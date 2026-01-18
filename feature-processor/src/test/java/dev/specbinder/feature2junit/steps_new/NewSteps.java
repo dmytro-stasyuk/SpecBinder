@@ -255,9 +255,37 @@ public class NewSteps {
                 "Expected error message does not match exactly");
     }
 
+    @Then("the generator error should contain the following text:")
+    public void theGeneratorErrorShouldContainTheFollowingText(String expectedErrorText) {
+
+        if (compilationError == null) {
+            fail("Expected compilation error but compilation succeeded");
+        }
+
+        // Check if the actual error contains the expected text
+        Assertions.assertTrue(compilationError.trim().contains(expectedErrorText.trim()),
+                "Expected error message to contain text:\n" + expectedErrorText + "\nbut was:\n" + compilationError
+        );
+    }
+
+    /**
+     * checks for the presence of the generated class and also checks for compilation errors
+     */
     @Then("the following class should be generated:")
     public void a_class_named_should_be_generated_with_content(String classContent) throws IOException {
 
+        a_source_file_named_should_be_generated_with_content(classContent);
+
+        if (compilationError != null) {
+            fail("Expected generated class file found, but there was a compilation error:\n" + compilationError);
+        }
+    }
+
+    /**
+     * doesn't check for compilation errors, just for the presence and content of the generated source file
+     */
+    @Then("the following java source file should be be generated:")
+    public void a_source_file_named_should_be_generated_with_content(String classContent) throws IOException {
         // Parse package name and class name from expected content
         String packageName = JavaSourceParser.extractPackageName(classContent);
         String className = JavaSourceParser.extractClassName(classContent);
@@ -299,10 +327,6 @@ public class NewSteps {
 
         Assertions.assertEquals(normalizedExpected, normalizedActual,
                 "Generated class content does not match expected content for file: " + expectedFilePath);
-
-        if (compilationError != null) {
-            fail("Expected generated class file found, but there was a compilation error:\n" + compilationError);
-        }
     }
 
 

@@ -7,6 +7,7 @@ import dev.specbinder.feature2junit.config.GeneratorOptions;
 import dev.specbinder.feature2junit.exception.ProcessingException;
 import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
 import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
+import dev.specbinder.feature2junit.gherkin.utils.RecordMetadata;
 import dev.specbinder.feature2junit.support.BaseTypeSupport;
 import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.support.OptionsSupport;
@@ -177,7 +178,9 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                         if (existingMethodSpec == null) {
                             // Check if base class has a compatible method (not just by name, but by signature)
                             boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(regularStep, scenarioParameterNames, scenarioStepsMethodSpecs);
-                            if (baseClassHasCompatibleMethod) {
+                            // Also check if we need an overloaded method (inherited type incompatible)
+                            boolean needsOverloadedMethod = stepNeedsOverloadedMethod(regularStep);
+                            if (baseClassHasCompatibleMethod && !needsOverloadedMethod) {
                                 logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
                             } else {
                                 classBuilder.addMethod(stepMethodSpec);
@@ -205,7 +208,9 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                     if (existingMethodSpec == null) {
                         // Check if base class has a compatible method (not just by name, but by signature)
                         boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, scenarioParameterNames, scenarioStepsMethodSpecs);
-                        if (baseClassHasCompatibleMethod) {
+                        // Also check if we need an overloaded method (inherited type incompatible)
+                        boolean needsOverloadedMethod = stepNeedsOverloadedMethod(scenarioStep);
+                        if (baseClassHasCompatibleMethod && !needsOverloadedMethod) {
                             logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
                         } else {
                             classBuilder.addMethod(stepMethodSpec);
@@ -400,6 +405,30 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         }
 
         return result;
+    }
+
+    /**
+     * Checks if a step requires an overloaded method to be generated.
+     * This happens when an inherited method exists but its List parameter type
+     * doesn't have a constructor that can accept all data table columns.
+     *
+     * @param step the step to check
+     * @return true if an overloaded method should be generated
+     */
+    private boolean stepNeedsOverloadedMethod(Step step) {
+        if (dataTableCollector == null) {
+            return false;
+        }
+
+        if (step.getDataTable().isEmpty()) {
+            return false;
+        }
+
+        String stepText = step.getKeyword() + step.getText();
+        String recordName = dataTableCollector.deriveRecordNameFromStepText(stepText);
+        RecordMetadata recordMetadata = dataTableCollector.getRecordMetadataMap().get(recordName);
+
+        return recordMetadata != null && recordMetadata.needsOverloadedMethod();
     }
 
 }

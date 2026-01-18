@@ -21,6 +21,11 @@ public class RecordMetadata {
     private TypeElement existingType;
     private ConstructorMappingUtils.MappingResult constructorMapping;
 
+    // Flag indicating that we need to generate an overloaded method
+    // This happens when an inherited method exists but its List parameter type
+    // doesn't have a constructor that can accept all data table columns
+    private boolean needsOverloadedMethod;
+
     /**
      * Creates a new RecordMetadata with the specified record name.
      *
@@ -112,5 +117,25 @@ public class RecordMetadata {
      */
     public ConstructorMappingUtils.MappingResult getConstructorMapping() {
         return constructorMapping;
+    }
+
+    /**
+     * Sets the flag indicating that an overloaded method needs to be generated.
+     * This is set when an inherited method exists but its List parameter type
+     * doesn't have a constructor that can accept all data table columns.
+     *
+     * @param needsOverloadedMethod true if an overloaded method should be generated
+     */
+    public void setNeedsOverloadedMethod(boolean needsOverloadedMethod) {
+        this.needsOverloadedMethod = needsOverloadedMethod;
+    }
+
+    /**
+     * Checks if an overloaded method needs to be generated for this record type.
+     *
+     * @return true if an overloaded method should be generated, false otherwise
+     */
+    public boolean needsOverloadedMethod() {
+        return needsOverloadedMethod;
     }
 }

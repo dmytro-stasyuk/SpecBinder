@@ -21,10 +21,18 @@ public class GlobPatternMatcher implements LoggingSupport {
 
     private final ProcessingEnvironment processingEnv;
 
+    /**
+     * Creates a new GlobPatternMatcher.
+     * @param processingEnv the processing environment
+     */
     public GlobPatternMatcher(ProcessingEnvironment processingEnv) {
         this.processingEnv = processingEnv;
     }
 
+    /**
+     * Returns the processing environment.
+     * @return the processing environment
+     */
     @Override
     public ProcessingEnvironment getProcessingEnv() {
         return processingEnv;

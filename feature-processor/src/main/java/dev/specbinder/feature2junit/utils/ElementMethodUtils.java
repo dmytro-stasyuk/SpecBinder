@@ -7,8 +7,10 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -145,6 +147,88 @@ public class ElementMethodUtils {
                 });
 
         return methodSignatures;
+    }
+
+    /**
+     * Checks if a type is a List with a custom object type argument (not a standard Java type).
+     *
+     * @param typeMirror the type to check
+     * @param processingEnv the processing environment
+     * @return true if the type is List&lt;CustomType&gt;, false otherwise
+     */
+    public static boolean isListOfCustomObjectType(TypeMirror typeMirror, ProcessingEnvironment processingEnv) {
+        if (!(typeMirror instanceof DeclaredType declaredType)) {
+            return false;
+        }
+
+        Element element = declaredType.asElement();
+        String qualifiedName = ((TypeElement) element).getQualifiedName().toString();
+
+        // Check if it's java.util.List
+        if (!qualifiedName.equals("java.util.List")) {
+            return false;
+        }
+
+        // Check if it has exactly one type argument
+        List<? extends TypeMirror> typeArgs = declaredType.getTypeArguments();
+        if (typeArgs.size() != 1) {
+            return false;
+        }
+
+        // Check if the type argument is a custom object (not a standard Java type)
+        TypeMirror typeArg = typeArgs.get(0);
+        if (!(typeArg instanceof DeclaredType argDeclaredType)) {
+            return false;
+        }
+
+        Element argElement = argDeclaredType.asElement();
+        if (!(argElement instanceof TypeElement typeElement)) {
+            return false;
+        }
+
+        String argQualifiedName = typeElement.getQualifiedName().toString();
+
+        // Exclude standard Java types like String, Map, etc.
+        return !argQualifiedName.startsWith("java.");
+    }
+
+    /**
+     * Extracts the TypeElement of the generic type argument from a List&lt;T&gt; type.
+     *
+     * @param typeMirror the List type (e.g., List&lt;UserParam&gt;)
+     * @return the TypeElement of T, or null if not a valid List&lt;T&gt; type
+     */
+    public static TypeElement extractListTypeArgument(TypeMirror typeMirror) {
+        if (!(typeMirror instanceof DeclaredType declaredType)) {
+            return null;
+        }
+
+        Element element = declaredType.asElement();
+        if (!(element instanceof TypeElement typeElement)) {
+            return null;
+        }
+
+        String qualifiedName = typeElement.getQualifiedName().toString();
+        if (!qualifiedName.equals("java.util.List")) {
+            return null;
+        }
+
+        List<? extends TypeMirror> typeArgs = declaredType.getTypeArguments();
+        if (typeArgs.size() != 1) {
+            return null;
+        }
+
+        TypeMirror typeArg = typeArgs.get(0);
+        if (!(typeArg instanceof DeclaredType argDeclaredType)) {
+            return null;
+        }
+
+        Element argElement = argDeclaredType.asElement();
+        if (!(argElement instanceof TypeElement)) {
+            return null;
+        }
+
+        return (TypeElement) argElement;
     }
 
 }

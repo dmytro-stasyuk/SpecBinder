@@ -16,6 +16,12 @@ import java.util.List;
  */
 public class InnerTypeUtils {
 
+    private InnerTypeUtils() {
+        /**
+         * utility class
+         */
+    }
+
     /**
      * Finds an inner type by name in the class hierarchy.
      * Searches the base type and all superclasses using Elements.getAllMembers().

@@ -3,10 +3,11 @@ Feature: InnerParamTypeInheritanceAutoconversion
   I want
   So that
 
-#  Rule: step data column values can be converted to match existing inner class fields as long as every value can be converted
-#    - to the primitive type's wrapper type (e.g., int to Integer, long or Long, double or Double, boolean or Boolean)
-#    - the conversion simply happens at the call site by directly passing the value as require type, e.g. for int or Integer type field instead of passing say "42" we pass 42 as an int, similarly for long, double and and boolean field types
-#
+  Rule: step data column values can be converted to match existing fields of parameterized list type as long as every value can be converted
+  - to the primitive type's wrapper type (e.g., int to Integer, long or Long, double or Double, boolean or Boolean)
+  - the conversion simply happens at the call site by directly passing the value as require type, e.g. for int or Integer type field instead of passing string equivalent "42" we pass 42 as an int,
+  - similarly for long, double and and boolean field types
+
 #    Scenario: Existing inner class has fields with different primitive types
 #      Given the following base class:
 #      """
@@ -15,6 +16,9 @@ Feature: InnerParamTypeInheritanceAutoconversion
 #      import dev.specbinder.annotations.Feature2JUnit;
 #      import dev.specbinder.annotations.Feature2JUnitOptions;
 #      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+#
+#      import java.util.List;
+#      import java.util.Map;
 #
 #      @Feature2JUnit
 #      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
@@ -36,6 +40,10 @@ Feature: InnerParamTypeInheritanceAutoconversion
 #                  this.active = active;
 #              }
 #          }
+#
+#          protected List<Map<String, String>> createListOfMaps(String tableLines) {
+#              return null;
+#          }
 #      }
 #      """
 #      And the following feature file:
@@ -53,12 +61,7 @@ Feature: InnerParamTypeInheritanceAutoconversion
 #      package features;
 #
 #      import dev.specbinder.annotations.output.FeatureFilePath;
-#      import java.lang.Math;
-#      import java.lang.String;
-#      import java.util.ArrayList;
-#      import java.util.HashMap;
 #      import java.util.List;
-#      import java.util.Map;
 #      import javax.annotation.processing.Generated;
 #      import org.junit.jupiter.api.Assertions;
 #      import org.junit.jupiter.api.DisplayName;
@@ -101,41 +104,8 @@ Feature: InnerParamTypeInheritanceAutoconversion
 #                              )
 #                      ).toList());
 #          }
-#
-#          protected List<Map<String, String>> createListOfMaps(String tableLines) {
-#
-#              String[] tableRows = tableLines.split("\\n");
-#              List<Map<String, String>> listOfMaps = new ArrayList<>();
-#
-#              if (tableRows.length < 2) {
-#                  return listOfMaps;
-#              }
-#
-#              String[] headers = null;
-#              for (int i = 0; i < tableRows.length; i++) {
-#                  String trimmedLine = tableRows[i].trim();
-#                  if (!trimmedLine.isEmpty()) {
-#                      String[] columns = trimmedLine.split("\\|");
-#                      List<String> rowColumns = new ArrayList<>(columns.length);
-#                      for (int j = 1; j < columns.length; j++) {
-#                          String column = columns[j].trim();
-#                          rowColumns.add(column);
-#                      }
-#
-#                      if (headers == null) {
-#                          headers = rowColumns.toArray(new String[0]);
-#                      } else {
-#                          Map<String, String> rowMap = new HashMap<>();
-#                          for (int j = 0; j < Math.min(headers.length, rowColumns.size()); j++) {
-#                              rowMap.put(headers[j], rowColumns.get(j));
-#                          }
-#                          listOfMaps.add(rowMap);
-#                      }
-#                  }
-#              }
-#
-#              return listOfMaps;
-#          }
 #      }
 #      """
 
+    Rule: conversion for enum types is also supported by passing the enum name of the enum constant (e.g., for enum Color { RED, GREEN }, passing RED directly as enum constant instead of original string value "RED"
+    - so long as every value in the data table column can be converted to the enum constant

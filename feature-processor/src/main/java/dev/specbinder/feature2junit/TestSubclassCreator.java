@@ -407,12 +407,8 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             String dataTableParameterType = options.getDataTableParameterType();
 
             if ("LIST_OF_OBJECT_PARAMS".equals(dataTableParameterType)) {
-                // Add createListOfMaps base method if not present in class hierarchy
-                boolean alreadyHasCreateListOfMaps = allInheritedMethodNames.contains("createListOfMaps");
-                if (!alreadyHasCreateListOfMaps) {
-                    MethodSpec createListOfMapsMethod = TableUtils.createListOfMapsMethod(processingEnv);
-                    classBuilder.addMethod(createListOfMapsMethod);
-                }
+                // LIST_OF_OBJECT_PARAMS uses List.of() with inline constructors
+                // No helper method needed
             } else if (LIST_OF_MAPS.name().equals(dataTableParameterType)) {
                 // Add createListOfMaps if not present in class hierarchy
                 boolean alreadyHasCreateListOfMaps = allInheritedMethodNames.contains("createListOfMaps");

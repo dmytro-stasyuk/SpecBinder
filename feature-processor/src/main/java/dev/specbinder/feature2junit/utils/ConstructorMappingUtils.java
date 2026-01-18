@@ -11,6 +11,13 @@ import java.util.Set;
  */
 public class ConstructorMappingUtils {
 
+    private ConstructorMappingUtils() {
+        /**
+         * utility class
+         */
+    }
+
+
     /**
      * Result of a mapping attempt between data table columns and constructor parameters.
      */
@@ -19,6 +26,12 @@ public class ConstructorMappingUtils {
         private final List<String> constructorParamNames;
         private final Map<Integer, String> paramIndexToColumnName;
 
+        /**
+         * Creates a new MappingResult.
+         * @param canMap true if all columns can be mapped, false otherwise
+         * @param constructorParamNames list of constructor parameter names in order
+         * @param paramIndexToColumnName mapping from constructor parameter index to original column name
+         */
         public MappingResult(
                 boolean canMap,
                 List<String> constructorParamNames,
@@ -29,20 +42,23 @@ public class ConstructorMappingUtils {
         }
 
         /**
-         * @return true if all data table columns can be mapped to constructor parameters
+         * Returns true if all data table columns can be mapped to constructor parameters.
+         * @return true if mapping is possible, false otherwise
          */
         public boolean canMap() {
             return canMap;
         }
 
         /**
-         * @return the list of constructor parameter names in order
+         * Returns the list of constructor parameter names in order.
+         * @return list of constructor parameter names
          */
         public List<String> getConstructorParamNames() {
             return constructorParamNames;
         }
 
         /**
+         * Returns the mapping from constructor parameter index to original column name.
          * @return map from constructor parameter index to original column name.
          *         If a parameter index is not in the map, that parameter should be passed as null.
          */

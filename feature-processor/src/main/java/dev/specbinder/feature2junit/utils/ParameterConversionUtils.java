@@ -123,6 +123,8 @@ public class ParameterConversionUtils {
 
     /**
      * Checks if the given TypeMirror represents an enum type.
+     * @param typeMirror the type mirror to check
+     * @return true if the type is an enum, false otherwise
      */
     public static boolean isEnumType(TypeMirror typeMirror) {
         if (typeMirror.getKind() != TypeKind.DECLARED) {
@@ -136,6 +138,8 @@ public class ParameterConversionUtils {
     /**
      * Gets the fully qualified name of an enum type for use in static imports.
      * Example: "features.MyFeature.DayOfWeek"
+     * @param targetType the enum type mirror
+     * @return the fully qualified name of the enum type
      */
     public static String getEnumQualifiedName(TypeMirror targetType) {
         DeclaredType declaredType = (DeclaredType) targetType;
@@ -146,6 +150,7 @@ public class ParameterConversionUtils {
     /**
      * Checks if the given string value can be parsed as an enum constant of the target type.
      * Enum constant matching is case-sensitive.
+     * @return true if the value matches an enum constant, false otherwise
      */
     private static boolean canParseEnum(String value, TypeMirror targetType) {
         DeclaredType declaredType = (DeclaredType) targetType;
@@ -165,6 +170,7 @@ public class ParameterConversionUtils {
     /**
      * Converts a string value to an enum literal.
      * Returns just the constant name (e.g., "MONDAY") for use with static imports.
+     * @param value the string value to convert
      */
     private static String toEnumLiteral(String value, TypeMirror targetType) {
         // Return just the constant name - static imports will be added separately

@@ -10,7 +10,18 @@ import java.util.Set;
 public class EnumImportCollector {
 
     /**
+     * Default constructor.
+     */
+    public EnumImportCollector() {
+        /**
+         * default constructor
+         */
+    }
+
+    /**
      * Represents an enum constant that needs a static import.
+     * @param enumQualifiedName the fully qualified name of the enum type
+     * @param constantName the name of the enum constant
      */
     public record EnumConstant(String enumQualifiedName, String constantName) {
     }
@@ -29,6 +40,7 @@ public class EnumImportCollector {
 
     /**
      * Returns all collected enum constants.
+     * @return set of enum constants
      */
     public Set<EnumConstant> getEnumConstants() {
         return enumConstants;
@@ -36,6 +48,7 @@ public class EnumImportCollector {
 
     /**
      * Returns true if any enum constants have been collected.
+     * @return true if enum constants exist, false otherwise
      */
     public boolean hasEnumConstants() {
         return !enumConstants.isEmpty();
