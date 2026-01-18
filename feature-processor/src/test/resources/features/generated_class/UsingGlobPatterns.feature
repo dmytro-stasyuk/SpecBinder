@@ -11,22 +11,28 @@ Feature: UsingGlobPatterns
       """
       package com.example.features;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit("**/*.feature")
       public abstract class UserFeatures {
       }
       """
-      And a feature file under path "UserLogin.feature" with the following content:
+      And a feature file under path "features/UserLogin.feature" with the following content:
       """
       Feature: User Login
         Scenario: Successful login
           Given user exists
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import com.example.features.UserFeatures;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -39,9 +45,11 @@ Feature: UsingGlobPatterns
       @DisplayName("UserLogin")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("UserLogin.feature")
-      public abstract class UserLoginScenarios extends UserFeatures {
-          public abstract void givenUserExists();
+      @FeatureFilePath("features/UserLogin.feature")
+      public class UserLoginTest extends UserFeatures {
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -60,6 +68,9 @@ Feature: UsingGlobPatterns
       """
       package com.example.features;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit("features/**/*.feature")
       public abstract class UserFeatures {
       }
@@ -77,14 +88,14 @@ Feature: UsingGlobPatterns
           Given user registers
       """
       When the generator is run
-      Then 2 test classes should be generated
-      And a class named "UserLoginScenarios" should be generated with content:
+      Then the following class should be generated:
       """
       package features;
 
       import com.example.features.UserFeatures;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -98,8 +109,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UserLogin.feature")
-      public abstract class UserLoginScenarios extends UserFeatures {
-          public abstract void givenUserExists();
+      public class UserLoginTest extends UserFeatures {
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -112,13 +125,14 @@ Feature: UsingGlobPatterns
           }
       }
       """
-      And a class named "UserRegistrationScenarios" should be generated with content:
+      And the following class should be generated:
       """
       package features;
 
       import com.example.features.UserFeatures;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -132,8 +146,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UserRegistration.feature")
-      public abstract class UserRegistrationScenarios extends UserFeatures {
-          public abstract void givenUserRegisters();
+      public class UserRegistrationTest extends UserFeatures {
+          public void givenUserRegisters() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -151,6 +167,9 @@ Feature: UsingGlobPatterns
       Given the following base class:
       """
       package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit("features/**/*.feature")
       public abstract class AllFeatures {
@@ -175,14 +194,14 @@ Feature: UsingGlobPatterns
           Given admin views dashboard
       """
       When the generator is run
-      Then 3 test classes should be generated
-      And a class named "LoginScenarios" should be generated with content:
+      Then the following class should be generated:
       """
       package features.user;
 
       import com.example.AllFeatures;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -196,8 +215,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/user/Login.feature")
-      public abstract class LoginScenarios extends AllFeatures {
-          public abstract void givenUserLogsIn();
+      public class LoginTest extends AllFeatures {
+          public void givenUserLogsIn() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -210,13 +231,14 @@ Feature: UsingGlobPatterns
           }
       }
       """
-      And a class named "RegistrationScenarios" should be generated with content:
+      And the following class should be generated:
       """
       package features.user;
 
       import com.example.AllFeatures;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -230,8 +252,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/user/Registration.feature")
-      public abstract class RegistrationScenarios extends AllFeatures {
-          public abstract void givenUserRegisters();
+      public class RegistrationTest extends AllFeatures {
+          public void givenUserRegisters() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -244,13 +268,14 @@ Feature: UsingGlobPatterns
           }
       }
       """
-      And a class named "DashboardScenarios" should be generated with content:
+      And the following class should be generated:
       """
       package features.admin;
 
       import com.example.AllFeatures;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -264,8 +289,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/admin/Dashboard.feature")
-      public abstract class DashboardScenarios extends AllFeatures {
-          public abstract void givenAdminViewsDashboard();
+      public class DashboardTest extends AllFeatures {
+          public void givenAdminViewsDashboard() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -283,6 +310,9 @@ Feature: UsingGlobPatterns
       Given the following base class:
       """
       package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit("features/user/**/*.feature")
       public abstract class UserFeatures {
@@ -307,14 +337,14 @@ Feature: UsingGlobPatterns
           Given admin views dashboard
       """
       When the generator is run
-      Then 2 test classes should be generated
-      And a class named "LoginScenarios" should be generated with content:
+      Then the following class should be generated:
       """
       package features.user;
 
       import com.example.UserFeatures;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -328,8 +358,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/user/Login.feature")
-      public abstract class LoginScenarios extends UserFeatures {
-          public abstract void givenUserLogsIn();
+      public class LoginTest extends UserFeatures {
+          public void givenUserLogsIn() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -342,13 +374,14 @@ Feature: UsingGlobPatterns
           }
       }
       """
-      And a class named "TwoFactorScenarios" should be generated with content:
+      And the following class should be generated:
       """
       package features.user.auth;
 
       import com.example.UserFeatures;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -362,8 +395,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/user/auth/TwoFactor.feature")
-      public abstract class TwoFactorScenarios extends UserFeatures {
-          public abstract void givenUserEnablesTwoFactorAuthentication();
+      public class TwoFactorTest extends UserFeatures {
+          public void givenUserEnablesTwoFactorAuthentication() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -384,8 +419,11 @@ Feature: UsingGlobPatterns
       """
       package com.example;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit("features/**/*.feature")
-      @Feature2JUnitOptions(generatedClassSuffix = "TestCases")
+      @Feature2JUnitOptions(classSuffixIfAbstract = "TestCases")
       public abstract class Features {
       }
       """
@@ -402,14 +440,14 @@ Feature: UsingGlobPatterns
           Given user logs out
       """
       When the generator is run
-      Then 2 test classes should be generated
-      And a class named "LoginTestCases" should be generated with content:
+      Then the following class should be generated:
       """
       package features;
 
       import com.example.Features;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -423,8 +461,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Login.feature")
-      public abstract class LoginTestCases extends Features {
-          public abstract void givenUserLogsIn();
+      public class LoginTest extends Features {
+          public void givenUserLogsIn() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -437,13 +477,14 @@ Feature: UsingGlobPatterns
           }
       }
       """
-      And a class named "LogoutTestCases" should be generated with content:
+      And the following class should be generated:
       """
       package features;
 
       import com.example.Features;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -457,8 +498,10 @@ Feature: UsingGlobPatterns
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Logout.feature")
-      public abstract class LogoutTestCases extends Features {
-          public abstract void givenUserLogsOut();
+      public class LogoutTest extends Features {
+          public void givenUserLogsOut() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -478,6 +521,9 @@ Feature: UsingGlobPatterns
       Given the following base class:
       """
       package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit("nonexistent/**/*.feature")
       public abstract class Features {
@@ -503,6 +549,9 @@ Feature: UsingGlobPatterns
       Given the following base class:
       """
       package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit("features/**/*.feature")
       public abstract class Features {

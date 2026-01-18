@@ -12,11 +12,14 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       """
       package com.example.features;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       public abstract class UserFeatures {
       }
       """
-      And a feature file under path "com/example/features/UserLogin.feature" with the following content:
+      And the following feature file:
       """
       Feature: User Login
         Scenario: Successful login
@@ -24,12 +27,13 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       """
       When the generator is run
       # the path used for finding feature files should be in this case "com/example/features/*.feature"
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example.features;
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -39,12 +43,14 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       /**
        * Feature: User Login
        */
-      @DisplayName("UserLogin")
+      @DisplayName("UserFeatures")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("com/example/features/UserLogin.feature")
-      public abstract class UserLoginScenarios extends UserFeatures {
-          public abstract void givenUserExists();
+      @FeatureFilePath("com/example/features/UserFeatures.feature")
+      public class UserFeaturesTest extends UserFeatures {
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -62,6 +68,9 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       Given the following base class:
       """
       package com.example.features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit
       public abstract class UserFeatures {
@@ -81,14 +90,13 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       """
       When the generator is run
       # the path used for finding feature files should be in this case "com/example/features/*.feature"
-
-      Then 2 test classes should be generated
-      And a class named "UserLoginScenarios" should be generated with content:
+      Then the following class should be generated:
       """
       package com.example.features;
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -102,8 +110,10 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/features/UserLogin.feature")
-      public abstract class UserLoginScenarios extends UserFeatures {
-          public abstract void givenUserExists();
+      public class UserLoginTest extends UserFeatures {
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -116,12 +126,13 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
           }
       }
       """
-      And a class named "UserRegistrationScenarios" should be generated with content:
+      And the following class should be generated:
       """
       package com.example.features;
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -135,8 +146,10 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/features/UserRegistration.feature")
-      public abstract class UserRegistrationScenarios extends UserFeatures {
-          public abstract void givenUserRegisters();
+      public class UserRegistrationTest extends UserFeatures {
+          public void givenUserRegisters() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -154,6 +167,9 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       Given the following base class:
       """
       package com.example.user;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit
       public abstract class UserFeatures {
@@ -178,13 +194,15 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
           Given admin views dashboard
       """
       When the generator is run
-      Then 1 test classes should be generated
-      And a class named "LoginScenarios" should be generated with content:
+      Then there should not be a class generated with name "TwoFactorTest" in package "com.example.user.auth"
+      And there should not be a class generated with name "DashboardTest" in package "features.admin"
+      And the following class should be generated:
       """
       package com.example.user;
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -198,8 +216,10 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/user/Login.feature")
-      public abstract class LoginScenarios extends UserFeatures {
-          public abstract void givenUserLogsIn();
+      public class LoginTest extends UserFeatures {
+          public void givenUserLogsIn() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)

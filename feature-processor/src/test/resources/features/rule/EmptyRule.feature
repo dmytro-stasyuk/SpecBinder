@@ -11,6 +11,9 @@ Feature: EmptyRule
       """
       package com.example.payment;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       @Feature2JUnitOptions(
         failRulesWithNoScenarios = true
@@ -18,14 +21,14 @@ Feature: EmptyRule
       public class TestFeature {
       }
       """
-      And a feature file under path "com/example/payment/TestFeature.feature" with the following content:
+      And the following feature file:
       """
       Feature: feature with empty rule
 
         Rule: Processing rules
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example.payment;
 
@@ -49,7 +52,7 @@ Feature: EmptyRule
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/payment/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Nested
           @Order(1)
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -69,6 +72,9 @@ Feature: EmptyRule
       """
       package com.example.payment;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       @Feature2JUnitOptions(
         failRulesWithNoScenarios = false
@@ -83,7 +89,7 @@ Feature: EmptyRule
         Rule: Processing rules
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example.payment;
 
@@ -104,7 +110,7 @@ Feature: EmptyRule
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/payment/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Nested
           @Order(1)
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -121,6 +127,9 @@ Feature: EmptyRule
       """
       package com.example.payment;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       public class TestFeature {
       }
@@ -132,7 +141,7 @@ Feature: EmptyRule
         Rule: Validation rules
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example.payment;
 
@@ -156,7 +165,7 @@ Feature: EmptyRule
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/payment/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Nested
           @Order(1)
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -178,6 +187,9 @@ Feature: EmptyRule
       """
       package com.example.payment;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       @Feature2JUnitOptions(
         tagForRulesWithNoScenarios = "incomplete"
@@ -192,7 +204,7 @@ Feature: EmptyRule
         Rule: Authorization rules
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example.payment;
       
@@ -216,7 +228,7 @@ Feature: EmptyRule
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/payment/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Nested
           @Order(1)
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

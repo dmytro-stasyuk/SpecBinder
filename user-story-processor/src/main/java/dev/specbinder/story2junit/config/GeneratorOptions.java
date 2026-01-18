@@ -13,7 +13,7 @@ public class GeneratorOptions {
     /**
      * Suffix that will be used for the name of the generated test class if it is abstract.
      */
-    private final String generatedClassSuffix;
+    private final String classSuffixIfAbstract;
 
     /**
      * If set to true, the generator will add {@link dev.specbinder.annotations.output.SourceLine} annotation to test methods and
@@ -73,7 +73,7 @@ public class GeneratorOptions {
      * Default options
      */
     public GeneratorOptions() {
-        this.generatedClassSuffix = "Scenarios";
+        this.classSuffixIfAbstract = "Scenarios";
         this.addSourceLineAnnotations = false;
         this.addSourceLineBeforeStepCalls = false;
         this.failScenariosWithNoSteps = true;
@@ -88,7 +88,7 @@ public class GeneratorOptions {
     /**
      * Custom options
      *
-     * @param generatedClassSuffix        see {@link #generatedClassSuffix}
+     * @param classSuffixIfAbstract        see {@link #classSuffixIfAbstract}
      * @param addSourceLineAnnotations     see {@link #addSourceLineAnnotations}
      * @param addSourceLineBeforeStepCalls see {@link #addSourceLineBeforeStepCalls}
      * @param failScenariosWithNoSteps     see {@link #failScenariosWithNoSteps}
@@ -100,7 +100,7 @@ public class GeneratorOptions {
      * @param dataTableParameterType       see {@link #dataTableParameterType}
      */
     public GeneratorOptions(
-            String generatedClassSuffix,
+            String classSuffixIfAbstract,
             boolean addSourceLineAnnotations,
             boolean addSourceLineBeforeStepCalls,
             boolean failScenariosWithNoSteps,
@@ -111,7 +111,7 @@ public class GeneratorOptions {
             boolean placeGeneratedClassNextToAnnotatedClass,
             String dataTableParameterType
     ) {
-        this.generatedClassSuffix = generatedClassSuffix;
+        this.classSuffixIfAbstract = classSuffixIfAbstract;
         this.addSourceLineAnnotations = addSourceLineAnnotations;
         this.addSourceLineBeforeStepCalls = addSourceLineBeforeStepCalls;
         this.failScenariosWithNoSteps = failScenariosWithNoSteps;

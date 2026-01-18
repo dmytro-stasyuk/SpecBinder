@@ -22,7 +22,7 @@ Feature: GeneratorOptionsInheritance
 
       import dev.specbinder.annotations.Feature2JUnit;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit
       public abstract class TestFeature extends BaseFeature {
       }
       """
@@ -33,12 +33,14 @@ Feature: GeneratorOptionsInheritance
           Given user exists
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.TestFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import io.cucumber.java.en.Given;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -48,13 +50,15 @@ Feature: GeneratorOptionsInheritance
       /**
        * Feature: Test
        */
-      @DisplayName("test")
+      @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      @FeatureFilePath("com/example/TestFeature.feature")
+      public class TestFeatureTest extends TestFeature {
           @Given("^user exists$")
-          public abstract void givenUserExists();
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -77,7 +81,7 @@ Feature: GeneratorOptionsInheritance
 
       @Feature2JUnitOptions(
         addCucumberStepAnnotations = true,
-        generatedClassSuffix = "TestCases"
+        classSuffixIfAbstract = "TestCases"
       )
       public abstract class BaseFeature {
       }
@@ -88,7 +92,7 @@ Feature: GeneratorOptionsInheritance
 
       import dev.specbinder.annotations.Feature2JUnit;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit
       public abstract class TestFeature extends BaseFeature {
       }
       """
@@ -99,12 +103,14 @@ Feature: GeneratorOptionsInheritance
           Given user exists
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.TestFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import io.cucumber.java.en.Given;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -114,13 +120,15 @@ Feature: GeneratorOptionsInheritance
       /**
        * Feature: Test
        */
-      @DisplayName("test")
+      @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureTestCases extends TestFeature {
+      @FeatureFilePath("com/example/TestFeature.feature")
+      public class TestFeatureTest extends TestFeature {
           @Given("^user exists$")
-          public abstract void givenUserExists();
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -158,7 +166,7 @@ Feature: GeneratorOptionsInheritance
 
       import dev.specbinder.annotations.Feature2JUnit;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit
       public abstract class TestFeature extends ParentFeature {
       }
       """
@@ -169,12 +177,14 @@ Feature: GeneratorOptionsInheritance
           Given user exists
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.TestFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import io.cucumber.java.en.Given;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -184,13 +194,15 @@ Feature: GeneratorOptionsInheritance
       /**
        * Feature: Test
        */
-      @DisplayName("test")
+      @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      @FeatureFilePath("com/example/TestFeature.feature")
+      public class TestFeatureTest extends TestFeature {
           @Given("^user exists$")
-          public abstract void givenUserExists();
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -224,7 +236,7 @@ Feature: GeneratorOptionsInheritance
       import dev.specbinder.annotations.Feature2JUnit;
       import dev.specbinder.annotations.Feature2JUnitOptions;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit
       @Feature2JUnitOptions(addCucumberStepAnnotations = false)
       public abstract class TestFeature extends BaseFeature {
       }
@@ -236,11 +248,13 @@ Feature: GeneratorOptionsInheritance
           Given user exists
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.TestFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -250,12 +264,14 @@ Feature: GeneratorOptionsInheritance
       /**
        * Feature: Test
        */
-      @DisplayName("test")
+      @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
-          public abstract void givenUserExists();
+      @FeatureFilePath("com/example/TestFeature.feature")
+      public class TestFeatureTest extends TestFeature {
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -296,7 +312,7 @@ Feature: GeneratorOptionsInheritance
 
       import dev.specbinder.annotations.Feature2JUnit;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit
       public abstract class TestFeature extends ParentFeature {
       }
       """
@@ -307,11 +323,13 @@ Feature: GeneratorOptionsInheritance
           Given user exists
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.TestFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -321,12 +339,14 @@ Feature: GeneratorOptionsInheritance
       /**
        * Feature: Test
        */
-      @DisplayName("test")
+      @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
-          public abstract void givenUserExists();
+      @FeatureFilePath("com/example/TestFeature.feature")
+      public class TestFeatureTest extends TestFeature {
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -349,7 +369,7 @@ Feature: GeneratorOptionsInheritance
 
       @Feature2JUnitOptions(
         addCucumberStepAnnotations = true,
-        generatedClassSuffix = "TestCases"
+        classSuffixIfAbstract = "TestCases"
       )
       public abstract class BaseFeature {
       }
@@ -361,7 +381,7 @@ Feature: GeneratorOptionsInheritance
       import dev.specbinder.annotations.Feature2JUnit;
       import dev.specbinder.annotations.Feature2JUnitOptions;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit
       @Feature2JUnitOptions(addCucumberStepAnnotations = false)
       public abstract class TestFeature extends BaseFeature {
       }
@@ -373,11 +393,13 @@ Feature: GeneratorOptionsInheritance
           Given user exists
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.TestFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -387,12 +409,14 @@ Feature: GeneratorOptionsInheritance
       /**
        * Feature: Test
        */
-      @DisplayName("test")
+      @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureTestCases extends TestFeature {
-          public abstract void givenUserExists();
+      @FeatureFilePath("com/example/TestFeature.feature")
+      public class TestFeatureTest extends TestFeature {
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -422,7 +446,7 @@ Feature: GeneratorOptionsInheritance
 
       import dev.specbinder.annotations.Feature2JUnit;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit
       public abstract class TestFeature extends BaseFeature {
       }
       """
@@ -433,11 +457,13 @@ Feature: GeneratorOptionsInheritance
           Given user exists
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.TestFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -447,12 +473,14 @@ Feature: GeneratorOptionsInheritance
       /**
        * Feature: Test
        */
-      @DisplayName("test")
+      @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
-          public abstract void givenUserExists();
+      @FeatureFilePath("com/example/TestFeature.feature")
+      public class TestFeatureTest extends TestFeature {
+          public void givenUserExists() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)

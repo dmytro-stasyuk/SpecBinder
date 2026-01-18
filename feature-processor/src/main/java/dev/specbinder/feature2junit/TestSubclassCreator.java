@@ -10,6 +10,7 @@ import dev.specbinder.feature2junit.exception.ProcessingException;
 import dev.specbinder.feature2junit.gherkin.FeatureFileParser;
 import dev.specbinder.feature2junit.gherkin.FeatureProcessor;
 import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
+import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.gherkin.utils.RecordGenerator;
 import dev.specbinder.feature2junit.gherkin.utils.RecordMetadata;
 import dev.specbinder.feature2junit.utils.*;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.*;
 import javax.annotation.processing.Generated;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
@@ -90,10 +92,10 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
      */
     public JavaFile createTestSubclass(TypeElement annotatedClass, String featureFilePath, boolean deriveClassNameFromFile) throws IOException {
         String suffixToApply;
-        if (options.isShouldBeConcrete()) {
+        if (!options.isShouldBeAbstract()) {
             suffixToApply = options.getClassSuffixIfConcrete();
         } else {
-            suffixToApply = options.getGeneratedClassSuffix();
+            suffixToApply = options.getClassSuffixIfAbstract();
         }
         String generatedClassName;
         String featureFilePathForParsing;
@@ -144,9 +146,12 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                 .superclass(asTypeMirror)
                 .addModifiers(Modifier.PUBLIC);
 
-        if (!options.isShouldBeConcrete()) {
+        if (options.isShouldBeAbstract()) {
             classBuilder.addModifiers(Modifier.ABSTRACT);
         }
+
+        // Create enum import collector for static imports (outside if block so it's accessible later)
+        EnumImportCollector enumImportCollector = new EnumImportCollector();
 
         // Add feature documentation and process feature content
         if (feature != null) {
@@ -161,15 +166,59 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                 collectDataTableMetadata(feature, dataTableCollector);
             }
 
+            // Pass 1.5: Check for existing inner types in hierarchy
+            if (dataTableCollector != null && dataTableCollector.hasDataTables()) {
+                for (RecordMetadata metadata : dataTableCollector.getRecordMetadataMap().values()) {
+                    String recordName = metadata.getRecordName();
+
+                    // Try to find existing inner type in base class hierarchy
+                    TypeElement existingType = InnerTypeUtils.findInnerTypeInHierarchy(
+                            annotatedClass, recordName, processingEnv);
+
+                    if (existingType != null) {
+                        logInfo("Found existing inner type in hierarchy: " + recordName);
+
+                        // Check if it has an all-args constructor
+                        ExecutableElement constructor = InnerTypeUtils.findAllArgsConstructor(existingType);
+
+                        if (constructor != null) {
+                            // Extract constructor parameter names in order
+                            List<String> constructorParams = InnerTypeUtils.getConstructorParameterNames(
+                                    constructor, existingType);
+
+                            // Try to map data table columns to constructor parameters
+                            ConstructorMappingUtils.MappingResult mapping =
+                                    ConstructorMappingUtils.tryMapColumnsToConstructor(
+                                            metadata.getColumnNames(), constructorParams);
+
+                            if (mapping.canMap()) {
+                                // Success! Can reuse existing type
+                                metadata.setExistingType(existingType, mapping);
+                                logInfo("Reusing existing inner type: " + recordName);
+                            } else {
+                                logInfo("Cannot reuse " + recordName +
+                                        " - not all data table columns can be mapped to constructor parameters");
+                            }
+                        } else {
+                            logInfo("Cannot reuse " + recordName +
+                                    " - no all-args constructor found");
+                        }
+                    }
+                }
+            }
+
             // Pass 2: Process feature and generate code
-            FeatureProcessor featureProcessor = new FeatureProcessor(processingEnv, options, annotatedClass, dataTableCollector);
+            FeatureProcessor featureProcessor = new FeatureProcessor(processingEnv, options, annotatedClass, dataTableCollector, enumImportCollector);
             featureProcessor.processFeature(feature, classBuilder);
 
             // Generate record types for LIST_OF_OBJECT_PARAMS
             if (dataTableCollector != null && dataTableCollector.hasDataTables()) {
                 for (RecordMetadata metadata : dataTableCollector.getRecordMetadataMap().values()) {
-                    TypeSpec recordType = RecordGenerator.generateRecord(metadata);
-                    classBuilder.addType(recordType);
+                    // Only generate new type if NOT using existing type from hierarchy
+                    if (!metadata.hasExistingType()) {
+                        TypeSpec recordType = RecordGenerator.generateRecord(metadata);
+                        classBuilder.addType(recordType);
+                    }
                 }
             }
 
@@ -191,9 +240,25 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
 
         TypeSpec typeSpec = classBuilder.build();
 
-        return JavaFile.builder(packageName, typeSpec)
-                .indent("    ")
-                .build();
+        JavaFile.Builder javaFileBuilder = JavaFile.builder(packageName, typeSpec)
+                .indent("    ");
+
+        // Add static import for Arrays.stream if composite steps are enabled
+        if (options.isEnableCompositeSteps()) {
+            javaFileBuilder.addStaticImport(java.util.Arrays.class, "stream");
+        }
+
+        // Add static imports for enum constants
+        if (enumImportCollector.hasEnumConstants()) {
+            for (EnumImportCollector.EnumConstant enumConstant : enumImportCollector.getEnumConstants()) {
+                javaFileBuilder.addStaticImport(
+                        ClassName.bestGuess(enumConstant.enumQualifiedName()),
+                        enumConstant.constantName()
+                );
+            }
+        }
+
+        return javaFileBuilder.build();
     }
 
     /**
@@ -272,6 +337,11 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
         }
 
+        // Capitalize first letter to follow Java class naming conventions
+        if (fileName.length() > 0) {
+            fileName = Character.toUpperCase(fileName.charAt(0)) + fileName.substring(1);
+        }
+
         return fileName;
     }
 
@@ -342,20 +412,6 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                 if (!alreadyHasCreateListOfMaps) {
                     MethodSpec createListOfMapsMethod = TableUtils.createListOfMapsMethod(processingEnv);
                     classBuilder.addMethod(createListOfMapsMethod);
-                }
-
-                // Add createListOf<RecordName> methods for each record type
-                if (dataTableCollector != null && dataTableCollector.hasDataTables()) {
-                    for (RecordMetadata recordMetadata : dataTableCollector.getRecordMetadataMap().values()) {
-                        String methodName = "createListOf" + recordMetadata.getRecordName();
-                        boolean alreadyHasMethod = allInheritedMethodNames.contains(methodName);
-
-                        if (!alreadyHasMethod) {
-                            MethodSpec createListOfRecordMethod =
-                                    TableUtils.createListOfRecordMethod(processingEnv, recordMetadata);
-                            classBuilder.addMethod(createListOfRecordMethod);
-                        }
-                    }
                 }
             } else if (LIST_OF_MAPS.name().equals(dataTableParameterType)) {
                 // Add createListOfMaps if not present in class hierarchy

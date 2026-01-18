@@ -10,7 +10,10 @@ Feature: GeneratedClassName
       """
       package com.example.cart;
 
-      @Feature2JUnit("cart.feature")
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit
       public abstract class CartFeature {
       }
       """
@@ -20,9 +23,10 @@ Feature: GeneratedClassName
         Scenario: Add item
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.cart.CartFeature;
+      package com.example.cart;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -36,11 +40,11 @@ Feature: GeneratedClassName
       /**
        * Feature: Shopping Cart
        */
-      @DisplayName("cart")
+      @DisplayName("CartFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("cart.feature")
-      public abstract class CartFeatureScenarios extends CartFeature {
+      @FeatureFilePath("com/example/cart/CartFeature.feature")
+      public class CartFeatureTest extends CartFeature {
           @Test
           @Order(1)
           @Tag("new")
@@ -56,21 +60,26 @@ Feature: GeneratedClassName
       """
       package com.example.payment;
 
-      @Feature2JUnit("payment.feature")
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit("features/payment.feature")
       @Feature2JUnitOptions(
-        generatedClassSuffix = "TestCases"
+        classSuffixIfAbstract = "TestCases"
       )
       public class PaymentFeature {
       }
       """
-      And the following feature file:
+      And a feature file under path "features/payment.feature" with the following content:
       """
       Feature: Payment Processing
         Scenario: Process payment
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import com.example.payment.PaymentFeature;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
@@ -88,8 +97,8 @@ Feature: GeneratedClassName
       @DisplayName("payment")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("payment.feature")
-      public abstract class PaymentFeatureTestCases extends PaymentFeature {
+      @FeatureFilePath("features/payment.feature")
+      public class PaymentTest extends PaymentFeature {
           @Test
           @Order(1)
           @Tag("new")

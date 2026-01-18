@@ -8,9 +8,12 @@ Feature: ClassAnnotationTestClassOrder
     Scenario: feature file without any Rules
       Given the following base class:
       """
-      package com.example.simple;
+      package com.example;
 
-      @Feature2JUnit("simple.feature")
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit
       public abstract class SimpleFeature {
       }
       """
@@ -20,9 +23,10 @@ Feature: ClassAnnotationTestClassOrder
         Scenario: Only scenario
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.simple.SimpleFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -36,11 +40,11 @@ Feature: ClassAnnotationTestClassOrder
       /**
        * Feature: Simple Feature
        */
-      @DisplayName("simple")
+      @DisplayName("SimpleFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("simple.feature")
-      public abstract class SimpleFeatureScenarios extends SimpleFeature {
+      @FeatureFilePath("com/example/SimpleFeature.feature")
+      public class SimpleFeatureTest extends SimpleFeature {
           @Test
           @Order(1)
           @Tag("new")
@@ -54,9 +58,12 @@ Feature: ClassAnnotationTestClassOrder
     Scenario: feature file with single rule
       Given the following base class:
       """
-      package com.example.rules;
+      package com.example;
 
-      @Feature2JUnit("business-rules.feature")
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit
       public abstract class BusinessRules {
       }
       """
@@ -67,9 +74,10 @@ Feature: ClassAnnotationTestClassOrder
           Scenario: First scenario
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.rules.BusinessRules;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -86,11 +94,11 @@ Feature: ClassAnnotationTestClassOrder
       /**
        * Feature: Business Rules
        */
-      @DisplayName("business-rules")
+      @DisplayName("BusinessRules")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("business-rules.feature")
-      public abstract class BusinessRulesScenarios extends BusinessRules {
+      @FeatureFilePath("com/example/BusinessRules.feature")
+      public class BusinessRulesTest extends BusinessRules {
           @Nested
           @Order(1)
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -114,7 +122,10 @@ Feature: ClassAnnotationTestClassOrder
       """
       package com.example.workflow;
 
-      @Feature2JUnit("workflow.feature")
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit
       public abstract class WorkflowTests {
       }
       """
@@ -131,9 +142,10 @@ Feature: ClassAnnotationTestClassOrder
           Scenario: Generate output
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.workflow.WorkflowTests;
+      package com.example.workflow;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -150,11 +162,11 @@ Feature: ClassAnnotationTestClassOrder
       /**
        * Feature: Workflow Processing
        */
-      @DisplayName("workflow")
+      @DisplayName("WorkflowTests")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("workflow.feature")
-      public abstract class WorkflowTestsScenarios extends WorkflowTests {
+      @FeatureFilePath("com/example/workflow/WorkflowTests.feature")
+      public class WorkflowTestsTest extends WorkflowTests {
           @Nested
           @Order(1)
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

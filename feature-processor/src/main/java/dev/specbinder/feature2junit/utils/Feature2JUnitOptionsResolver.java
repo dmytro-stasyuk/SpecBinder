@@ -47,9 +47,9 @@ public class Feature2JUnitOptionsResolver {
         }
 
         // Start with defaults
-        boolean shouldBeConcrete = false;
+        boolean shouldBeAbstract = false;
         String classSuffixIfConcrete = "Test";
-        String generatedClassSuffix = "Scenarios";
+        String classSuffixIfAbstract = "Scenarios";
         boolean addSourceLineAnnotations = false;
         boolean addSourceLineBeforeStepCalls = false;
         boolean failScenariosWithNoSteps = true;
@@ -59,17 +59,19 @@ public class Feature2JUnitOptionsResolver {
         boolean addCucumberStepAnnotations = false;
         boolean placeGeneratedClassNextToAnnotatedClass = false;
         String dataTableParameterType = LIST_OF_MAPS.name();
+        boolean enableCompositeSteps = false;
 
         // Merge annotations from parent to child (so child values override parent values)
         for (Feature2JUnitOptions options : annotations) {
             // For boolean properties, we always take the value (can't detect if explicitly set)
-            shouldBeConcrete = options.shouldBeConcrete();
+            shouldBeAbstract = options.shouldBeAbstract();
             addSourceLineAnnotations = options.addSourceLineAnnotations();
             addSourceLineBeforeStepCalls = options.addSourceLineBeforeStepCalls();
             failScenariosWithNoSteps = options.failScenariosWithNoSteps();
             failRulesWithNoScenarios = options.failRulesWithNoScenarios();
             addCucumberStepAnnotations = options.addCucumberStepAnnotations();
             placeGeneratedClassNextToAnnotatedClass = false; // option removed
+            enableCompositeSteps = options.enableCompositeSteps();
 
             // For enum properties, convert to String
             Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE enumValue = options.dataTableParameterType();
@@ -82,8 +84,8 @@ public class Feature2JUnitOptionsResolver {
             if (!"Test".equals(options.classSuffixIfConcrete())) {
                 classSuffixIfConcrete = options.classSuffixIfConcrete();
             }
-            if (!"Scenarios".equals(options.generatedClassSuffix())) {
-                generatedClassSuffix = options.generatedClassSuffix();
+            if (!"Scenarios".equals(options.classSuffixIfAbstract())) {
+                classSuffixIfAbstract = options.classSuffixIfAbstract();
             }
             if (!"new".equals(options.tagForScenariosWithNoSteps())) {
                 tagForScenariosWithNoSteps = options.tagForScenariosWithNoSteps();
@@ -94,9 +96,9 @@ public class Feature2JUnitOptionsResolver {
         }
 
         return new GeneratorOptions(
-                shouldBeConcrete,
+                shouldBeAbstract,
                 classSuffixIfConcrete,
-                generatedClassSuffix,
+                classSuffixIfAbstract,
                 addSourceLineAnnotations,
                 addSourceLineBeforeStepCalls,
                 failScenariosWithNoSteps,
@@ -105,7 +107,8 @@ public class Feature2JUnitOptionsResolver {
                 tagForRulesWithNoScenarios,
                 addCucumberStepAnnotations,
                 placeGeneratedClassNextToAnnotatedClass,
-                dataTableParameterType
+                dataTableParameterType,
+                enableCompositeSteps
         );
     }
 }

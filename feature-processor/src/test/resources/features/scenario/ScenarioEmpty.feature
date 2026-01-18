@@ -10,6 +10,9 @@ Feature: ScenarioEmpty
       """
       package com.example;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       @Feature2JUnitOptions(
         failScenariosWithNoSteps = true
@@ -24,7 +27,7 @@ Feature: ScenarioEmpty
         Scenario: Future implementation
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example;
 
@@ -45,7 +48,7 @@ Feature: ScenarioEmpty
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Test
           @Order(1)
           @Tag("new")
@@ -61,6 +64,9 @@ Feature: ScenarioEmpty
       """
       package com.example;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       @Feature2JUnitOptions(
         failScenariosWithNoSteps = false
@@ -75,7 +81,7 @@ Feature: ScenarioEmpty
         Scenario: Placeholder test
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example;
 
@@ -95,7 +101,7 @@ Feature: ScenarioEmpty
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Test
           @Order(1)
           @Tag("new")
@@ -111,6 +117,9 @@ Feature: ScenarioEmpty
       Given the following base class:
       """
       package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit
       @Feature2JUnitOptions(
@@ -147,7 +156,7 @@ Feature: ScenarioEmpty
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Test
           @Order(1)
           @Tag("todo")
@@ -165,6 +174,9 @@ Feature: ScenarioEmpty
       """
       package com.example;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       public class TestFeature {
       }
@@ -176,7 +188,7 @@ Feature: ScenarioEmpty
         Scenario: Work in progress
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example;
 
@@ -197,7 +209,7 @@ Feature: ScenarioEmpty
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Test
           @Order(1)
           @Tag("new")
@@ -215,6 +227,9 @@ Feature: ScenarioEmpty
       """
       package com.example;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit
       @Feature2JUnitOptions(
         failScenariosWithNoSteps = false,
@@ -230,7 +245,7 @@ Feature: ScenarioEmpty
         Scenario: Under construction
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example;
 
@@ -250,7 +265,7 @@ Feature: ScenarioEmpty
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
+      public class TestFeatureTest extends TestFeature {
           @Test
           @Order(1)
           @Tag("wip")

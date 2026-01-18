@@ -6,7 +6,12 @@ import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.exception.ProcessingException;
 import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
+import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
+import dev.specbinder.feature2junit.gherkin.utils.RecordMetadata;
+import dev.specbinder.feature2junit.utils.ConstructorMappingUtils;
+import dev.specbinder.feature2junit.utils.ElementMethodUtils;
 import dev.specbinder.feature2junit.utils.MethodNamingUtils;
+import dev.specbinder.feature2junit.utils.ParameterConversionUtils;
 import dev.specbinder.feature2junit.utils.TableUtils;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
@@ -20,6 +25,8 @@ import org.junit.jupiter.api.Assertions;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,13 +41,23 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private final ProcessingEnvironment processingEnv;
     private final GeneratorOptions options;
     private final DataTableCollector dataTableCollector;
+    private final EnumImportCollector enumImportCollector;
+    private final TypeElement baseType;
+    private final Map<String, List<ElementMethodUtils.MethodSignature>> baseClassMethodSignatures;
 
     private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]+?)(\"))");
 
-    public StepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, DataTableCollector dataTableCollector) {
+    public StepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options,
+                         DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,
+                         TypeElement baseType) {
         this.processingEnv = processingEnv;
         this.options = options;
         this.dataTableCollector = dataTableCollector;
+        this.enumImportCollector = enumImportCollector;
+        this.baseType = baseType;
+        this.baseClassMethodSignatures = baseType != null
+                ? ElementMethodUtils.getAllInheritedMethodSignatures(processingEnv, baseType)
+                : Map.of();
     }
 
     public ProcessingEnvironment getProcessingEnv() {
@@ -95,10 +112,10 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                 .methodBuilder(stepMethodName)
                 .addModifiers(Modifier.PUBLIC);
 
-        if (options.isShouldBeConcrete()) {
-            stepMethodBuilder.addStatement("$T.fail(\"Step is not yet implemented\")", Assertions.class);
-        } else {
+        if (options.isShouldBeAbstract()) {
             stepMethodBuilder.addModifiers(Modifier.ABSTRACT);
+        } else {
+            stepMethodBuilder.addStatement("$T.fail(\"Step is not yet implemented\")", Assertions.class);
         }
 
         if (options.isAddCucumberStepAnnotations()) {
@@ -174,16 +191,90 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             stepMethodBuilder.addParameter(docStringSpec);
         }
 
-        // add a call to the step method in the scenario method
-        addACallToTheStepMethod(scenarioMethodBuilder,
-                stepMethodName,
-                parameterValues,
-                step,
-                scenarioParameterNames,
-                testMethodParameterNames);
+        // add a call to the step method in the scenario method (skip if null - for composite sub-steps)
+        if (scenarioMethodBuilder != null) {
+            addACallToTheStepMethod(scenarioMethodBuilder,
+                    stepMethodName,
+                    parameterValues,
+                    step,
+                    scenarioParameterNames,
+                    testMethodParameterNames);
+        }
 
         MethodSpec stepMethodSpec = stepMethodBuilder.build();
         return stepMethodSpec;
+    }
+
+    /**
+     * Checks if a base class has a compatible method for the given step.
+     * A method is compatible if it has the same name and all parameter values can be converted to the method's parameter types.
+     *
+     * @param step                     the Gherkin step
+     * @param scenarioParameterNames   scenario parameter names (for Scenario Outlines)
+     * @param scenarioStepsMethodSpecs previously processed steps (needed for resolving And/But keywords)
+     * @return true if a compatible base method exists, false otherwise
+     */
+    public boolean hasCompatibleBaseMethod(Step step, List<String> scenarioParameterNames, List<MethodSpec> scenarioStepsMethodSpecs) {
+        String stepText = step.getKeyword() + " " + step.getText();
+        String[] lines = stepText.trim().split("\\n");
+        String stepFirstLine = lines[0].trim();
+
+        List<String> parameterValues = new ArrayList<>();
+        String stepPattern = processWithParameterPattern(stepFirstLine, parameterPattern, parameterValues);
+
+        if (scenarioParameterNames != null && !scenarioParameterNames.isEmpty()) {
+            String paramsPatternPart = StringUtils.join(scenarioParameterNames, "|");
+            Pattern scenarioParametersPattern = Pattern.compile(
+                    "(?<parameter>(?<parameterValue>(<)(" + paramsPatternPart + ")(>)))"
+            );
+            stepPattern = processWithParameterPattern(stepPattern, scenarioParametersPattern, parameterValues);
+        }
+
+        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, step.getLocation().getLine());
+
+        return findMatchingBaseMethod(stepMethodName, parameterValues) != null;
+    }
+
+    /**
+     * Finds a matching base class method signature for the given method name and parameter count.
+     * Returns the first matching signature where all parameters can be converted.
+     *
+     * @param stepMethodName  the step method name
+     * @param parameterValues the parameter values from the step
+     * @return the matching method signature, or null if no match found
+     */
+    private ElementMethodUtils.MethodSignature findMatchingBaseMethod(
+            String stepMethodName, List<String> parameterValues) {
+
+        if (baseClassMethodSignatures == null || !baseClassMethodSignatures.containsKey(stepMethodName)) {
+            return null;
+        }
+
+        List<ElementMethodUtils.MethodSignature> signatures = baseClassMethodSignatures.get(stepMethodName);
+        for (ElementMethodUtils.MethodSignature signature : signatures) {
+            // Check if parameter count matches (not including DataTable or DocString parameters)
+            if (signature.getParameterCount() != parameterValues.size()) {
+                continue;
+            }
+
+            // Check if all parameters can be converted
+            boolean allMatch = true;
+            for (int i = 0; i < parameterValues.size(); i++) {
+                String paramValue = parameterValues.get(i);
+                TypeMirror paramType = signature.getParameterType(i);
+
+                if (!ParameterConversionUtils.canConvert(paramValue, paramType)) {
+                    allMatch = false;
+                    break;
+                }
+            }
+
+            if (allMatch) {
+                return signature;
+            }
+        }
+
+        return null;
     }
 
     private void addACallToTheStepMethod(
@@ -235,6 +326,9 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         /**
          * construct parameter values
          */
+        // Check if there's a matching base class method with specific parameter types
+        ElementMethodUtils.MethodSignature matchingBaseMethod = findMatchingBaseMethod(stepMethodName, parameterValues);
+
         StringBuilder parameterValuesSB = new StringBuilder();
         for (int j = 0; j < parameterValues.size(); j++) {
             if (j > 0) {
@@ -251,7 +345,24 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                  * no quote marks in this case as we are passing a reference to a Scenario test method parameter
                  */
                 parameterValuesSB.append(scenarioParameter);
+            } else if (matchingBaseMethod != null) {
+                /**
+                 * Base class has a method with compatible parameter types
+                 * Convert the string value to the appropriate type literal
+                 */
+                TypeMirror targetType = matchingBaseMethod.getParameterType(j);
+                String literal = ParameterConversionUtils.toLiteral(parameterValue, targetType);
+                parameterValuesSB.append(literal);
+
+                // Register enum constants for static import
+                if (enumImportCollector != null && ParameterConversionUtils.isEnumType(targetType)) {
+                    String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
+                    enumImportCollector.registerEnumConstant(enumQualifiedName, parameterValue);
+                }
             } else {
+                /**
+                 * No matching base method, use quoted string
+                 */
                 parameterValuesSB.append("\"");
                 parameterValuesSB.append(parameterValue);
                 parameterValuesSB.append("\"");
@@ -271,13 +382,14 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             // Choose method name based on data table parameter type
             String helperMethodName;
             String dataTableType = options.getDataTableParameterType();
+            String recordName = null;
 
             if ("LIST_OF_MAPS".equals(dataTableType)) {
                 helperMethodName = "createListOfMaps";
             } else if ("LIST_OF_OBJECT_PARAMS".equals(dataTableType)) {
                 String stepTextForRecord = step.getKeyword() + step.getText();
-                String recordName = dataTableCollector.deriveRecordNameFromStepText(stepTextForRecord);
-                helperMethodName = "createListOf" + recordName;
+                recordName = dataTableCollector.deriveRecordNameFromStepText(stepTextForRecord);
+                helperMethodName = "createListOfMaps";
             } else {
                 helperMethodName = "createDataTable";
             }
@@ -293,16 +405,76 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
              * then we need to replace any references to scenario parameters with reference value from the examples table
              */
             if (scenarioParameterNames != null && !scenarioParameterNames.isEmpty()) {
-                for (String scenarioParameterName : scenarioParameterNames) {
-                    parameterValuesSB.append("\n.replaceAll(");
-                    parameterValuesSB.append("\"<" + scenarioParameterName + ">\"");
-                    parameterValuesSB.append(", ");
-                    parameterValuesSB.append(scenarioParameterName);
-                    parameterValuesSB.append(")");
+                // Only add replaceAll calls for parameters that are actually present in the DataTable
+                for (int i = 0; i < scenarioParameterNames.size(); i++) {
+                    String scenarioParameterName = scenarioParameterNames.get(i);
+                    // Check if this specific parameter appears in the DataTable
+                    if (dataTableAsString.contains("<" + scenarioParameterName + ">")) {
+                        String testMethodParameterName = testMethodParameterNames.get(i);
+                        parameterValuesSB.append("\n.replaceAll(");
+                        parameterValuesSB.append("\"<" + scenarioParameterName + ">\"");
+                        parameterValuesSB.append(", ");
+                        parameterValuesSB.append(testMethodParameterName);
+                        parameterValuesSB.append(")");
+                    }
                 }
             }
 
             parameterValuesSB.append(")");
+
+            // For LIST_OF_OBJECT_PARAMS, add inline stream mapping to convert List<Map> to List<ObjectParam>
+            if ("LIST_OF_OBJECT_PARAMS".equals(dataTableType) && recordName != null) {
+                RecordMetadata recordMetadata = dataTableCollector.getRecordMetadataMap().get(recordName);
+                if (recordMetadata != null) {
+                    parameterValuesSB.append("\n.stream()")
+                            .append(".map(row ->")
+                            .append("\n        ")
+                            .append("new ")
+                            .append(recordName)
+                            .append("(");
+
+                    if (recordMetadata.hasExistingType()) {
+                        // Use existing type: args in constructor parameter order
+                        ConstructorMappingUtils.MappingResult mapping = recordMetadata.getConstructorMapping();
+                        Map<Integer, String> paramIndexToColumnName = mapping.getParamIndexToColumnName();
+                        List<String> constructorParams = mapping.getConstructorParamNames();
+
+                        for (int i = 0; i < constructorParams.size(); i++) {
+                            if (i > 0) {
+                                parameterValuesSB.append(",");
+                            }
+                            parameterValuesSB.append("\n                ");
+
+                            String columnName = paramIndexToColumnName.get(i);
+                            if (columnName != null) {
+                                // Parameter has mapped column: row.get("columnName")
+                                parameterValuesSB.append("row.get(\"");
+                                parameterValuesSB.append(columnName);
+                                parameterValuesSB.append("\")");
+                            } else {
+                                // Parameter not mapped: use null
+                                parameterValuesSB.append("null");
+                            }
+                        }
+                    } else {
+                        // Generate new type: use data table column order
+                        List<String> columnNames = recordMetadata.getColumnNames();
+                        for (int i = 0; i < columnNames.size(); i++) {
+                            if (i > 0) {
+                                parameterValuesSB.append(",");
+                            }
+                            parameterValuesSB.append("\n                ");
+                            parameterValuesSB.append("row.get(\"");
+                            parameterValuesSB.append(columnNames.get(i));
+                            parameterValuesSB.append("\")");
+                        }
+                    }
+
+                    parameterValuesSB.append("\n        )");
+                    parameterValuesSB.append("\n)");
+                    parameterValuesSB.append(".toList()");
+                }
+            }
 
         } else if (step.getDocString().isPresent()) {
 
@@ -323,6 +495,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             /**
              * in case we are processing a scenario with examples table i.e. Scenario Template type
              * then we need to replace any references to scenario parameters with reference value from the examples table
+             * BUT only add replaceAll for parameters that are actually present in the DocString
              */
             if (scenarioParameterNames != null && !scenarioParameterNames.isEmpty()) {
 
@@ -330,12 +503,18 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                 parameterValuesSB.append(docString);
                 parameterValuesSB.append("\n\"\"\"");
 
-                for (String scenarioParameterName : scenarioParameterNames) {
-                    parameterValuesSB.append("\n.replaceAll(");
-                    parameterValuesSB.append("\"<" + scenarioParameterName + ">\"");
-                    parameterValuesSB.append(", ");
-                    parameterValuesSB.append(scenarioParameterName);
-                    parameterValuesSB.append(")");
+                // Only add replaceAll calls for parameters that are actually present in the DocString
+                for (int i = 0; i < scenarioParameterNames.size(); i++) {
+                    String scenarioParameterName = scenarioParameterNames.get(i);
+                    // Check if this specific parameter appears in the DocString
+                    if (docString.contains("<" + scenarioParameterName + ">")) {
+                        String testMethodParameterName = testMethodParameterNames.get(i);
+                        parameterValuesSB.append("\n.replaceAll(");
+                        parameterValuesSB.append("\"<" + scenarioParameterName + ">\"");
+                        parameterValuesSB.append(", ");
+                        parameterValuesSB.append(testMethodParameterName);
+                        parameterValuesSB.append(")");
+                    }
                 }
 
             } else {

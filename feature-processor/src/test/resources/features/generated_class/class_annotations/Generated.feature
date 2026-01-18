@@ -1,4 +1,4 @@
-Feature: ClassAnnotationGenerated
+Feature: Generated
   As a developer maintaining a codebase with generated code
   I want generated test classes to be clearly marked with @Generated annotation
   So that my development tools can automatically exclude them from code coverage, static analysis, and formatting rules
@@ -10,7 +10,9 @@ Feature: ClassAnnotationGenerated
       """
       package com.example.inventory;
 
-      @Feature2JUnit("stock.feature")
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
       public abstract class StockManagement {
       }
       """
@@ -21,9 +23,10 @@ Feature: ClassAnnotationGenerated
         I want to track inventory
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.inventory.StockManagement;
+      package com.example.inventory;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.DisplayName;
@@ -33,10 +36,10 @@ Feature: ClassAnnotationGenerated
        *   As a warehouse manager
        *   I want to track inventory
        */
-      @DisplayName("stock")
+      @DisplayName("StockManagement")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("stock.feature")
-      public abstract class StockManagementScenarios extends StockManagement {
+      @FeatureFilePath("com/example/inventory/StockManagement.feature")
+      public class StockManagementTest extends StockManagement {
       }
       """
 

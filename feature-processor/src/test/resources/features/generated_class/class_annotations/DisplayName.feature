@@ -10,12 +10,15 @@ Feature: DisplayName
       """
       package com.example;
 
-      @Feature2JUnit("ShoppingCart.feature")
-      public abstract class FeatureTestBase extends  {
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit("features/ShoppingCart.feature")
+      public abstract class FeatureTestBase {
 
       }
       """
-      And the following feature file:
+      And a feature file under path "features/ShoppingCart.feature" with the following content:
       """
       Feature: managing shopping cart
         As a customer
@@ -25,8 +28,10 @@ Feature: DisplayName
 
       When the generator is run
 
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import com.example.FeatureTestBase;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
@@ -40,8 +45,8 @@ Feature: DisplayName
        */
       @DisplayName("ShoppingCart")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("ShoppingCart.feature")
-      public abstract class FeatureTestBaseScenarios extends FeatureTestBase {
+      @FeatureFilePath("features/ShoppingCart.feature")
+      public class ShoppingCartTest extends FeatureTestBase {
       }
       """
 
@@ -50,8 +55,11 @@ Feature: DisplayName
       """
       package com.example;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit("features/ShoppingCart.feature")
-      public abstract class FeatureTestBase extends  {
+      public abstract class FeatureTestBase {
 
       }
       """
@@ -65,7 +73,7 @@ Feature: DisplayName
 
       When the generator is run
 
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package features;
 
@@ -83,7 +91,7 @@ Feature: DisplayName
       @DisplayName("ShoppingCart")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("features/ShoppingCart.feature")
-      public abstract class FeatureTestBaseScenarios extends FeatureTestBase {
+      public class ShoppingCartTest extends FeatureTestBase {
       }
       """
 
@@ -93,6 +101,9 @@ Feature: DisplayName
       Given the following base class:
       """
       package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit("specs/payment.feature")
       public abstract class FeatureTestBase {
@@ -109,7 +120,7 @@ Feature: DisplayName
 
       When the generator is run
 
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package specs;
 
@@ -127,7 +138,7 @@ Feature: DisplayName
       @DisplayName("payment")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("specs/payment.feature")
-      public abstract class FeatureTestBaseScenarios extends FeatureTestBase {
+      public class PaymentTest extends FeatureTestBase {
       }
       """
 

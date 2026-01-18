@@ -30,7 +30,7 @@ import java.util.*;
  * Annotation processor that generates JUnit test subclasses for classes annotated with {@link Feature2JUnit} annotation.
  */
 @SupportedAnnotationTypes("dev.specbinder.annotations.Feature2JUnit")
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
 public class Feature2JUnitGenerator extends AbstractProcessor implements LoggingSupport {
 
@@ -121,7 +121,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
                     logInfo("Found " + matchingFiles.size() + " files matching pattern: " + annotationValue);
 
                     // Check for duplicate generated class names (both within pattern and across all annotations)
-                    String suffixToApply = generatorOptions.getGeneratedClassSuffix();
+                    String suffixToApply = generatorOptions.getClassSuffixIfAbstract();
                     String packageName = getPackageName(annotatedClass);
 
                     for (String featureFilePath : matchingFiles) {
@@ -160,7 +160,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
                     // Single feature file (original behavior)
                     JavaFile javaFile = null;
                     try {
-                        javaFile = subclassGenerator.createTestSubclass(annotatedClass, annotationValue);
+                        javaFile = subclassGenerator.createTestSubclass(annotatedClass, annotationValue, true);
                     } catch (FileNotFoundException e) {
                         String errorMessage = "No feature file found for path '" + annotationValue + "'";
                         logError(errorMessage);
@@ -217,7 +217,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
 
                 out = new PrintWriter(subclassFile.openWriter());
                 javaFile.writeTo(out);
-
+                out.flush();
             } catch (Throwable t) {
                 logException(t, annotatedClass);
             } finally {
@@ -243,7 +243,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
         java.io.File sourceDir = sourceFile.getParentFile();
 
         // Determine the suffix
-        String suffix = generatorOptions.getGeneratedClassSuffix();
+        String suffix = generatorOptions.getClassSuffixIfAbstract();
 
         String generatedClassName = annotatedClass.getSimpleName().toString() + suffix + ".java";
         java.io.File targetFile = new java.io.File(sourceDir, generatedClassName);
@@ -280,7 +280,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_17;
+        return SourceVersion.RELEASE_21;
     }
 
     /**

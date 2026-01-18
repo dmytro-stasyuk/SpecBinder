@@ -8,6 +8,7 @@ import dev.specbinder.feature2junit.support.BaseTypeSupport;
 import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
+import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import io.cucumber.messages.types.*;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -24,6 +25,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
     private final GeneratorOptions options;
     private final TypeElement baseType;
     private final DataTableCollector dataTableCollector;
+    private final EnumImportCollector enumImportCollector;
 
     /**
      * Constructs a FeatureProcessor with the given processing environment, options, and base type.
@@ -32,12 +34,15 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
      * @param options the generator options
      * @param baseType the base type element
      * @param dataTableCollector the data table collector for LIST_OF_OBJECT_PARAMS option (may be null)
+     * @param enumImportCollector the enum import collector for static imports (may be null)
      */
-    public FeatureProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType, DataTableCollector dataTableCollector) {
+    public FeatureProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType,
+                            DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector) {
         this.processingEnv = processingEnv;
         this.options = options;
         this.baseType = baseType;
         this.dataTableCollector = dataTableCollector;
+        this.enumImportCollector = enumImportCollector;
     }
 
     public ProcessingEnvironment getProcessingEnv() {
@@ -68,7 +73,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
 
             if (child.getBackground().isPresent()) {
 
-                BackgroundProcessor backgroundProcessor = new BackgroundProcessor(processingEnv, options, baseType, dataTableCollector);
+                BackgroundProcessor backgroundProcessor = new BackgroundProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
 
                 Background background = child.getBackground().get();
                 MethodSpec.Builder featureBackgroundMethodBuilder = backgroundProcessor.processFeatureBackground(background, classBuilder);
@@ -80,14 +85,14 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
 
                 featureRuleCount++;
                 Rule rule = child.getRule().get();
-                RuleProcessor ruleProcessor = new RuleProcessor(processingEnv, options, baseType, dataTableCollector);
+                RuleProcessor ruleProcessor = new RuleProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
                 ruleProcessor.processRule(featureRuleCount, rule, classBuilder);
             }
             else if (child.getScenario().isPresent()) {
 
                 Scenario scenario = child.getScenario().get();
                 featureScenarioCount++;
-                ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector);
+                ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
                 MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(featureScenarioCount, scenario, classBuilder);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();

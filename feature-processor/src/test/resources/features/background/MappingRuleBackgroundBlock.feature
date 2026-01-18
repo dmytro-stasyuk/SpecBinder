@@ -6,6 +6,16 @@ Feature: MappingRuleBackgroundBlock
   Rule: Rule-level Background should be mapped to @BeforeEach in the nested Rule class
 
     Scenario: Rule with its own Background
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: payment processing
@@ -20,10 +30,13 @@ Feature: MappingRuleBackgroundBlock
             Then payment should be processed
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -38,16 +51,22 @@ Feature: MappingRuleBackgroundBlock
       /**
        * Feature: payment processing
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenPaymentGatewayIsConfigured();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenPaymentGatewayIsConfigured() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenUserSubmitsValidPayment();
+          public void whenUserSubmitsValidPayment() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenPaymentShouldBeProcessed();
+          public void thenPaymentShouldBeProcessed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -81,6 +100,16 @@ Feature: MappingRuleBackgroundBlock
       """
 
     Scenario: Multiple steps in Rule Background
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: authentication
@@ -97,10 +126,13 @@ Feature: MappingRuleBackgroundBlock
             Then user should be authenticated
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -115,20 +147,30 @@ Feature: MappingRuleBackgroundBlock
       /**
        * Feature: authentication
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenAuthenticationServiceIsStarted();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenAuthenticationServiceIsStarted() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenUserDatabaseIsConnected();
+          public void givenUserDatabaseIsConnected() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenSessionManagerIsInitialized();
+          public void givenSessionManagerIsInitialized() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenUserLogsInWithValidCredentials();
+          public void whenUserLogsInWithValidCredentials() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenUserShouldBeAuthenticated();
+          public void thenUserShouldBeAuthenticated() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -170,6 +212,16 @@ Feature: MappingRuleBackgroundBlock
       """
 
     Scenario: Rule Background with description
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: notification system
@@ -187,10 +239,13 @@ Feature: MappingRuleBackgroundBlock
             Then welcome email should be sent
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -205,18 +260,26 @@ Feature: MappingRuleBackgroundBlock
       /**
        * Feature: notification system
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenEmailServerIsConfigured();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenEmailServerIsConfigured() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenEmailTemplatesAreLoaded();
+          public void givenEmailTemplatesAreLoaded() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenNewUserRegisters();
+          public void whenNewUserRegisters() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenWelcomeEmailShouldBeSent();
+          public void thenWelcomeEmailShouldBeSent() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -258,6 +321,16 @@ Feature: MappingRuleBackgroundBlock
       """
 
     Scenario: Scenario Outline in Rule with Background
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: data validation
@@ -276,11 +349,14 @@ Feature: MappingRuleBackgroundBlock
               | bad   | fail    |
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.String;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -296,16 +372,22 @@ Feature: MappingRuleBackgroundBlock
       /**
        * Feature: data validation
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenValidationRulesAreLoaded();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenValidationRulesAreLoaded() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenUserEnters$p1(String p1);
+          public void whenUserEnters$p1(String p1) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenValidationResultShouldBe$p1(String p1);
+          public void thenValidationResultShouldBe$p1(String p1) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -350,6 +432,16 @@ Feature: MappingRuleBackgroundBlock
       """
 
     Scenario: Rule with Background containing DataTable
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: configuration management
@@ -367,8 +459,10 @@ Feature: MappingRuleBackgroundBlock
             Then all services should be ready
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.Math;
       import java.lang.String;
@@ -377,6 +471,7 @@ Feature: MappingRuleBackgroundBlock
       import java.util.List;
       import java.util.Map;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -391,16 +486,22 @@ Feature: MappingRuleBackgroundBlock
       /**
        * Feature: configuration management
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenTheFollowingServicesAreConfigured(List<Map<String, String>> data);
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenTheFollowingServicesAreConfigured(List<Map<String, String>> data) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenConfigurationIsValidated();
+          public void whenConfigurationIsValidated() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenAllServicesShouldBeReady();
+          public void thenAllServicesShouldBeReady() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           protected List<Map<String, String>> createListOfMaps(String tableLines) {
 
@@ -475,6 +576,16 @@ Feature: MappingRuleBackgroundBlock
   Rule: rule Background doesn't have to have any steps
 
     Scenario: Rule with empty Background
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: logging system
@@ -488,10 +599,13 @@ Feature: MappingRuleBackgroundBlock
             Then old logs should be archived
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -506,14 +620,18 @@ Feature: MappingRuleBackgroundBlock
       /**
        * Feature: logging system
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void whenLogRotationIsTriggered();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void whenLogRotationIsTriggered() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenOldLogsShouldBeArchived();
+          public void thenOldLogsShouldBeArchived() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -548,6 +666,16 @@ Feature: MappingRuleBackgroundBlock
   - JUnit's @BeforeEach execution order ensures proper setup layering
 
     Scenario: Feature-level Background and Rule-level Background both present
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: inventory management
@@ -565,10 +693,13 @@ Feature: MappingRuleBackgroundBlock
             Then stock level should be displayed
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -583,12 +714,14 @@ Feature: MappingRuleBackgroundBlock
       /**
        * Feature: inventory management
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenSystemIsInitialized();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenSystemIsInitialized() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")
@@ -599,11 +732,17 @@ Feature: MappingRuleBackgroundBlock
               givenSystemIsInitialized();
           }
 
-          public abstract void givenInventoryDatabaseIsConnected();
+          public void givenInventoryDatabaseIsConnected() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenUserChecksStockForProduct();
+          public void whenUserChecksStockForProduct() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenStockLevelShouldBeDisplayed();
+          public void thenStockLevelShouldBeDisplayed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -639,6 +778,16 @@ Feature: MappingRuleBackgroundBlock
   Rule: Multiple Rules with different Backgrounds should each have isolated @BeforeEach methods
 
     Scenario: Multiple Rules each with different Backgrounds
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: e-commerce platform
@@ -662,10 +811,13 @@ Feature: MappingRuleBackgroundBlock
             Then order should be confirmed
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -680,22 +832,34 @@ Feature: MappingRuleBackgroundBlock
       /**
        * Feature: e-commerce platform
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenShoppingCartServiceIsInitialized();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenShoppingCartServiceIsInitialized() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenUserAddsItemToCart();
+          public void whenUserAddsItemToCart() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenItemShouldBeInCart();
+          public void thenItemShouldBeInCart() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenPaymentProcessorIsInitialized();
+          public void givenPaymentProcessorIsInitialized() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenUserCompletesCheckout();
+          public void whenUserCompletesCheckout() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenOrderShouldBeConfirmed();
+          public void thenOrderShouldBeConfirmed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)

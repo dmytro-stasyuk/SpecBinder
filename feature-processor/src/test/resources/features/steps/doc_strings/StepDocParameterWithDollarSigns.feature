@@ -8,6 +8,16 @@ Feature: StepDocParameterWithDollarSigns
   - This ensures JavaPoet doesn't interpret them as format placeholders
 
     Scenario: DocString with dollar signs
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: DocString Dollar Signs
@@ -20,11 +30,14 @@ Feature: StepDocParameterWithDollarSigns
               \"\"\"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -34,12 +47,14 @@ Feature: StepDocParameterWithDollarSigns
         /**
          * Feature: DocString Dollar Signs
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenDocumentContains(String docString);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenDocumentContains(String docString) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)

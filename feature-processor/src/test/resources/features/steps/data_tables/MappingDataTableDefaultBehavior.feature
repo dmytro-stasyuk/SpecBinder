@@ -6,6 +6,16 @@ Feature: MappingDataTableDefaultBehavior
   Rule: DataTable works with all step keywords - Given, When, Then, And, But, and *
 
     Scenario: DataTable in And step
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: And Step
@@ -16,8 +26,10 @@ Feature: MappingDataTableDefaultBehavior
               | val |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Math;
         import java.lang.String;
@@ -26,6 +38,7 @@ Feature: MappingDataTableDefaultBehavior
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -35,14 +48,18 @@ Feature: MappingDataTableDefaultBehavior
         /**
          * Feature: And Step
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenInitialState();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenInitialState() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenAnAndStepHasADatatable(List<Map<String, String>> data);
+            public void givenAnAndStepHasADatatable(List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -99,6 +116,16 @@ Feature: MappingDataTableDefaultBehavior
         """
 
     Scenario: DataTable in But step
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: But Step
@@ -112,8 +139,10 @@ Feature: MappingDataTableDefaultBehavior
               | error2    | not found  |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Math;
         import java.lang.String;
@@ -122,6 +151,7 @@ Feature: MappingDataTableDefaultBehavior
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -131,18 +161,26 @@ Feature: MappingDataTableDefaultBehavior
         /**
          * Feature: But Step
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenInitialState();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenInitialState() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void whenActionIsPerformed();
+            public void whenActionIsPerformed() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenResultIsVerified();
+            public void thenResultIsVerified() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenExceptionsExist(List<Map<String, String>> data);
+            public void thenExceptionsExist(List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -208,6 +246,16 @@ Feature: MappingDataTableDefaultBehavior
         """
 
     Scenario: DataTable in * step
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Asterisk Step
@@ -219,8 +267,10 @@ Feature: MappingDataTableDefaultBehavior
               | key2  | val2  |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Math;
         import java.lang.String;
@@ -229,6 +279,7 @@ Feature: MappingDataTableDefaultBehavior
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -238,14 +289,18 @@ Feature: MappingDataTableDefaultBehavior
         /**
          * Feature: Asterisk Step
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenInitialContext();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenInitialContext() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenAWildcardStepHasADatatable(List<Map<String, String>> data);
+            public void givenAWildcardStepHasADatatable(List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -302,330 +357,19 @@ Feature: MappingDataTableDefaultBehavior
         }
         """
 
-  Rule: data tables may contain references to the values from the examples table via the <param> syntax
-  - angle bracket parameters <param> in data tables are replaced with actual values
-  - the replacement happens at the method call site, not in the method signature
-
-    Scenario: DataTable with single parameter reference from Examples
-      Given the following feature file:
-        """
-        Feature: Product Inventory
-          Scenario Outline: Check product availability
-            When checking inventory for product:
-              | name   | status   |
-              | <name> | <status> |
-            Examples:
-              | name   | status      |
-              | Laptop | Available   |
-              | Mouse  | Out of Stock|
-        """
-      When the generator is run
-      Then the content of the generated class should be:
-        """
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Math;
-        import java.lang.String;
-        import java.util.ArrayList;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.TestMethodOrder;
-        import org.junit.jupiter.params.ParameterizedTest;
-        import org.junit.jupiter.params.provider.CsvSource;
-
-        /**
-         * Feature: Product Inventory
-         */
-        @DisplayName("MockedAnnotatedTestClass")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenCheckingInventoryForProduct(List<Map<String, String>> data);
-
-            @ParameterizedTest(
-                    name = "Example {index}: [{arguments}]"
-            )
-            @CsvSource(
-                    useHeadersInDisplayName = true,
-                    delimiter = '|',
-                    textBlock = \"\"\"
-                            name   | status
-                            Laptop | Available
-                            Mouse  | Out of Stock
-                            \"\"\"
-            )
-            @Order(1)
-            @DisplayName("Scenario Outline: Check product availability")
-            public void scenario_1(String name, String status) {
-                /*
-                 * When checking inventory for product:
-                 */
-                whenCheckingInventoryForProduct(createListOfMaps(\"\"\"
-                        | name   | status   |
-                        | <name> | <status> |
-                        \"\"\"
-                        .replaceAll("<name>", name)
-                        .replaceAll("<status>", status)));
-            }
-
-            protected List<Map<String, String>> createListOfMaps(String tableLines) {
-
-                String[] tableRows = tableLines.split("\\n");
-                List<Map<String, String>> listOfMaps = new ArrayList<>();
-
-                if (tableRows.length < 2) {
-                    return listOfMaps;
-                }
-
-                String[] headers = null;
-                for (int i = 0; i < tableRows.length; i++) {
-                    String trimmedLine = tableRows[i].trim();
-                    if (!trimmedLine.isEmpty()) {
-                        String[] columns = trimmedLine.split("\\|");
-                        List<String> rowColumns = new ArrayList<>(columns.length);
-                        for (int j = 1; j < columns.length; j++) {
-                            String column = columns[j].trim();
-                            rowColumns.add(column);
-                        }
-
-                        if (headers == null) {
-                            headers = rowColumns.toArray(new String[0]);
-                        } else {
-                            Map<String, String> rowMap = new HashMap<>();
-                            for (int j = 0; j < Math.min(headers.length, rowColumns.size()); j++) {
-                                rowMap.put(headers[j], rowColumns.get(j));
-                            }
-                            listOfMaps.add(rowMap);
-                        }
-                    }
-                }
-
-                return listOfMaps;
-            }
-        }
-        """
-
-    Scenario: DataTable with multiple parameter references
-      Given the following feature file:
-        """
-        Feature: User Management
-          Scenario Outline: Create user with permissions
-            Given user with credentials:
-              | username   | role   | department   |
-              | <username> | <role> | <department> |
-            Examples:
-              | username | role  | department |
-              | alice    | admin | IT         |
-              | bob      | user  | Sales      |
-        """
-      When the generator is run
-      Then the content of the generated class should be:
-        """
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Math;
-        import java.lang.String;
-        import java.util.ArrayList;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.TestMethodOrder;
-        import org.junit.jupiter.params.ParameterizedTest;
-        import org.junit.jupiter.params.provider.CsvSource;
-
-        /**
-         * Feature: User Management
-         */
-        @DisplayName("MockedAnnotatedTestClass")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserWithCredentials(List<Map<String, String>> data);
-
-            @ParameterizedTest(
-                    name = "Example {index}: [{arguments}]"
-            )
-            @CsvSource(
-                    useHeadersInDisplayName = true,
-                    delimiter = '|',
-                    textBlock = \"\"\"
-                            username | role  | department
-                            alice    | admin | IT
-                            bob      | user  | Sales
-                            \"\"\"
-            )
-            @Order(1)
-            @DisplayName("Scenario Outline: Create user with permissions")
-            public void scenario_1(String username, String role, String department) {
-                /*
-                 * Given user with credentials:
-                 */
-                givenUserWithCredentials(createListOfMaps(\"\"\"
-                        | username   | role   | department   |
-                        | <username> | <role> | <department> |
-                        \"\"\"
-                        .replaceAll("<username>", username)
-                        .replaceAll("<role>", role)
-                        .replaceAll("<department>", department)));
-            }
-
-            protected List<Map<String, String>> createListOfMaps(String tableLines) {
-
-                String[] tableRows = tableLines.split("\\n");
-                List<Map<String, String>> listOfMaps = new ArrayList<>();
-
-                if (tableRows.length < 2) {
-                    return listOfMaps;
-                }
-
-                String[] headers = null;
-                for (int i = 0; i < tableRows.length; i++) {
-                    String trimmedLine = tableRows[i].trim();
-                    if (!trimmedLine.isEmpty()) {
-                        String[] columns = trimmedLine.split("\\|");
-                        List<String> rowColumns = new ArrayList<>(columns.length);
-                        for (int j = 1; j < columns.length; j++) {
-                            String column = columns[j].trim();
-                            rowColumns.add(column);
-                        }
-
-                        if (headers == null) {
-                            headers = rowColumns.toArray(new String[0]);
-                        } else {
-                            Map<String, String> rowMap = new HashMap<>();
-                            for (int j = 0; j < Math.min(headers.length, rowColumns.size()); j++) {
-                                rowMap.put(headers[j], rowColumns.get(j));
-                            }
-                            listOfMaps.add(rowMap);
-                        }
-                    }
-                }
-
-                return listOfMaps;
-            }
-        }
-        """
-
-    Scenario: DataTable with mixed static values and parameter references
-      Given the following feature file:
-        """
-        Feature: Order Processing
-          Scenario Outline: Process order with items
-            Then order "<orderId>" contains items:
-              | product   | quantity | status    |
-              | <product> | <qty>    | pending   |
-              | Keyboard  | 1        | <status>  |
-            Examples:
-              | orderId | product | qty | status    |
-              | ORD-001 | Monitor | 2   | confirmed |
-              | ORD-002 | Mouse   | 5   | shipped   |
-        """
-      When the generator is run
-      Then the content of the generated class should be:
-        """
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Math;
-        import java.lang.String;
-        import java.util.ArrayList;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.TestMethodOrder;
-        import org.junit.jupiter.params.ParameterizedTest;
-        import org.junit.jupiter.params.provider.CsvSource;
-
-        /**
-         * Feature: Order Processing
-         */
-        @DisplayName("MockedAnnotatedTestClass")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void thenOrder$p1ContainsItems(String p1, List<Map<String, String>> data);
-
-            @ParameterizedTest(
-                    name = "Example {index}: [{arguments}]"
-            )
-            @CsvSource(
-                    useHeadersInDisplayName = true,
-                    delimiter = '|',
-                    textBlock = \"\"\"
-                            orderId | product | qty | status
-                            ORD-001 | Monitor | 2   | confirmed
-                            ORD-002 | Mouse   | 5   | shipped
-                            \"\"\"
-            )
-            @Order(1)
-            @DisplayName("Scenario Outline: Process order with items")
-            public void scenario_1(String orderId, String product, String qty, String status) {
-                /*
-                 * Then order "<orderId>" contains items:
-                 */
-                thenOrder$p1ContainsItems(orderId, createListOfMaps(\"\"\"
-                        | product   | quantity | status   |
-                        | <product> | <qty>    | pending  |
-                        | Keyboard  | 1        | <status> |
-                        \"\"\"
-                        .replaceAll("<orderId>", orderId)
-                        .replaceAll("<product>", product)
-                        .replaceAll("<qty>", qty)
-                        .replaceAll("<status>", status)));
-            }
-
-            protected List<Map<String, String>> createListOfMaps(String tableLines) {
-
-                String[] tableRows = tableLines.split("\\n");
-                List<Map<String, String>> listOfMaps = new ArrayList<>();
-
-                if (tableRows.length < 2) {
-                    return listOfMaps;
-                }
-
-                String[] headers = null;
-                for (int i = 0; i < tableRows.length; i++) {
-                    String trimmedLine = tableRows[i].trim();
-                    if (!trimmedLine.isEmpty()) {
-                        String[] columns = trimmedLine.split("\\|");
-                        List<String> rowColumns = new ArrayList<>(columns.length);
-                        for (int j = 1; j < columns.length; j++) {
-                            String column = columns[j].trim();
-                            rowColumns.add(column);
-                        }
-
-                        if (headers == null) {
-                            headers = rowColumns.toArray(new String[0]);
-                        } else {
-                            Map<String, String> rowMap = new HashMap<>();
-                            for (int j = 0; j < Math.min(headers.length, rowColumns.size()); j++) {
-                                rowMap.put(headers[j], rowColumns.get(j));
-                            }
-                            listOfMaps.add(rowMap);
-                        }
-                    }
-                }
-
-                return listOfMaps;
-            }
-        }
-        """
-
   Rule: DataTable is formatted with pipe delimiters and aligned columns
 
     Scenario: DataTable with single column
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Permissions
@@ -637,8 +381,10 @@ Feature: MappingDataTableDefaultBehavior
               | delete     |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Math;
         import java.lang.String;
@@ -647,6 +393,7 @@ Feature: MappingDataTableDefaultBehavior
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -656,12 +403,14 @@ Feature: MappingDataTableDefaultBehavior
         /**
          * Feature: Permissions
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenAvailablePermissions(List<Map<String, String>> data);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenAvailablePermissions(List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -716,6 +465,16 @@ Feature: MappingDataTableDefaultBehavior
         """
 
     Scenario: DataTable with misaligned columns
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Column Alignment
@@ -726,8 +485,10 @@ Feature: MappingDataTableDefaultBehavior
               | y        | another value     | defghi |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Math;
         import java.lang.String;
@@ -736,6 +497,7 @@ Feature: MappingDataTableDefaultBehavior
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -745,12 +507,14 @@ Feature: MappingDataTableDefaultBehavior
         /**
          * Feature: Column Alignment
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenDataWithVaryingWidths(List<Map<String, String>> data);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenDataWithVaryingWidths(List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -807,6 +571,16 @@ Feature: MappingDataTableDefaultBehavior
   - these are converted to an empty list when using the default LIST_OF_MAPS parameter type
 
     Scenario: DataTable with headers only
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Header Only
@@ -815,8 +589,10 @@ Feature: MappingDataTableDefaultBehavior
               | name | email |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Math;
         import java.lang.String;
@@ -825,6 +601,7 @@ Feature: MappingDataTableDefaultBehavior
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -834,12 +611,14 @@ Feature: MappingDataTableDefaultBehavior
         /**
          * Feature: Header Only
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenADatatable(List<Map<String, String>> data);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenADatatable(List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)

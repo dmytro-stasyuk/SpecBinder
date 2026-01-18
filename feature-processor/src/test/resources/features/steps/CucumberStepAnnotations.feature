@@ -27,13 +27,14 @@ Feature: CucumberStepAnnotations
             Given user exists
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import io.cucumber.java.en.Given;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -47,9 +48,11 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^user exists$")
-            public abstract void givenUserExists();
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -90,6 +93,7 @@ Feature: CucumberStepAnnotations
         import dev.specbinder.annotations.output.FeatureFilePath;
         import io.cucumber.java.en.When;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -103,9 +107,11 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @When("^user clicks button$")
-            public abstract void whenUserClicksButton();
+            public void whenUserClicksButton() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -139,13 +145,14 @@ Feature: CucumberStepAnnotations
             Then result is displayed
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import io.cucumber.java.en.Then;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -159,9 +166,11 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Then("^result is displayed$")
-            public abstract void thenResultIsDisplayed();
+            public void thenResultIsDisplayed() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -202,7 +211,7 @@ Feature: CucumberStepAnnotations
             And user menu is visible
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
@@ -211,6 +220,7 @@ Feature: CucumberStepAnnotations
         import io.cucumber.java.en.Then;
         import io.cucumber.java.en.When;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -224,24 +234,36 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^user exists$")
-            public abstract void givenUserExists();
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Given("^user is active$")
-            public abstract void givenUserIsActive();
+            public void givenUserIsActive() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @When("^user logs in$")
-            public abstract void whenUserLogsIn();
+            public void whenUserLogsIn() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @When("^user navigates to dashboard$")
-            public abstract void whenUserNavigatesToDashboard();
+            public void whenUserNavigatesToDashboard() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Then("^dashboard is displayed$")
-            public abstract void thenDashboardIsDisplayed();
+            public void thenDashboardIsDisplayed() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Then("^user menu is visible$")
-            public abstract void thenUserMenuIsVisible();
+            public void thenUserMenuIsVisible() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -300,7 +322,7 @@ Feature: CucumberStepAnnotations
             But user remains on current page
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
@@ -309,6 +331,7 @@ Feature: CucumberStepAnnotations
         import io.cucumber.java.en.Then;
         import io.cucumber.java.en.When;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -322,24 +345,36 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^user is logged in$")
-            public abstract void givenUserIsLoggedIn();
+            public void givenUserIsLoggedIn() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Given("^user is not admin$")
-            public abstract void givenUserIsNotAdmin();
+            public void givenUserIsNotAdmin() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @When("^user requests admin page$")
-            public abstract void whenUserRequestsAdminPage();
+            public void whenUserRequestsAdminPage() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @When("^request is denied$")
-            public abstract void whenRequestIsDenied();
+            public void whenRequestIsDenied() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Then("^error message is shown$")
-            public abstract void thenErrorMessageIsShown();
+            public void thenErrorMessageIsShown() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Then("^user remains on current page$")
-            public abstract void thenUserRemainsOnCurrentPage();
+            public void thenUserRemainsOnCurrentPage() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -398,7 +433,7 @@ Feature: CucumberStepAnnotations
             * confirmation is sent
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
@@ -407,6 +442,7 @@ Feature: CucumberStepAnnotations
         import io.cucumber.java.en.Then;
         import io.cucumber.java.en.When;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -420,24 +456,36 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^system is ready$")
-            public abstract void givenSystemIsReady();
+            public void givenSystemIsReady() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Given("^database is connected$")
-            public abstract void givenDatabaseIsConnected();
+            public void givenDatabaseIsConnected() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @When("^user submits form$")
-            public abstract void whenUserSubmitsForm();
+            public void whenUserSubmitsForm() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @When("^validation passes$")
-            public abstract void whenValidationPasses();
+            public void whenValidationPasses() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Then("^form is saved$")
-            public abstract void thenFormIsSaved();
+            public void thenFormIsSaved() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Then("^confirmation is sent$")
-            public abstract void thenConfirmationIsSent();
+            public void thenConfirmationIsSent() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -493,7 +541,7 @@ Feature: CucumberStepAnnotations
             Given user "Alice" exists
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
@@ -501,6 +549,7 @@ Feature: CucumberStepAnnotations
         import io.cucumber.java.en.Given;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -514,9 +563,11 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^user (?<p1>.*) exists$")
-            public abstract void givenUser$p1Exists(String p1);
+            public void givenUser$p1Exists(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -550,7 +601,7 @@ Feature: CucumberStepAnnotations
             When user "Bob" sends message "Hello World" to "Alice"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
@@ -558,6 +609,7 @@ Feature: CucumberStepAnnotations
         import io.cucumber.java.en.When;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -571,9 +623,11 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @When("^user (?<p1>.*) sends message (?<p2>.*) to (?<p3>.*)$")
-            public abstract void whenUser$p1SendsMessage$p2To$p3(String p1, String p2, String p3);
+            public void whenUser$p1SendsMessage$p2To$p3(String p1, String p2, String p3) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -609,13 +663,14 @@ Feature: CucumberStepAnnotations
             Then balance is $100.50 (verified)
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import io.cucumber.java.en.Then;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -629,9 +684,11 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Then("^balance is \\$100\\.50 \\(verified\\)$")
-            public abstract void thenBalanceIs$10050Verified();
+            public void thenBalanceIs$10050Verified() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -670,7 +727,7 @@ Feature: CucumberStepAnnotations
               \"\"\"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
@@ -678,6 +735,7 @@ Feature: CucumberStepAnnotations
         import io.cucumber.java.en.Given;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -691,9 +749,11 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^document contains:$")
-            public abstract void givenDocumentContains(String docString);
+            public void givenDocumentContains(String docString) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -734,7 +794,7 @@ Feature: CucumberStepAnnotations
             | Bob   | 25  |
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example;
 
@@ -747,6 +807,7 @@ Feature: CucumberStepAnnotations
       import java.util.List;
       import java.util.Map;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -760,9 +821,11 @@ Feature: CucumberStepAnnotations
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
+      public class TestFeatureTest extends MockedAnnotatedTestClass {
           @Given("^the following users exist:$")
-          public abstract void givenTheFollowingUsersExist(List<Map<String, String>> data);
+          public void givenTheFollowingUsersExist(List<Map<String, String>> data) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -822,8 +885,8 @@ Feature: CucumberStepAnnotations
         """
         package com.example;
 
-        import dev.specbinder.feature2junit.Feature2JUnit;
-        import dev.specbinder.feature2junit.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Feature2JUnit;
+        import dev.specbinder.annotations.Feature2JUnitOptions;
 
         @Feature2JUnit
         @Feature2JUnitOptions(addCucumberStepAnnotations = false)
@@ -837,12 +900,13 @@ Feature: CucumberStepAnnotations
             Given user exists
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -856,8 +920,10 @@ Feature: CucumberStepAnnotations
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)

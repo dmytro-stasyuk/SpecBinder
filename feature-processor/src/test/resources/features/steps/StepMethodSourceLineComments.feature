@@ -9,6 +9,16 @@ Feature: StepMethodSourceLineComments
     - this is the default behavior to keep generated code clean
 
     Scenario: Source line comments are not added when option is disabled (default)
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Default Behavior
@@ -18,10 +28,13 @@ Feature: StepMethodSourceLineComments
             Then result is displayed
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -31,16 +44,22 @@ Feature: StepMethodSourceLineComments
         /**
          * Feature: Default Behavior
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void whenUserClicksButton();
+            public void whenUserClicksButton() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenResultIsDisplayed();
+            public void thenResultIsDisplayed() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -89,12 +108,13 @@ Feature: StepMethodSourceLineComments
             Then result is displayed
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -108,12 +128,18 @@ Feature: StepMethodSourceLineComments
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void whenUserClicksButton();
+            public void whenUserClicksButton() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenResultIsDisplayed();
+            public void thenResultIsDisplayed() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -164,12 +190,13 @@ Feature: StepMethodSourceLineComments
             When user clicks button
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -183,10 +210,14 @@ Feature: StepMethodSourceLineComments
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void whenUserClicksButton();
+            public void whenUserClicksButton() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -229,12 +260,13 @@ Feature: StepMethodSourceLineComments
             Then result is displayed
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -248,14 +280,22 @@ Feature: StepMethodSourceLineComments
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserIsActive();
+            public void givenUserIsActive() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void whenUserClicksButton();
+            public void whenUserClicksButton() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenResultIsDisplayed();
+            public void thenResultIsDisplayed() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)

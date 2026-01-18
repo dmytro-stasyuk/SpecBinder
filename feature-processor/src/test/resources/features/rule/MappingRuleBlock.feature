@@ -6,6 +6,16 @@ Feature: MappingRuleBlock
   Rule: rule section should be mapped to nested inner class and rule name should be mapped to the value in display name annotation
 
     Scenario: with just the keyword
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with rule
@@ -13,8 +23,10 @@ Feature: MappingRuleBlock
         Rule:
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -31,11 +43,11 @@ Feature: MappingRuleBlock
       /**
        * Feature: feature with rule
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
           @Nested
           @Order(1)
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -51,15 +63,27 @@ Feature: MappingRuleBlock
       """
 
     Scenario: with the keyword and name
-      Given the following feature file:
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      And the following feature file:
       """
       Feature: feature with rule
 
         Rule: rule name
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -76,11 +100,11 @@ Feature: MappingRuleBlock
       /**
        * Feature: feature with rule
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
           @Nested
           @Order(1)
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -98,7 +122,17 @@ Feature: MappingRuleBlock
   Rule: rule description lines should be mapped to JavaDoc comment on the nested inner test class
 
     Scenario: with the keyword, name and description lines
-      Given the following feature file:
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      And the following feature file:
       """
       Feature: feature with rule
         Rule: rule name
@@ -107,9 +141,10 @@ Feature: MappingRuleBlock
       """
 
       When the generator is run
-
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -126,11 +161,11 @@ Feature: MappingRuleBlock
       /**
        * Feature: feature with rule
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
           /**
            * rule description line 1
            * rule description line 2

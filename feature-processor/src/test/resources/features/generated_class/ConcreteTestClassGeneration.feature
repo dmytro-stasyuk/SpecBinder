@@ -1,9 +1,9 @@
 Feature: ConcreteTestClassGeneration
   As a developer
-  I want step method bodies to be generated based on the shouldBeConcrete option
+  I want step method bodies to be generated based on the shouldBeAbstract option
   So that I can choose between abstract step methods or concrete methods with fail() statements
 
-  Rule: When shouldBeConcrete is true, generated class is not abstract and method stubs contain failing assertions
+  Rule: When shouldBeAbstract is false, generated class is not abstract and method stubs contain failing assertions
   - methods do NOT have the abstract modifier
   - method bodies contains: Assertions.fail("Step is not yet implemented")
 
@@ -16,7 +16,7 @@ Feature: ConcreteTestClassGeneration
         import dev.specbinder.annotations.Feature2JUnitOptions;
 
         @Feature2JUnit
-        @Feature2JUnitOptions(shouldBeConcrete = true)
+        @Feature2JUnitOptions(shouldBeAbstract = false)
         public class MockedAnnotatedTestClass {
         }
         """
@@ -27,7 +27,7 @@ Feature: ConcreteTestClassGeneration
             Given user exists
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
@@ -73,7 +73,7 @@ Feature: ConcreteTestClassGeneration
         import dev.specbinder.annotations.Feature2JUnitOptions;
 
         @Feature2JUnit
-        @Feature2JUnitOptions(shouldBeConcrete = true)
+        @Feature2JUnitOptions(shouldBeAbstract = false)
         public class MockedAnnotatedTestClass {
         }
         """
@@ -84,7 +84,7 @@ Feature: ConcreteTestClassGeneration
             When user "Alice" logs in with password "secret123"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 

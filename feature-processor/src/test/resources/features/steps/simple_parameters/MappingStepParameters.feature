@@ -7,6 +7,16 @@ Feature: MappingStepParameters
   - method signatures receive parameters named: p1, p2, p3, etc., all of type String
 
     Scenario: Step with one quoted parameter
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: One Parameter
@@ -14,11 +24,14 @@ Feature: MappingStepParameters
             Given user "John" exists
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -28,12 +41,14 @@ Feature: MappingStepParameters
         /**
          * Feature: One Parameter
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUser$p1Exists(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUser$p1Exists(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -48,6 +63,16 @@ Feature: MappingStepParameters
         """
 
     Scenario: Step with two quoted parameters
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Two Parameters
@@ -55,11 +80,14 @@ Feature: MappingStepParameters
             When user "Alice" sends message "Hello"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -69,12 +97,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Two Parameters
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenUser$p1SendsMessage$p2(String p1, String p2);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void whenUser$p1SendsMessage$p2(String p1, String p2) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -89,6 +119,16 @@ Feature: MappingStepParameters
         """
 
     Scenario: Step with three quoted parameters
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Three Parameters
@@ -96,11 +136,14 @@ Feature: MappingStepParameters
             Then order "12345" for customer "Bob" has status "shipped"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -110,12 +153,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Three Parameters
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void thenOrder$p1ForCustomer$p2HasStatus$p3(String p1, String p2, String p3);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void thenOrder$p1ForCustomer$p2HasStatus$p3(String p1, String p2, String p3) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -130,6 +175,16 @@ Feature: MappingStepParameters
         """
 
     Scenario: Step with parameter containing spaces
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Parameter With Spaces
@@ -137,11 +192,14 @@ Feature: MappingStepParameters
             When I search for "hello world"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -151,12 +209,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Parameter With Spaces
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenISearchFor$p1(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void whenISearchFor$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -171,6 +231,16 @@ Feature: MappingStepParameters
         """
 
     Scenario: Step with parameter containing special characters
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Special Characters Parameter
@@ -178,11 +248,14 @@ Feature: MappingStepParameters
             Given password is "P@ssw0rd!"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -192,12 +265,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Special Characters Parameter
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenPasswordIs$p1(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenPasswordIs$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -212,6 +287,16 @@ Feature: MappingStepParameters
         """
 
     Scenario: Step with parameter at the beginning
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Parameter At Beginning
@@ -219,11 +304,14 @@ Feature: MappingStepParameters
             Given "Admin" role is assigned
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -233,12 +321,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Parameter At Beginning
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void given$p1RoleIsAssigned(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void given$p1RoleIsAssigned(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -253,6 +343,16 @@ Feature: MappingStepParameters
         """
 
     Scenario: Step with consecutive quoted parameters
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Consecutive Parameters
@@ -260,11 +360,14 @@ Feature: MappingStepParameters
             Given transfer from "ACC001" to "ACC002" completes
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -274,12 +377,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Consecutive Parameters
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenTransferFrom$p1To$p2Completes(String p1, String p2);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenTransferFrom$p1To$p2Completes(String p1, String p2) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -296,6 +401,16 @@ Feature: MappingStepParameters
   Rule: if a quoted parameter is empty (""), then there is no parameter passed to the step method
 
     Scenario: Step with empty quoted parameter
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Empty Parameter
@@ -303,10 +418,13 @@ Feature: MappingStepParameters
             When field is set to ""
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -316,12 +434,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Empty Parameter
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenFieldIsSetTo();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void whenFieldIsSetTo() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -338,6 +458,16 @@ Feature: MappingStepParameters
   Rule: quoted parameters with only whitespace characters are extracted as-is and passed as String parameters
 
     Scenario: Step with blank quoted parameter
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: Blank Parameter
@@ -345,11 +475,14 @@ Feature: MappingStepParameters
           Given name is "   "
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.String;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -359,12 +492,14 @@ Feature: MappingStepParameters
       /**
        * Feature: Blank Parameter
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenNameIs$p1(String p1);
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenNameIs$p1(String p1) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -382,6 +517,16 @@ Feature: MappingStepParameters
   - type conversion is the responsibility of the step implementation
 
     Scenario: Numeric parameter is typed as String
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Numeric Parameter
@@ -389,11 +534,14 @@ Feature: MappingStepParameters
             When quantity is set to "42"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -403,12 +551,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Numeric Parameter
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenQuantityIsSetTo$p1(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void whenQuantityIsSetTo$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -423,6 +573,16 @@ Feature: MappingStepParameters
         """
 
     Scenario: Boolean-like parameter is typed as String
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Boolean Parameter
@@ -430,11 +590,14 @@ Feature: MappingStepParameters
             Given feature flag is "true"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -444,12 +607,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Boolean Parameter
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenFeatureFlagIs$p1(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenFeatureFlagIs$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -464,6 +629,16 @@ Feature: MappingStepParameters
         """
 
     Scenario: Date-like parameter is typed as String
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Date Parameter
@@ -471,11 +646,14 @@ Feature: MappingStepParameters
             When date is set to "2024-12-20"
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -485,12 +663,14 @@ Feature: MappingStepParameters
         /**
          * Feature: Date Parameter
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenDateIsSetTo$p1(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void whenDateIsSetTo$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)

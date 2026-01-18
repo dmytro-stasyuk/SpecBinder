@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn clean test-compile:*)",
+      "Bash(mvn test-compile:*)",
+      "Bash(mvn test:*)",
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(find:*)",
+      "Bash(\"/Applications/IntelliJ IDEA.app/Contents/MacOS/idea\" --help)",
+      "mcp__jetbrains__*",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.jetbrains.com)",
+      "Bash(ls:*)",
+      "Bash(git mv:*)",
+      "Bash(git restore:*)",
+      "Bash(mvn clean install:*)",
+      "Bash(xargs sed:*)",
+      "Bash(chmod:*)",
+      "Bash(grep:*)",
+      "Bash(done)",
+      "Bash(mvn clean test:*)",
+      "Bash(javap:*)",
+      "Bash(curl:*)",
+      "Bash(tee:*)",
+      "Bash(mvn clean package:*)",
+      "Bash(mvn clean compile:*)",
+      "Bash(/tmp/update-packages.py:*)",
+      "Bash(python3:*)",
+      "Bash(./scripts/review-features.sh:*)",
+      "Bash(timeout 30 mvn test:*)",
+      "Bash(mvn dependency:tree:*)",
+      "Skill(run-last-test)",
+      "Bash(/Users/dmytro/Projects/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

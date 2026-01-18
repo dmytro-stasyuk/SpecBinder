@@ -6,6 +6,16 @@ Feature: BackgroundWithDataTable
   Rule: Background steps with DataTables should generate methods accepting List<Map<String, String>> parameter
 
     Scenario: Background with a DataTable step
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: product catalog
@@ -16,8 +26,10 @@ Feature: BackgroundWithDataTable
             | Orange  | 2.00  |
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.Math;
       import java.lang.String;
@@ -26,6 +38,7 @@ Feature: BackgroundWithDataTable
       import java.util.List;
       import java.util.Map;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.TestInfo;
@@ -33,11 +46,13 @@ Feature: BackgroundWithDataTable
       /**
        * Feature: product catalog
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenTheFollowingProductsExist(List<Map<String, String>> data);
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenTheFollowingProductsExist(List<Map<String, String>> data) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")
@@ -90,6 +105,16 @@ Feature: BackgroundWithDataTable
       """
 
     Scenario: Background with multiple steps including DataTable
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: user permissions
@@ -102,8 +127,10 @@ Feature: BackgroundWithDataTable
           And permissions are loaded
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.Math;
       import java.lang.String;
@@ -112,6 +139,7 @@ Feature: BackgroundWithDataTable
       import java.util.List;
       import java.util.Map;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.TestInfo;
@@ -119,15 +147,21 @@ Feature: BackgroundWithDataTable
       /**
        * Feature: user permissions
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenTheSystemIsInitialized();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenTheSystemIsInitialized() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenTheFollowingUsersAreCreated(List<Map<String, String>> data);
+          public void givenTheFollowingUsersAreCreated(List<Map<String, String>> data) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenPermissionsAreLoaded();
+          public void givenPermissionsAreLoaded() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")

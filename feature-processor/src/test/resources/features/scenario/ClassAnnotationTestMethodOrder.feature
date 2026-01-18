@@ -6,14 +6,26 @@ Feature: ClassAnnotationTestMethodOrder
   Rule: @TestMethodOrder annotation is added to every generated test class if it has at least one scenario
 
     Scenario: feature with no scenarios
-      Given the following feature file:
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      And the following feature file:
       """
       Feature: Empty Feature
         This feature has no scenarios yet
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.DisplayName;
@@ -22,22 +34,34 @@ Feature: ClassAnnotationTestMethodOrder
        * Feature: Empty Feature
        *   This feature has no scenarios yet
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
       }
       """
 
     Scenario: feature with just one scenario
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: Test Ordering
         Scenario: First scenario
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -51,11 +75,11 @@ Feature: ClassAnnotationTestMethodOrder
       /**
        * Feature: Test Ordering
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
           @Test
           @Order(1)
           @Tag("new")
@@ -69,6 +93,16 @@ Feature: ClassAnnotationTestMethodOrder
   Rule: Each scenario method gets @Order(1), @Order(2), etc., matching their position in the feature file.
 
     Scenario: multiple scenarios get sequential @Order annotations
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: Sequential Scenarios
@@ -77,8 +111,10 @@ Feature: ClassAnnotationTestMethodOrder
         Scenario: Third test
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
@@ -92,11 +128,11 @@ Feature: ClassAnnotationTestMethodOrder
       /**
        * Feature: Sequential Scenarios
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
           @Test
           @Order(1)
           @Tag("new")

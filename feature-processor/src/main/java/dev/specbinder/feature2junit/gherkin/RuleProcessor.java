@@ -10,6 +10,7 @@ import dev.specbinder.feature2junit.support.BaseTypeSupport;
 import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
+import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.utils.JavaDocUtils;
 import dev.specbinder.feature2junit.utils.LocationUtils;
 import dev.specbinder.feature2junit.utils.TagUtils;
@@ -30,12 +31,15 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
     private final GeneratorOptions options;
     private final TypeElement baseType;
     private final DataTableCollector dataTableCollector;
+    private final EnumImportCollector enumImportCollector;
 
-    public RuleProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType, DataTableCollector dataTableCollector) {
+    public RuleProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType,
+                         DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector) {
         this.processingEnv = processingEnv;
         this.options = options;
         this.baseType = baseType;
         this.dataTableCollector = dataTableCollector;
+        this.enumImportCollector = enumImportCollector;
     }
 
     public ProcessingEnvironment getProcessingEnv() {
@@ -131,7 +135,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
                 Scenario scenario = child.getScenario().get();
 
                 ruleScenarioCount++;
-                ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector);
+                ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
                 MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(ruleScenarioCount, scenario, classBuilder);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
@@ -143,7 +147,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
                 Background background = child.getBackground().get();
 
-                BackgroundProcessor backgroundProcessor = new BackgroundProcessor(processingEnv, options, baseType, dataTableCollector);
+                BackgroundProcessor backgroundProcessor = new BackgroundProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
                 MethodSpec.Builder ruleBackgroundMethodBuilder = backgroundProcessor.processRuleBackground(background, classBuilder);
 
                 MethodSpec backgroundMethod = ruleBackgroundMethodBuilder.build();

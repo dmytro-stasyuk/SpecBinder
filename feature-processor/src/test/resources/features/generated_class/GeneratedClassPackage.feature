@@ -10,6 +10,9 @@ Feature: GeneratedClassPackage
       """
       package com.example.cart;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
       @Feature2JUnit("features/checkout/cart/cart.feature")
       public abstract class CartFeature {
       }
@@ -20,7 +23,7 @@ Feature: GeneratedClassPackage
         Scenario: Add item
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package features.checkout.cart;
 
@@ -42,7 +45,7 @@ Feature: GeneratedClassPackage
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/checkout/cart/cart.feature")
-      public abstract class CartFeatureScenarios extends CartFeature {
+      public class CartTest extends CartFeature {
           @Test
           @Order(1)
           @Tag("new")

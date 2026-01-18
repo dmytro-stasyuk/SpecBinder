@@ -6,7 +6,17 @@ Feature: RuleTags
   Rule: Single tag on a Rule is converted to a single JUnit @Tag annotation on the nested class
 
     Scenario: Rule with single tag
-      Given the following feature file:
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      And the following feature file:
       """
       Feature: feature with tagged rule
 
@@ -18,10 +28,13 @@ Feature: RuleTags
             Then the email format should be valid
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -35,16 +48,22 @@ Feature: RuleTags
       /**
        * Feature: feature with tagged rule
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenAnEmailAddress();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenAnEmailAddress() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenValidationIsPerformed();
+          public void whenValidationIsPerformed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenTheEmailFormatShouldBeValid();
+          public void thenTheEmailFormatShouldBeValid() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -76,6 +95,16 @@ Feature: RuleTags
   Rule: Multiple tags on a Rule are converted to a @Tags container annotation with an array of @Tag annotations
 
     Scenario: Rule with multiple tags
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with multi-tagged rule
@@ -88,10 +117,13 @@ Feature: RuleTags
             Then the password should meet requirements
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -106,16 +138,22 @@ Feature: RuleTags
       /**
        * Feature: feature with multi-tagged rule
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenAPassword();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenAPassword() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenStrengthValidationIsPerformed();
+          public void whenStrengthValidationIsPerformed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenThePasswordShouldMeetRequirements();
+          public void thenThePasswordShouldMeetRequirements() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -151,7 +189,17 @@ Feature: RuleTags
   Rule: Rule tags are independent of Feature-level tags and only apply to the nested Rule class
 
     Scenario: Feature with tags and Rule with different tags
-      Given the following feature file:
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      And the following feature file:
       """
       @feature-level @smoke
       Feature: feature with both feature and rule tags
@@ -164,10 +212,13 @@ Feature: RuleTags
             Then input should be accepted
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -186,16 +237,22 @@ Feature: RuleTags
               @Tag("feature-level"),
               @Tag("smoke")
       })
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenValidInput();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenValidInput() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenValidationRuns();
+          public void whenValidationRuns() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenInputShouldBeAccepted();
+          public void thenInputShouldBeAccepted() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)

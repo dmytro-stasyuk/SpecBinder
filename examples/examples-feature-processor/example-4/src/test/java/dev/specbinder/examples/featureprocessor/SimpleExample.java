@@ -11,4 +11,20 @@ import dev.specbinder.annotations.Feature2JUnit;
  */
 @Feature2JUnit
 public abstract class SimpleExample {
+
+    public void givenIHaveACalculator() {
+        // TODO: Implement step
+    }
+
+    public void givenIHaveEntered$p1IntoTheCalculator(String p1) {
+        // TODO: Implement step
+    }
+
+    public void whenIPressAdd() {
+        // TODO: Implement step
+    }
+
+    public void thenTheResultShouldBe$p1(String p1) {
+        // TODO: Implement step
+    }
 }

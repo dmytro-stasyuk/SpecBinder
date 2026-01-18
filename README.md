@@ -1486,7 +1486,7 @@ public abstract class CartFeature extends BaseFeatureOptions { }
   <dependency>
     <groupId>dev.specbinder</groupId>
     <artifactId>annotations</artifactId>
-    <version>0.1.8-SNAPSHOT</version>
+    <version>0.1.9</version>
     <scope>test</scope>
   </dependency>
 
@@ -1494,7 +1494,7 @@ public abstract class CartFeature extends BaseFeatureOptions { }
   <dependency>
     <groupId>dev.specbinder</groupId>
     <artifactId>feature-processor</artifactId>
-    <version>0.1.8-SNAPSHOT</version>
+    <version>0.1.9</version>
     <scope>test</scope>
   </dependency>
 </dependencies>

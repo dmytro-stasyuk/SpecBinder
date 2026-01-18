@@ -5,13 +5,13 @@
     <parent>
         <groupId>dev.specbinder</groupId>
         <artifactId>parent</artifactId>
-        <version>0.1.8-SNAPSHOT</version>
+        <version>0.1.14-SNAPSHOT</version>
     </parent>
     <artifactId>feature-processor</artifactId>
     <name>${project.artifactId}</name>
     <description>Annotation processor for generating JUnit test classes from Cucumber '.feature' files</description>
     <properties>
-        <cucumber-java.version>7.14.0</cucumber-java.version>
+        <!--<cucumber-java.version>7.14.0</cucumber-java.version>-->
         <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
     <build>
@@ -28,6 +28,14 @@
                     <!--<skipPublishing>${maven.deploy.skip}</skipPublishing>-->
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -40,7 +48,6 @@
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
             <version>${cucumber-java.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -62,13 +69,11 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.jupiter.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <version>${junit.jupiter.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.squareup</groupId>
@@ -102,7 +107,7 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
-            <version>1.10.2</version>
+            <version>${junit.jupiter.platform.suite}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -141,6 +146,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.18.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.0-alpha1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

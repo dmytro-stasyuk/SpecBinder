@@ -8,6 +8,16 @@ Feature: MappingFeatureBackgroundBlock
     - Background name is put into the @DisplayName of the @BeforeEach method
 
     Scenario: with just the keyword
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with background
@@ -15,8 +25,10 @@ Feature: MappingFeatureBackgroundBlock
         Background:
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.BeforeEach;
@@ -26,10 +38,10 @@ Feature: MappingFeatureBackgroundBlock
       /**
        * Feature: feature with background
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
           @BeforeEach
           @DisplayName("Background:")
           public void featureBackground(TestInfo testInfo) {
@@ -38,6 +50,16 @@ Feature: MappingFeatureBackgroundBlock
       """
 
     Scenario: with the keyword and name
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with background
@@ -45,8 +67,10 @@ Feature: MappingFeatureBackgroundBlock
         Background: setup test data
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.BeforeEach;
@@ -56,10 +80,10 @@ Feature: MappingFeatureBackgroundBlock
       /**
        * Feature: feature with background
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
           @BeforeEach
           @DisplayName("Background: setup test data")
           public void featureBackground(TestInfo testInfo) {
@@ -70,6 +94,16 @@ Feature: MappingFeatureBackgroundBlock
   Rule: steps in Background section should be mapped to calls within the @BeforeEach method
 
     Scenario: with multiple steps
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with background
@@ -79,10 +113,13 @@ Feature: MappingFeatureBackgroundBlock
           And precondition two
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.TestInfo;
@@ -90,13 +127,17 @@ Feature: MappingFeatureBackgroundBlock
       /**
        * Feature: feature with background
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenPreconditionOne();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenPreconditionOne() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenPreconditionTwo();
+          public void givenPreconditionTwo() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")
@@ -116,6 +157,16 @@ Feature: MappingFeatureBackgroundBlock
   Rule: background steps can be the same steps as in the Scenario section
 
     Scenario: with steps that are also in Scenarios
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with background
@@ -133,10 +184,13 @@ Feature: MappingFeatureBackgroundBlock
           Then outcome two is expected
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -148,12 +202,14 @@ Feature: MappingFeatureBackgroundBlock
       /**
        * Feature: feature with background
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenSharedPrecondition();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenSharedPrecondition() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")
@@ -164,9 +220,13 @@ Feature: MappingFeatureBackgroundBlock
               givenSharedPrecondition();
           }
 
-          public abstract void whenActionOneIsPerformed();
+          public void whenActionOneIsPerformed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenOutcomeOneIsExpected();
+          public void thenOutcomeOneIsExpected() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -182,9 +242,13 @@ Feature: MappingFeatureBackgroundBlock
               thenOutcomeOneIsExpected();
           }
 
-          public abstract void whenActionTwoIsPerformed();
+          public void whenActionTwoIsPerformed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenOutcomeTwoIsExpected();
+          public void thenOutcomeTwoIsExpected() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(2)
@@ -209,6 +273,16 @@ Feature: MappingFeatureBackgroundBlock
   Rule: Background description lines should be mapped to JavaDoc comment above the @BeforeEach method
 
     Scenario: with the keyword, name and description lines
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with background
@@ -217,8 +291,10 @@ Feature: MappingFeatureBackgroundBlock
           description line 2
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.BeforeEach;
@@ -228,10 +304,10 @@ Feature: MappingFeatureBackgroundBlock
       /**
        * Feature: feature with background
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
           /**
            * description line 1
            * description line 2
@@ -246,6 +322,16 @@ Feature: MappingFeatureBackgroundBlock
   Rule: Background interaction with Feature children
 
     Scenario: Feature with Background and mixed children (Scenarios and Rules)
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: customer management
@@ -268,10 +354,13 @@ Feature: MappingFeatureBackgroundBlock
           Then customer should be removed
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -286,13 +375,15 @@ Feature: MappingFeatureBackgroundBlock
       /**
        * Feature: customer management
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenCustomerDatabaseIsConnected();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenCustomerDatabaseIsConnected() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")
@@ -303,9 +394,13 @@ Feature: MappingFeatureBackgroundBlock
               givenCustomerDatabaseIsConnected();
           }
 
-          public abstract void whenNewCustomerIsCreated();
+          public void whenNewCustomerIsCreated() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenCustomerShouldExistInDatabase();
+          public void thenCustomerShouldExistInDatabase() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -321,13 +416,21 @@ Feature: MappingFeatureBackgroundBlock
               thenCustomerShouldExistInDatabase();
           }
 
-          public abstract void whenCustomerDetailsAreUpdated();
+          public void whenCustomerDetailsAreUpdated() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenChangesShouldBeSaved();
+          public void thenChangesShouldBeSaved() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenCustomerIsDeleted();
+          public void whenCustomerIsDeleted() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenCustomerShouldBeRemoved();
+          public void thenCustomerShouldBeRemoved() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)

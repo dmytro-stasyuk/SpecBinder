@@ -1,4 +1,4 @@
-Feature: StepKeywordErrorHandling
+Feature: FeatureFileWithErrorsHandling
   As a developer
   I want to be informed of parsing errors in feature files in case of invalid step keywords or other issues
   So that I can quickly identify and fix issues in my feature files
@@ -8,6 +8,16 @@ Feature: StepKeywordErrorHandling
   - Error message should indicate the invalid keyword
 
     Scenario: Invalid step keyword
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Invalid Keyword
@@ -18,5 +28,5 @@ Feature: StepKeywordErrorHandling
       When the generator is run
       Then the generator should report an error:
         """
-        Unable to parse Feature from the specified gherkin document: MockedAnnotatedTestClass.feature
+        Unable to parse Feature from the specified gherkin document: features/MyFeature.feature
         """

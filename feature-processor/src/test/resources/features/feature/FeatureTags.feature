@@ -10,22 +10,23 @@ Feature: FeatureTags
       """
       package com.example.tests;
 
-      @Feature2JUnit("features/smoke-tests.feature")
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
       public abstract class SmokeTests {
       }
       """
-      And a feature file under path "features/smoke-tests.feature" with the following content:
+      And the following feature file:
       """
       @smoke
       Feature: Smoke Tests
         Critical tests that must pass
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      package features;
+      package com.example.tests;
 
-      import com.example.tests.SmokeTests;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.DisplayName;
@@ -36,10 +37,10 @@ Feature: FeatureTags
        *   Critical tests that must pass
        */
       @Tag("smoke")
-      @DisplayName("smoke-tests")
+      @DisplayName("SmokeTests")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("features/smoke-tests.feature")
-      public abstract class SmokeTestsScenarios extends SmokeTests {
+      @FeatureFilePath("com/example/tests/SmokeTests.feature")
+      public class SmokeTestsTest extends SmokeTests {
       }
       """
 
@@ -50,7 +51,9 @@ Feature: FeatureTags
       """
       package com.example.api;
 
-      @Feature2JUnit("user-api.feature")
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
       public abstract class UserApiTests {
       }
       """
@@ -61,9 +64,10 @@ Feature: FeatureTags
         Testing user management endpoints
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.api.UserApiTests;
+      package com.example.api;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.DisplayName;
@@ -79,10 +83,10 @@ Feature: FeatureTags
               @Tag("regression"),
               @Tag("api")
       })
-      @DisplayName("user-api")
+      @DisplayName("UserApiTests")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("user-api.feature")
-      public abstract class UserApiTestsScenarios extends UserApiTests {
+      @FeatureFilePath("com/example/api/UserApiTests.feature")
+      public class UserApiTestsTest extends UserApiTests {
       }
       """
 

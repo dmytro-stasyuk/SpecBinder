@@ -17,7 +17,7 @@ import java.util.Set;
  * APT processor that generates JUnit test subclasses based on the Story2JUnit annotation.
  */
 @SupportedAnnotationTypes("dev.specbinder.story2junit.Story2JUnit")
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedSourceVersion(SourceVersion.RELEASE_21)
 //@AutoService(Processor.class)
 public class Story2JUnitGenerator extends AbstractProcessor {
 

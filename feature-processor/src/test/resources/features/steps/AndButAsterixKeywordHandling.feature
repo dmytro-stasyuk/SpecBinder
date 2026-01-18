@@ -8,6 +8,16 @@ Feature: AndButAsterixKeywordHandling
   If there is no previous step, processing throws an exception
 
     Scenario: And keyword inherits from Given
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: And Inheritance
@@ -16,10 +26,13 @@ Feature: AndButAsterixKeywordHandling
             And user is authenticated
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -29,14 +42,18 @@ Feature: AndButAsterixKeywordHandling
         /**
          * Feature: And Inheritance
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserIsAuthenticated();
+            public void givenUserIsAuthenticated() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -55,6 +72,16 @@ Feature: AndButAsterixKeywordHandling
         """
 
     Scenario: And keyword inherits from When
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: And Inheritance When
@@ -63,10 +90,13 @@ Feature: AndButAsterixKeywordHandling
             And user clicks button
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -76,14 +106,18 @@ Feature: AndButAsterixKeywordHandling
         /**
          * Feature: And Inheritance When
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenUserLogsIn();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void whenUserLogsIn() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void whenUserClicksButton();
+            public void whenUserClicksButton() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -102,6 +136,16 @@ Feature: AndButAsterixKeywordHandling
         """
 
     Scenario: But keyword inherits from Then
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: But Inheritance
@@ -110,10 +154,13 @@ Feature: AndButAsterixKeywordHandling
             But username is not visible
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -123,14 +170,18 @@ Feature: AndButAsterixKeywordHandling
         /**
          * Feature: But Inheritance
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void thenPasswordIsVisible();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void thenPasswordIsVisible() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenUsernameIsNotVisible();
+            public void thenUsernameIsNotVisible() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -149,6 +200,16 @@ Feature: AndButAsterixKeywordHandling
         """
 
     Scenario: Asterisk keyword inherits from previous step
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Asterisk Inheritance
@@ -157,10 +218,13 @@ Feature: AndButAsterixKeywordHandling
             * database is connected
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -170,14 +234,18 @@ Feature: AndButAsterixKeywordHandling
         /**
          * Feature: Asterisk Inheritance
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenSystemIsReady();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenSystemIsReady() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenDatabaseIsConnected();
+            public void givenDatabaseIsConnected() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -196,6 +264,16 @@ Feature: AndButAsterixKeywordHandling
         """
 
     Scenario: Multiple And keywords chain inheritance
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Multiple And Chain
@@ -205,10 +283,13 @@ Feature: AndButAsterixKeywordHandling
             And user has permissions
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -218,16 +299,22 @@ Feature: AndButAsterixKeywordHandling
         /**
          * Feature: Multiple And Chain
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserIsActive();
+            public void givenUserIsActive() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserHasPermissions();
+            public void givenUserHasPermissions() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -250,6 +337,16 @@ Feature: AndButAsterixKeywordHandling
         """
 
     Scenario: If And, But and * are all used after a step with Given/When/Then keyword they all chain inheritance
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Mixed Keywords Chain
@@ -260,10 +357,13 @@ Feature: AndButAsterixKeywordHandling
             * user has permissions
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -273,18 +373,26 @@ Feature: AndButAsterixKeywordHandling
         /**
          * Feature: Mixed Keywords Chain
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserIsActive();
+            public void givenUserIsActive() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserIsNotLocked();
+            public void givenUserIsNotLocked() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserHasPermissions();
+            public void givenUserHasPermissions() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -310,11 +418,103 @@ Feature: AndButAsterixKeywordHandling
         }
         """
 
+    Scenario: If And, But steps are used after * step which is used after Given/When/Then keyword step
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      Given the following feature file:
+        """
+        Feature: And But After Asterisk Chain
+          Scenario: Test
+            Given user exists
+            * user is active
+            And user has permissions
+            But user is not locked
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: And But After Asterisk Chain
+         */
+        @DisplayName("MyFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenUserIsActive() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenUserHasPermissions() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenUserIsNotLocked() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given user exists
+                 */
+                givenUserExists();
+                /*
+                 * * user is active
+                 */
+                givenUserIsActive();
+                /*
+                 * And user has permissions
+                 */
+                givenUserHasPermissions();
+                /*
+                 * But user is not locked
+                 */
+                givenUserIsNotLocked();
+            }
+        }
+        """
+
   Rule: And, But, and * keywords require a previous step with a GWT annotation
   - If And/But/* is the first step in a scenario, an error is reported
   - Error messages include the line number where the issue occurred
 
     Scenario: And keyword without any previous step should fail
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: And Without Previous Step
@@ -328,6 +528,16 @@ Feature: AndButAsterixKeywordHandling
         """
 
     Scenario: But keyword without any previous step should fail
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: But Without Previous Step
@@ -341,6 +551,16 @@ Feature: AndButAsterixKeywordHandling
         """
 
     Scenario: Asterisk keyword without any previous step should fail
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Asterisk Without Previous Step

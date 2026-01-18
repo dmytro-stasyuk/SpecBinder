@@ -5,10 +5,11 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.feature2junit.config.GeneratorOptions;
 import dev.specbinder.feature2junit.exception.ProcessingException;
+import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
+import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.support.BaseTypeSupport;
 import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.support.OptionsSupport;
-import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
 import dev.specbinder.feature2junit.utils.*;
 import io.cucumber.messages.types.*;
 import org.apache.commons.lang3.StringUtils;
@@ -33,12 +34,15 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
     private final TypeElement baseType;
     private final Set<String> baseClassMethodNames;
     private final DataTableCollector dataTableCollector;
+    private final EnumImportCollector enumImportCollector;
 
-    public ScenarioProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType, DataTableCollector dataTableCollector) {
+    public ScenarioProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType,
+                             DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector) {
         this.processingEnv = processingEnv;
         this.options = options;
         this.baseType = baseType;
         this.dataTableCollector = dataTableCollector;
+        this.enumImportCollector = enumImportCollector;
 
         baseClassMethodNames = ElementMethodUtils.getAllInheritedMethodNames(processingEnv, baseType);
     }
@@ -130,29 +134,82 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         } else {
 
-            for (Step scenarioStep : scenarioSteps) {
-
-                StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector);
-                MethodSpec stepMethodSpec = stepProcessor.processStep(
-                        scenarioStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
-                        scenarioParameterNames, testMethodParameterNames
-                );
-                scenarioStepsMethodSpecs.add(stepMethodSpec);
-
-                String stepMethodName = stepMethodSpec.name;
-                MethodSpec existingMethodSpec =
-                        allMethodSpecs.stream().filter(methodSpec -> methodSpec.name.equals(stepMethodName))
-                                .findFirst()
-                                .orElse(null);
-
-                if (existingMethodSpec == null) {
-                    // If the method already exists, we can skip creating it again
-                    boolean baseClassHasMethod = baseClassMethodNames.contains(stepMethodName);
-                    if (baseClassHasMethod) {
-                        logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
-//                        logInfo("Skipping generation of  Base class " + baseType.getQualifiedName() + " already has method '" + stepMethodName + "', ");
+            // Detect composite step patterns if enabled
+            if (options.isEnableCompositeSteps()) {
+                logInfo("Composite steps ENABLED - detecting composite step groups");
+                logInfo("Number of scenario steps: " + scenarioSteps.size());
+                List<Object> stepGroups = detectCompositeStepGroups(scenarioSteps);
+                logInfo("Detected " + stepGroups.size() + " step groups");
+                for (int i = 0; i < stepGroups.size(); i++) {
+                    Object group = stepGroups.get(i);
+                    if (group instanceof CompositeStepGroup) {
+                        logInfo("Group " + i + ": CompositeStepGroup with " + ((CompositeStepGroup) group).size() + " sub-steps");
                     } else {
-                        classBuilder.addMethod(stepMethodSpec);
+                        logInfo("Group " + i + ": Regular Step");
+                    }
+                }
+
+                for (Object item : stepGroups) {
+                    if (item instanceof CompositeStepGroup compositeGroup) {
+                        // Process composite step
+                        CompositeStepProcessor compositeProcessor = new CompositeStepProcessor(
+                                processingEnv, options, dataTableCollector, enumImportCollector, baseType);
+                        compositeProcessor.processCompositeStep(
+                                compositeGroup, scenarioMethodBuilder, scenarioStepsMethodSpecs,
+                                classBuilder, allMethodSpecs, baseClassMethodNames,
+                                scenarioParameterNames, testMethodParameterNames
+                        );
+                    } else if (item instanceof Step regularStep) {
+                        // Process regular step
+                        StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
+                        MethodSpec stepMethodSpec = stepProcessor.processStep(
+                                regularStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
+                                scenarioParameterNames, testMethodParameterNames
+                        );
+                        scenarioStepsMethodSpecs.add(stepMethodSpec);
+
+                        String stepMethodName = stepMethodSpec.name;
+                        MethodSpec existingMethodSpec =
+                                allMethodSpecs.stream().filter(methodSpec -> methodSpec.name.equals(stepMethodName))
+                                        .findFirst()
+                                        .orElse(null);
+
+                        if (existingMethodSpec == null) {
+                            // Check if base class has a compatible method (not just by name, but by signature)
+                            boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(regularStep, scenarioParameterNames, scenarioStepsMethodSpecs);
+                            if (baseClassHasCompatibleMethod) {
+                                logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
+                            } else {
+                                classBuilder.addMethod(stepMethodSpec);
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Original logic without composite steps
+                for (Step scenarioStep : scenarioSteps) {
+
+                    StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
+                    MethodSpec stepMethodSpec = stepProcessor.processStep(
+                            scenarioStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
+                            scenarioParameterNames, testMethodParameterNames
+                    );
+                    scenarioStepsMethodSpecs.add(stepMethodSpec);
+
+                    String stepMethodName = stepMethodSpec.name;
+                    MethodSpec existingMethodSpec =
+                            allMethodSpecs.stream().filter(methodSpec -> methodSpec.name.equals(stepMethodName))
+                                    .findFirst()
+                                    .orElse(null);
+
+                    if (existingMethodSpec == null) {
+                        // Check if base class has a compatible method (not just by name, but by signature)
+                        boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, scenarioParameterNames, scenarioStepsMethodSpecs);
+                        if (baseClassHasCompatibleMethod) {
+                            logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
+                        } else {
+                            classBuilder.addMethod(stepMethodSpec);
+                        }
                     }
                 }
             }
@@ -201,78 +258,148 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
             Scenario scenario) {
 
         List<Examples> examples = scenario.getExamples();
-        if (examples.size() > 1) {
-            throw new ProcessingException(
-                    "ERROR: Multiple Examples sections are not supported. " +
-                            "Only one Examples section is allowed per Scenario Outline but found = " + examples.size());
-        }
 
-        Examples examplesTable = examples.get(0);
-
-        /**
-         * convert Examples into data table so that we can format it easily with pipe characters
-         */
-        TableRow tableHeader = examplesTable.getTableHeader().get();
-        List<TableRow> tableBody = examplesTable.getTableBody();
-        List<TableRow> allRows = new ArrayList<>(tableBody.size() + 1);
-        allRows.add(tableHeader);
-        allRows.addAll(tableBody);
-
-        Location examplesTableLocation = examplesTable.getLocation();
-        DataTable examplesDataTable = new DataTable(examplesTableLocation, allRows);
-
-        List<Integer> maxColumnLengths = TableUtils.workOutMaxColumnLength(examplesDataTable);
-
-        StringBuilder textBlockSB = new StringBuilder();
-        textBlockSB.append("\"\"\"\n");
-
-        for (TableRow row : allRows) {
-
-            List<TableCell> rowCells = row.getCells();
-            List<String> cellValues = new ArrayList<>(rowCells.size());
-
-            for (int i = 0; i < rowCells.size(); i++) {
-                TableCell cell = rowCells.get(i);
-                String value = cell.getValue();
-
-                // Pad all columns except the last one to avoid trailing spaces
-                if (i < rowCells.size() - 1) {
-                    int maxColumnLength = maxColumnLengths.get(i);
-                    String paddedValue = StringUtils.rightPad(value, maxColumnLength);
-                    cellValues.add(paddedValue);
-                } else {
-                    // Last column - don't pad to avoid trailing spaces
-                    cellValues.add(value);
-                }
-            }
-
-            String rowLine = String.join(" | ", cellValues);
-            textBlockSB.append(rowLine);
-            textBlockSB.append("\n");
-        }
-
-        textBlockSB.append("\"\"\"");
-
-        String textBlock = textBlockSB.toString();
-
+        // Add @ParameterizedTest annotation once
         AnnotationSpec parameterizedTestAnnotation = AnnotationSpec
                 .builder(ParameterizedTest.class)
                 .addMember("name", "\"Example {index}: [{arguments}]\"")
                 .build();
-        scenarioMethodBuilder
-                .addAnnotation(parameterizedTestAnnotation);
+        scenarioMethodBuilder.addAnnotation(parameterizedTestAnnotation);
 
-        AnnotationSpec csvSourceAnnotation = AnnotationSpec
-                .builder(CsvSource.class)
-                .addMember("useHeadersInDisplayName", "true")
-                .addMember("delimiter", "'|'")
-                .addMember("textBlock", textBlock)
-                .build();
-        scenarioMethodBuilder
-                .addAnnotation(csvSourceAnnotation);
+        // Validate that all Examples sections have the same header columns in the same order
+        List<String> headerCells = null;
+        for (int exampleIndex = 0; exampleIndex < examples.size(); exampleIndex++) {
+            Examples examplesTable = examples.get(exampleIndex);
+            List<String> currentHeaderCells = examplesTable.getTableHeader().get().getCells().stream()
+                    .map(TableCell::getValue)
+                    .toList();
 
-        List<String> headerCells = examplesTable.getTableHeader().get().getCells().stream().map(TableCell::getValue).toList();
+            if (headerCells == null) {
+                headerCells = currentHeaderCells;
+            } else {
+                // Validate headers match exactly (same columns in same order)
+                if (!headerCells.equals(currentHeaderCells)) {
+                    // Provide detailed error message
+                    String errorMsg = "ERROR: All Examples sections must have identical header columns in the same order. ";
+                    
+                    if (headerCells.size() != currentHeaderCells.size()) {
+                        errorMsg += "Expected " + headerCells.size() + " columns " + headerCells + 
+                                    ", but found " + currentHeaderCells.size() + " columns " + currentHeaderCells +
+                                    " in Examples section " + (exampleIndex + 1) + ".";
+                    } else {
+                        errorMsg += "Expected columns " + headerCells + 
+                                    ", but found " + currentHeaderCells +
+                                    " in Examples section " + (exampleIndex + 1) + 
+                                    " (columns are in different order or have different names).";
+                    }
+                    
+                    throw new ProcessingException(errorMsg);
+                }
+            }
+        }
+
+        // Add a @CsvSource annotation for each Examples section
+        for (Examples examplesTable : examples) {
+            /**
+             * convert Examples into data table so that we can format it easily with pipe characters
+             */
+            TableRow tableHeader = examplesTable.getTableHeader().get();
+            List<TableRow> tableBody = examplesTable.getTableBody();
+            List<TableRow> allRows = new ArrayList<>(tableBody.size() + 1);
+            allRows.add(tableHeader);
+            allRows.addAll(tableBody);
+
+            Location examplesTableLocation = examplesTable.getLocation();
+            DataTable examplesDataTable = new DataTable(examplesTableLocation, allRows);
+
+            List<Integer> maxColumnLengths = TableUtils.workOutMaxColumnLength(examplesDataTable);
+
+            StringBuilder textBlockSB = new StringBuilder();
+            textBlockSB.append("\"\"\"\n");
+
+            for (TableRow row : allRows) {
+
+                List<TableCell> rowCells = row.getCells();
+                List<String> cellValues = new ArrayList<>(rowCells.size());
+
+                for (int i = 0; i < rowCells.size(); i++) {
+                    TableCell cell = rowCells.get(i);
+                    String value = cell.getValue();
+
+                    // Pad all columns except the last one to avoid trailing spaces
+                    if (i < rowCells.size() - 1) {
+                        int maxColumnLength = maxColumnLengths.get(i);
+                        String paddedValue = StringUtils.rightPad(value, maxColumnLength);
+                        cellValues.add(paddedValue);
+                    } else {
+                        // Last column - don't pad to avoid trailing spaces
+                        cellValues.add(value);
+                    }
+                }
+
+                String rowLine = String.join(" | ", cellValues);
+                textBlockSB.append(rowLine);
+                textBlockSB.append("\n");
+            }
+
+            textBlockSB.append("\"\"\"");
+
+            String textBlock = textBlockSB.toString();
+
+            AnnotationSpec csvSourceAnnotation = AnnotationSpec
+                    .builder(CsvSource.class)
+                    .addMember("useHeadersInDisplayName", "true")
+                    .addMember("delimiter", "'|'")
+                    .addMember("textBlock", textBlock)
+                    .build();
+            scenarioMethodBuilder.addAnnotation(csvSourceAnnotation);
+        }
+
         return headerCells;
+    }
+
+    /**
+     * Detects composite step patterns in a list of steps.
+     * A composite step is a Given/When/Then/And/But step followed by one or more '*' steps.
+     *
+     * @param steps the list of steps to analyze
+     * @return a list where each element is either a CompositeStepGroup or a single Step
+     */
+    private static List<Object> detectCompositeStepGroups(List<Step> steps) {
+        List<Object> result = new ArrayList<>();
+
+        for (int i = 0; i < steps.size(); i++) {
+            Step step = steps.get(i);
+            String keyword = step.getKeyword().trim();
+
+            // Check if this is a potential composite step parent (not *)
+            if (!"*".equals(keyword)) {
+                // Look ahead to see if there are * steps following
+                List<Step> subSteps = new ArrayList<>();
+                int j = i + 1;
+                while (j < steps.size() && "*".equals(steps.get(j).getKeyword().trim())) {
+                    subSteps.add(steps.get(j));
+                    j++;
+                }
+
+                if (!subSteps.isEmpty()) {
+                    // This is a composite step
+                    CompositeStepGroup group = new CompositeStepGroup(step);
+                    for (Step subStep : subSteps) {
+                        group.addSubStep(subStep);
+                    }
+                    result.add(group);
+                    i = j - 1;  // Skip the sub-steps we just processed
+                } else {
+                    // Regular step
+                    result.add(step);
+                }
+            }
+            // Note: * steps that aren't part of a composite group are skipped
+            // (they would be orphaned * steps, which shouldn't happen in valid Gherkin)
+        }
+
+        return result;
     }
 
 }

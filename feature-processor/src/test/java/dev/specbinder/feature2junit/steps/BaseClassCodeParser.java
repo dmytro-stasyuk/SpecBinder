@@ -84,9 +84,9 @@ class BaseClassCodeParser {
         GeneratorOptions defaultOptions = new GeneratorOptions();
 
         // Set default values from GeneratorOptions
-        Mockito.when(options.shouldBeConcrete()).thenReturn(defaultOptions.isShouldBeConcrete());
+        Mockito.when(options.shouldBeAbstract()).thenReturn(defaultOptions.isShouldBeAbstract());
         Mockito.when(options.classSuffixIfConcrete()).thenReturn(defaultOptions.getClassSuffixIfConcrete());
-        Mockito.when(options.generatedClassSuffix()).thenReturn(defaultOptions.getGeneratedClassSuffix());
+        Mockito.when(options.classSuffixIfAbstract()).thenReturn(defaultOptions.getClassSuffixIfAbstract());
         Mockito.when(options.addSourceLineAnnotations()).thenReturn(defaultOptions.isAddSourceLineAnnotations());
         Mockito.when(options.addSourceLineBeforeStepCalls()).thenReturn(defaultOptions.isAddSourceLineBeforeStepCalls());
         Mockito.when(options.failScenariosWithNoSteps()).thenReturn(defaultOptions.isFailScenariosWithNoSteps());
@@ -94,13 +94,14 @@ class BaseClassCodeParser {
         Mockito.when(options.tagForScenariosWithNoSteps()).thenReturn(defaultOptions.getTagForScenariosWithNoSteps());
         Mockito.when(options.tagForRulesWithNoScenarios()).thenReturn(defaultOptions.getTagForRulesWithNoScenarios());
         Mockito.when(options.addCucumberStepAnnotations()).thenReturn(defaultOptions.isAddCucumberStepAnnotations());
+        Mockito.when(options.enableCompositeSteps()).thenReturn(defaultOptions.isEnableCompositeSteps());
         Mockito.when(options.dataTableParameterType()).thenReturn(
                 DATA_TABLE_PARAMETER_TYPE.valueOf(defaultOptions.getDataTableParameterType()));
 
         // Override with values from annotation if present
-        Boolean shouldBeConcrete = extractBooleanOption(classString, "shouldBeConcrete");
-        if (shouldBeConcrete != null) {
-            Mockito.when(options.shouldBeConcrete()).thenReturn(shouldBeConcrete);
+        Boolean shouldBeAbstract = extractBooleanOption(classString, "shouldBeAbstract");
+        if (shouldBeAbstract != null) {
+            Mockito.when(options.shouldBeAbstract()).thenReturn(shouldBeAbstract);
         }
 
         String classSuffixIfConcrete = extractStringOption(classString, "classSuffixIfConcrete");
@@ -108,9 +109,9 @@ class BaseClassCodeParser {
             Mockito.when(options.classSuffixIfConcrete()).thenReturn(classSuffixIfConcrete);
         }
 
-        String generatedClassSuffix = extractStringOption(classString, "generatedClassSuffix");
-        if (generatedClassSuffix != null) {
-            Mockito.when(options.generatedClassSuffix()).thenReturn(generatedClassSuffix);
+        String classSuffixIfAbstract = extractStringOption(classString, "classSuffixIfAbstract");
+        if (classSuffixIfAbstract != null) {
+            Mockito.when(options.classSuffixIfAbstract()).thenReturn(classSuffixIfAbstract);
         }
 
         Boolean addSourceLineAnnotations = extractBooleanOption(classString, "addSourceLineAnnotations");
@@ -146,6 +147,11 @@ class BaseClassCodeParser {
         Boolean addCucumberStepAnnotations = extractBooleanOption(classString, "addCucumberStepAnnotations");
         if (addCucumberStepAnnotations != null) {
             Mockito.when(options.addCucumberStepAnnotations()).thenReturn(addCucumberStepAnnotations);
+        }
+
+        Boolean enableCompositeSteps = extractBooleanOption(classString, "enableCompositeSteps");
+        if (enableCompositeSteps != null) {
+            Mockito.when(options.enableCompositeSteps()).thenReturn(enableCompositeSteps);
         }
 
         DATA_TABLE_PARAMETER_TYPE dataTableParameterType = extractEnumOption(classString, "dataTableParameterType", DATA_TABLE_PARAMETER_TYPE.class);

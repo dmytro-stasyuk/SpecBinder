@@ -1,6 +1,5 @@
 package dev.specbinder.feature2junit.config;
 
-import dev.specbinder.annotations.Feature2JUnitOptions;
 import lombok.Getter;
 
 import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
@@ -12,11 +11,12 @@ import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMET
 public class GeneratorOptions {
 
     /**
-     * If set to true, the generated test class will be concrete and will include step method bodies with failing
-     * assertions for all methods required for the feature file to run. To implement those step test methods - move
-     * them to the superclass and add appropriate code in the method body.
+     * If set to true, the generated test class will be abstract and will have abstract step methods that need to be
+     * implemented. If set to false, the generated test class will be concrete and will include step method bodies
+     * with failing assertions for all methods required for the feature file to run. To implement those step test
+     * methods - move them to the superclass and add appropriate code in the method body.
      */
-    private final boolean shouldBeConcrete;
+    private final boolean shouldBeAbstract;
 
     /**
      * Suffix that will be used for the name of the generated test class if it is concrete.
@@ -26,7 +26,7 @@ public class GeneratorOptions {
     /**
      * Suffix that will be used for the name of the generated test class if it is abstract.
      */
-    private final String generatedClassSuffix;
+    private final String classSuffixIfAbstract;
 
     /**
      * If set to true, the generator will add {@link dev.specbinder.annotations.output.SourceLine} annotation to test methods and
@@ -83,12 +83,18 @@ public class GeneratorOptions {
     private final String dataTableParameterType;
 
     /**
+     * If set to true, enables composite step pattern where Given/When/Then/And/But steps followed by '*' steps
+     * generate composite methods with lambda parameters.
+     */
+    private final boolean enableCompositeSteps;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
-        this.shouldBeConcrete = false;
+        this.shouldBeAbstract = false;
         this.classSuffixIfConcrete = "Test";
-        this.generatedClassSuffix = "Scenarios";
+        this.classSuffixIfAbstract = "Scenarios";
         this.addSourceLineAnnotations = false;
         this.addSourceLineBeforeStepCalls = false;
         this.failScenariosWithNoSteps = true;
@@ -98,14 +104,15 @@ public class GeneratorOptions {
         this.addCucumberStepAnnotations = false;
         this.placeGeneratedClassNextToAnnotatedClass = false;
         this.dataTableParameterType = LIST_OF_MAPS.name();
+        this.enableCompositeSteps = false;
     }
 
     /**
      * Custom options
      *
-     * @param shouldBeConcrete             see {@link #shouldBeConcrete}
+     * @param shouldBeAbstract             see {@link #shouldBeAbstract}
      * @param classSuffixIfConcrete        see {@link #classSuffixIfConcrete}
-     * @param generatedClassSuffix        see {@link #generatedClassSuffix}
+     * @param classSuffixIfAbstract        see {@link #classSuffixIfAbstract}
      * @param addSourceLineAnnotations     see {@link #addSourceLineAnnotations}
      * @param addSourceLineBeforeStepCalls see {@link #addSourceLineBeforeStepCalls}
      * @param failScenariosWithNoSteps     see {@link #failScenariosWithNoSteps}
@@ -115,11 +122,12 @@ public class GeneratorOptions {
      * @param addCucumberStepAnnotations   see {@link #addCucumberStepAnnotations}
      * @param placeGeneratedClassNextToAnnotatedClass see {@link #placeGeneratedClassNextToAnnotatedClass}
      * @param dataTableParameterType       see {@link #dataTableParameterType}
+     * @param enableCompositeSteps         see {@link #enableCompositeSteps}
      */
     public GeneratorOptions(
-            boolean shouldBeConcrete,
+            boolean shouldBeAbstract,
             String classSuffixIfConcrete,
-            String generatedClassSuffix,
+            String classSuffixIfAbstract,
             boolean addSourceLineAnnotations,
             boolean addSourceLineBeforeStepCalls,
             boolean failScenariosWithNoSteps,
@@ -128,11 +136,12 @@ public class GeneratorOptions {
             String tagForRulesWithNoScenarios,
             boolean addCucumberStepAnnotations,
             boolean placeGeneratedClassNextToAnnotatedClass,
-            String dataTableParameterType
+            String dataTableParameterType,
+            boolean enableCompositeSteps
     ) {
-        this.shouldBeConcrete = shouldBeConcrete;
+        this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
-        this.generatedClassSuffix = generatedClassSuffix;
+        this.classSuffixIfAbstract = classSuffixIfAbstract;
         this.addSourceLineAnnotations = addSourceLineAnnotations;
         this.addSourceLineBeforeStepCalls = addSourceLineBeforeStepCalls;
         this.failScenariosWithNoSteps = failScenariosWithNoSteps;
@@ -142,6 +151,7 @@ public class GeneratorOptions {
         this.addCucumberStepAnnotations = addCucumberStepAnnotations;
         this.placeGeneratedClassNextToAnnotatedClass = placeGeneratedClassNextToAnnotatedClass;
         this.dataTableParameterType = dataTableParameterType;
+        this.enableCompositeSteps = enableCompositeSteps;
     }
 
 }

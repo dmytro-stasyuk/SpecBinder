@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **IMPORTANT: Running Tests**
 - **Use a hybrid approach** to ensure reliable test execution:
-  1. **First**, run `mvn test-compile` to ensure all source and test code is compiled
+  1. **First**, trigger a full project rebuild using the rebuild script
   2. **Then**, execute tests using IntelliJ IDEA's MCP server tools
 - This two-step approach is necessary because IntelliJ's automatic build is asynchronous - running tests immediately after code changes may execute against stale compiled classes
 - Use the `mcp__jetbrains__get_run_configurations` tool to list available run configurations
@@ -27,68 +27,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Example test execution workflow:**
 ```bash
-# Step 1: Ensure compilation is complete
-mvn test-compile
+# Step 1: Trigger full project rebuild in IntelliJ IDEA
+/Users/dmytro/Projects/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh
 
 # Step 2: Run tests via IntelliJ MCP server
 mcp__jetbrains__execute_run_configuration(configurationName="AllTests")
 ```
 
-**IMPORTANT: Compilation**
-- **NEVER use Maven for compilation** - Do NOT run `mvn clean compile`, `mvn compile`, or any Maven build commands
-- IntelliJ IDEA is configured to build automatically when files are saved
-- The annotation processor runs automatically during IntelliJ's build process
-- After making code changes, IntelliJ will recompile automatically - do not attempt to trigger compilation manually
-- Only use Maven build commands when explicitly requested by the user
-
-### Standard Build
-```bash
-mvn clean install
-```
-
-### Compile Only
-```bash
-mvn clean compile
-```
-
-### Run All Tests
-```bash
-mvn clean test
-```
-
-### Run Tests for a Specific Module
-```bash
-# Test feature-processor module only
-mvn clean test -pl feature-processor
-
-# Test common module only
-mvn clean test -pl common
-```
-
-### Run a Single Test Class
-```bash
-mvn test -Dtest=MappingFeatureTest -pl feature-processor
-```
-
-### Build Without Tests
-```bash
-mvn clean install -DskipTests
-```
-
-### Generate Javadocs
-```bash
-mvn javadoc:javadoc
-```
-
-### Build with Verbose Output (for debugging annotation processor)
-```bash
-mvn clean compile -X
-```
-
-### Deploy (requires GPG and credentials)
-```bash
-mvn clean deploy
-```
+**IMPORTANT: Compilation and Project Rebuild**
+- **NEVER USE MAVEN FOR COMPILATION** - DO NOT RUN `mvn clean compile`, `mvn compile`, `mvn test-compile`, OR ANY MAVEN BUILD COMMANDS
+- **ALWAYS use the rebuild script** to trigger full project rebuilds in IntelliJ IDEA:
+  ```bash
+  /Users/dmytro/Projects/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh
+  ```
+- **When to trigger a rebuild:**
+  - After making code changes and before running tests
+  - When verifying that tests are passing
+  - When checking for regressions across the project
+  - Any time you need to ensure all code is compiled with the latest changes
+- The rebuild script triggers IntelliJ IDEA's "Rebuild Project" action, which:
+  - Cleans all compiled output
+  - Runs the annotation processor on all modules
+  - Compiles all source and test code from scratch
+  - Ensures no stale compiled classes exist
+- IntelliJ IDEA also builds automatically when files are saved, but this automatic build is asynchronous and may not complete before tests run
+- **The rebuild script guarantees synchronous, complete compilation** before proceeding to test execution
+- ONLY USE MAVEN BUILD COMMANDS WHEN EXPLICITLY REQUESTED BY THE USER
 
 ## Multi-Module Architecture
 
@@ -228,10 +192,40 @@ When creating or updating Java code, **avoid using Java reflection** (e.g., `Cla
 5. Update tests
 
 ### Debugging Generated Code
+
+**Production Code Generation:**
 - Generated sources: `target/generated-test-sources/test-annotations/`
-- Enable verbose Maven output: `mvn clean compile -X`
 - Processor logs prefixed with `[Feature2JUnitGenerator]`
 - Use @SourceLine annotations for navigation back to .feature files
+
+**Test Execution Output Structure:**
+
+When feature tests execute, they write test artifacts to a structured output directory for debugging and verification:
+
+```
+target/feature-tests-output/
+  └── <feature-file-path>/           # Path of the currently running feature
+      └── <scenario-line-number>/    # Directory for each scenario (identified by line number)
+          └── <package-directories>/ # Package structure for base classes and feature files
+```
+
+**Purpose:**
+- **Debugging test failures**: Inspect what base classes and feature files were created by each scenario
+- **Verifying compilation**: Check what was actually compiled during test execution
+- **Analyzing verification failures**: Compare actual generated output against expected values
+
+**When to use:**
+- When a test fails, navigate to the corresponding scenario's output directory to examine:
+  - Base classes generated as preconditions
+  - Feature files used for context
+  - Compiled artifacts produced by the annotation processor
+- When verification assertions fail, inspect these directories to understand the discrepancy between actual and expected output
+
+**Example:**
+For a feature file at `features/steps/MappingSteps.feature` with a scenario at line 42:
+```
+target/feature-tests-output/features/steps/MappingSteps/Scenario_line_42/...
+```
 
 ### Working with Step Processing
 Most step-related logic is in StepProcessor.java:478. Key responsibilities:
@@ -287,7 +281,7 @@ Feature: MappingStepDataTables
 **Additional .feature File Guidelines:**
 - Place test feature files in `feature-processor/src/test/resources/features/`
 - Feature files serve as living documentation of the Gherkin-to-JUnit mapping
-- Always run tests using IntelliJ IDEA's MCP server tools, not Maven commands
+- Always run tests using IntelliJ IDEA's MCP server tools, NOT MAVEN COMMANDS
 
 ## Git Workflow
 
@@ -327,6 +321,39 @@ The project uses a self-hosting approach - Cucumber tests validate the Cucumber-
 - Test features in `feature-processor/src/test/resources/features/`
 - Test implementations verify generated code correctness
 - MappingSteps.feature documents the complete mapping specification
+
+**Test Execution and Verification:**
+
+Tests in the feature-processor module follow a structured execution and verification pattern:
+
+1. **Test Preconditions**: Test scenarios create base classes and feature files as preconditions using Given steps
+2. **Code Generation**: The annotation processor generates test classes from the feature files
+3. **Compilation**: Generated code is compiled to verify it's syntactically correct
+4. **Verification**: Assertion steps verify the generated output matches expected values
+
+**Test Output Directory Structure:**
+
+During test execution, all test artifacts (base classes, feature files, and compiled output) are written to:
+```
+target/feature-tests-output/<feature-path>/<scenario-identifier>/
+```
+
+This structured output enables:
+- **Isolated scenario testing**: Each scenario's artifacts are in a separate directory
+- **Post-failure analysis**: Inspect what was generated and compiled when tests fail
+- **Verification debugging**: Compare actual generated code against expected values
+- **Compilation verification**: Check compiled artifacts to ensure code is not just generated but also compilable
+
+**Debugging Failed Tests:**
+
+When a test fails:
+1. Locate the scenario's output directory in `target/feature-tests-output/`
+2. Examine the base classes and feature files created as preconditions
+3. Review the generated test code produced by the annotation processor
+4. Compare actual output against the expected values in the assertion
+5. Check compilation artifacts to verify the generated code compiles correctly
+
+This approach ensures comprehensive testing of the entire code generation pipeline, from parsing through generation to compilation.
 
 ## Generated Code Location
 

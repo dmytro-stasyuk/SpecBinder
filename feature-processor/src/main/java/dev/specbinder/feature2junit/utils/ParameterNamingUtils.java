@@ -20,22 +20,17 @@ public class ParameterNamingUtils {
 
         StringBuilder parameterNameBuilder = new StringBuilder();
 
-        String[] words = scenarioParameter.split("\\s+");
-
-        // Only preserve casing if input is already "proper camelCase":
-        // - Single word (no spaces)
-        // - Starts with lowercase letter
-        // - Contains at least one uppercase letter
-        // - No underscores or special characters
-        boolean isProperCamelCase = words.length == 1
-            && scenarioParameter.length() > 0
-            && Character.isLowerCase(scenarioParameter.charAt(0))
-            && scenarioParameter.chars().anyMatch(Character::isUpperCase)
-            && scenarioParameter.chars().allMatch(Character::isLetterOrDigit);
+        String[] words = scenarioParameter.split("[\\s.]+");
 
         for (int i = 0; i < words.length; i++) {
 
             String word = words[i];
+
+            // Check if the entire word is uppercase (all letter characters are uppercase)
+            boolean isAllUppercase = word.chars()
+                .filter(Character::isLetter)
+                .allMatch(Character::isUpperCase)
+                && word.chars().anyMatch(Character::isLetter); // must have at least one letter
 
             // Remove invalid characters
             StringBuilder sanitizedWordBuilder = new StringBuilder();
@@ -45,7 +40,10 @@ public class ParameterNamingUtils {
                     // nothing added yet - so check if char is suitable as a starting char
                     if (Character.isJavaIdentifierStart(c)) {
                         char wordFirstChar;
-                        if (parameterNameBuilder.length() == 0) {
+                        if (isAllUppercase) {
+                            // If the whole word is uppercase, preserve it as-is
+                            wordFirstChar = c;
+                        } else if (parameterNameBuilder.length() == 0) {
                             // first word in method name - so use lower case
                             wordFirstChar = Character.toLowerCase(c);
                         } else {
@@ -55,8 +53,7 @@ public class ParameterNamingUtils {
                         sanitizedWordBuilder.append(wordFirstChar);
                     } else if (Character.isJavaIdentifierPart(c) && parameterNameBuilder.length() > 0) {
                         // It's a digit or other valid identifier part, and we already have something in the parameter name
-                        // Add it in lowercase (for digits, this has no effect)
-                        sanitizedWordBuilder.append(Character.toLowerCase(c));
+                        sanitizedWordBuilder.append(c);
                     } else {
                         // skip - can't use this character
                     }
@@ -64,10 +61,8 @@ public class ParameterNamingUtils {
                 } else {
 
                     if (Character.isJavaIdentifierPart(c)) {
-                        // For proper camelCase parameters, preserve the original casing
-                        // For all other cases, convert to lowercase for camelCase convention
-                        char charToAppend = isProperCamelCase ? c : Character.toLowerCase(c);
-                        sanitizedWordBuilder.append(charToAppend);
+                        // Preserve the original casing of all characters except the first character of each word
+                        sanitizedWordBuilder.append(c);
                     } else {
                         // skip
                     }

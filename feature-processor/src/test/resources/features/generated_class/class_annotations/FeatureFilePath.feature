@@ -8,6 +8,8 @@ Feature: FeatureFilePath
       """
       package com.example.shop;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+
       @Feature2JUnit("features/shopping/cart.feature")
       public abstract class CartFeatureBase {
       }
@@ -19,7 +21,7 @@ Feature: FeatureFilePath
         I want to manage items in my cart
       """
     When the generator is run
-    Then the content of the generated class should be:
+    Then the following class should be generated:
       """
       package features.shopping;
 
@@ -36,7 +38,7 @@ Feature: FeatureFilePath
       @DisplayName("cart")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("features/shopping/cart.feature")
-      public abstract class CartFeatureBaseScenarios extends CartFeatureBase {
+      public class CartTest extends CartFeatureBase {
       }
       """
 
@@ -46,6 +48,8 @@ Feature: FeatureFilePath
       Given the following base class:
       """
       package com.example.payment;
+
+      import dev.specbinder.annotations.Feature2JUnit;
 
       @Feature2JUnit
       public abstract class PaymentProcessing {
@@ -58,7 +62,7 @@ Feature: FeatureFilePath
         I want to process payments
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
       package com.example.payment;
 
@@ -74,7 +78,7 @@ Feature: FeatureFilePath
       @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("com/example/payment/TestFeature.feature")
-      public abstract class TestFeatureScenarios extends PaymentProcessing {
+      public class TestFeatureTest extends PaymentProcessing {
       }
       """
 
@@ -84,6 +88,8 @@ Feature: FeatureFilePath
       Given the following base class:
       """
       package com.example.nonexistent;
+
+      import dev.specbinder.annotations.Feature2JUnit;
 
       @Feature2JUnit("features/nonexistent/missing.feature")
       public abstract class MissingFeature {

@@ -6,6 +6,16 @@ Feature: GherkinComments
   Rule: Gherkin comments (lines starting with #) are ignored in all locations and do not appear in generated code
 
     Scenario: Feature file with comments in all possible locations
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       # Comment before feature
@@ -62,11 +72,14 @@ Feature: GherkinComments
             | data  |
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.String;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
@@ -83,14 +96,18 @@ Feature: GherkinComments
       /**
        * Feature: feature with comprehensive comments
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenABackgroundStep();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenABackgroundStep() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenAnotherBackgroundStep();
+          public void givenAnotherBackgroundStep() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")
@@ -105,21 +122,37 @@ Feature: GherkinComments
               givenAnotherBackgroundStep();
           }
 
-          public abstract void givenARuleStep();
+          public void givenARuleStep() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenAnotherRuleStep();
+          public void whenAnotherRuleStep() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenAStep();
+          public void givenAStep() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenAnotherStep();
+          public void whenAnotherStep() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenFinalStep();
+          public void thenFinalStep() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenYetAnotherStep();
+          public void givenYetAnotherStep() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenIHave$p1(String p1);
+          public void givenIHave$p1(String p1) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenIUse$p1(String p1);
+          public void whenIUse$p1(String p1) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)

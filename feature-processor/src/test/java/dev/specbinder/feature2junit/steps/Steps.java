@@ -105,7 +105,7 @@ public class Steps {
                 .thenReturn(mockedAnnotatedElements);
     }
 
-    @Before
+    //@Before
     public void beforeEach(Scenario scenario) {
         // Reset the generatorException before each scenario
         generatorException = null;
@@ -137,7 +137,7 @@ public class Steps {
 
     }
 
-    @Given("the following base class:")
+    //@Given("the following base class:")
     public void the_following_base_class(String docString) {
 
         // Extract the package name and class name from the base class
@@ -237,7 +237,7 @@ public class Steps {
         }
     }
 
-    @Given("the following feature file:")
+    //@Given("the following feature file:")
     public void the_following_feature_file(String docString) throws IOException {
         // Use the path from @Feature2JUnit annotation if available, otherwise use default
         String path = annotatedFeatureFilePath != null
@@ -247,7 +247,7 @@ public class Steps {
         setupFeatureFileMocks();
     }
 
-    @Given("a feature file under path {string} with the following content:")
+    //@Given("a feature file under path {string} with the following content:")
     public void a_feature_file_under_path_with_the_following_content(String path, String docString) throws IOException {
         featureFiles.put(path, docString);
         setupFeatureFileMocks();
@@ -278,7 +278,7 @@ public class Steps {
                 });
     }
 
-    @When("the generator is run")
+    //@When("the generator is run")
     public void the_generator_is_run() {
         // Write code here that turns the phrase above into concrete actions
         //        throw new io.cucumber.java.PendingException();
@@ -307,7 +307,7 @@ public class Steps {
         }
     }
 
-    @Then("the content of the generated class should be:")
+    //@Then("the content of the generated class should be:")
     public void the_content_of_the_generated_class_should_be(String docString) {
         // Write code here that turns the phrase above into concrete actions
 
@@ -372,7 +372,7 @@ public class Steps {
         }
     }
 
-    @Then("the generator should report an error:")
+    //@Then("the generator should report an error:")
     public void the_generator_should_report_an_error(String expectedErrorMessage) {
         // Verify that an exception was thrown during generator execution
         Assertions.assertNotNull(
@@ -386,7 +386,7 @@ public class Steps {
         Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
-    @Then("{int} test classes should be generated")
+    //@Then("{int} test classes should be generated")
     public void test_classes_should_be_generated(Integer expectedCount) {
         if (generatorException != null) {
             Assertions.fail("Expected the generator to complete without exceptions, but an exception was thrown: "
@@ -398,7 +398,7 @@ public class Steps {
                 "Expected " + expectedCount + " test classes but got " + actualCount + ". Generated classes: " + generatedClasses.keySet());
     }
 
-    @Then("a class named {string} should be generated with content:")
+    //@Then("a class named {string} should be generated with content:")
     public void a_class_named_should_be_generated_with_content(String className, String expectedContent) {
         if (generatorException != null) {
             Assertions.fail("Expected the generator to complete without exceptions, but an exception was thrown: "

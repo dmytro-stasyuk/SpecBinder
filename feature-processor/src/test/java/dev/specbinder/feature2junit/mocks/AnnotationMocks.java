@@ -37,9 +37,9 @@ final class AnnotationMocks {
         GeneratorOptions defaultOptions = new GeneratorOptions();
 
         // Set default values from GeneratorOptions (can be overridden by Steps.java)
-        Mockito.when(options.shouldBeConcrete()).thenReturn(defaultOptions.isShouldBeConcrete());
+        Mockito.when(options.shouldBeAbstract()).thenReturn(defaultOptions.isShouldBeAbstract());
         Mockito.when(options.classSuffixIfConcrete()).thenReturn(defaultOptions.getClassSuffixIfConcrete());
-        Mockito.when(options.generatedClassSuffix()).thenReturn(defaultOptions.getGeneratedClassSuffix());
+        Mockito.when(options.classSuffixIfAbstract()).thenReturn(defaultOptions.getClassSuffixIfAbstract());
         Mockito.when(options.addSourceLineAnnotations()).thenReturn(defaultOptions.isAddSourceLineAnnotations());
         Mockito.when(options.addSourceLineBeforeStepCalls()).thenReturn(defaultOptions.isAddSourceLineBeforeStepCalls());
         Mockito.when(options.failScenariosWithNoSteps()).thenReturn(defaultOptions.isFailScenariosWithNoSteps());

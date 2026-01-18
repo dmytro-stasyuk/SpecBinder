@@ -6,6 +6,16 @@ Feature: BackgroundWithDocString
   Rule: Background steps with DocStrings should generate methods accepting String parameter
 
     Scenario: Background with a DocString step
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: API testing
@@ -19,11 +29,14 @@ Feature: BackgroundWithDocString
             \"\"\"
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.String;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.TestInfo;
@@ -31,11 +44,13 @@ Feature: BackgroundWithDocString
       /**
        * Feature: API testing
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenTheServerRespondsWith(String docString);
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenTheServerRespondsWith(String docString) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")
@@ -54,6 +69,16 @@ Feature: BackgroundWithDocString
       """
 
     Scenario: Background with multiple steps including DocString
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: email testing
@@ -67,11 +92,14 @@ Feature: BackgroundWithDocString
           And email sending is enabled
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.String;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.TestInfo;
@@ -79,15 +107,21 @@ Feature: BackgroundWithDocString
       /**
        * Feature: email testing
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenTheEmailServiceIsAvailable();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenTheEmailServiceIsAvailable() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenTheEmailTemplateIs(String docString);
+          public void givenTheEmailTemplateIs(String docString) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void givenEmailSendingIsEnabled();
+          public void givenEmailSendingIsEnabled() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @BeforeEach
           @DisplayName("Background:")

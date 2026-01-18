@@ -21,3 +21,4 @@ buildNumber.properties
 **/*Scenarios.java
 /_resources/
 **/.flattened-pom.xml
+.aider*

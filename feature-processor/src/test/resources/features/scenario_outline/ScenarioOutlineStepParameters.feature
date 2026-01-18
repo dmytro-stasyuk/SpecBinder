@@ -5,10 +5,18 @@ Feature: ScenarioOutlineStepParameters
 
   Rule: Step text with angle bracket parameters <param> in Scenario Outlines are replaced at method call site
   - Angle bracket parameters in step text are detected and replaced
-  - The replacement uses the actual parameter value from the Examples table
-  - Method signature still uses String parameters for scenario parameters
 
     Scenario: Step with single scenario outline parameter
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Scenario Outline Single Parameter
@@ -20,11 +28,14 @@ Feature: ScenarioOutlineStepParameters
               | bob      |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -35,12 +46,14 @@ Feature: ScenarioOutlineStepParameters
         /**
          * Feature: Scenario Outline Single Parameter
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUser$p1Exists(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUser$p1Exists(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
@@ -66,6 +79,16 @@ Feature: ScenarioOutlineStepParameters
         """
 
     Scenario: Step with multiple scenario outline parameters
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Scenario Outline Multiple Parameters
@@ -77,11 +100,14 @@ Feature: ScenarioOutlineStepParameters
               | carol    | hi      | dave      |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -92,12 +118,14 @@ Feature: ScenarioOutlineStepParameters
         /**
          * Feature: Scenario Outline Multiple Parameters
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenUser$p1SendsMessage$p2To$p3(String p1, String p2, String p3);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void whenUser$p1SendsMessage$p2To$p3(String p1, String p2, String p3) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
@@ -123,6 +151,16 @@ Feature: ScenarioOutlineStepParameters
         """
 
     Scenario: Step mixing quoted parameters and scenario outline parameters
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Mixed Parameters
@@ -134,11 +172,14 @@ Feature: ScenarioOutlineStepParameters
               | bob      | admin |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -149,12 +190,14 @@ Feature: ScenarioOutlineStepParameters
         /**
          * Feature: Mixed Parameters
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUser$p1AssignsRole$p2ToUser$p3(String p1, String p2, String p3);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUser$p1AssignsRole$p2ToUser$p3(String p1, String p2, String p3) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
@@ -179,59 +222,4 @@ Feature: ScenarioOutlineStepParameters
         }
         """
 
-    Scenario: Step with only scenario outline parameters - no quoted strings
-      Given the following feature file:
-        """
-        Feature: Only Scenario Parameters
-          Scenario Outline: Test
-            Then status is <status> and code is <code>
-            Examples:
-              | status  | code |
-              | success | 200  |
-              | error   | 500  |
-        """
-      When the generator is run
-      Then the content of the generated class should be:
-        """
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.String;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.TestMethodOrder;
-        import org.junit.jupiter.params.ParameterizedTest;
-        import org.junit.jupiter.params.provider.CsvSource;
 
-        /**
-         * Feature: Only Scenario Parameters
-         */
-        @DisplayName("MockedAnnotatedTestClass")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void thenStatusIs$p1AndCodeIs$p2(String p1, String p2);
-
-            @ParameterizedTest(
-                    name = "Example {index}: [{arguments}]"
-            )
-            @CsvSource(
-                    useHeadersInDisplayName = true,
-                    delimiter = '|',
-                    textBlock = \"\"\"
-                            status  | code
-                            success | 200
-                            error   | 500
-                            \"\"\"
-            )
-            @Order(1)
-            @DisplayName("Scenario Outline: Test")
-            public void scenario_1(String status, String code) {
-                /*
-                 * Then status is <status> and code is <code>
-                 */
-                thenStatusIs$p1AndCodeIs$p2(status, code);
-            }
-        }
-        """

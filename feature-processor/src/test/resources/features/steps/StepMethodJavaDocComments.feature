@@ -9,6 +9,16 @@ Feature: StepMethodJavaDocComments
   - And, But, and * keywords are preserved in comments (not replaced with inherited keyword)
 
     Scenario: JavaDoc comment preserves exact step text including keyword
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: JavaDoc Preservation
@@ -18,11 +28,14 @@ Feature: StepMethodJavaDocComments
             Then message "Success" is displayed
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -32,16 +45,22 @@ Feature: StepMethodJavaDocComments
         /**
          * Feature: JavaDoc Preservation
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUser$p1Exists(String p1);
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUser$p1Exists(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void whenUserClicks$p1Button(String p1);
+            public void whenUserClicks$p1Button(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenMessage$p1IsDisplayed(String p1);
+            public void thenMessage$p1IsDisplayed(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -64,6 +83,16 @@ Feature: StepMethodJavaDocComments
         """
 
     Scenario: JavaDoc comment preserves And keyword in original form
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: And Keyword Preservation
@@ -73,10 +102,13 @@ Feature: StepMethodJavaDocComments
             And user has permissions
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -86,16 +118,22 @@ Feature: StepMethodJavaDocComments
         /**
          * Feature: And Keyword Preservation
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserIsActive();
+            public void givenUserIsActive() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenUserHasPermissions();
+            public void givenUserHasPermissions() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -118,6 +156,16 @@ Feature: StepMethodJavaDocComments
         """
 
     Scenario: JavaDoc comment preserves But keyword in original form
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: But Keyword Preservation
@@ -126,10 +174,13 @@ Feature: StepMethodJavaDocComments
             But password is not visible
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -139,14 +190,18 @@ Feature: StepMethodJavaDocComments
         /**
          * Feature: But Keyword Preservation
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void thenUsernameIsVisible();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void thenUsernameIsVisible() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenPasswordIsNotVisible();
+            public void thenPasswordIsNotVisible() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -165,6 +220,16 @@ Feature: StepMethodJavaDocComments
         """
 
     Scenario: JavaDoc comment preserves asterisk keyword in original form
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
         """
         Feature: Asterisk Preservation
@@ -174,10 +239,13 @@ Feature: StepMethodJavaDocComments
             * cache is warm
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -187,16 +255,22 @@ Feature: StepMethodJavaDocComments
         /**
          * Feature: Asterisk Preservation
          */
-        @DisplayName("MockedAnnotatedTestClass")
+        @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("MockedAnnotatedTestClass.feature")
-        public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenSystemIsReady();
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void givenSystemIsReady() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenDatabaseIsConnected();
+            public void givenDatabaseIsConnected() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void givenCacheIsWarm();
+            public void givenCacheIsWarm() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -227,8 +301,8 @@ Feature: StepMethodJavaDocComments
         """
         package com.example;
 
-        import dev.specbinder.feature2junit.Feature2JUnit;
-        import dev.specbinder.feature2junit.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Feature2JUnit;
+        import dev.specbinder.annotations.Feature2JUnitOptions;
 
         @Feature2JUnit
         @Feature2JUnitOptions(addSourceLineAnnotations = true)
@@ -244,13 +318,14 @@ Feature: StepMethodJavaDocComments
             Then result is displayed
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import dev.specbinder.annotations.output.SourceLine;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -264,12 +339,18 @@ Feature: StepMethodJavaDocComments
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
-        public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
+            public void givenUserExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void whenUserClicksButton();
+            public void whenUserClicksButton() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
-            public abstract void thenResultIsDisplayed();
+            public void thenResultIsDisplayed() {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)

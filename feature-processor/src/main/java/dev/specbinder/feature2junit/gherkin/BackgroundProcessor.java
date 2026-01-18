@@ -8,6 +8,7 @@ import dev.specbinder.feature2junit.config.GeneratorOptions;
 import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
+import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.utils.ElementMethodUtils;
 import dev.specbinder.feature2junit.utils.JavaDocUtils;
 import dev.specbinder.feature2junit.utils.LocationUtils;
@@ -32,12 +33,15 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
     private final TypeElement baseType;
     private final Set<String> baseClassMethodNames;
     private final DataTableCollector dataTableCollector;
+    private final EnumImportCollector enumImportCollector;
 
-    BackgroundProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType, DataTableCollector dataTableCollector) {
+    BackgroundProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType,
+                        DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector) {
         this.processingEnv = processingEnv;
         this.options = options;
         this.baseType = baseType;
         this.dataTableCollector = dataTableCollector;
+        this.enumImportCollector = enumImportCollector;
 
         baseClassMethodNames = ElementMethodUtils.getAllInheritedMethodNames(processingEnv, baseType);
     }
@@ -96,7 +100,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
         for (Step scenarioStep : backgroundSteps) {
 
-            StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector);
+            StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
             MethodSpec stepMethodSpec = stepProcessor.processStep(scenarioStep, backgroundMethodBuilder, backgroundStepsMethodSpecs);
             backgroundStepsMethodSpecs.add(stepMethodSpec);
 
@@ -107,9 +111,9 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
                             .orElse(null);
 
             if (existingMethodSpec == null) {
-                // If the method already exists, we can skip creating it again
-                boolean baseClassHasMethod = baseClassMethodNames.contains(stepMethodName);
-                if (baseClassHasMethod) {
+                // Check if base class has a compatible method (not just by name, but by signature)
+                boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, null, backgroundStepsMethodSpecs);
+                if (baseClassHasCompatibleMethod) {
                     logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
                 } else {
                     classBuilder.addMethod(stepMethodSpec);

@@ -19,13 +19,13 @@ Feature: MappingDataTableToListOfMaps
       import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature {
 
       }
       """
-      And a feature file under path "test.feature" with the following content:
+      And the following feature file:
         """
         Feature: Users Management
           Scenario: Create users
@@ -35,9 +35,10 @@ Feature: MappingDataTableToListOfMaps
               | Bob   | User  |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
-        import com.example.TestFeature;
+        package com.example;
+
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Math;
         import java.lang.String;
@@ -46,6 +47,7 @@ Feature: MappingDataTableToListOfMaps
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -55,12 +57,14 @@ Feature: MappingDataTableToListOfMaps
         /**
          * Feature: Users Management
          */
-        @DisplayName("test")
+        @DisplayName("TestFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("test.feature")
-        public abstract class TestFeatureScenarios extends TestFeature {
-            public abstract void givenTheFollowingUsersExist(List<Map<String, String>> data);
+        @FeatureFilePath("com/example/TestFeature.feature")
+        public class TestFeatureTest extends TestFeature {
+            public void givenTheFollowingUsersExist(List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -123,13 +127,13 @@ Feature: MappingDataTableToListOfMaps
       import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit("features/Users.feature")
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature {
 
       }
       """
-      And a feature file under path "test.feature" with the following content:
+      And a feature file under path "features/Users.feature" with the following content:
         """
         Feature: Permissions Management
           Scenario: Set permissions
@@ -139,8 +143,10 @@ Feature: MappingDataTableToListOfMaps
               | write      | false   |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import com.example.TestFeature;
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Math;
@@ -150,6 +156,7 @@ Feature: MappingDataTableToListOfMaps
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -159,12 +166,14 @@ Feature: MappingDataTableToListOfMaps
         /**
          * Feature: Permissions Management
          */
-        @DisplayName("test")
+        @DisplayName("Users")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("test.feature")
-        public abstract class TestFeatureScenarios extends TestFeature {
-            public abstract void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data);
+        @FeatureFilePath("features/Users.feature")
+        public class UsersTest extends TestFeature {
+            public void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -217,254 +226,6 @@ Feature: MappingDataTableToListOfMaps
         }
         """
 
-  Rule: data tables may contain references to the values from the examples table via the <param> syntax when using LIST_OF_MAPS
-  - angle bracket parameters <param> in data tables are replaced with actual values
-  - the replacement happens at the method call site, not in the method signature
-
-    Scenario: DataTable with single parameter reference from Examples
-      Given the following base class:
-      """
-      package com.example;
-
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
-      import io.cucumber.datatable.DataTable;
-
-      @Feature2JUnit("test.feature")
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
-      public abstract class TestFeature {
-
-      }
-      """
-      And a feature file under path "test.feature" with the following content:
-        """
-        Feature: Product Inventory
-          Scenario Outline: Check product availability
-            When checking inventory for product:
-              | name   | status   |
-              | <name> | <status> |
-            Examples:
-              | name   | status      |
-              | Laptop | Available   |
-              | Mouse  | Out of Stock|
-        """
-      When the generator is run
-      Then the content of the generated class should be:
-        """
-        import com.example.TestFeature;
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Math;
-        import java.lang.String;
-        import java.util.ArrayList;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.TestMethodOrder;
-        import org.junit.jupiter.params.ParameterizedTest;
-        import org.junit.jupiter.params.provider.CsvSource;
-
-        /**
-         * Feature: Product Inventory
-         */
-        @DisplayName("test")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("test.feature")
-        public abstract class TestFeatureScenarios extends TestFeature {
-            public abstract void whenCheckingInventoryForProduct(List<Map<String, String>> data);
-
-            @ParameterizedTest(
-                    name = "Example {index}: [{arguments}]"
-            )
-            @CsvSource(
-                    useHeadersInDisplayName = true,
-                    delimiter = '|',
-                    textBlock = \"\"\"
-                            name   | status
-                            Laptop | Available
-                            Mouse  | Out of Stock
-                            \"\"\"
-            )
-            @Order(1)
-            @DisplayName("Scenario Outline: Check product availability")
-            public void scenario_1(String name, String status) {
-                /*
-                 * When checking inventory for product:
-                 */
-                whenCheckingInventoryForProduct(createListOfMaps(\"\"\"
-                        | name   | status   |
-                        | <name> | <status> |
-                        \"\"\"
-                        .replaceAll("<name>", name)
-                        .replaceAll("<status>", status)));
-            }
-
-            protected List<Map<String, String>> createListOfMaps(String tableLines) {
-
-                String[] tableRows = tableLines.split("\\n");
-                List<Map<String, String>> listOfMaps = new ArrayList<>();
-
-                if (tableRows.length < 2) {
-                    return listOfMaps;
-                }
-
-                String[] headers = null;
-                for (int i = 0; i < tableRows.length; i++) {
-                    String trimmedLine = tableRows[i].trim();
-                    if (!trimmedLine.isEmpty()) {
-                        String[] columns = trimmedLine.split("\\|");
-                        List<String> rowColumns = new ArrayList<>(columns.length);
-                        for (int j = 1; j < columns.length; j++) {
-                            String column = columns[j].trim();
-                            rowColumns.add(column);
-                        }
-
-                        if (headers == null) {
-                            headers = rowColumns.toArray(new String[0]);
-                        } else {
-                            Map<String, String> rowMap = new HashMap<>();
-                            for (int j = 0; j < Math.min(headers.length, rowColumns.size()); j++) {
-                                rowMap.put(headers[j], rowColumns.get(j));
-                            }
-                            listOfMaps.add(rowMap);
-                        }
-                    }
-                }
-
-                return listOfMaps;
-            }
-        }
-        """
-
-    Scenario: DataTable with mixed static values and parameter references
-      Given the following base class:
-      """
-      package com.example;
-
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
-      import io.cucumber.datatable.DataTable;
-
-      @Feature2JUnit("test.feature")
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
-      public abstract class TestFeature {
-
-      }
-      """
-      And a feature file under path "test.feature" with the following content:
-        """
-        Feature: Order Processing
-          Scenario Outline: Process order with items
-            Then order "<orderId>" contains items:
-              | product   | quantity | status    |
-              | <product> | <qty>    | pending   |
-              | Keyboard  | 1        | <status>  |
-            Examples:
-              | orderId | product | qty | status    |
-              | ORD-001 | Monitor | 2   | confirmed |
-              | ORD-002 | Mouse   | 5   | shipped   |
-        """
-      When the generator is run
-      Then the content of the generated class should be:
-      """
-      import com.example.TestFeature;
-      import dev.specbinder.annotations.output.FeatureFilePath;
-      import java.lang.Math;
-      import java.lang.String;
-      import java.util.ArrayList;
-      import java.util.HashMap;
-      import java.util.List;
-      import java.util.Map;
-      import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.DisplayName;
-      import org.junit.jupiter.api.MethodOrderer;
-      import org.junit.jupiter.api.Order;
-      import org.junit.jupiter.api.TestMethodOrder;
-      import org.junit.jupiter.params.ParameterizedTest;
-      import org.junit.jupiter.params.provider.CsvSource;
-
-      /**
-       * Feature: Order Processing
-       */
-      @DisplayName("test")
-      @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-      @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
-          public abstract void thenOrder$p1ContainsItems(String p1, List<Map<String, String>> data);
-
-          @ParameterizedTest(
-                  name = "Example {index}: [{arguments}]"
-          )
-          @CsvSource(
-                  useHeadersInDisplayName = true,
-                  delimiter = '|',
-                  textBlock = \"\"\"
-                          orderId | product | qty | status
-                          ORD-001 | Monitor | 2   | confirmed
-                          ORD-002 | Mouse   | 5   | shipped
-                          \"\"\"
-          )
-          @Order(1)
-          @DisplayName("Scenario Outline: Process order with items")
-          public void scenario_1(String orderId, String product, String qty, String status) {
-              /*
-               * Then order "<orderId>" contains items:
-               */
-              thenOrder$p1ContainsItems(orderId, createListOfMaps(\"\"\"
-                      | product   | quantity | status   |
-                      | <product> | <qty>    | pending  |
-                      | Keyboard  | 1        | <status> |
-                      \"\"\"
-                      .replaceAll("<orderId>", orderId)
-                      .replaceAll("<product>", product)
-                      .replaceAll("<qty>", qty)
-                      .replaceAll("<status>", status)));
-          }
-
-          protected List<Map<String, String>> createListOfMaps(String tableLines) {
-
-              String[] tableRows = tableLines.split("\\n");
-              List<Map<String, String>> listOfMaps = new ArrayList<>();
-
-              if (tableRows.length < 2) {
-                  return listOfMaps;
-              }
-
-              String[] headers = null;
-              for (int i = 0; i < tableRows.length; i++) {
-                  String trimmedLine = tableRows[i].trim();
-                  if (!trimmedLine.isEmpty()) {
-                      String[] columns = trimmedLine.split("\\|");
-                      List<String> rowColumns = new ArrayList<>(columns.length);
-                      for (int j = 1; j < columns.length; j++) {
-                          String column = columns[j].trim();
-                          rowColumns.add(column);
-                      }
-
-                      if (headers == null) {
-                          headers = rowColumns.toArray(new String[0]);
-                      } else {
-                          Map<String, String> rowMap = new HashMap<>();
-                          for (int j = 0; j < Math.min(headers.length, rowColumns.size()); j++) {
-                              rowMap.put(headers[j], rowColumns.get(j));
-                          }
-                          listOfMaps.add(rowMap);
-                      }
-                  }
-              }
-
-              return listOfMaps;
-          }
-      }
-      """
-
   Rule: a helper method is used conversion from string to list of maps creation
 
     Scenario: Multiple steps with DataTables share the same helper method
@@ -477,13 +238,13 @@ Feature: MappingDataTableToListOfMaps
         import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
         import io.cucumber.datatable.DataTable;
 
-        @Feature2JUnit("test.feature")
+        @Feature2JUnit
         @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
         public abstract class TestFeature {
 
         }
         """
-      And a feature file under path "test.feature" with the following content:
+      And the following feature file:
       """
       Feature: Team Management
       Scenario: Add team members
@@ -497,9 +258,10 @@ Feature: MappingDataTableToListOfMaps
           | Dana   | Coding       |
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
-      import com.example.TestFeature;
+      package com.example;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.Math;
       import java.lang.String;
@@ -508,6 +270,7 @@ Feature: MappingDataTableToListOfMaps
       import java.util.List;
       import java.util.Map;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -517,15 +280,18 @@ Feature: MappingDataTableToListOfMaps
       /**
        * Feature: Team Management
        */
-      @DisplayName("test")
+      @DisplayName("TestFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
-          public abstract void givenTheFollowingTeamMembersExist(List<Map<String, String>> data);
+      @FeatureFilePath("com/example/TestFeature.feature")
+      public class TestFeatureTest extends TestFeature {
+          public void givenTheFollowingTeamMembersExist(List<Map<String, String>> data) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenTheFollowingTeamMembersAreAssignedTasks(
-                  List<Map<String, String>> data);
+          public void whenTheFollowingTeamMembersAreAssignedTasks(List<Map<String, String>> data) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -598,13 +364,13 @@ Feature: MappingDataTableToListOfMaps
       import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit("features/Permissions.feature")
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature {
 
       }
       """
-      And a feature file under path "test.feature" with the following content:
+      And a feature file under path "features/Permissions.feature" with the following content:
       """
       Feature: Permissions Management
       Scenario: Set permissions
@@ -614,8 +380,10 @@ Feature: MappingDataTableToListOfMaps
         | write      | false   |
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import com.example.TestFeature;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.Math;
@@ -625,6 +393,7 @@ Feature: MappingDataTableToListOfMaps
       import java.util.List;
       import java.util.Map;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -634,12 +403,14 @@ Feature: MappingDataTableToListOfMaps
       /**
        * Feature: Permissions Management
        */
-      @DisplayName("test")
+      @DisplayName("Permissions")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
-          public abstract void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data);
+      @FeatureFilePath("features/Permissions.feature")
+      public class PermissionsTest extends TestFeature {
+          public void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -706,7 +477,7 @@ Feature: MappingDataTableToListOfMaps
       import java.util.List;
       import java.util.Map;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit("features/Permissions.feature")
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature {
           protected List<Map<String, String>> createListOfMaps(String tableLines) {
@@ -715,7 +486,7 @@ Feature: MappingDataTableToListOfMaps
           }
       }
       """
-      And a feature file under path "test.feature" with the following content:
+      And a feature file under path "features/Permissions.feature" with the following content:
         """
         Feature: Permissions Management
           Scenario: Set permissions
@@ -725,14 +496,17 @@ Feature: MappingDataTableToListOfMaps
               | write      | false   |
         """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
         """
+        package features;
+
         import com.example.TestFeature;
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import java.util.List;
         import java.util.Map;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -742,12 +516,14 @@ Feature: MappingDataTableToListOfMaps
         /**
          * Feature: Permissions Management
          */
-        @DisplayName("test")
+        @DisplayName("Permissions")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("test.feature")
-        public abstract class TestFeatureScenarios extends TestFeature {
-            public abstract void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data);
+        @FeatureFilePath("features/Permissions.feature")
+        public class PermissionsTest extends TestFeature {
+            public void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data) {
+                Assertions.fail("Step is not yet implemented");
+            }
 
             @Test
             @Order(1)
@@ -795,12 +571,12 @@ Feature: MappingDataTableToListOfMaps
       import java.util.List;
       import java.util.Map;
 
-      @Feature2JUnit("test.feature")
+      @Feature2JUnit("features/Permissions.feature")
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature extends BaseFeature {
       }
       """
-      And a feature file under path "test.feature" with the following content:
+      And a feature file under path "features/Permissions.feature" with the following content:
       """
       Feature: Permissions Management
         Scenario: Set permissions
@@ -810,14 +586,17 @@ Feature: MappingDataTableToListOfMaps
             | write      | false   |
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import com.example.TestFeature;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import java.lang.String;
       import java.util.List;
       import java.util.Map;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -827,12 +606,14 @@ Feature: MappingDataTableToListOfMaps
       /**
        * Feature: Permissions Management
        */
-      @DisplayName("test")
+      @DisplayName("Permissions")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("test.feature")
-      public abstract class TestFeatureScenarios extends TestFeature {
-          public abstract void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data);
+      @FeatureFilePath("features/Permissions.feature")
+      public class PermissionsTest extends TestFeature {
+          public void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data) {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)

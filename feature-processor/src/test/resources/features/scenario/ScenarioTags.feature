@@ -6,6 +6,16 @@ Feature: ScenarioTags
   Rule: Single tag on a Scenario is converted to a single JUnit @Tag annotation on the test method
 
     Scenario: Scenario with single tag
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with tagged scenario
@@ -17,10 +27,13 @@ Feature: ScenarioTags
           Then payment should succeed
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -31,16 +44,22 @@ Feature: ScenarioTags
       /**
        * Feature: feature with tagged scenario
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenAPaymentRequest();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenAPaymentRequest() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenPaymentIsProcessed();
+          public void whenPaymentIsProcessed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenPaymentShouldSucceed();
+          public void thenPaymentShouldSucceed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -66,6 +85,16 @@ Feature: ScenarioTags
   Rule: Multiple tags on a Scenario are converted to a @Tags container annotation with an array of @Tag annotations
 
     Scenario: Scenario with multiple tags
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with multi-tagged scenario
@@ -77,10 +106,13 @@ Feature: ScenarioTags
           Then login should succeed
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -92,16 +124,22 @@ Feature: ScenarioTags
       /**
        * Feature: feature with multi-tagged scenario
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenAUserAccount();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenAUserAccount() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenUserLogsIn();
+          public void whenUserLogsIn() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenLoginShouldSucceed();
+          public void thenLoginShouldSucceed() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -131,6 +169,16 @@ Feature: ScenarioTags
   Rule: Scenario tags are independent of Feature-level and Rule-level tags
 
     Scenario: Feature, Rule, and Scenario each have different tags
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       @feature-tag
@@ -145,10 +193,13 @@ Feature: ScenarioTags
             Then transaction completes
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -163,16 +214,22 @@ Feature: ScenarioTags
        * Feature: feature with layered tags
        */
       @Tag("feature-tag")
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenATransaction();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenATransaction() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenProcessingOccurs();
+          public void whenProcessingOccurs() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenTransactionCompletes();
+          public void thenTransactionCompletes() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Nested
           @Order(1)
@@ -205,6 +262,16 @@ Feature: ScenarioTags
   Rule: Scenario tags apply only to the specific test method, not the entire class
 
     Scenario: Multiple scenarios with different tags in same class
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
       Given the following feature file:
       """
       Feature: feature with differently tagged scenarios
@@ -222,10 +289,13 @@ Feature: ScenarioTags
           Then optional result
       """
       When the generator is run
-      Then the content of the generated class should be:
+      Then the following class should be generated:
       """
+      package features;
+
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -236,16 +306,22 @@ Feature: ScenarioTags
       /**
        * Feature: feature with differently tagged scenarios
        */
-      @DisplayName("MockedAnnotatedTestClass")
+      @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @FeatureFilePath("MockedAnnotatedTestClass.feature")
-      public abstract class MockedAnnotatedTestClassScenarios extends MockedAnnotatedTestClass {
-          public abstract void givenCriticalSetup();
+      @FeatureFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+          public void givenCriticalSetup() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenCriticalAction();
+          public void whenCriticalAction() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenCriticalResult();
+          public void thenCriticalResult() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(1)
@@ -266,11 +342,17 @@ Feature: ScenarioTags
               thenCriticalResult();
           }
 
-          public abstract void givenOptionalSetup();
+          public void givenOptionalSetup() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void whenOptionalAction();
+          public void whenOptionalAction() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
-          public abstract void thenOptionalResult();
+          public void thenOptionalResult() {
+              Assertions.fail("Step is not yet implemented");
+          }
 
           @Test
           @Order(2)

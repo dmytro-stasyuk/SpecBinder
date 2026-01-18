@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.specbinder</groupId>
     <artifactId>parent</artifactId>
-    <version>0.1.8-SNAPSHOT</version>
-    <name>${project.groupId}:${project.artifactId}</name>
+    <version>0.1.14-SNAPSHOT</version>
+    <name>spec-binder</name>
     <description>Used to generate JUnit test classes from a specification file</description>
     <url>https://github.com/dmytro-stasyuk/spec-binder/tree/main</url>
     <packaging>pom</packaging>
@@ -30,7 +30,12 @@
     </licenses>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.jupiter.version>5.10.2</junit.jupiter.version>
+        <cucumber-java.version>7.33.0</cucumber-java.version>
+        <!--<junit.jupiter.version>5.10.2</junit.jupiter.version>-->
+        <!--<junit.jupiter.version>5.12.0</junit.jupiter.version>-->
+        <!--<junit.jupiter.version>5.13.4</junit.jupiter.version>-->
+        <junit.jupiter.version>5.14.1</junit.jupiter.version>
+        <junit.jupiter.platform.suite>1.14.1</junit.jupiter.platform.suite>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <modules>
@@ -121,7 +126,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>deploy</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
