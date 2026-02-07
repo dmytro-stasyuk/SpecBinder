@@ -1,13 +1,13 @@
-Feature: StepMethodParameterAutoConversion
+Feature: InheritedStepAndParameterTypeInference
   As a developer writing BDD tests with existing step implementations
   I want the generator to automatically match step definitions with compatible parameter types
-  So that I can use strongly-typed step methods (int, long, double & boolean) without manual type conversion, catching type mismatches at compile-time rather than runtime
+  So that I can use strongly-typed step methods (int, long, double & boolean) without manual type conversion,
+  catching type mismatches at compile-time rather than runtime
 
   Rule: step methods on the class hierarchy are considered a match only if their signatures match including the number
   and type of parameters
-    - regarding the parameter types, all parameters are treated initially as String
-    - however when it comes to matching existing methods on the class hierarchy the type of the parameter can be String
-    - or any of the primitive types (int, long, double, boolean) or their boxed equivalents (Integer, Long, Double, Boolean) or an enum type
+    - when it comes to matching existing methods on the class hierarchy the type of the parameter can be String
+    - or any of the primitive types (int, long, double, boolean) or their boxed equivalents (Integer, Long, Double, Boolean) o
     - in such cases the parameter in the step method signature is considered a match only if the parameter in the feature file
     - can be converted to the required type (e.g. "42" can be converted to int/Integer/long/Long but not to boolean/Boolean)
     - similarly "true" and "false" can be converted to boolean/Boolean but not to numeric types
@@ -200,7 +200,7 @@ Feature: StepMethodParameterAutoConversion
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.String;
+        import java.lang.Boolean;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
@@ -217,7 +217,7 @@ Feature: StepMethodParameterAutoConversion
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenQuantity$p1(String p1) {
+            public void givenQuantity$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -228,7 +228,7 @@ Feature: StepMethodParameterAutoConversion
                 /*
                  * Given quantity "true"
                  */
-                givenQuantity$p1("true");
+                givenQuantity$p1(true);
             }
         }
         """
@@ -259,7 +259,7 @@ Feature: StepMethodParameterAutoConversion
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.String;
+        import java.lang.Boolean;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
@@ -276,7 +276,7 @@ Feature: StepMethodParameterAutoConversion
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenQuantity$p1(String p1) {
+            public void givenQuantity$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -287,7 +287,7 @@ Feature: StepMethodParameterAutoConversion
                 /*
                  * Given quantity "true"
                  */
-                givenQuantity$p1("true");
+                givenQuantity$p1(true);
             }
         }
         """
@@ -426,7 +426,7 @@ Feature: StepMethodParameterAutoConversion
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.String;
+        import java.lang.Boolean;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
@@ -443,7 +443,7 @@ Feature: StepMethodParameterAutoConversion
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenAmount$p1(String p1) {
+            public void givenAmount$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -454,7 +454,7 @@ Feature: StepMethodParameterAutoConversion
                 /*
                  * Given amount "false"
                  */
-                givenAmount$p1("false");
+                givenAmount$p1(false);
             }
         }
         """
@@ -593,7 +593,7 @@ Feature: StepMethodParameterAutoConversion
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.String;
+        import java.lang.Boolean;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
@@ -610,7 +610,7 @@ Feature: StepMethodParameterAutoConversion
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenRate$p1(String p1) {
+            public void givenRate$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -621,7 +621,7 @@ Feature: StepMethodParameterAutoConversion
                 /*
                  * Given rate "true"
                  */
-                givenRate$p1("true");
+                givenRate$p1(true);
             }
         }
         """
@@ -760,7 +760,7 @@ Feature: StepMethodParameterAutoConversion
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.String;
+        import java.lang.Integer;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
@@ -777,7 +777,7 @@ Feature: StepMethodParameterAutoConversion
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenValue$p1(String p1) {
+            public void givenValue$p1(Integer p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -788,14 +788,14 @@ Feature: StepMethodParameterAutoConversion
                 /*
                  * Given value "42"
                  */
-                givenValue$p1("42");
+                givenValue$p1(42);
             }
         }
         """
 
-  Rule: step methods on the class hierarchy with Enum parameters are considered a match if conversion using enum constant's "valueOf(String arg)" is possible
+  Rule: step methods on the class hierarchy with char parameters are considered a match if conversion is possible
 
-    Scenario: matching enum value against enum type parameter
+    Scenario: matching single character value against char parameter
       Given the following base class:
       """
       package features;
@@ -804,34 +804,21 @@ Feature: StepMethodParameterAutoConversion
 
       @Feature2JUnit
       public abstract class MyFeature {
-
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
-
-          public enum DayOfWeek {
-              MONDAY,
-              TUESDAY,
-              WEDNESDAY,
-              THURSDAY,
-              FRIDAY,
-              SATURDAY,
-              SUNDAY
+          protected void givenGrade$p1(char grade) {
+              // Implementation with char parameter
           }
       }
       """
       Given the following feature file:
         """
-        Feature: Boolean Parameter Matching
+        Feature: Char Parameter Matching
           Scenario: Test
-            Given the following day of the week "MONDAY"
+            Given grade "A"
         """
       When the generator is run
       Then the following class should be generated:
         """
         package features;
-
-        import static features.MyFeature.DayOfWeek.MONDAY;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
@@ -842,7 +829,7 @@ Feature: StepMethodParameterAutoConversion
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: Boolean Parameter Matching
+         * Feature: Char Parameter Matching
          */
         @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
@@ -854,14 +841,14 @@ Feature: StepMethodParameterAutoConversion
             @DisplayName("Scenario: Test")
             public void scenario_1() {
                 /*
-                 * Given the following day of the week "MONDAY"
+                 * Given grade "A"
                  */
-                givenTheFollowingDayOfTheWeek$p1(MONDAY);
+                givenGrade$p1('A');
             }
         }
         """
 
-    Example: [counter] inherited method with required name has enum parameter type but not matching constant for our parameter value
+    Scenario: matching single character value against boxed character parameter
       Given the following base class:
       """
       package features;
@@ -870,27 +857,69 @@ Feature: StepMethodParameterAutoConversion
 
       @Feature2JUnit
       public abstract class MyFeature {
-
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
-
-          public enum DayOfWeek {
-              MONDAY,
-              TUESDAY,
-              WEDNESDAY,
-              THURSDAY,
-              FRIDAY,
-              SATURDAY,
-              SUNDAY
+          protected void givenSymbol$p1(Character symbol) {
+              // Implementation with Character parameter
           }
       }
       """
       Given the following feature file:
         """
-        Feature: Enum Parameter Matching
+        Feature: Character Boxed Parameter Matching
           Scenario: Test
-            Given the following day of the week "INVALID_DAY"
+            Given symbol "X"
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Character Boxed Parameter Matching
+         */
+        @DisplayName("MyFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given symbol "X"
+                 */
+                givenSymbol$p1('X');
+            }
+        }
+        """
+
+    Example: [counter] no match when value has more than one character
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+          protected void givenCode$p1(char code) {
+              // Implementation with char parameter
+          }
+      }
+      """
+      Given the following feature file:
+        """
+        Feature: Multi Character To Char Mismatch
+          Scenario: Test
+            Given code "AB"
         """
       When the generator is run
       Then the following class should be generated:
@@ -908,14 +937,14 @@ Feature: StepMethodParameterAutoConversion
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: Enum Parameter Matching
+         * Feature: Multi Character To Char Mismatch
          */
         @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingDayOfTheWeek$p1(String p1) {
+            public void givenCode$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -924,9 +953,9 @@ Feature: StepMethodParameterAutoConversion
             @DisplayName("Scenario: Test")
             public void scenario_1() {
                 /*
-                 * Given the following day of the week "INVALID_DAY"
+                 * Given code "AB"
                  */
-                givenTheFollowingDayOfTheWeek$p1("INVALID_DAY");
+                givenCode$p1("AB");
             }
         }
         """
@@ -1065,6 +1094,7 @@ Feature: StepMethodParameterAutoConversion
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.Boolean;
         import java.lang.String;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
@@ -1082,7 +1112,7 @@ Feature: StepMethodParameterAutoConversion
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenProductWithName$p1AndPrice$p2(String p1, String p2) {
+            public void givenProductWithName$p1AndPrice$p2(String p1, Boolean p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1093,7 +1123,7 @@ Feature: StepMethodParameterAutoConversion
                 /*
                  * Given product with name "Widget" and price "true"
                  */
-                givenProductWithName$p1AndPrice$p2("Widget", "true");
+                givenProductWithName$p1AndPrice$p2("Widget", true);
             }
         }
         """

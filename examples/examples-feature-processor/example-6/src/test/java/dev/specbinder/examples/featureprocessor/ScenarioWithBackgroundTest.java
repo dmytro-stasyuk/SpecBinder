@@ -23,12 +23,12 @@ public class ScenarioWithBackgroundTest extends ScenarioWithBackgroundScenarios 
     }
 
     @Then("^the cart should contain (?<p1>.*) item$")
-    public void thenTheCartShouldContain$p1Item(String p1) {
+    public void thenTheCartShouldContain$p1Item(Integer p1) {
         // TODO: Implement step
     }
 
     @Then("^the cart should contain (?<p1>.*) items$")
-    public void thenTheCartShouldContain$p1Items(String p1) {
+    public void thenTheCartShouldContain$p1Items(Integer p1) {
         // TODO: Implement step
     }
 }

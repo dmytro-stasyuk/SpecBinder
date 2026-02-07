@@ -304,6 +304,7 @@ Feature: StepMethodInheritance
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.Integer;
         import java.lang.String;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
@@ -321,7 +322,7 @@ Feature: StepMethodInheritance
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUserWithName$p1AndAge$p2(String p1, String p2) {
+            public void givenUserWithName$p1AndAge$p2(String p1, Integer p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -332,7 +333,7 @@ Feature: StepMethodInheritance
                 /*
                  * Given user with name "Bob" and age "30"
                  */
-                givenUserWithName$p1AndAge$p2("Bob", "30");
+                givenUserWithName$p1AndAge$p2("Bob", 30);
             }
         }
         """

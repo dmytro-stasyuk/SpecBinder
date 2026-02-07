@@ -1,7 +1,9 @@
 package dev.specbinder.feature2junit.steps_new;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -56,6 +58,37 @@ public class NewSteps {
 
         // Clear any previous compilation error
         compilationError = null;
+    }
+
+    @Given("the following enum class:")
+    public void theFollowingEnumClass(String docString) throws IOException {
+        // Parse package name
+        String packageName = JavaSourceParser.extractPackageName(docString);
+
+        // Parse enum name (same method works for enums)
+        String enumName = JavaSourceParser.extractClassName(docString);
+
+        if (enumName == null) {
+            throw new IllegalArgumentException("Could not extract enum name from the provided enum definition");
+        }
+
+        // Use the current output directory that was already prepared
+        Path outputDir = currentOutputDirectory;
+
+        // Add package directory structure if the package exists
+        if (packageName != null && !packageName.isEmpty()) {
+            String[] packageParts = packageName.split("\\.");
+            for (String part : packageParts) {
+                outputDir = outputDir.resolve(part);
+            }
+        }
+
+        // Ensure directory exists
+        Files.createDirectories(outputDir);
+
+        // Create the Java enum file
+        Path javaFile = outputDir.resolve(enumName + ".java");
+        Files.write(javaFile, docString.getBytes());
     }
 
     @Given("the following base class:")
@@ -255,8 +288,8 @@ public class NewSteps {
                 "Expected error message does not match exactly");
     }
 
-    @Then("the generator error should contain the following text:")
-    public void theGeneratorErrorShouldContainTheFollowingText(String expectedErrorText) {
+    @Then("the compilation error should contain the following text:")
+    public void theCompilationErrorShouldContainTheFollowingText(String expectedErrorText) {
 
         if (compilationError == null) {
             fail("Expected compilation error but compilation succeeded");
@@ -352,4 +385,5 @@ public class NewSteps {
                     " should not have been generated, but was found at: " + expectedFilePath);
         }
     }
+
 }

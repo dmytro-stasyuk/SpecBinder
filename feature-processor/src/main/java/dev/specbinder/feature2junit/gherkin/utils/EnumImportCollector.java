@@ -27,6 +27,7 @@ public class EnumImportCollector {
     }
 
     private final Set<EnumConstant> enumConstants = new LinkedHashSet<>();
+    private final Set<String> enumTypes = new LinkedHashSet<>();
 
     /**
      * Registers an enum constant that needs a static import.
@@ -52,5 +53,31 @@ public class EnumImportCollector {
      */
     public boolean hasEnumConstants() {
         return !enumConstants.isEmpty();
+    }
+
+    /**
+     * Registers an enum type that needs a regular (non-static) import.
+     * Used when useQualifiedEnumConstants is enabled.
+     *
+     * @param enumQualifiedName the fully qualified name of the enum type (e.g., "features.MyFeature.Status")
+     */
+    public void registerEnumType(String enumQualifiedName) {
+        enumTypes.add(enumQualifiedName);
+    }
+
+    /**
+     * Returns all collected enum types.
+     * @return set of fully qualified enum type names
+     */
+    public Set<String> getEnumTypes() {
+        return enumTypes;
+    }
+
+    /**
+     * Returns true if any enum types have been collected.
+     * @return true if enum types exist, false otherwise
+     */
+    public boolean hasEnumTypes() {
+        return !enumTypes.isEmpty();
     }
 }

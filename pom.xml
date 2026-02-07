@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.specbinder</groupId>
     <artifactId>parent</artifactId>
-    <version>0.1.14-SNAPSHOT</version>
+    <version>0.1.20-SNAPSHOT</version>
     <name>spec-binder</name>
     <description>Used to generate JUnit test classes from a specification file</description>
     <url>https://github.com/dmytro-stasyuk/spec-binder/tree/main</url>

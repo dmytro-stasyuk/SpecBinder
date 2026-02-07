@@ -9,15 +9,15 @@ import dev.specbinder.annotations.Feature2JUnit;
 @Feature2JUnit("features/ScenarioOutline.feature")
 public abstract class ScenarioOutlineFeature {
 
-    public void givenIHaveAProductPricedAt$p1(String p1) {
+    public void givenIHaveAProductPricedAt$p1(Integer p1) {
         // TODO: Implement step with parameter: p1
     }
 
-    public void whenIApplyADiscountOf$p1Percent(String p1) {
+    public void whenIApplyADiscountOf$p1Percent(Integer p1) {
         // TODO: Implement step with parameter: p1
     }
 
-    public void thenTheFinalPriceShouldBe$p1(String p1) {
+    public void thenTheFinalPriceShouldBe$p1(Double p1) {
         // TODO: Implement step with parameter: p1
     }
 }

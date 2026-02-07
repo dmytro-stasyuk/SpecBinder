@@ -239,6 +239,7 @@ Feature: MappingDataTableToCucumberDataTable
       import com.example.TestFeature;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import io.cucumber.datatable.DataTable;
+      import java.lang.Integer;
       import java.lang.String;
       import java.util.ArrayList;
       import java.util.List;
@@ -258,7 +259,7 @@ Feature: MappingDataTableToCucumberDataTable
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Products.feature")
       public class ProductsTest extends TestFeature {
-          public void thenOrder$p1ForCustomer$p2Contains(String p1, String p2, DataTable dataTable) {
+          public void thenOrder$p1ForCustomer$p2Contains(Integer p1, String p2, DataTable dataTable) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -269,7 +270,7 @@ Feature: MappingDataTableToCucumberDataTable
               /*
                * Then order "12345" for customer "Bob" contains:
                */
-              thenOrder$p1ForCustomer$p2Contains("12345", "Bob", createDataTable(\"\"\"
+              thenOrder$p1ForCustomer$p2Contains(12345, "Bob", createDataTable(\"\"\"
                       | product | quantity |
                       | Laptop  | 1        |
                       | Mouse   | 2        |
@@ -634,6 +635,7 @@ Feature: MappingDataTableToCucumberDataTable
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import io.cucumber.datatable.DataTable;
+        import java.lang.Integer;
         import java.lang.String;
         import java.util.ArrayList;
         import java.util.List;
@@ -653,7 +655,7 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
-            public void thenOrder$p1Contains(String p1, DataTable dataTable) {
+            public void thenOrder$p1Contains(Integer p1, DataTable dataTable) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -664,7 +666,7 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * Then order "12345" contains:
                  */
-                thenOrder$p1Contains("12345", createDataTable(\"\"\"
+                thenOrder$p1Contains(12345, createDataTable(\"\"\"
                         | product | quantity |
                         | Laptop  | 1        |
                         | Mouse   | 2        |

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -66,7 +67,9 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
             List<MethodSpec> allMethodSpecs,
             Set<String> baseClassMethodNames,
             List<String> scenarioParameterNames,
-            List<String> testMethodParameterNames) {
+            List<String> testMethodParameterNames,
+            List<Class<?>> scenarioParameterTypes,
+            Map<Integer, TypeMirror> enumParameterTypes) {
 
         Step parentStep = compositeGroup.getParentStep();
         List<Step> subSteps = compositeGroup.getSubSteps();
@@ -106,7 +109,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
             StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
             subStepMethod = stepProcessor.processStep(
                     wrappedStep, null, scenarioStepsMethodSpecs,
-                    scenarioParameterNames, testMethodParameterNames
+                    scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
             );
 
             subStepMethods.add(subStepMethod);
@@ -357,12 +360,61 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
                     callParams.add("p" + paramNum);
                 }
             } else {
-                // It's a literal quoted string, pass it as a literal
-                callParams.add("\"" + value + "\"");
+                // It's a literal quoted string, convert to appropriate type literal
+                TypeName paramType = subStepMethod.parameters.get(i).type;
+                String literal = convertToLiteral(paramType, value);
+                callParams.add(literal);
             }
         }
 
         return methodName + "(" + String.join(", ", callParams) + ")";
+    }
+
+    /**
+     * Converts a string value to the appropriate Java literal based on the target type.
+     * For example: "120" -> 120 for Integer, "true" -> true for Boolean, "Alice" -> "Alice" for String
+     */
+    private String convertToLiteral(TypeName typeName, String value) {
+        String typeString = typeName.toString();
+
+        // Handle primitive and wrapper types
+        if (typeString.equals("int") || typeString.equals("java.lang.Integer")) {
+            try {
+                Integer.parseInt(value);
+                return value; // No suffix for int
+            } catch (NumberFormatException e) {
+                // Fall through to default string literal
+            }
+        } else if (typeString.equals("long") || typeString.equals("java.lang.Long")) {
+            try {
+                Long.parseLong(value);
+                return value + "L";
+            } catch (NumberFormatException e) {
+                // Fall through to default string literal
+            }
+        } else if (typeString.equals("double") || typeString.equals("java.lang.Double")) {
+            try {
+                Double.parseDouble(value);
+                if (value.contains(".")) {
+                    return value;
+                } else {
+                    return value + ".0";
+                }
+            } catch (NumberFormatException e) {
+                // Fall through to default string literal
+            }
+        } else if (typeString.equals("boolean") || typeString.equals("java.lang.Boolean")) {
+            if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+                return value.toLowerCase();
+            }
+        } else if (typeString.equals("char") || typeString.equals("java.lang.Character")) {
+            if (value.length() == 1) {
+                return "'" + value + "'";
+            }
+        }
+
+        // Default: return as quoted string
+        return "\"" + value + "\"";
     }
 
     /**

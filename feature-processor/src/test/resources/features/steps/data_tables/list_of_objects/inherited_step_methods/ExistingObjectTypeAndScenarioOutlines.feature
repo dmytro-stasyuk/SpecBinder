@@ -1,15 +1,12 @@
-Ability: InnerParamTypeInheritanceAndScenarioOutlines
+Ability: ExistingObjectTypeAndScenarioOutlines
   As a developer writing BDD tests with Scenario Outlines and parameterized data tables
   I want the generator to reuse inherited parameter types while properly substituting Example placeholders in data table cells
   So that I can combine inherited type reuse with parameterized test data in a single cohesive pattern
 
-  Rule: when an inherited parameter type matches data table columns, placeholders in cell values are substituted using the inherited type's constructor
-  - the inherited type (class or record) is reused instead of generating a new inner class
-  - single placeholders like <name> are replaced with the corresponding method parameter
-  - the constructor arguments are ordered according to the inherited type's constructor parameter order
-  - literal values remain as string literals in the generated code
+  Rule: placeholders in cell values are substituted with argument references passed in to test method
+#  - cells with mixed content like "Hello <name>!" use .replaceAll() for substitution
 
-    Scenario: Inherited inner class with single placeholder per cell in Scenario Outline
+    Scenario: with single placeholder references in step data cells
       Given the following base class:
       """
       package features;
@@ -63,9 +60,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
               | name   | age   | email   |
               | <name> | <age> | <email> |
             Examples:
-              | name  | age | email           |
-              | Alice | 30  | alice@gmail.com |
-              | Bob   | 25  | bob@gmail.com   |
+              | name  | age         | email           |
+              | Alice | thirty      | alice@gmail.com |
+              | Bob   | twenty-five | bob@gmail.com   |
         """
       When the generator is run
       Then the following class should be generated:
@@ -98,9 +95,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                   useHeadersInDisplayName = true,
                   delimiter = '|',
                   textBlock = \"\"\"
-                          name  | age | email
-                          Alice | 30  | alice@gmail.com
-                          Bob   | 25  | bob@gmail.com
+                          name  | age         | email
+                          Alice | thirty      | alice@gmail.com
+                          Bob   | twenty-five | bob@gmail.com
                           \"\"\"
           )
           @Order(1)
@@ -113,13 +110,17 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingUsers(
                       List.of(
-                              new BaseUserParam(name, age, email)
+                              new BaseUserParam(
+                                      name,
+                                      age,
+                                      email
+                              )
                       ));
           }
       }
       """
 
-    Scenario: Inherited inner class with constructor parameters in different order than data table columns
+    Scenario: with constructor parameters for the custom object specified in different order than used in step data table
       Given the following base class:
       """
       package features;
@@ -173,9 +174,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
               | name   | age   | email   |
               | <name> | <age> | <email> |
             Examples:
-              | name  | age | email           |
-              | Alice | 30  | alice@gmail.com |
-              | Bob   | 25  | bob@gmail.com   |
+              | name  | age         | email           |
+              | Alice | thirty      | alice@gmail.com |
+              | Bob   | twenty-five | bob@gmail.com   |
         """
       When the generator is run
       Then the following class should be generated:
@@ -208,9 +209,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                   useHeadersInDisplayName = true,
                   delimiter = '|',
                   textBlock = \"\"\"
-                          name  | age | email
-                          Alice | 30  | alice@gmail.com
-                          Bob   | 25  | bob@gmail.com
+                          name  | age         | email
+                          Alice | thirty      | alice@gmail.com
+                          Bob   | twenty-five | bob@gmail.com
                           \"\"\"
           )
           @Order(1)
@@ -223,13 +224,17 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingUsers(
                       List.of(
-                              new BaseUserParam(email, age, name)
+                              new BaseUserParam(
+                                      email,
+                                      age,
+                                      name
+                              )
                       ));
           }
       }
       """
 
-    Scenario: Inherited inner class with mix of placeholders and literal values in Scenario Outline
+    Scenario: step data table with a mix of literal values and placeholders from Examples table
       Given the following base class:
       """
       package features;
@@ -333,18 +338,19 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingUsers(
                       List.of(
-                              new BaseUserParam(name, "Admin", email)
+                              new BaseUserParam(
+                                      name,
+                                      "Admin",
+                                      email
+                              )
                       ));
           }
       }
       """
 
-  Rule: when an inherited parameter type is used with mixed content cells (literal + placeholder), string concatenation is applied
-  - cells like "Hello <name>!" become "Hello " + name + "!" in the generated code
-  - the inherited type's constructor is still used with concatenated expressions as arguments
-  - constructor argument order follows the inherited type's parameter order
+  Rule: when a step dat table value has with mixed content cells (literal + placeholder), string replacement is applied
 
-    Scenario: Inherited inner class with literal text and placeholder mixed in cell values
+    Scenario: step data table cell with with literal text and a placeholder from examples table
       Given the following base class:
       """
       package features;
@@ -442,16 +448,16 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingMessages(
                       List.of(
-                              new MessageParam(name, "Hello " + name + "!")
+                              new MessageParam(
+                                      name,
+                                      "Hello <name>!".replaceAll("<name>", name)
+                              )
                       ));
           }
       }
       """
 
-  Rule: when an inherited parameter type is used with cells containing multiple placeholders, all placeholders are substituted
-  - cells like "<firstName> <lastName>" become firstName + " " + lastName
-  - each placeholder is replaced with its corresponding method parameter
-  - concatenation follows the order of appearance in the cell value
+  Rule: when data table cell contains multiple placeholders, all placeholders are replaced
 
     Scenario: Inherited inner class with multiple placeholders in a single cell
       Given the following base class:
@@ -551,16 +557,17 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingContacts(
                       List.of(
-                              new ContactParam(firstName + " " + lastName, firstName + "." + lastName + "@test.com")
+                              new ContactParam(
+                                      "<firstName> <lastName>".replaceAll("<firstName>", firstName).replaceAll("<lastName>", lastName),
+                                      "<firstName>.<lastName>@test.com".replaceAll("<firstName>", firstName).replaceAll("<lastName>", lastName)
+                              )
                       ));
           }
       }
       """
 
-  Rule: when an inherited parameter type has more fields than the data table columns, nulls are passed for missing fields while placeholders are still substituted
-  - columns present in the data table use values (with placeholder substitution where applicable)
-  - columns not present in the data table receive null as constructor arguments
-  - constructor argument order follows the inherited type's parameter order
+  Rule: when an inherited parameter type has more fields than is specified in step's data table columns,
+  nulls are passed for missing fields while placeholders are still substituted
 
     Scenario: Inherited inner class with extra fields beyond data table columns containing placeholders
       Given the following base class:
@@ -622,9 +629,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
               | name   | age   |
               | <name> | <age> |
             Examples:
-              | name  | age |
-              | Alice | 30  |
-              | Bob   | 25  |
+              | name  | age         |
+              | Alice | thirty      |
+              | Bob   | twenty-five |
         """
       When the generator is run
       Then the following class should be generated:
@@ -658,8 +665,8 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                   delimiter = '|',
                   textBlock = \"\"\"
                           name  | age
-                          Alice | 30
-                          Bob   | 25
+                          Alice | thirty
+                          Bob   | twenty-five
                           \"\"\"
           )
           @Order(1)
@@ -672,7 +679,12 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingUsers(
                       List.of(
-                              new UserParam(name, age, null, null)
+                              new UserParam(
+                                      name,
+                                      age,
+                                      null,
+                                      null
+                              )
                       ));
           }
       }
@@ -722,9 +734,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
               | name   | age   |
               | <name> | <age> |
             Examples:
-              | name  | age |
-              | Alice | 30  |
-              | Bob   | 25  |
+              | name  | age         |
+              | Alice | thirty      |
+              | Bob   | twenty-five |
         """
       When the generator is run
       Then the following class should be generated:
@@ -758,8 +770,8 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                   delimiter = '|',
                   textBlock = \"\"\"
                           name  | age
-                          Alice | 30
-                          Bob   | 25
+                          Alice | thirty
+                          Bob   | twenty-five
                           \"\"\"
           )
           @Order(1)
@@ -772,7 +784,12 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingUsers(
                       List.of(
-                              new UserParam(null, name, null, age)
+                              new UserParam(
+                                      null,
+                                      name,
+                                      null,
+                                      age
+                              )
                       ));
           }
       }
@@ -814,9 +831,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
               | name   | age   | email   |
               | <name> | <age> | <email> |
             Examples:
-              | name  | age | email           |
-              | Alice | 30  | alice@gmail.com |
-              | Bob   | 25  | bob@gmail.com   |
+              | name  | age         | email           |
+              | Alice | thirty      | alice@gmail.com |
+              | Bob   | twenty-five | bob@gmail.com   |
         """
       When the generator is run
       Then the following class should be generated:
@@ -849,9 +866,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                   useHeadersInDisplayName = true,
                   delimiter = '|',
                   textBlock = \"\"\"
-                          name  | age | email
-                          Alice | 30  | alice@gmail.com
-                          Bob   | 25  | bob@gmail.com
+                          name  | age         | email
+                          Alice | thirty      | alice@gmail.com
+                          Bob   | twenty-five | bob@gmail.com
                           \"\"\"
           )
           @Order(1)
@@ -864,7 +881,11 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingUsers(
                       List.of(
-                              new UsersParam(name, age, email)
+                              new UsersParam(
+                                      name,
+                                      age,
+                                      email
+                              )
                       ));
           }
       }
@@ -901,9 +922,9 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
               | name   | age   |
               | <name> | <age> |
             Examples:
-              | name  | age |
-              | Alice | 30  |
-              | Bob   | 25  |
+              | name  | age         |
+              | Alice | thirty      |
+              | Bob   | twenty-five |
         """
       When the generator is run
       Then the following class should be generated:
@@ -937,8 +958,8 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                   delimiter = '|',
                   textBlock = \"\"\"
                           name  | age
-                          Alice | 30
-                          Bob   | 25
+                          Alice | thirty
+                          Bob   | twenty-five
                           \"\"\"
           )
           @Order(1)
@@ -951,7 +972,12 @@ Ability: InnerParamTypeInheritanceAndScenarioOutlines
                */
               givenTheFollowingUsers(
                       List.of(
-                              new UsersParam(null, name, null, age)
+                              new UsersParam(
+                                      null,
+                                      name,
+                                      null,
+                                      age
+                              )
                       ));
           }
       }

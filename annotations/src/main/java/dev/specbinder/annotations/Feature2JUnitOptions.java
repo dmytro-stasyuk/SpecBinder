@@ -246,13 +246,43 @@ public @interface Feature2JUnitOptions {
      * If set to true, the generator will add Cucumber step annotations (e.g. @Given, @When, @Then) to the generated
      * step methods. This can be useful inside IDEs with installed Cucumber/Gherkin plugins to facilitate navigation
      * from textual steps in a Gherkin feature file to step method java code.
-     * <br/><br/>
-     * Note that this would introduce a dependency on Cucumber annotations in the generated test class, which the client
-     * project would need to have on its classpath.
      *
      * @return true if Cucumber step annotations should be added, false otherwise
      */
     boolean addCucumberStepAnnotations() default false;
+
+    /**
+     * Controls how enum constants from parent/ancestor classes are referenced in generated test code
+     * when using {@link DATA_TABLE_PARAMETER_TYPE#LIST_OF_OBJECT_PARAMS} for data tables.
+     * <p>
+     * When {@code false} (default):
+     * <ul>
+     *     <li>Enum constants are imported using static imports</li>
+     *     <li>Constants are referenced by their simple name</li>
+     * </ul>
+     * <pre>
+     * import static features.ProductsFeature.Status.AVAILABLE;
+     * ...
+     * new ProductsParam("Laptop", AVAILABLE)
+     * </pre>
+     * <p>
+     * When {@code true}:
+     * <ul>
+     *     <li>The enum type is imported (non-static)</li>
+     *     <li>Constants are referenced with the type qualifier prefix</li>
+     * </ul>
+     * <pre>
+     * import features.ProductsFeature.Status;
+     * ...
+     * new ProductsParam("Laptop", Status.AVAILABLE)
+     * </pre>
+     * <p>
+     * The qualified form can improve readability when the enum type provides meaningful context
+     * about what the constant represents.
+     *
+     * @return true if enum constants should be qualified with their type name, false otherwise
+     */
+    boolean useQualifiedEnumConstants() default false;
 
     /**
      * -- EXPERIMENTAL OPTION --

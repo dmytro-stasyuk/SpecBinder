@@ -24,13 +24,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Annotation processor that generates JUnit test subclasses for classes annotated with {@link Feature2JUnit} annotation.
  */
 @SupportedAnnotationTypes("dev.specbinder.annotations.Feature2JUnit")
-@SupportedSourceVersion(SourceVersion.RELEASE_21)
+@SupportedSourceVersion(SourceVersion.RELEASE_22)
 @AutoService(Processor.class)
 public class Feature2JUnitGenerator extends AbstractProcessor implements LoggingSupport {
 
@@ -145,22 +148,22 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
                     for (String featureFilePath : matchingFiles) {
                         logInfo("Processing feature file: " + featureFilePath);
 
-                        JavaFile javaFile = null;
+                        TestSubclassCreator.GeneratedFileResult result = null;
                         try {
-                            javaFile = subclassGenerator.createTestSubclass(annotatedClass, featureFilePath, true);
+                            result = subclassGenerator.createTestSubclass(annotatedClass, featureFilePath, true);
                         } catch (IOException e) {
                             logException(e, annotatedClass);
                             continue;
                         }
 
                         // Write the generated file
-                        writeGeneratedFile(javaFile, annotatedClass, generatorOptions);
+                        writeGeneratedFile(result, annotatedClass, generatorOptions);
                     }
                 } else {
                     // Single feature file (original behavior)
-                    JavaFile javaFile = null;
+                    TestSubclassCreator.GeneratedFileResult result = null;
                     try {
-                        javaFile = subclassGenerator.createTestSubclass(annotatedClass, annotationValue, true);
+                        result = subclassGenerator.createTestSubclass(annotatedClass, annotationValue, true);
                     } catch (FileNotFoundException e) {
                         String errorMessage = "No feature file found for path '" + annotationValue + "'";
                         logError(errorMessage);
@@ -171,12 +174,10 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
                     }
 
                     // Check for duplicate generated class name
-                    String fullyQualifiedClassName = javaFile.packageName.isEmpty()
-                        ? javaFile.typeSpec.name
-                        : javaFile.packageName + "." + javaFile.typeSpec.name;
+                    String fullyQualifiedClassName = getFullyQualifiedClassName(result.javaFile);
 
                     if (allGeneratedClassNames.containsKey(fullyQualifiedClassName)) {
-                        String errorMessage = "Duplicate generated class name '" + javaFile.typeSpec.name +
+                        String errorMessage = "Duplicate generated class name '" + result.javaFile.typeSpec.name +
                                 "' would be generated for feature file '" + annotationValue + "'. " +
                                 "Previously generated " + allGeneratedClassNames.get(fullyQualifiedClassName);
                         logError(errorMessage);
@@ -187,7 +188,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
                         "from @Feature2JUnit on " + annotatedClass.getQualifiedName() + " for " + annotationValue);
 
                     // Write the generated file
-                    writeGeneratedFile(javaFile, annotatedClass, generatorOptions);
+                    writeGeneratedFile(result, annotatedClass, generatorOptions);
                 }
             }
         }
@@ -197,17 +198,17 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
         return true;
     }
 
-    private void writeGeneratedFile(JavaFile javaFile, TypeElement annotatedClass, GeneratorOptions generatorOptions) {
+    private void writeGeneratedFile(TestSubclassCreator.GeneratedFileResult result, TypeElement annotatedClass, GeneratorOptions generatorOptions) {
         boolean placeInSameDir = generatorOptions.isPlaceGeneratedClassNextToAnnotatedClass();
 
         if (placeInSameDir) {
             try {
-                writeGeneratedSourceFileNextToAnnotatedClass(javaFile, annotatedClass, generatorOptions);
+                writeGeneratedSourceFileNextToAnnotatedClass(result, annotatedClass, generatorOptions);
             } catch (IOException e) {
                 logException(e, annotatedClass);
             }
         } else {
-            String subclassFullyQualifiedName = javaFile.packageName + "." + javaFile.typeSpec.name;
+            String subclassFullyQualifiedName = getFullyQualifiedClassName(result.javaFile);
 
             Filer filer = getProcessingEnv().getFiler();
 
@@ -216,7 +217,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
                 JavaFileObject subclassFile = filer.createSourceFile(subclassFullyQualifiedName);
 
                 out = new PrintWriter(subclassFile.openWriter());
-                javaFile.writeTo(out);
+                result.writeTo(out);
                 out.flush();
             } catch (Throwable t) {
                 logException(t, annotatedClass);
@@ -227,10 +228,19 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
             }
         }
 
-        logInfo("Generated test class: " + javaFile.packageName + "." + javaFile.typeSpec.name);
+        logInfo("Generated test class: " + getFullyQualifiedClassName(result.javaFile));
     }
 
-    private void writeGeneratedSourceFileNextToAnnotatedClass(JavaFile javaFile, TypeElement annotatedClass, GeneratorOptions generatorOptions) throws IOException {
+    /**
+     * Gets the fully qualified class name from a JavaFile.
+     */
+    private String getFullyQualifiedClassName(JavaFile javaFile) {
+        return javaFile.packageName.isEmpty()
+                ? javaFile.typeSpec.name
+                : javaFile.packageName + "." + javaFile.typeSpec.name;
+    }
+
+    private void writeGeneratedSourceFileNextToAnnotatedClass(TestSubclassCreator.GeneratedFileResult result, TypeElement annotatedClass, GeneratorOptions generatorOptions) throws IOException {
         // Get the source file location of the annotated class
         FileObject resource = getProcessingEnv().getFiler().getResource(
                 StandardLocation.SOURCE_PATH,
@@ -257,10 +267,10 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
 
         // Write the file
         try (PrintWriter out = new PrintWriter(targetFile)) {
-            javaFile.writeTo(out);
+            result.writeTo(out);
         }
 
-        logInfo("Generated test class: " + javaFile.packageName + "." + javaFile.typeSpec.name
+        logInfo("Generated test class: " + getFullyQualifiedClassName(result.javaFile)
                 + " at " + targetFile.getAbsolutePath());
     }
 
@@ -280,7 +290,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_21;
+        return SourceVersion.RELEASE_22;
     }
 
     /**

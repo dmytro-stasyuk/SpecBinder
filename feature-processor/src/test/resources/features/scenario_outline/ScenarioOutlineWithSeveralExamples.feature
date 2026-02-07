@@ -18,18 +18,18 @@ Feature: ScenarioOutline
       """
       Given the following feature file:
       """
-      Feature: Calculator
-        Scenario Outline: Adding numbers
-          Given I have <a> and <b>
-          When I add them
-          Then the result is <sum>
+      Feature: StringConcatenation
+        Scenario Outline: Concatenating words
+          Given I have <first> and <second>
+          When I concatenate them
+          Then the result is <combined>
           Examples:
-            | a | b | sum |
-            | 1 | 2 | 3   |
+            | first | second | combined    |
+            | hello | world  | helloworld  |
           Examples:
-            | a | b | sum |
-            | 3 | 6 | 9   |
-            | 4 | 8 | 12  |
+            | first | second | combined    |
+            | foo   | bar    | foobar      |
+            | test  | data   | testdata    |
       """
       When the generator is run
       Then the following class should be generated:
@@ -48,7 +48,7 @@ Feature: ScenarioOutline
       import org.junit.jupiter.params.provider.CsvSource;
 
       /**
-       * Feature: Calculator
+       * Feature: StringConcatenation
        */
       @DisplayName("MyFeature")
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
@@ -59,7 +59,7 @@ Feature: ScenarioOutline
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenIAddThem() {
+          public void whenIConcatenateThem() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -74,34 +74,34 @@ Feature: ScenarioOutline
                   useHeadersInDisplayName = true,
                   delimiter = '|',
                   textBlock = \"\"\"
-                          a | b | sum
-                          1 | 2 | 3
+                          first | second | combined
+                          hello | world  | helloworld
                           \"\"\"
           )
           @CsvSource(
                   useHeadersInDisplayName = true,
                   delimiter = '|',
                   textBlock = \"\"\"
-                          a | b | sum
-                          3 | 6 | 9
-                          4 | 8 | 12
+                          first | second | combined
+                          foo   | bar    | foobar
+                          test  | data   | testdata
                           \"\"\"
           )
           @Order(1)
-          @DisplayName("Scenario Outline: Adding numbers")
-          public void scenario_1(String a, String b, String sum) {
+          @DisplayName("Scenario Outline: Concatenating words")
+          public void scenario_1(String first, String second, String combined) {
               /*
-               * Given I have <a> and <b>
+               * Given I have <first> and <second>
                */
-              givenIHave$p1And$p2(a, b);
+              givenIHave$p1And$p2(first, second);
               /*
-               * When I add them
+               * When I concatenate them
                */
-              whenIAddThem();
+              whenIConcatenateThem();
               /*
-               * Then the result is <sum>
+               * Then the result is <combined>
                */
-              thenTheResultIs$p1(sum);
+              thenTheResultIs$p1(combined);
           }
       }
       """
@@ -121,22 +121,22 @@ Feature: ScenarioOutline
       """
       Given the following feature file:
       """
-      Feature: Calculator
-        Scenario Outline: Adding numbers
-          Given I have <a> and <b>
-          When I add them
-          Then the result is <sum>
+      Feature: StringConcatenation
+        Scenario Outline: Concatenating words
+          Given I have <first> and <second>
+          When I concatenate them
+          Then the result is <combined>
           Examples:
-            | a | b | sum |
-            | 1 | 2 | 3   |
+            | first | second | combined    |
+            | hello | world  | helloworld  |
           Examples:
-            | a | b | result |
-            | 3 | 6 | 9      |
+            | first | second | output   |
+            | foo   | bar    | foobar   |
       """
       When the generator is run
       Then the generator should report an error:
       """
-      ERROR: All Examples sections must have identical header columns in the same order. Expected columns [a, b, sum], but found [a, b, result] in Examples section 2 (columns are in different order or have different names).
+      ERROR: All Examples sections must have identical header columns in the same order. Expected columns [first, second, combined], but found [first, second, output] in Examples section 2 (columns are in different order or have different names).
       """
 
     Scenario: Scenario Outline with Examples sections having different number of columns
@@ -152,22 +152,22 @@ Feature: ScenarioOutline
       """
       Given the following feature file:
       """
-      Feature: Calculator
-        Scenario Outline: Adding numbers
-          Given I have <a> and <b>
-          When I add them
-          Then the result is <sum>
+      Feature: StringConcatenation
+        Scenario Outline: Concatenating words
+          Given I have <first> and <second>
+          When I concatenate them
+          Then the result is <combined>
           Examples:
-            | a | b | sum |
-            | 1 | 2 | 3   |
+            | first | second | combined    |
+            | hello | world  | helloworld  |
           Examples:
-            | a | b |
-            | 3 | 6 |
+            | first | second |
+            | foo   | bar    |
       """
       When the generator is run
       Then the generator should report an error:
       """
-      ERROR: All Examples sections must have identical header columns in the same order. Expected 3 columns [a, b, sum], but found 2 columns [a, b] in Examples section 2.
+      ERROR: All Examples sections must have identical header columns in the same order. Expected 3 columns [first, second, combined], but found 2 columns [first, second] in Examples section 2.
       """
 
     Scenario: Scenario Outline with Examples sections having same columns but in different order
@@ -183,22 +183,22 @@ Feature: ScenarioOutline
       """
       Given the following feature file:
       """
-      Feature: Calculator
-        Scenario Outline: Adding numbers
-          Given I have <a> and <b>
-          When I add them
-          Then the result is <sum>
+      Feature: StringConcatenation
+        Scenario Outline: Concatenating words
+          Given I have <first> and <second>
+          When I concatenate them
+          Then the result is <combined>
           Examples:
-            | a | b | sum |
-            | 1 | 2 | 3   |
+            | first | second | combined    |
+            | hello | world  | helloworld  |
           Examples:
-            | sum | a | b |
-            | 9   | 3 | 6 |
+            | combined | first | second |
+            | foobar   | foo   | bar    |
       """
       When the generator is run
       Then the generator should report an error:
       """
-      ERROR: All Examples sections must have identical header columns in the same order. Expected columns [a, b, sum], but found [sum, a, b] in Examples section 2 (columns are in different order or have different names).
+      ERROR: All Examples sections must have identical header columns in the same order. Expected columns [first, second, combined], but found [combined, first, second] in Examples section 2 (columns are in different order or have different names).
       """
 
 

@@ -29,7 +29,7 @@ Feature: ClassAnnotationTestClassOrder
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -50,7 +50,7 @@ Feature: ClassAnnotationTestClassOrder
           @Tag("new")
           @DisplayName("Scenario: Only scenario")
           public void scenario_1() {
-              Assertions.fail("Scenario has no steps");
+              Assumptions.assumeTrue(false, "Scenario has no steps");
           }
       }
       """
@@ -80,7 +80,7 @@ Feature: ClassAnnotationTestClassOrder
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -109,7 +109,7 @@ Feature: ClassAnnotationTestClassOrder
               @Tag("new")
               @DisplayName("Scenario: First scenario")
               public void scenario_1() {
-                  Assertions.fail("Scenario has no steps");
+                  Assumptions.assumeTrue(false, "Scenario has no steps");
               }
           }
       }
@@ -148,7 +148,7 @@ Feature: ClassAnnotationTestClassOrder
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -177,7 +177,7 @@ Feature: ClassAnnotationTestClassOrder
               @Tag("new")
               @DisplayName("Scenario: Validate input")
               public void scenario_1() {
-                  Assertions.fail("Scenario has no steps");
+                  Assumptions.assumeTrue(false, "Scenario has no steps");
               }
           }
 
@@ -191,7 +191,7 @@ Feature: ClassAnnotationTestClassOrder
               @Tag("new")
               @DisplayName("Scenario: Process data")
               public void scenario_1() {
-                  Assertions.fail("Scenario has no steps");
+                  Assumptions.assumeTrue(false, "Scenario has no steps");
               }
           }
 
@@ -205,7 +205,7 @@ Feature: ClassAnnotationTestClassOrder
               @Tag("new")
               @DisplayName("Scenario: Generate output")
               public void scenario_1() {
-                  Assertions.fail("Scenario has no steps");
+                  Assumptions.assumeTrue(false, "Scenario has no steps");
               }
           }
       }

@@ -1,5 +1,13 @@
 package dev.specbinder.feature2junit.utils;
 
+import com.squareup.javapoet.TypeName;
+import io.cucumber.messages.types.Examples;
+import io.cucumber.messages.types.TableCell;
+import io.cucumber.messages.types.TableRow;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
@@ -36,6 +44,8 @@ public class ParameterConversionUtils {
             return canParseDouble(value);
         } else if (typeKind == TypeKind.BOOLEAN || "java.lang.Boolean".equals(typeName)) {
             return canParseBoolean(value);
+        } else if (typeKind == TypeKind.CHAR || "java.lang.Character".equals(typeName)) {
+            return value.length() == 1;
         } else if (typeKind == TypeKind.DECLARED && isEnumType(targetType)) {
             return canParseEnum(value, targetType);
         } else if ("java.lang.String".equals(typeName)) {
@@ -79,6 +89,10 @@ public class ParameterConversionUtils {
         } else if (typeKind == TypeKind.BOOLEAN || "java.lang.Boolean".equals(typeName)) {
             if (canParseBoolean(value)) {
                 return value.toLowerCase(); // "true" or "false"
+            }
+        } else if (typeKind == TypeKind.CHAR || "java.lang.Character".equals(typeName)) {
+            if (value.length() == 1) {
+                return "'" + value + "'"; // Return as character literal
             }
         } else if (typeKind == TypeKind.DECLARED && isEnumType(targetType)) {
             if (canParseEnum(value, targetType)) {
@@ -149,14 +163,14 @@ public class ParameterConversionUtils {
 
     /**
      * Checks if the given string value can be parsed as an enum constant of the target type.
-     * Enum constant matching is case-sensitive.
+     * Enum constant matching is case-sensitive (value must match exactly).
      * @return true if the value matches an enum constant, false otherwise
      */
     private static boolean canParseEnum(String value, TypeMirror targetType) {
         DeclaredType declaredType = (DeclaredType) targetType;
         TypeElement enumElement = (TypeElement) declaredType.asElement();
 
-        // Get all enum constants and check if value matches one
+        // Get all enum constants and check if value matches one (case-sensitive)
         for (Element enclosed : enumElement.getEnclosedElements()) {
             if (enclosed.getKind() == ElementKind.ENUM_CONSTANT) {
                 if (enclosed.getSimpleName().toString().equals(value)) {
@@ -169,11 +183,427 @@ public class ParameterConversionUtils {
 
     /**
      * Converts a string value to an enum literal.
-     * Returns just the constant name (e.g., "MONDAY") for use with static imports.
+     * Returns the constant name as-is (e.g., "MONDAY") for use with static imports.
+     * The value must match the enum constant exactly (case-sensitive).
      * @param value the string value to convert
      */
     private static String toEnumLiteral(String value, TypeMirror targetType) {
-        // Return just the constant name - static imports will be added separately
+        // Return constant name as-is - it should already match the enum constant exactly
         return value;
+    }
+
+    /**
+     * Converts a string value to a qualified enum literal.
+     * Returns the enum type simple name and constant (e.g., "Status.AVAILABLE").
+     * When useQualifiedEnumConstants is enabled, the enum type is imported separately,
+     * so no parent class prefix is needed regardless of whether the enum is nested or external.
+     * The value must match the enum constant exactly (case-sensitive).
+     * @param value the string value to convert
+     * @param targetType the target enum type
+     * @return the qualified enum literal (e.g., "Status.AVAILABLE")
+     */
+    public static String toQualifiedEnumLiteral(String value, TypeMirror targetType) {
+        String enumSimpleName = getEnumSimpleName(targetType);
+        return enumSimpleName + "." + value;
+    }
+
+    /**
+     * Gets the simple name of an enum type.
+     * @param targetType the enum type mirror
+     * @return the simple name of the enum type (e.g., "Status")
+     */
+    public static String getEnumSimpleName(TypeMirror targetType) {
+        DeclaredType declaredType = (DeclaredType) targetType;
+        TypeElement enumElement = (TypeElement) declaredType.asElement();
+        return enumElement.getSimpleName().toString();
+    }
+
+    /**
+     * Gets the simple name of the enclosing class of an enum type.
+     * For nested enums like ProductsFeature.Status, returns "ProductsFeature".
+     * @param targetType the enum type mirror
+     * @return the simple name of the enclosing class, or null if the enum is not nested
+     */
+    public static String getEnclosingClassName(TypeMirror targetType) {
+        DeclaredType declaredType = (DeclaredType) targetType;
+        TypeElement enumElement = (TypeElement) declaredType.asElement();
+        Element enclosingElement = enumElement.getEnclosingElement();
+        if (enclosingElement != null && enclosingElement.getKind() == ElementKind.CLASS) {
+            return ((TypeElement) enclosingElement).getSimpleName().toString();
+        }
+        return null;
+    }
+
+    /**
+     * Result of inferring column types from Examples tables.
+     */
+    public static class InferredColumnTypes {
+        /**
+         * Type names for each column index.
+         */
+        public final Map<Integer, TypeName> typeNames;
+        /**
+         * Enum type mirrors for enum columns.
+         */
+        public final Map<Integer, TypeMirror> enumTypes;
+
+        /**
+         * Constructor.
+         * @param typeNames type names for each column index
+         * @param enumTypes enum type mirrors for enum columns
+         */
+        public InferredColumnTypes(Map<Integer, TypeName> typeNames, Map<Integer, TypeMirror> enumTypes) {
+            this.typeNames = typeNames;
+            this.enumTypes = enumTypes;
+        }
+    }
+
+    /**
+     * Infers parameter types for each column in the Examples tables.
+     * Analyzes all values in each column across all Examples sections and determines
+     * the most appropriate type using the following precedence:
+     * Enum (if all values match enum constants) -> Boolean -> Integer -> Long -> Double -> Character -> String
+     *
+     * @param examples list of Examples tables from a Scenario Outline
+     * @param baseType the base class TypeElement (used to find enum types)
+     * @param processingEnv the processing environment
+     * @return InferredColumnTypes containing TypeNames and TypeMirrors for enum columns
+     */
+    public static InferredColumnTypes inferColumnTypes(List<Examples> examples, TypeElement baseType, ProcessingEnvironment processingEnv) {
+        return inferColumnTypes(examples, baseType, processingEnv, null);
+    }
+
+    /**
+     * Infers parameter types for each column in the Examples tables.
+     * Analyzes all values in each column across all Examples sections and determines
+     * the most appropriate type using the following precedence:
+     * Enum (if all values match enum constants) -> Boolean -> Integer -> Long -> Double -> Character -> String
+     *
+     * @param examples list of Examples tables from a Scenario Outline
+     * @param baseType the base class TypeElement (used to find enum types)
+     * @param processingEnv the processing environment
+     * @param parameterClassFieldTypes optional map of column name to TypeMirror for parameter class fields
+     * @return InferredColumnTypes containing TypeNames and TypeMirrors for enum columns
+     */
+    public static InferredColumnTypes inferColumnTypes(List<Examples> examples, TypeElement baseType, ProcessingEnvironment processingEnv, Map<String, TypeMirror> parameterClassFieldTypes) {
+        if (examples == null || examples.isEmpty()) {
+            return new InferredColumnTypes(Map.of(), Map.of());
+        }
+
+        // Get column names from the first Examples table header
+        List<TableRow> tableHeader = examples.get(0).getTableHeader().stream().toList();
+        if (tableHeader.isEmpty()) {
+            return new InferredColumnTypes(Map.of(), Map.of());
+        }
+
+        List<String> columnNames = tableHeader.get(0).getCells().stream()
+                .map(TableCell::getValue)
+                .toList();
+
+        int columnCount = columnNames.size();
+        Map<Integer, TypeName> columnTypeNames = new HashMap<>();
+        Map<Integer, TypeMirror> enumTypeMirrors = new HashMap<>();
+
+        // For each column, analyze all values across all Examples sections
+        for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+            String columnName = columnNames.get(columnIndex);
+            ColumnTypeInfo typeInfo = inferColumnType(examples, columnIndex, baseType, processingEnv, columnName, parameterClassFieldTypes);
+            columnTypeNames.put(columnIndex, typeInfo.typeName);
+            if (typeInfo.enumType != null) {
+                enumTypeMirrors.put(columnIndex, typeInfo.enumType);
+            }
+        }
+
+        return new InferredColumnTypes(columnTypeNames, enumTypeMirrors);
+    }
+
+    /**
+     * Information about an inferred column type.
+     */
+    private static class ColumnTypeInfo {
+        final TypeName typeName;
+        final TypeMirror enumType; // null if not an enum
+
+        ColumnTypeInfo(TypeName typeName, TypeMirror enumType) {
+            this.typeName = typeName;
+            this.enumType = enumType;
+        }
+    }
+
+    /**
+     * Infers the type for a single column by analyzing all values in that column
+     * across all Examples sections.
+     *
+     * @param examples list of Examples tables
+     * @param columnIndex the column index to analyze
+     * @param baseType the base class TypeElement (used to find enum types)
+     * @param processingEnv the processing environment
+     * @param columnName the name of the column being analyzed
+     * @param parameterClassFieldTypes optional map of column name to TypeMirror for parameter class fields
+     * @return the inferred column type info
+     */
+    private static ColumnTypeInfo inferColumnType(List<Examples> examples, int columnIndex, TypeElement baseType, ProcessingEnvironment processingEnv, String columnName, Map<String, TypeMirror> parameterClassFieldTypes) {
+        // Collect all values in this column across all Examples sections
+        List<String> columnValues = new java.util.ArrayList<>();
+
+        for (Examples examplesTable : examples) {
+            List<TableRow> tableBody = examplesTable.getTableBody();
+
+            for (TableRow row : tableBody) {
+                List<TableCell> cells = row.getCells();
+                if (columnIndex >= cells.size()) {
+                    continue; // Skip if row doesn't have this column
+                }
+                columnValues.add(cells.get(columnIndex).getValue());
+            }
+        }
+
+        // First, check if this column corresponds to a field in the parameter class
+        // and if that field is an enum type
+        if (parameterClassFieldTypes != null && columnName != null) {
+            TypeMirror fieldType = parameterClassFieldTypes.get(columnName);
+            if (fieldType != null && isEnumType(fieldType)) {
+                // Verify all values match this enum's constants
+                DeclaredType declaredType = (DeclaredType) fieldType;
+                TypeElement enumElement = (TypeElement) declaredType.asElement();
+                if (allValuesMatchEnumConstants(columnValues, enumElement)) {
+                    return new ColumnTypeInfo(TypeName.get(fieldType), fieldType);
+                }
+            }
+        }
+
+        // If not found in parameter class, check if all values match enum constants from the base class
+        TypeMirror matchingEnumType = findMatchingEnumType(columnValues, baseType, processingEnv);
+        if (matchingEnumType != null) {
+            return new ColumnTypeInfo(TypeName.get(matchingEnumType), matchingEnumType);
+        }
+
+        // If not enum, check primitive types
+        boolean allBoolean = true;
+        boolean allInteger = true;
+        boolean allLong = true;
+        boolean allDouble = true;
+        boolean allCharacter = true;
+        boolean hasNonEmptyValue = false;
+
+        for (String value : columnValues) {
+            // Skip empty values - they will be converted to null in generated code
+            String trimmedValue = value.trim();
+            if (trimmedValue.isEmpty()) {
+                continue;
+            }
+            hasNonEmptyValue = true;
+
+            // Check type compatibility following precedence order
+            if (allBoolean && !canParseBoolean(trimmedValue)) {
+                allBoolean = false;
+            }
+            if (allInteger && !canParseInt(trimmedValue)) {
+                allInteger = false;
+            }
+            if (allLong && !canParseLong(trimmedValue)) {
+                allLong = false;
+            }
+            if (allDouble && !canParseDouble(trimmedValue)) {
+                allDouble = false;
+            }
+            if (allCharacter && trimmedValue.length() != 1) {
+                allCharacter = false;
+            }
+        }
+
+        // If all values were empty, fall back to String type
+        if (!hasNonEmptyValue) {
+            return new ColumnTypeInfo(TypeName.get(String.class), null);
+        }
+
+        // Return the most specific type that all non-empty values can convert to
+        // Following precedence: Boolean -> Integer -> Long -> Double -> Character -> String
+        if (allBoolean) {
+            return new ColumnTypeInfo(TypeName.get(Boolean.class), null);
+        }
+        if (allInteger) {
+            return new ColumnTypeInfo(TypeName.get(Integer.class), null);
+        }
+        if (allLong) {
+            return new ColumnTypeInfo(TypeName.get(Long.class), null);
+        }
+        if (allDouble) {
+            return new ColumnTypeInfo(TypeName.get(Double.class), null);
+        }
+        if (allCharacter) {
+            return new ColumnTypeInfo(TypeName.get(Character.class), null);
+        }
+
+        // Default fallback
+        return new ColumnTypeInfo(TypeName.get(String.class), null);
+    }
+
+    /**
+     * Finds an enum type from the base class where all given values match enum constants.
+     *
+     * @param values the list of string values to check
+     * @param baseType the base class TypeElement
+     * @param processingEnv the processing environment
+     * @return the matching enum TypeMirror, or null if no match found
+     */
+    private static TypeMirror findMatchingEnumType(List<String> values, TypeElement baseType, ProcessingEnvironment processingEnv) {
+        if (baseType == null || values.isEmpty()) {
+            return null;
+        }
+
+        // Get all enum types from the base class (including nested enums)
+        List<TypeElement> enumTypes = new java.util.ArrayList<>();
+        collectEnumTypes(baseType, enumTypes);
+
+        // Check each enum type to see if all values match its constants
+        for (TypeElement enumType : enumTypes) {
+            if (allValuesMatchEnumConstants(values, enumType)) {
+                return enumType.asType();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Collects all enum types from the given type element, including nested enums.
+     *
+     * @param typeElement the type element to search
+     * @param enumTypes the list to collect enum types into
+     */
+    private static void collectEnumTypes(TypeElement typeElement, List<TypeElement> enumTypes) {
+        for (Element enclosed : typeElement.getEnclosedElements()) {
+            if (enclosed.getKind() == ElementKind.ENUM) {
+                enumTypes.add((TypeElement) enclosed);
+            }
+            // Recursively check nested classes for enums
+            if (enclosed.getKind() == ElementKind.CLASS && enclosed instanceof TypeElement) {
+                collectEnumTypes((TypeElement) enclosed, enumTypes);
+            }
+        }
+    }
+
+    /**
+     * Checks if all non-empty values match enum constants of the given enum type.
+     * Empty or null values are skipped during checking.
+     * Matching is case-sensitive (value must match enum constant exactly).
+     *
+     * @param values the values to check
+     * @param enumType the enum type
+     * @return true if all non-empty values match enum constants, false otherwise
+     */
+    private static boolean allValuesMatchEnumConstants(List<String> values, TypeElement enumType) {
+        // Get all enum constants
+        java.util.Set<String> enumConstants = new java.util.HashSet<>();
+        for (Element enclosed : enumType.getEnclosedElements()) {
+            if (enclosed.getKind() == ElementKind.ENUM_CONSTANT) {
+                enumConstants.add(enclosed.getSimpleName().toString());
+            }
+        }
+
+        boolean hasNonEmptyValue = false;
+        // Check if all non-empty values match (case-sensitive)
+        for (String value : values) {
+            // Skip empty values - they will be converted to null in generated code
+            String trimmedValue = value.trim();
+            if (trimmedValue.isEmpty()) {
+                continue;
+            }
+            hasNonEmptyValue = true;
+            if (!enumConstants.contains(trimmedValue)) {
+                return false;
+            }
+        }
+
+        // If all values were empty, return false to fall back to another type
+        return hasNonEmptyValue;
+    }
+
+    /**
+     * Infers the most specific type that a string value can convert to.
+     * Follows type precedence: Boolean → Integer → Long → Double → Character → String
+     *
+     * @param value the string value to analyze
+     * @return the inferred type (Boolean.class, Integer.class, Long.class,
+     *         Double.class, Character.class, or String.class)
+     */
+    public static Class<?> inferType(String value) {
+        // Check type compatibility following precedence order
+        if (canParseBoolean(value)) {
+            return Boolean.class;
+        }
+        if (canParseInt(value)) {
+            return Integer.class;
+        }
+        if (canParseLong(value)) {
+            return Long.class;
+        }
+        if (canParseDouble(value)) {
+            return Double.class;
+        }
+        if (value.length() == 1) {
+            return Character.class;
+        }
+
+        // Default fallback
+        return String.class;
+    }
+
+    /**
+     * Extracts field types from a parameter class constructor.
+     * Maps parameter names to their TypeMirrors.
+     *
+     * @param parameterClass the parameter class TypeElement
+     * @param processingEnv the processing environment
+     * @return a map of parameter name to TypeMirror, or null if constructor not found
+     */
+    public static Map<String, TypeMirror> extractParameterClassFieldTypes(TypeElement parameterClass, ProcessingEnvironment processingEnv) {
+        if (parameterClass == null) {
+            return null;
+        }
+
+        // Find the all-args constructor
+        javax.lang.model.element.ExecutableElement constructor = findAllArgsConstructor(parameterClass);
+        if (constructor == null) {
+            return null;
+        }
+
+        // Extract parameter names and types
+        Map<String, TypeMirror> fieldTypes = new HashMap<>();
+        List<? extends javax.lang.model.element.VariableElement> parameters = constructor.getParameters();
+        for (javax.lang.model.element.VariableElement param : parameters) {
+            String paramName = param.getSimpleName().toString();
+            TypeMirror paramType = param.asType();
+            fieldTypes.put(paramName, paramType);
+        }
+
+        return fieldTypes;
+    }
+
+    /**
+     * Finds the all-args constructor for a class.
+     *
+     * @param typeElement the class type
+     * @return the constructor element, or null if not found
+     */
+    private static javax.lang.model.element.ExecutableElement findAllArgsConstructor(TypeElement typeElement) {
+        // Find constructor with public or package-private visibility
+        for (javax.lang.model.element.Element element : typeElement.getEnclosedElements()) {
+            if (element.getKind() == javax.lang.model.element.ElementKind.CONSTRUCTOR) {
+                javax.lang.model.element.ExecutableElement constructor = (javax.lang.model.element.ExecutableElement) element;
+
+                // Skip private constructors
+                if (constructor.getModifiers().contains(javax.lang.model.element.Modifier.PRIVATE)) {
+                    continue;
+                }
+
+                // Return the first non-private constructor
+                // (For parameter classes, there should typically be only one public constructor)
+                return constructor;
+            }
+        }
+
+        return null;
     }
 }

@@ -162,6 +162,7 @@ Feature: DataTableInScenarioOutlines
       package com.example;
 
       import dev.specbinder.annotations.output.FeatureFilePath;
+      import java.lang.Integer;
       import java.lang.Math;
       import java.lang.String;
       import java.util.ArrayList;
@@ -203,7 +204,7 @@ Feature: DataTableInScenarioOutlines
           )
           @Order(1)
           @DisplayName("Scenario Outline: Process order with items")
-          public void scenario_1(String orderId, String product, String qty, String status) {
+          public void scenario_1(String orderId, String product, Integer qty, String status) {
               /*
                * Then order "<orderId>" contains items:
                */
@@ -213,7 +214,7 @@ Feature: DataTableInScenarioOutlines
                       | Keyboard  | 1        | <status> |
                       \"\"\"
                       .replaceAll("<product>", product)
-                      .replaceAll("<qty>", qty)
+                      .replaceAll("<qty>", qty.toString())
                       .replaceAll("<status>", status)));
           }
 

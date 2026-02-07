@@ -22,6 +22,7 @@ import io.cucumber.messages.types.RuleChild;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.TableCell;
+import io.cucumber.messages.types.TableRow;
 import io.cucumber.messages.types.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
@@ -35,6 +36,7 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -73,10 +75,10 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
      *
      * @param annotatedClass  the type element to create a test subclass for
      * @param featureFilePath the feature file path
-     * @return a {@link JavaFile} representing the generated test subclass
+     * @return a {@link GeneratedFileResult} representing the generated test subclass
      * @throws IOException if an error occurs during file generation
      */
-    public JavaFile createTestSubclass(TypeElement annotatedClass, String featureFilePath) throws IOException {
+    public GeneratedFileResult createTestSubclass(TypeElement annotatedClass, String featureFilePath) throws IOException {
         return createTestSubclass(annotatedClass, featureFilePath, false);
     }
 
@@ -87,10 +89,10 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
      * @param featureFilePath          the feature file path
      * @param deriveClassNameFromFile  if true, derives the generated class name from the feature file name;
      *                                 if false, derives it from the annotated class name
-     * @return a {@link JavaFile} representing the generated test subclass
+     * @return a {@link GeneratedFileResult} representing the generated test subclass
      * @throws IOException if an error occurs during file generation
      */
-    public JavaFile createTestSubclass(TypeElement annotatedClass, String featureFilePath, boolean deriveClassNameFromFile) throws IOException {
+    public GeneratedFileResult createTestSubclass(TypeElement annotatedClass, String featureFilePath, boolean deriveClassNameFromFile) throws IOException {
         String suffixToApply;
         if (!options.isShouldBeAbstract()) {
             suffixToApply = options.getClassSuffixIfConcrete();
@@ -124,10 +126,10 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
      * @param featureFilePathForParsing the path to use for parsing the feature file
      * @param featureFilePathForAnnotation the path to use in the @FeatureFilePath annotation
      * @param generatedClassName       the name for the generated class (without package)
-     * @return a {@link JavaFile} representing the generated test subclass
+     * @return a {@link GeneratedFileResult} representing the generated test subclass
      * @throws IOException if an error occurs during file generation
      */
-    private JavaFile createTestSubclassInternal(
+    private GeneratedFileResult createTestSubclassInternal(
             TypeElement annotatedClass,
             String featureFilePathForParsing,
             String featureFilePathForAnnotation,
@@ -248,8 +250,8 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             javaFileBuilder.addStaticImport(java.util.Arrays.class, "stream");
         }
 
-        // Add static imports for enum constants
-        if (enumImportCollector.hasEnumConstants()) {
+        // Add static imports for enum constants (only when NOT using qualified enum constants)
+        if (enumImportCollector.hasEnumConstants() && !options.isUseQualifiedEnumConstants()) {
             for (EnumImportCollector.EnumConstant enumConstant : enumImportCollector.getEnumConstants()) {
                 javaFileBuilder.addStaticImport(
                         ClassName.bestGuess(enumConstant.enumQualifiedName()),
@@ -258,7 +260,66 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             }
         }
 
-        return javaFileBuilder.build();
+        JavaFile javaFile = javaFileBuilder.build();
+
+        // Wrap the JavaFile with enum types that need regular imports
+        return new GeneratedFileResult(
+                javaFile,
+                enumImportCollector.getEnumTypes(),
+                options.isUseQualifiedEnumConstants()
+        );
+    }
+
+    /**
+     * Result class containing the generated JavaFile and metadata for enum imports.
+     */
+    public static class GeneratedFileResult {
+        public final JavaFile javaFile;
+        public final Set<String> enumTypesToImport;
+        public final boolean useQualifiedEnumConstants;
+
+        public GeneratedFileResult(JavaFile javaFile, Set<String> enumTypesToImport, boolean useQualifiedEnumConstants) {
+            this.javaFile = javaFile;
+            this.enumTypesToImport = enumTypesToImport;
+            this.useQualifiedEnumConstants = useQualifiedEnumConstants;
+        }
+
+        /**
+         * Writes the JavaFile to the given writer, adding enum type imports if needed.
+         */
+        public void writeTo(Appendable writer) throws java.io.IOException {
+            String source = javaFile.toString();
+
+            // Add enum type imports if we're using qualified enum constants
+            if (useQualifiedEnumConstants && enumTypesToImport != null && !enumTypesToImport.isEmpty()) {
+                source = addEnumTypeImportsToSource(source, javaFile.packageName, enumTypesToImport);
+            }
+
+            writer.append(source);
+        }
+
+        /**
+         * Adds regular enum type imports to the generated source code.
+         */
+        private String addEnumTypeImportsToSource(String source, String packageName, Set<String> enumQualifiedNames) {
+            // Find the position to insert imports (after package declaration)
+            String packageDeclaration = "package " + packageName + ";";
+            int insertPosition = source.indexOf(packageDeclaration);
+            if (insertPosition == -1) {
+                // No package declaration found, insert at the beginning
+                insertPosition = 0;
+            } else {
+                insertPosition += packageDeclaration.length();
+            }
+
+            // Build the import statements (preserving insertion order)
+            StringBuilder imports = new StringBuilder();
+            imports.append("\n");
+            enumQualifiedNames.forEach(enumQualifiedName -> imports.append("\nimport ").append(enumQualifiedName).append(";"));
+
+            // Insert the imports
+            return source.substring(0, insertPosition) + imports + source.substring(insertPosition);
+        }
     }
 
     /**
@@ -353,39 +414,53 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         for (FeatureChild child : feature.getChildren()) {
             if (child.getScenario().isPresent()) {
                 Scenario scenario = child.getScenario().get();
-                collectDataTableMetadataFromSteps(scenario.getSteps(), collector);
+                // For Scenario Outlines, pass Examples to infer types from Examples columns
+                collectDataTableMetadataFromSteps(scenario.getSteps(), collector, scenario);
             } else if (child.getRule().isPresent()) {
                 Rule rule = child.getRule().get();
                 for (RuleChild ruleChild : rule.getChildren()) {
                     if (ruleChild.getBackground().isPresent()) {
                         Background background = ruleChild.getBackground().get();
-                        collectDataTableMetadataFromSteps(background.getSteps(), collector);
+                        // Background steps are not part of Scenario Outlines
+                        collectDataTableMetadataFromSteps(background.getSteps(), collector, null);
                     }
                     if (ruleChild.getScenario().isPresent()) {
                         Scenario scenario = ruleChild.getScenario().get();
-                        collectDataTableMetadataFromSteps(scenario.getSteps(), collector);
+                        // For Scenario Outlines, pass Examples to infer types from Examples columns
+                        collectDataTableMetadataFromSteps(scenario.getSteps(), collector, scenario);
                     }
                 }
             } else if (child.getBackground().isPresent()) {
                 Background background = child.getBackground().get();
-                collectDataTableMetadataFromSteps(background.getSteps(), collector);
+                // Background steps are not part of Scenario Outlines
+                collectDataTableMetadataFromSteps(background.getSteps(), collector, null);
             }
         }
     }
 
     /**
      * Collects data table metadata from a list of steps.
+     *
+     * @param steps the steps to collect data table metadata from
+     * @param collector the data table collector
+     * @param scenario the scenario containing these steps (null for Background steps, non-null for Scenario/Scenario Outline)
      */
-    private void collectDataTableMetadataFromSteps(List<Step> steps, DataTableCollector collector) {
+    private void collectDataTableMetadataFromSteps(List<Step> steps, DataTableCollector collector, Scenario scenario) {
         for (Step step : steps) {
             if (step.getDataTable().isPresent()) {
                 io.cucumber.messages.types.DataTable dt = step.getDataTable().get();
-                List<String> headers = dt.getRows().get(0).getCells()
-                        .stream()
-                        .map(TableCell::getValue)
-                        .toList();
                 String stepText = step.getKeyword() + step.getText();
-                collector.registerDataTable(stepText, headers);
+
+                // Check if this is a Scenario Outline (has Examples)
+                boolean isScenarioOutline = scenario != null && !scenario.getExamples().isEmpty();
+
+                if (isScenarioOutline) {
+                    // For Scenario Outlines, infer types from Examples table columns
+                    collector.registerDataTableWithExamples(stepText, dt.getRows(), scenario.getExamples());
+                } else {
+                    // For regular scenarios and background steps, use type inference from data table cell values
+                    collector.registerDataTableWithTypeInference(stepText, dt.getRows());
+                }
             }
         }
     }

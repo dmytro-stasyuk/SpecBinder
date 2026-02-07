@@ -5,7 +5,7 @@
     <parent>
         <groupId>dev.specbinder</groupId>
         <artifactId>parent</artifactId>
-        <version>0.1.14-SNAPSHOT</version>
+        <version>0.1.20-SNAPSHOT</version>
     </parent>
     <artifactId>feature-processor</artifactId>
     <name>${project.artifactId}</name>
@@ -24,8 +24,8 @@
                 <configuration>
                     <publishingServerId>central</publishingServerId>
                     <autoPublish>true</autoPublish>
+                    <!--<waitUntil>validated</waitUntil>-->
                     <waitForPublishCompletion>true</waitForPublishCompletion>
-                    <!--<skipPublishing>${maven.deploy.skip}</skipPublishing>-->
                 </configuration>
             </plugin>
             <plugin>

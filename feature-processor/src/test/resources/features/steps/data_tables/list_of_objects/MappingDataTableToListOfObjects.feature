@@ -3,14 +3,8 @@ Feature: MappingDataTableToListOfObjects
   I want data tables automatically mapped to type-safe object classes with named fields matching column headers
   So that I get compile-time safety, IDE autocomplete, and refactoring support
 
-  Rule: when "dataTableParameterType" option is set to "LIST_OF_OBJECT_PARAMS", data tables are mapped to List<ObjectParam> parameters
-  - if a step has a DataTable, a generated record type is created with fields matching column headers
-  - the record name is derived from the last word of the step's text (capitalised and converted to camel case if necessary) with "Param" suffix added
-  - a parameter of type List<ObjectParam> is added to the step method, with the name derived from the last word of the step's text (lowercased)
-  - the data is formatted with pipe delimiters and passed via createListOf<RecordName>() helper method
-  - if another step with a data table has the same last word, the existing record type is reused, but importantly
-  --the other step (or more than one) doesn't have to specify the complete list of columns for the record, so long
-  --as all columns used across all steps are compatible with the same record type
+  Rule: when "dataTableParameterType" option is set to "LIST_OF_OBJECT_PARAMS", data tables are mapped to List<ObjectParam> step method parameter
+  - a generated object type is created with fields matching column headers
 
     Scenario: Step with DataTable and no quoted parameters
       Given the following base class:
@@ -81,9 +75,18 @@ Feature: MappingDataTableToListOfObjects
                */
               givenTheFollowingUsers(
                       List.of(
-                              new UsersParam("Alice", "Admin"),
-                              new UsersParam("Bob", "User"),
-                              new UsersParam("John", "Client")
+                              new UsersParam(
+                                      "Alice",
+                                      "Admin"
+                              ),
+                              new UsersParam(
+                                      "Bob",
+                                      "User"
+                              ),
+                              new UsersParam(
+                                      "John",
+                                      "Client"
+                              )
                       ));
           }
 
@@ -172,8 +175,14 @@ Feature: MappingDataTableToListOfObjects
                  */
                 whenUser$p1HasPermissions("Alice",
                         List.of(
-                                new PermissionsParam("read", "yes"),
-                                new PermissionsParam("write", "no")
+                                new PermissionsParam(
+                                        "read",
+                                        "yes"
+                                ),
+                                new PermissionsParam(
+                                        "write",
+                                        "no"
+                                )
                         ));
             }
 
@@ -193,6 +202,368 @@ Feature: MappingDataTableToListOfObjects
 
                 public String enabled() {
                     return this.enabled;
+                }
+            }
+        }
+        """
+
+  Rule: the object type name is derived from the last word of the step's text (capitalised and converted to camel case if necessary) with "Param" suffix added
+
+    Scenario: object type name from simple last word
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+
+      @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      public abstract class SimpleWordFeature {
+
+      }
+      """
+      And the following feature file:
+        """
+        Feature: Simple Word Test
+          Scenario: Test naming
+            Given the following users:
+              | name  | age     |
+              | Alice | thirty  |
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
+        import java.util.List;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Simple Word Test
+         */
+        @DisplayName("SimpleWordFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/SimpleWordFeature.feature")
+        public class SimpleWordFeatureTest extends SimpleWordFeature {
+            public void givenTheFollowingUsers(List<UsersParam> users) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test naming")
+            public void scenario_1() {
+                /*
+                 * Given the following users:
+                 *   | name  | age    |
+                 *   | Alice | thirty |
+                 */
+                givenTheFollowingUsers(
+                        List.of(
+                                new UsersParam(
+                                        "Alice",
+                                        "thirty"
+                                )
+                        ));
+            }
+
+            public static class UsersParam {
+                private final String name;
+
+                private final String age;
+
+                public UsersParam(String name, String age) {
+                    this.name = name;
+                    this.age = age;
+                }
+
+                public String name() {
+                    return this.name;
+                }
+
+                public String age() {
+                    return this.age;
+                }
+            }
+        }
+        """
+
+    Scenario: object type name from hyphenated last word converts to camel case
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+
+      @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      public abstract class HyphenatedWordFeature {
+
+      }
+      """
+      And the following feature file:
+        """
+        Feature: Hyphenated Word Test
+          Scenario: Test naming
+            Given the following user-settings:
+              | theme | language |
+              | dark  | en       |
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
+        import java.util.List;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Hyphenated Word Test
+         */
+        @DisplayName("HyphenatedWordFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/HyphenatedWordFeature.feature")
+        public class HyphenatedWordFeatureTest extends HyphenatedWordFeature {
+            public void givenTheFollowingUserSettings(List<UserSettingsParam> userSettings) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test naming")
+            public void scenario_1() {
+                /*
+                 * Given the following user-settings:
+                 *   | theme | language |
+                 *   | dark  | en       |
+                 */
+                givenTheFollowingUserSettings(
+                        List.of(
+                                new UserSettingsParam(
+                                        "dark",
+                                        "en"
+                                )
+                        ));
+            }
+
+            public static class UserSettingsParam {
+                private final String theme;
+
+                private final String language;
+
+                public UserSettingsParam(String theme, String language) {
+                    this.theme = theme;
+                    this.language = language;
+                }
+
+                public String theme() {
+                    return this.theme;
+                }
+
+                public String language() {
+                    return this.language;
+                }
+            }
+        }
+        """
+
+    Scenario: object type name from lowercase last word is capitalized
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+
+      @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      public abstract class LowercaseWordFeature {
+
+      }
+      """
+      And the following feature file:
+        """
+        Feature: Lowercase Word Test
+          Scenario: Test naming
+            Given the following products:
+              | name   | price |
+              | Widget | high  |
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
+        import java.util.List;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Lowercase Word Test
+         */
+        @DisplayName("LowercaseWordFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/LowercaseWordFeature.feature")
+        public class LowercaseWordFeatureTest extends LowercaseWordFeature {
+            public void givenTheFollowingProducts(List<ProductsParam> products) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test naming")
+            public void scenario_1() {
+                /*
+                 * Given the following products:
+                 *   | name   | price |
+                 *   | Widget | high  |
+                 */
+                givenTheFollowingProducts(
+                        List.of(
+                                new ProductsParam(
+                                        "Widget",
+                                        "high"
+                                )
+                        ));
+            }
+
+            public static class ProductsParam {
+                private final String name;
+
+                private final String price;
+
+                public ProductsParam(String name, String price) {
+                    this.name = name;
+                    this.price = price;
+                }
+
+                public String name() {
+                    return this.name;
+                }
+
+                public String price() {
+                    return this.price;
+                }
+            }
+        }
+        """
+
+    Scenario: object type name from all caps last word is converted to proper case
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+
+      @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      public abstract class AllCapsWordFeature {
+
+      }
+      """
+      And the following feature file:
+        """
+        Feature: All Caps Word Test
+          Scenario: Test naming
+            Given the following API:
+              | endpoint | method |
+              | /users   | GET    |
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
+        import java.util.List;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: All Caps Word Test
+         */
+        @DisplayName("AllCapsWordFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/AllCapsWordFeature.feature")
+        public class AllCapsWordFeatureTest extends AllCapsWordFeature {
+            public void givenTheFollowingApi(List<ApiParam> api) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test naming")
+            public void scenario_1() {
+                /*
+                 * Given the following API:
+                 *   | endpoint | method |
+                 *   | /users   | GET    |
+                 */
+                givenTheFollowingApi(
+                        List.of(
+                                new ApiParam(
+                                        "/users",
+                                        "GET"
+                                )
+                        ));
+            }
+
+            public static class ApiParam {
+                private final String endpoint;
+
+                private final String method;
+
+                public ApiParam(String endpoint, String method) {
+                    this.endpoint = endpoint;
+                    this.method = method;
+                }
+
+                public String endpoint() {
+                    return this.endpoint;
+                }
+
+                public String method() {
+                    return this.method;
                 }
             }
         }
@@ -271,8 +642,14 @@ Feature: MappingDataTableToListOfObjects
                  */
                 givenTheFollowingAccounts(
                         List.of(
-                                new AccountsParam("Alice", "alice@test.com"),
-                                new AccountsParam("Bob", "bob@test.com")
+                                new AccountsParam(
+                                        "Alice",
+                                        "alice@test.com"
+                                ),
+                                new AccountsParam(
+                                        "Bob",
+                                        "bob@test.com"
+                                )
                         ));
                 /*
                  * When Update accounts:
@@ -281,7 +658,10 @@ Feature: MappingDataTableToListOfObjects
                  */
                 whenUpdateAccounts(
                         List.of(
-                                new AccountsParam("Alice", "alice@test.com")
+                                new AccountsParam(
+                                        "Alice",
+                                        "alice@test.com"
+                                )
                         ));
             }
 
@@ -305,6 +685,9 @@ Feature: MappingDataTableToListOfObjects
             }
         }
         """
+
+  Rule: the other step (or more than one) doesn't have to specify the complete list of columns for the custom object type
+  so long as all columns used across all steps are compatible with the same object type
 
     Scenario: Multiple steps ending with same word share record type even if different set of columns are used
       Given the following base class:
@@ -339,6 +722,7 @@ Feature: MappingDataTableToListOfObjects
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.Integer;
         import java.lang.String;
         import java.util.List;
         import javax.annotation.processing.Generated;
@@ -377,8 +761,18 @@ Feature: MappingDataTableToListOfObjects
                  */
                 givenTheFollowingAccounts(
                         List.of(
-                                new AccountsParam("Alice", "alice@test.com", "", ""),
-                                new AccountsParam("Bob", "bob@test.com", "", "")
+                                new AccountsParam(
+                                        "Alice",
+                                        "alice@test.com",
+                                        null,
+                                        null
+                                ),
+                                new AccountsParam(
+                                        "Bob",
+                                        "bob@test.com",
+                                        null,
+                                        null
+                                )
                         ));
                 /*
                  * When Update accounts:
@@ -387,7 +781,12 @@ Feature: MappingDataTableToListOfObjects
                  */
                 whenUpdateAccounts(
                         List.of(
-                                new AccountsParam("Alice", "", "10", "active")
+                                new AccountsParam(
+                                        "Alice",
+                                        null,
+                                        10,
+                                        "active"
+                                )
                         ));
             }
 
@@ -396,11 +795,11 @@ Feature: MappingDataTableToListOfObjects
 
                 private final String email;
 
-                private final String id;
+                private final Integer id;
 
                 private final String status;
 
-                public AccountsParam(String name, String email, String id, String status) {
+                public AccountsParam(String name, String email, Integer id, String status) {
                     this.name = name;
                     this.email = email;
                     this.id = id;
@@ -415,7 +814,7 @@ Feature: MappingDataTableToListOfObjects
                     return this.email;
                 }
 
-                public String id() {
+                public Integer id() {
                     return this.id;
                 }
 
@@ -425,5 +824,4 @@ Feature: MappingDataTableToListOfObjects
             }
         }
         """
-
 

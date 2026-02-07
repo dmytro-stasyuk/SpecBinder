@@ -2,6 +2,7 @@ package dev.specbinder.feature2junit.gherkin;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.feature2junit.config.GeneratorOptions;
 import dev.specbinder.feature2junit.exception.ProcessingException;
@@ -14,7 +15,7 @@ import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.utils.*;
 import io.cucumber.messages.types.*;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -24,9 +25,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
@@ -82,20 +89,84 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         List<Examples> examples = scenario.getExamples();
         List<String> scenarioParameterNames;
         List<String> testMethodParameterNames;
+        List<Class<?>> scenarioParameterTypes;
+        Map<Integer, TypeMirror> enumParameterTypes;
 
         if (examples != null && !examples.isEmpty()) {
 
             scenarioParameterNames = addJUnitAnnotationsForParameterizedTest(scenarioMethodBuilder, scenario);
             testMethodParameterNames = new ArrayList<>(scenarioParameterNames.size());
 
-            for (String scenarioParameterName : scenarioParameterNames) {
+            // Extract parameter class field types from data tables (if any)
+            Map<String, TypeMirror> allParameterClassFieldTypes = extractParameterClassFieldTypes(scenarioSteps);
+
+            // Filter to only include field types for columns actually used as placeholders in data tables
+            Map<String, TypeMirror> parameterClassFieldTypes = allParameterClassFieldTypes;
+            if (allParameterClassFieldTypes != null && !allParameterClassFieldTypes.isEmpty()) {
+                Set<String> columnsUsedAsPlaceholders = findColumnsUsedAsPlaceholders(scenarioSteps);
+                if (!columnsUsedAsPlaceholders.isEmpty()) {
+                    parameterClassFieldTypes = new HashMap<>();
+                    for (Map.Entry<String, TypeMirror> entry : allParameterClassFieldTypes.entrySet()) {
+                        if (columnsUsedAsPlaceholders.contains(entry.getKey())) {
+                            parameterClassFieldTypes.put(entry.getKey(), entry.getValue());
+                        }
+                    }
+                }
+            }
+
+            // Infer types for each column in the Examples tables
+            ParameterConversionUtils.InferredColumnTypes inferredTypes = ParameterConversionUtils.inferColumnTypes(examples, baseType, processingEnv, parameterClassFieldTypes);
+            enumParameterTypes = inferredTypes.enumTypes;
+
+            // Convert map to list for easier access in processStep
+            scenarioParameterTypes = new ArrayList<>(scenarioParameterNames.size());
+
+            for (int i = 0; i < scenarioParameterNames.size(); i++) {
+                String scenarioParameterName = scenarioParameterNames.get(i);
                 String methodParameterName = ParameterNamingUtils.toMethodParameterName(scenarioParameterName);
                 testMethodParameterNames.add(methodParameterName);
-                scenarioMethodBuilder.addParameter(String.class, methodParameterName);
+
+                // Use inferred type instead of hardcoded String.class
+                TypeName parameterType = inferredTypes.typeNames.getOrDefault(i, TypeName.get(String.class));
+
+                // When useQualifiedEnumConstants is true, customize the parameter type for enums
+                if (getOptions().isUseQualifiedEnumConstants() && inferredTypes.enumTypes.containsKey(i)) {
+                    TypeMirror enumType = inferredTypes.enumTypes.get(i);
+                    String enumSimpleName = ParameterConversionUtils.getEnumSimpleName(enumType);
+
+                    if (isEnumExternal(enumType)) {
+                        // For external enums: register in EnumImportCollector and use simple name
+                        // The import will be added via addEnumTypeImportsToSource() to avoid duplicates
+                        String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(enumType);
+                        if (enumImportCollector != null) {
+                            enumImportCollector.registerEnumType(enumQualifiedName);
+                        }
+                        parameterType = com.squareup.javapoet.ClassName.bestGuess(enumSimpleName);
+                    } else {
+                        // For internal enums: use simple name without package qualification
+                        // JavaPoet will not add an import for this
+                        parameterType = com.squareup.javapoet.ClassName.bestGuess(enumSimpleName);
+                    }
+                }
+
+                scenarioMethodBuilder.addParameter(parameterType, methodParameterName);
+
+                // For scenarioParameterTypes, use String.class as a placeholder for enums
+                // The actual enum type checking will happen via hasCompatibleBaseMethod() using TypeMirror
+                if (inferredTypes.enumTypes.containsKey(i)) {
+                    // Use String.class as a placeholder - the actual type checking will use TypeMirror
+                    scenarioParameterTypes.add(String.class);
+                } else {
+                    // For primitives, extract the Class from TypeName
+                    Class<?> parameterClass = typeNameToClass(parameterType);
+                    scenarioParameterTypes.add(parameterClass);
+                }
             }
         } else {
             scenarioParameterNames = null;
             testMethodParameterNames = null;
+            scenarioParameterTypes = null;
+            enumParameterTypes = null;
 
             addJUnitAnnotationsForSingleTest(scenarioMethodBuilder, scenario);
         }
@@ -130,7 +201,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                 /**
                  * add an empty method that throws an exception
                  */
-                scenarioMethodBuilder.addStatement("$T.fail(\"Scenario has no steps\")", Assertions.class);
+                scenarioMethodBuilder.addStatement("$T.assumeTrue(false, \"Scenario has no steps\")", Assumptions.class);
             }
 
         } else {
@@ -158,14 +229,14 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                         compositeProcessor.processCompositeStep(
                                 compositeGroup, scenarioMethodBuilder, scenarioStepsMethodSpecs,
                                 classBuilder, allMethodSpecs, baseClassMethodNames,
-                                scenarioParameterNames, testMethodParameterNames
+                                scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                         );
                     } else if (item instanceof Step regularStep) {
                         // Process regular step
                         StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
                         MethodSpec stepMethodSpec = stepProcessor.processStep(
                                 regularStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
-                                scenarioParameterNames, testMethodParameterNames
+                                scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                         );
                         scenarioStepsMethodSpecs.add(stepMethodSpec);
 
@@ -177,7 +248,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
                         if (existingMethodSpec == null) {
                             // Check if base class has a compatible method (not just by name, but by signature)
-                            boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(regularStep, scenarioParameterNames, scenarioStepsMethodSpecs);
+                            boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(regularStep, scenarioParameterNames, scenarioParameterTypes, enumParameterTypes, scenarioStepsMethodSpecs);
                             // Also check if we need an overloaded method (inherited type incompatible)
                             boolean needsOverloadedMethod = stepNeedsOverloadedMethod(regularStep);
                             if (baseClassHasCompatibleMethod && !needsOverloadedMethod) {
@@ -195,7 +266,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                     StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
                     MethodSpec stepMethodSpec = stepProcessor.processStep(
                             scenarioStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
-                            scenarioParameterNames, testMethodParameterNames
+                            scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                     );
                     scenarioStepsMethodSpecs.add(stepMethodSpec);
 
@@ -207,7 +278,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
                     if (existingMethodSpec == null) {
                         // Check if base class has a compatible method (not just by name, but by signature)
-                        boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, scenarioParameterNames, scenarioStepsMethodSpecs);
+                        boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, scenarioParameterNames, scenarioParameterTypes, enumParameterTypes, scenarioStepsMethodSpecs);
                         // Also check if we need an overloaded method (inherited type incompatible)
                         boolean needsOverloadedMethod = stepNeedsOverloadedMethod(scenarioStep);
                         if (baseClassHasCompatibleMethod && !needsOverloadedMethod) {
@@ -343,6 +414,10 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                 }
 
                 String rowLine = String.join(" | ", cellValues);
+                // If the last cell is empty, remove the trailing space after the last separator
+                if (!cellValues.isEmpty() && cellValues.get(cellValues.size() - 1).isEmpty()) {
+                    rowLine = rowLine.substring(0, rowLine.length() - 1);
+                }
                 textBlockSB.append(rowLine);
                 textBlockSB.append("\n");
             }
@@ -429,6 +504,125 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         RecordMetadata recordMetadata = dataTableCollector.getRecordMetadataMap().get(recordName);
 
         return recordMetadata != null && recordMetadata.needsOverloadedMethod();
+    }
+
+    /**
+     * Converts a TypeName to a Class<?> for primitive wrapper types.
+     * Returns String.class for any non-primitive types.
+     */
+    private Class<?> typeNameToClass(TypeName typeName) {
+        String typeNameStr = typeName.toString();
+        return switch (typeNameStr) {
+            case "java.lang.Boolean" -> Boolean.class;
+            case "java.lang.Integer" -> Integer.class;
+            case "java.lang.Long" -> Long.class;
+            case "java.lang.Double" -> Double.class;
+            case "java.lang.Character" -> Character.class;
+            case "java.lang.String" -> String.class;
+            default -> String.class; // Fallback for unknown types
+        };
+    }
+
+    /**
+     * Checks if an enum type is defined outside the base class hierarchy.
+     * External enums require regular imports, while internal enums do not.
+     */
+    private boolean isEnumExternal(TypeMirror enumType) {
+        if (baseType == null) {
+            return true;
+        }
+
+        String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(enumType);
+        String baseQualifiedName = baseType.getQualifiedName().toString();
+
+        // Check if enum is defined in the base class
+        if (enumQualifiedName.startsWith(baseQualifiedName + ".")) {
+            return false;
+        }
+
+        // Check superclass hierarchy
+        TypeMirror superclass = baseType.getSuperclass();
+        while (superclass != null && superclass.getKind() == javax.lang.model.type.TypeKind.DECLARED) {
+            javax.lang.model.type.DeclaredType declaredSuperclass = (javax.lang.model.type.DeclaredType) superclass;
+            TypeElement superclassElement = (TypeElement) declaredSuperclass.asElement();
+            String superclassQualifiedName = superclassElement.getQualifiedName().toString();
+
+            if (enumQualifiedName.startsWith(superclassQualifiedName + ".")) {
+                return false;
+            }
+
+            superclass = superclassElement.getSuperclass();
+        }
+
+        return true;
+    }
+
+    /**
+     * Extracts parameter class field types from data tables in the scenario steps.
+     * Looks for the first step with a data table and finds its corresponding parameter class.
+     *
+     * @param scenarioSteps the list of steps in the scenario
+     * @return a map of field name to TypeMirror, or null if no data table found
+     */
+    private Set<String> findColumnsUsedAsPlaceholders(List<Step> scenarioSteps) {
+        Set<String> columnsUsedAsPlaceholders = new HashSet<>();
+
+        if (scenarioSteps == null) {
+            return columnsUsedAsPlaceholders;
+        }
+
+        // Pattern to match placeholders like <columnName>
+        Pattern placeholderPattern = Pattern.compile("<([^>]+)>");
+
+        for (Step step : scenarioSteps) {
+            if (step.getDataTable().isEmpty()) {
+                continue;
+            }
+
+            // Parse all cells in the data table
+            DataTable dataTable = step.getDataTable().get();
+            for (TableRow row : dataTable.getRows()) {
+                for (TableCell cell : row.getCells()) {
+                    String cellValue = cell.getValue();
+                    Matcher matcher = placeholderPattern.matcher(cellValue);
+                    while (matcher.find()) {
+                        String columnName = matcher.group(1);
+                        columnsUsedAsPlaceholders.add(columnName);
+                    }
+                }
+            }
+        }
+
+        return columnsUsedAsPlaceholders;
+    }
+
+    private Map<String, TypeMirror> extractParameterClassFieldTypes(List<Step> scenarioSteps) {
+        if (dataTableCollector == null || scenarioSteps == null) {
+            return null;
+        }
+
+        // Find the first step with a data table
+        for (Step step : scenarioSteps) {
+            if (step.getDataTable().isEmpty()) {
+                continue;
+            }
+
+            // Get the record name for this step
+            String stepText = step.getKeyword() + step.getText();
+            String recordName = dataTableCollector.deriveRecordNameFromStepText(stepText);
+
+            // Get the record metadata
+            RecordMetadata recordMetadata = dataTableCollector.getRecordMetadataMap().get(recordName);
+            if (recordMetadata == null || !recordMetadata.hasExistingType()) {
+                continue;
+            }
+
+            // Extract field types from the parameter class
+            TypeElement parameterClass = recordMetadata.getExistingType();
+            return ParameterConversionUtils.extractParameterClassFieldTypes(parameterClass, processingEnv);
+        }
+
+        return null;
     }
 
 }

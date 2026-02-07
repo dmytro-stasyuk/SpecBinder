@@ -60,6 +60,7 @@ public class Feature2JUnitOptionsResolver {
         boolean placeGeneratedClassNextToAnnotatedClass = false;
         String dataTableParameterType = LIST_OF_MAPS.name();
         boolean enableCompositeSteps = false;
+        boolean useQualifiedEnumConstants = false;
 
         // Merge annotations from parent to child (so child values override parent values)
         for (Feature2JUnitOptions options : annotations) {
@@ -72,6 +73,7 @@ public class Feature2JUnitOptionsResolver {
             addCucumberStepAnnotations = options.addCucumberStepAnnotations();
             placeGeneratedClassNextToAnnotatedClass = false; // option removed
             enableCompositeSteps = options.enableCompositeSteps();
+            useQualifiedEnumConstants = options.useQualifiedEnumConstants();
 
             // For enum properties, convert to String
             Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE enumValue = options.dataTableParameterType();
@@ -108,7 +110,8 @@ public class Feature2JUnitOptionsResolver {
                 addCucumberStepAnnotations,
                 placeGeneratedClassNextToAnnotatedClass,
                 dataTableParameterType,
-                enableCompositeSteps
+                enableCompositeSteps,
+                useQualifiedEnumConstants
         );
     }
 }

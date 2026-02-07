@@ -54,6 +54,43 @@ public class RecordMetadata {
     }
 
     /**
+     * Merges columns with their inferred types from a data table into this record.
+     * Maintains insertion order and deduplicates column names.
+     * If a column already exists with a different type, the type is updated to String
+     * to ensure compatibility with all usages.
+     *
+     * @param newColumns the list of column names to merge
+     * @param newTypes the list of inferred types corresponding to the column names
+     */
+    public void mergeColumnsWithTypes(List<String> newColumns, List<String> newTypes) {
+        if (newColumns.size() != newTypes.size()) {
+            throw new IllegalArgumentException(
+                    "Column names and types must have the same size. Got " +
+                    newColumns.size() + " columns and " + newTypes.size() + " types."
+            );
+        }
+
+        for (int i = 0; i < newColumns.size(); i++) {
+            String column = newColumns.get(i);
+            String type = newTypes.get(i);
+
+            int existingIndex = columnNames.indexOf(column);
+            if (existingIndex >= 0) {
+                // Column already exists - check if types match
+                String existingType = columnTypes.get(existingIndex);
+                if (!existingType.equals(type)) {
+                    // Type conflict - fall back to String
+                    columnTypes.set(existingIndex, "String");
+                }
+            } else {
+                // New column - add it with its type
+                columnNames.add(column);
+                columnTypes.add(type);
+            }
+        }
+    }
+
+    /**
      * Gets the record name.
      *
      * @return the record name (e.g., "Users")

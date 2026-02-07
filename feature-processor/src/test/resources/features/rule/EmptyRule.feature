@@ -34,7 +34,7 @@ Feature: EmptyRule
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -61,7 +61,7 @@ Feature: EmptyRule
               @Test
               @Tag("new")
               public void noScenariosInRule() {
-                  Assertions.fail("Rule doesn't have any scenarios");
+                  Assumptions.assumeTrue(false, "Rule has no scenarios");
               }
           }
       }
@@ -147,7 +147,7 @@ Feature: EmptyRule
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -174,7 +174,7 @@ Feature: EmptyRule
               @Test
               @Tag("new")
               public void noScenariosInRule() {
-                  Assertions.fail("Rule doesn't have any scenarios");
+                  Assumptions.assumeTrue(false, "Rule has no scenarios");
               }
           }
       }
@@ -210,7 +210,7 @@ Feature: EmptyRule
       
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -237,7 +237,7 @@ Feature: EmptyRule
               @Test
               @Tag("incomplete")
               public void noScenariosInRule() {
-                  Assertions.fail("Rule doesn't have any scenarios");
+                  Assumptions.assumeTrue(false, "Rule has no scenarios");
               }
           }
       }

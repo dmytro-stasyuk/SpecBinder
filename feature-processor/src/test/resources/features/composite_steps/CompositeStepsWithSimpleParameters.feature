@@ -846,6 +846,7 @@ Feature: CompositeStepsWithSimpleParameters
         import static java.util.Arrays.stream;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.Integer;
         import java.lang.String;
         import java.util.function.BiConsumer;
         import javax.annotation.processing.Generated;
@@ -885,7 +886,7 @@ Feature: CompositeStepsWithSimpleParameters
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSendReceipt$p1To$p2(String p1, String p2) {
+            public void givenSendReceipt$p1To$p2(Integer p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -912,7 +913,7 @@ Feature: CompositeStepsWithSimpleParameters
                     givenValidateCustomer$p1WithMethod$p2(p1, "Credit Card");
                     givenChargeAmount$p1ToCustomer$p2(p2, p1);
                     givenSendReceiptTo$p1WithAmount$p2(p1, p2);
-                    givenSendReceipt$p1To$p2("120", p1);
+                    givenSendReceipt$p1To$p2(120, p1);
                     givenLogTransactionFor$p1WithStatus$p2(p1, "Completed");
                 });
                 /*
@@ -927,5 +928,332 @@ Feature: CompositeStepsWithSimpleParameters
         }
         """
 
+    Scenario: Composite step with sub-steps containing Long parameters
+      Given the following base class:
+      """
+      package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit
+      @Feature2JUnitOptions(enableCompositeSteps = true)
+      public abstract class DataProcessing {
+
+      }
+      """
+      And the following feature file:
+      """
+      Feature: Data Processing
+        Scenario: Process large dataset
+          Given user "Bob" processes dataset with ID "999999999999"
+          * load dataset "999999999999" from storage
+          * validate user $p1 has access to dataset "999999999999"
+          * calculate checksum for dataset "999999999999"
+          When processing is complete
+          Then user "Bob" should see results
+      """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package com.example;
+
+        import static java.util.Arrays.stream;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.Long;
+        import java.lang.String;
+        import java.util.function.BiConsumer;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Data Processing
+         */
+        @DisplayName("DataProcessing")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("com/example/DataProcessing.feature")
+        public class DataProcessingTest extends DataProcessing {
+            protected void givenUser$p1ProcessesDatasetWithId$p2(String p1, String p2,
+                    BiConsumer<String, String>... composite) {
+                if (composite.length > 0) {
+                    stream(composite).forEach(action -> action.accept(p1, p2));
+                } else {
+                    Assertions.fail("Step is not yet implemented");
+                }
+            }
+
+            public void givenLoadDataset$p1FromStorage(Long p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenValidateUser$p1HasAccessToDataset$p2(String p1, Long p2) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenCalculateChecksumForDataset$p1(Long p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void whenProcessingIsComplete() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void thenUser$p1ShouldSeeResults(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Process large dataset")
+            public void scenario_1() {
+                /*
+                 * Given user "Bob" processes dataset with ID "999999999999"
+                 */
+                givenUser$p1ProcessesDatasetWithId$p2("Bob", "999999999999", (p1, p2) -> {
+                    givenLoadDataset$p1FromStorage(999999999999L);
+                    givenValidateUser$p1HasAccessToDataset$p2(p1, 999999999999L);
+                    givenCalculateChecksumForDataset$p1(999999999999L);
+                });
+                /*
+                 * When processing is complete
+                 */
+                whenProcessingIsComplete();
+                /*
+                 * Then user "Bob" should see results
+                 */
+                thenUser$p1ShouldSeeResults("Bob");
+            }
+        }
+        """
+
+    Scenario: Composite step with sub-steps containing Boolean parameters
+      Given the following base class:
+      """
+      package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit
+      @Feature2JUnitOptions(enableCompositeSteps = true)
+      public abstract class FeatureToggle {
+
+      }
+      """
+      And the following feature file:
+      """
+      Feature: Feature Toggle
+        Scenario: Enable feature for user
+          Given user "Alice" enables feature with debug "true"
+          * check if user $p1 has admin rights
+          * enable feature flag "true" for user $p1
+          * set debug mode to "true"
+          * send notification "false" to user $p1
+          When configuration is saved
+          Then feature should be enabled for "Alice"
+      """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package com.example;
+
+        import static java.util.Arrays.stream;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.Boolean;
+        import java.lang.String;
+        import java.util.function.BiConsumer;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Feature Toggle
+         */
+        @DisplayName("FeatureToggle")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("com/example/FeatureToggle.feature")
+        public class FeatureToggleTest extends FeatureToggle {
+            protected void givenUser$p1EnablesFeatureWithDebug$p2(String p1, String p2,
+                    BiConsumer<String, String>... composite) {
+                if (composite.length > 0) {
+                    stream(composite).forEach(action -> action.accept(p1, p2));
+                } else {
+                    Assertions.fail("Step is not yet implemented");
+                }
+            }
+
+            public void givenCheckIfUser$p1HasAdminRights(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenEnableFeatureFlag$p1ForUser$p2(Boolean p1, String p2) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenSetDebugModeTo$p1(Boolean p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenSendNotification$p1ToUser$p2(Boolean p1, String p2) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void whenConfigurationIsSaved() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void thenFeatureShouldBeEnabledFor$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Enable feature for user")
+            public void scenario_1() {
+                /*
+                 * Given user "Alice" enables feature with debug "true"
+                 */
+                givenUser$p1EnablesFeatureWithDebug$p2("Alice", "true", (p1, p2) -> {
+                    givenCheckIfUser$p1HasAdminRights(p1);
+                    givenEnableFeatureFlag$p1ForUser$p2(true, p1);
+                    givenSetDebugModeTo$p1(true);
+                    givenSendNotification$p1ToUser$p2(false, p1);
+                });
+                /*
+                 * When configuration is saved
+                 */
+                whenConfigurationIsSaved();
+                /*
+                 * Then feature should be enabled for "Alice"
+                 */
+                thenFeatureShouldBeEnabledFor$p1("Alice");
+            }
+        }
+        """
+
+    Scenario: Composite step with sub-steps containing Double parameters
+      Given the following base class:
+      """
+      package com.example;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+
+      @Feature2JUnit
+      @Feature2JUnitOptions(enableCompositeSteps = true)
+      public abstract class PricingEngine {
+
+      }
+      """
+      And the following feature file:
+      """
+      Feature: Pricing Engine
+        Scenario: Calculate discounted price
+          Given customer "John" purchases item with price "99.99"
+          * load product with price "99.99" from catalog
+          * apply discount rate "0.15" for customer $p1
+          * calculate tax with rate "8.5" on price "99.99"
+          * round final price to "2" decimals
+          When order is finalized
+          Then customer "John" should see total price
+      """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package com.example;
+
+        import static java.util.Arrays.stream;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.Double;
+        import java.lang.Integer;
+        import java.lang.String;
+        import java.util.function.BiConsumer;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Pricing Engine
+         */
+        @DisplayName("PricingEngine")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("com/example/PricingEngine.feature")
+        public class PricingEngineTest extends PricingEngine {
+            protected void givenCustomer$p1PurchasesItemWithPrice$p2(String p1, String p2,
+                    BiConsumer<String, String>... composite) {
+                if (composite.length > 0) {
+                    stream(composite).forEach(action -> action.accept(p1, p2));
+                } else {
+                    Assertions.fail("Step is not yet implemented");
+                }
+            }
+
+            public void givenLoadProductWithPrice$p1FromCatalog(Double p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenApplyDiscountRate$p1ForCustomer$p2(Double p1, String p2) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenCalculateTaxWithRate$p1OnPrice$p2(Double p1, Double p2) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void givenRoundFinalPriceTo$p1Decimals(Integer p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void whenOrderIsFinalized() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            public void thenCustomer$p1ShouldSeeTotalPrice(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Calculate discounted price")
+            public void scenario_1() {
+                /*
+                 * Given customer "John" purchases item with price "99.99"
+                 */
+                givenCustomer$p1PurchasesItemWithPrice$p2("John", "99.99", (p1, p2) -> {
+                    givenLoadProductWithPrice$p1FromCatalog(99.99);
+                    givenApplyDiscountRate$p1ForCustomer$p2(0.15, p1);
+                    givenCalculateTaxWithRate$p1OnPrice$p2(8.5, 99.99);
+                    givenRoundFinalPriceTo$p1Decimals(2);
+                });
+                /*
+                 * When order is finalized
+                 */
+                whenOrderIsFinalized();
+                /*
+                 * Then customer "John" should see total price
+                 */
+                thenCustomer$p1ShouldSeeTotalPrice("John");
+            }
+        }
+        """
 
 

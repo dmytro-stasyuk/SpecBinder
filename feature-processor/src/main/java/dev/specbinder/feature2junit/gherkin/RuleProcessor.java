@@ -164,7 +164,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
             MethodSpec.Builder noScenariosInRuleMSB = MethodSpec
                     .methodBuilder("noScenariosInRule")
                     .addModifiers(Modifier.PUBLIC);
-            noScenariosInRuleMSB.addStatement("$T.fail(\"Rule doesn't have any scenarios\")", Assertions.class);
+            noScenariosInRuleMSB.addStatement("$T.assumeTrue(false, \"Rule has no scenarios\")", Assumptions.class);
 
             AnnotationSpec testAnnotation = AnnotationSpec
                     .builder(Test.class)

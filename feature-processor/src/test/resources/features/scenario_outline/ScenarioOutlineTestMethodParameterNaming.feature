@@ -27,8 +27,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
         Scenario Outline: Column name conversion
           Given user <first name> has <last name> and <user id>
           Examples:
-            | first name | last name | user id |
-            | John       | Doe       | 123     |
+            | first name | last name | user id   |
+            | John       | Doe       | user123   |
       """
       When the generator is run
       Then the following class should be generated:
@@ -66,7 +66,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           first name | last name | user id
-                          John       | Doe       | 123
+                          John       | Doe       | user123
                           \"\"\"
           )
           @Order(1)
@@ -97,8 +97,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
         Scenario Outline: Column name conversion
           Given user <first.name> has <last.name> and <user.id>
           Examples:
-            | first.name | last.name | user.id |
-            | John       | Doe       | 123     |
+            | first.name | last.name | user.id   |
+            | John       | Doe       | user123   |
       """
       When the generator is run
       Then the following class should be generated:
@@ -136,7 +136,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           first.name | last.name | user.id
-                          John       | Doe       | 123
+                          John       | Doe       | user123
                           \"\"\"
           )
           @Order(1)
@@ -168,7 +168,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
           Given <value1> and <user 2 id> and <test_3_name>
           Examples:
             | value1 | user 2 id | test_3_name |
-            | abc    | 123       | xyz         |
+            | abc    | user456   | xyz         |
       """
       When the generator is run
       Then the following class should be generated:
@@ -206,7 +206,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           value1 | user 2 id | test_3_name
-                          abc    | 123       | xyz
+                          abc    | user456   | xyz
                           \"\"\"
           )
           @Order(1)
@@ -238,7 +238,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
           Given <first-name_value> and <user.id-number>
           Examples:
             | first-name_value | user.id-number |
-            | John             | 123            |
+            | John             | user789        |
       """
       When the generator is run
       Then the following class should be generated:
@@ -276,7 +276,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           first-name_value | user.id-number
-                          John             | 123
+                          John             | user789
                           \"\"\"
           )
           @Order(1)
@@ -384,8 +384,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
         Scenario Outline: Column name conversion
           Given user <first_name> has <last_name> and <user_id>
           Examples:
-            | first_name | last_name | user_id |
-            | John       | Doe       | 123     |
+            | first_name | last_name | user_id  |
+            | John       | Doe       | user123  |
       """
       When the generator is run
       Then the following class should be generated:
@@ -423,7 +423,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           first_name | last_name | user_id
-                          John       | Doe       | 123
+                          John       | Doe       | user123
                           \"\"\"
           )
           @Order(1)
@@ -455,7 +455,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
           Given <first  name> and <user__id>
           Examples:
             | first  name | user__id |
-            | John        | 123      |
+            | John        | user123  |
       """
       When the generator is run
       Then the following class should be generated:
@@ -493,7 +493,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           first  name | user__id
-                          John        | 123
+                          John        | user123
                           \"\"\"
           )
           @Order(1)
@@ -526,8 +526,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
         Scenario Outline: Column names with special characters
           Given user <user-id> has <user.name> and <order#number>
           Examples:
-            | user-id | user.name | order#number |
-            | 123     | John      | 456          |
+            | user-id  | user.name | order#number |
+            | user123  | John      | order456     |
       """
       When the generator is run
       Then the following class should be generated:
@@ -565,7 +565,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           user-id | user.name | order#number
-                          123     | John      | 456
+                          user123 | John      | order456
                           \"\"\"
           )
           @Order(1)
@@ -597,7 +597,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
           Given <!firstName> and <lastName@> and <_userId_>
           Examples:
             |  !firstName | lastName@  | _userId_ |
-            | John        | Doe        | 123      |
+            | John        | Doe        | user123  |
       """
       When the generator is run
       Then the following class should be generated:
@@ -635,7 +635,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           !firstName | lastName@ | _userId_
-                          John       | Doe       | 123
+                          John       | Doe       | user123
                           \"\"\"
           )
           @Order(1)
@@ -669,8 +669,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
         Scenario Outline: Column names with mixed case in words
           Given <user iD> and <first NaMe> and <order ToTal>
           Examples:
-            | user iD | first NaMe | order ToTal |
-            | 123     | John       | 99.99       |
+            | user iD  | first NaMe | order ToTal |
+            | user123  | John       | total99     |
       """
       When the generator is run
       Then the following class should be generated:
@@ -708,7 +708,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           user iD | first NaMe | order ToTal
-                          123     | John       | 99.99
+                          user123 | John       | total99
                           \"\"\"
           )
           @Order(1)
@@ -739,8 +739,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
         Scenario Outline: Column names in PascalCase format
           Given <First Name> and <Last Name> and <User ID>
           Examples:
-            | First Name | Last Name | User ID |
-            | John       | Doe       | 123     |
+            | First Name | Last Name | User ID  |
+            | John       | Doe       | user123  |
       """
       When the generator is run
       Then the following class should be generated:
@@ -778,7 +778,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           First Name | Last Name | User ID
-                          John       | Doe       | 123
+                          John       | Doe       | user123
                           \"\"\"
           )
           @Order(1)
@@ -810,7 +810,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
           Given <xml Data> and <json Payload> and <http Request>
           Examples:
             | xml Data | json Payload | http Request |
-            | abc      | xyz          | 123          |
+            | abc      | xyz          | request123   |
       """
       When the generator is run
       Then the following class should be generated:
@@ -848,7 +848,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           xml Data | json Payload | http Request
-                          abc      | xyz          | 123
+                          abc      | xyz          | request123
                           \"\"\"
           )
           @Order(1)
@@ -884,8 +884,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
         Scenario Outline: SCREAMING_SNAKE_CASE column names
           Given <USER_ID> and <FIRST_NAME> and <LAST NAME>
           Examples:
-            | USER_ID | FIRST_NAME | LAST NAME |
-            | 123     | John       | Smith     |
+            | USER_ID  | FIRST_NAME | LAST NAME |
+            | USER123  | John       | Smith     |
       """
       When the generator is run
       Then the following class should be generated:
@@ -923,7 +923,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   delimiter = '|',
                   textBlock = \"\"\"
                           USER_ID | FIRST_NAME | LAST NAME
-                          123     | John       | Smith
+                          USER123 | John       | Smith
                           \"\"\"
           )
           @Order(1)
@@ -957,8 +957,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
         Scenario Outline: Column names already in camelCase
           Given <firstName> and <userId> and <orderTotal>
           Examples:
-            | firstName | userId | orderTotal |
-            | John      | 123    | 99.99      |
+            | firstName | userId   | orderTotal  |
+            | John      | user123  | total99     |
       """
       When the generator is run
       Then the following class should be generated:
@@ -995,8 +995,8 @@ Feature: ScenarioOutlineTestMethodParameterNaming
                   useHeadersInDisplayName = true,
                   delimiter = '|',
                   textBlock = \"\"\"
-                          firstName | userId | orderTotal
-                          John      | 123    | 99.99
+                          firstName | userId  | orderTotal
+                          John      | user123 | total99
                           \"\"\"
           )
           @Order(1)

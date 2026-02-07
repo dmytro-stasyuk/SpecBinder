@@ -3,9 +3,9 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
   I want data table placeholder references to Examples columns to be properly substituted in the generated parameterized test code
   So that I can combine the power of Scenario Outline parameterization with type-safe data table objects
 
-  Rule: when a data table cell value is exactly a single placeholder like <exampleColumn>, the generated code uses the parameter value directly
+  Rule: when a data table cell value is exactly a single placeholder like <exampleColumn>
   - the placeholder is replaced with the corresponding @ParameterizedTest method parameter
-  - no string concatenation is needed for single-placeholder cells
+  - no string replacement is needed for single-placeholder cells
 
     Scenario: Data table with single placeholder per cell in Scenario Outline
       Given the following base class:
@@ -29,6 +29,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
             Given the following users:
               | name   | role   |
               | <name> | <role> |
+              | John   | Smith  |
             Examples:
               | name  | role  |
               | Alice | Admin |
@@ -82,10 +83,18 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                * Given the following users:
                *   | name   | role   |
                *   | <name> | <role> |
+               *   | John   | Smith  |
                */
               givenTheFollowingUsers(
                       List.of(
-                              new UsersParam(name, role)
+                              new UsersParam(
+                                      name,
+                                      role
+                              ),
+                              new UsersParam(
+                                      "John",
+                                      "Smith"
+                              )
                       ));
           }
 
@@ -190,8 +199,14 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                */
               givenTheFollowingUsers(
                       List.of(
-                              new UsersParam(name, "Admin"),
-                              new UsersParam("Bob", role)
+                              new UsersParam(
+                                      name,
+                                      "Admin"
+                              ),
+                              new UsersParam(
+                                      "Bob",
+                                      role
+                              )
                       ));
           }
 
@@ -216,9 +231,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       }
       """
 
-  Rule: when a data table cell contains mixed content (literal text + placeholder) like "Hello <name>!", string concatenation is used
-  - the generated code concatenates literal parts with parameter values
-  - example: "Hello " + name + "!" for cell value "Hello <name>!"
+  Rule: when a data table cell contains mixed content (literal text + placeholder) like "Hello <name>!", string replacement is used
 
     Scenario: Data table cell with literal text and placeholder mixed
       Given the following base class:
@@ -298,7 +311,10 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                */
               givenTheFollowingMessages(
                       List.of(
-                              new MessagesParam(name, "Hello " + name + "!")
+                              new MessagesParam(
+                                      name,
+                                      "Hello <name>!".replaceAll("<name>", name)
+                              )
                       ));
           }
 
@@ -407,9 +423,24 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                */
               givenTheFollowingNotifications(
                       List.of(
-                              new NotificationsParam(name, "Welcome " + name + "!", "Hello " + name + ", welcome to app!", "high"),
-                              new NotificationsParam("admin", "New user: " + name, "User " + name + " (" + email + ") joined", level),
-                              new NotificationsParam("support", "Support notification", "Standard support message", "low")
+                              new NotificationsParam(
+                                      name,
+                                      "Welcome <name>!".replaceAll("<name>", name),
+                                      "Hello <name>, welcome to app!".replaceAll("<name>", name),
+                                      "high"
+                              ),
+                              new NotificationsParam(
+                                      "admin",
+                                      "New user: <name>".replaceAll("<name>", name),
+                                      "User <name> (<email>) joined".replaceAll("<name>", name).replaceAll("<email>", email),
+                                      level
+                              ),
+                              new NotificationsParam(
+                                      "support",
+                                      "Support notification",
+                                      "Standard support message",
+                                      "low"
+                              )
                       ));
           }
 
@@ -448,9 +479,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       }
       """
 
-  Rule: when a data table cell contains multiple placeholders like <firstName> <lastName>, all are substituted
-  - each placeholder is replaced with its corresponding parameter value
-  - the parts are concatenated in the order they appear in the cell
+  Rule: when a data table cell contains multiple placeholders like <firstName> <lastName>, all are replaced with corresponding parameter values
 
     Scenario: Data table cell with multiple placeholders
       Given the following base class:
@@ -472,7 +501,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
         Feature: Contacts
           Scenario Outline: Create contacts
             Given the following contacts:
-              | fullName               | email                        |
+              | fullName               | email                           |
               | <firstName> <lastName> | <firstName>.<lastName>@test.com |
             Examples:
               | firstName | lastName |
@@ -530,7 +559,10 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                */
               givenTheFollowingContacts(
                       List.of(
-                              new ContactsParam(firstName + " " + lastName, firstName + "." + lastName + "@test.com")
+                              new ContactsParam(
+                                      "<firstName> <lastName>".replaceAll("<firstName>", firstName).replaceAll("<lastName>", lastName),
+                                      "<firstName>.<lastName>@test.com".replaceAll("<firstName>", firstName).replaceAll("<lastName>", lastName)
+                              )
                       ));
           }
 
@@ -555,9 +587,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       }
       """
 
-  Rule: different rows in the same data table may have different placeholder patterns
-  - some rows may contain placeholders while others contain only literal values
-  - each row is processed independently based on its content
+  Rule: different rows in the same data table may have different placeholder patterns or only literal values
 
     Scenario: Data table rows with varying placeholder patterns
       Given the following base class:
@@ -579,14 +609,14 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
         Feature: Orders
           Scenario Outline: Process orders
             Given the following orders:
-              | customer   | product   | quantity |
-              | <customer> | <product> | 1        |
-              | admin      | Widget    | 10       |
-              | <customer> | Gadget    | <qty>    |
+              | customer   | product   | status    |
+              | <customer> | <product> | pending   |
+              | admin      | Widget    | completed |
+              | <customer> | Gadget    | <status>  |
             Examples:
-              | customer | product | qty |
-              | Alice    | Phone   | 2   |
-              | Bob      | Laptop  | 5   |
+              | customer | product | status     |
+              | Alice    | Phone   | processing |
+              | Bob      | Laptop  | shipped    |
         """
       When the generator is run
       Then the following class should be generated:
@@ -624,26 +654,38 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                   useHeadersInDisplayName = true,
                   delimiter = '|',
                   textBlock = \"\"\"
-                          customer | product | qty
-                          Alice    | Phone   | 2
-                          Bob      | Laptop  | 5
+                          customer | product | status
+                          Alice    | Phone   | processing
+                          Bob      | Laptop  | shipped
                           \"\"\"
           )
           @Order(1)
           @DisplayName("Scenario Outline: Process orders")
-          public void scenario_1(String customer, String product, String qty) {
+          public void scenario_1(String customer, String product, String status) {
               /*
                * Given the following orders:
-               *   | customer   | product   | quantity |
-               *   | <customer> | <product> | 1        |
-               *   | admin      | Widget    | 10       |
-               *   | <customer> | Gadget    | <qty>    |
+               *   | customer   | product   | status    |
+               *   | <customer> | <product> | pending   |
+               *   | admin      | Widget    | completed |
+               *   | <customer> | Gadget    | <status>  |
                */
               givenTheFollowingOrders(
                       List.of(
-                              new OrdersParam(customer, product, "1"),
-                              new OrdersParam("admin", "Widget", "10"),
-                              new OrdersParam(customer, "Gadget", qty)
+                              new OrdersParam(
+                                      customer,
+                                      product,
+                                      "pending"
+                              ),
+                              new OrdersParam(
+                                      "admin",
+                                      "Widget",
+                                      "completed"
+                              ),
+                              new OrdersParam(
+                                      customer,
+                                      "Gadget",
+                                      status
+                              )
                       ));
           }
 
@@ -652,12 +694,12 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
 
               private final String product;
 
-              private final String quantity;
+              private final String status;
 
-              public OrdersParam(String customer, String product, String quantity) {
+              public OrdersParam(String customer, String product, String status) {
                   this.customer = customer;
                   this.product = product;
-                  this.quantity = quantity;
+                  this.status = status;
               }
 
               public String customer() {
@@ -668,8 +710,8 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                   return this.product;
               }
 
-              public String quantity() {
-                  return this.quantity;
+              public String status() {
+                  return this.status;
               }
           }
       }
@@ -700,13 +742,13 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
         Feature: Shopping Cart
           Scenario Outline: User adds items to cart
             Given user "<username>" has the following items:
-              | item   | price   | quantity |
-              | <item> | <price> | 1        |
-              | Bonus  | 0       | <qty>    |
+              | item   | category   | status     |
+              | <item> | <category> | active     |
+              | Bonus  | gift       | <status>   |
             Examples:
-              | username | item   | price | qty |
-              | Alice    | Phone  | 999   | 2   |
-              | Bob      | Laptop | 1499  | 1   |
+              | username | item   | category    | status   |
+              | Alice    | Phone  | electronics | pending  |
+              | Bob      | Laptop | computers   | approved |
         """
       When the generator is run
       Then the following class should be generated:
@@ -744,50 +786,58 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                   useHeadersInDisplayName = true,
                   delimiter = '|',
                   textBlock = \"\"\"
-                          username | item   | price | qty
-                          Alice    | Phone  | 999   | 2
-                          Bob      | Laptop | 1499  | 1
+                          username | item   | category    | status
+                          Alice    | Phone  | electronics | pending
+                          Bob      | Laptop | computers   | approved
                           \"\"\"
           )
           @Order(1)
           @DisplayName("Scenario Outline: User adds items to cart")
-          public void scenario_1(String username, String item, String price, String qty) {
+          public void scenario_1(String username, String item, String category, String status) {
               /*
                * Given user "<username>" has the following items:
-               *   | item   | price   | quantity |
-               *   | <item> | <price> | 1        |
-               *   | Bonus  | 0       | <qty>    |
+               *   | item   | category   | status   |
+               *   | <item> | <category> | active   |
+               *   | Bonus  | gift       | <status> |
                */
               givenUser$p1HasTheFollowingItems(username,
                       List.of(
-                              new ItemsParam(item, price, "1"),
-                              new ItemsParam("Bonus", "0", qty)
+                              new ItemsParam(
+                                      item,
+                                      category,
+                                      "active"
+                              ),
+                              new ItemsParam(
+                                      "Bonus",
+                                      "gift",
+                                      status
+                              )
                       ));
           }
 
           public static class ItemsParam {
               private final String item;
 
-              private final String price;
+              private final String category;
 
-              private final String quantity;
+              private final String status;
 
-              public ItemsParam(String item, String price, String quantity) {
+              public ItemsParam(String item, String category, String status) {
                   this.item = item;
-                  this.price = price;
-                  this.quantity = quantity;
+                  this.category = category;
+                  this.status = status;
               }
 
               public String item() {
                   return this.item;
               }
 
-              public String price() {
-                  return this.price;
+              public String category() {
+                  return this.category;
               }
 
-              public String quantity() {
-                  return this.quantity;
+              public String status() {
+                  return this.status;
               }
           }
       }

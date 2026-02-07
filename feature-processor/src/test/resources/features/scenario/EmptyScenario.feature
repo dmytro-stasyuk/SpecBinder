@@ -1,4 +1,4 @@
-Feature: ScenarioEmpty
+Feature: EmptyScenario
   As a test developer using Gherkin
   I want to configure how empty Scenarios (Scenarios without steps) are handled
   So that I can control test behavior and tag incomplete specifications
@@ -33,7 +33,7 @@ Feature: ScenarioEmpty
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -54,7 +54,7 @@ Feature: ScenarioEmpty
           @Tag("new")
           @DisplayName("Scenario: Future implementation")
           public void scenario_1() {
-              Assertions.fail("Scenario has no steps");
+              Assumptions.assumeTrue(false, "Scenario has no steps");
           }
       }
       """
@@ -141,7 +141,7 @@ Feature: ScenarioEmpty
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -162,7 +162,7 @@ Feature: ScenarioEmpty
           @Tag("todo")
           @DisplayName("Scenario: Not implemented yet")
           public void scenario_1() {
-              Assertions.fail("Scenario has no steps");
+              Assumptions.assumeTrue(false, "Scenario has no steps");
           }
       }
       """
@@ -194,7 +194,7 @@ Feature: ScenarioEmpty
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -215,7 +215,7 @@ Feature: ScenarioEmpty
           @Tag("new")
           @DisplayName("Scenario: Work in progress")
           public void scenario_1() {
-              Assertions.fail("Scenario has no steps");
+              Assumptions.assumeTrue(false, "Scenario has no steps");
           }
       }
       """

@@ -89,6 +89,12 @@ public class GeneratorOptions {
     private final boolean enableCompositeSteps;
 
     /**
+     * If set to true, enum constants will be referenced with their type qualifier (e.g., Status.AVAILABLE)
+     * instead of using static imports and simple names (e.g., AVAILABLE).
+     */
+    private final boolean useQualifiedEnumConstants;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -105,6 +111,7 @@ public class GeneratorOptions {
         this.placeGeneratedClassNextToAnnotatedClass = false;
         this.dataTableParameterType = LIST_OF_MAPS.name();
         this.enableCompositeSteps = false;
+        this.useQualifiedEnumConstants = false;
     }
 
     /**
@@ -123,6 +130,7 @@ public class GeneratorOptions {
      * @param placeGeneratedClassNextToAnnotatedClass see {@link #placeGeneratedClassNextToAnnotatedClass}
      * @param dataTableParameterType       see {@link #dataTableParameterType}
      * @param enableCompositeSteps         see {@link #enableCompositeSteps}
+     * @param useQualifiedEnumConstants    see {@link #useQualifiedEnumConstants}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -137,7 +145,8 @@ public class GeneratorOptions {
             boolean addCucumberStepAnnotations,
             boolean placeGeneratedClassNextToAnnotatedClass,
             String dataTableParameterType,
-            boolean enableCompositeSteps
+            boolean enableCompositeSteps,
+            boolean useQualifiedEnumConstants
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -152,6 +161,7 @@ public class GeneratorOptions {
         this.placeGeneratedClassNextToAnnotatedClass = placeGeneratedClassNextToAnnotatedClass;
         this.dataTableParameterType = dataTableParameterType;
         this.enableCompositeSteps = enableCompositeSteps;
+        this.useQualifiedEnumConstants = useQualifiedEnumConstants;
     }
 
 }

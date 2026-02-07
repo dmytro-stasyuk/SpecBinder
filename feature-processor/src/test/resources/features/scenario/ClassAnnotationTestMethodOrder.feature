@@ -64,7 +64,7 @@ Feature: ClassAnnotationTestMethodOrder
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -85,7 +85,7 @@ Feature: ClassAnnotationTestMethodOrder
           @Tag("new")
           @DisplayName("Scenario: First scenario")
           public void scenario_1() {
-              Assertions.fail("Scenario has no steps");
+              Assumptions.assumeTrue(false, "Scenario has no steps");
           }
       }
       """
@@ -117,7 +117,7 @@ Feature: ClassAnnotationTestMethodOrder
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -138,7 +138,7 @@ Feature: ClassAnnotationTestMethodOrder
           @Tag("new")
           @DisplayName("Scenario: First test")
           public void scenario_1() {
-              Assertions.fail("Scenario has no steps");
+              Assumptions.assumeTrue(false, "Scenario has no steps");
           }
 
           @Test
@@ -146,7 +146,7 @@ Feature: ClassAnnotationTestMethodOrder
           @Tag("new")
           @DisplayName("Scenario: Second test")
           public void scenario_2() {
-              Assertions.fail("Scenario has no steps");
+              Assumptions.assumeTrue(false, "Scenario has no steps");
           }
 
           @Test
@@ -154,7 +154,7 @@ Feature: ClassAnnotationTestMethodOrder
           @Tag("new")
           @DisplayName("Scenario: Third test")
           public void scenario_3() {
-              Assertions.fail("Scenario has no steps");
+              Assumptions.assumeTrue(false, "Scenario has no steps");
           }
       }
       """

@@ -171,6 +171,7 @@ Feature: StepMethodDeduplication
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.Integer;
         import java.lang.String;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
@@ -188,7 +189,7 @@ Feature: StepMethodDeduplication
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUser$p1WithAge$p2Exists(String p1, String p2) {
+            public void givenUser$p1WithAge$p2Exists(String p1, Integer p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -199,7 +200,7 @@ Feature: StepMethodDeduplication
                 /*
                  * Given user "Alice" with age "30" exists
                  */
-                givenUser$p1WithAge$p2Exists("Alice", "30");
+                givenUser$p1WithAge$p2Exists("Alice", 30);
             }
 
             @Test
@@ -209,7 +210,7 @@ Feature: StepMethodDeduplication
                 /*
                  * Given user "Bob" with age "25" exists
                  */
-                givenUser$p1WithAge$p2Exists("Bob", "25");
+                givenUser$p1WithAge$p2Exists("Bob", 25);
             }
         }
         """
