@@ -1,4 +1,4 @@
-Feature: EmptyRule
+Feature: failRulesWithNoScenarios
   As a test developer using Gherkin
   I want to configure how empty Rules (Rules without scenarios) are handled
   So that I can control test behavior and tag incomplete specifications
