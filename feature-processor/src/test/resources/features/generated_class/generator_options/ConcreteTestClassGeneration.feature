@@ -4,8 +4,6 @@ Feature: ConcreteTestClassGeneration
   So that I can choose between abstract step methods or concrete methods with fail() statements
 
   Rule: When shouldBeAbstract is false, generated class is not abstract and method stubs contain failing assertions
-  - methods do NOT have the abstract modifier
-  - method bodies contains: Assertions.fail("Step is not yet implemented")
 
     Scenario: Concrete step method with fail() statement
       Given the following base class:
