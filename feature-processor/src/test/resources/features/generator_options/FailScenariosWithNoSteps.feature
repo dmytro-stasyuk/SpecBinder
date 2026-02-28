@@ -1,4 +1,4 @@
-Feature: EmptyScenario
+Feature: FailScenariosWithNoSteps
   As a test developer using Gherkin
   I want to configure how empty Scenarios (Scenarios without steps) are handled
   So that I can control test behavior and tag incomplete specifications
