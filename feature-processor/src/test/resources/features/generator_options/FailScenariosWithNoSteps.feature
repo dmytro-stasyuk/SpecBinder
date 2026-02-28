@@ -1,7 +1,7 @@
 Feature: FailScenariosWithNoSteps
   As a test developer using Gherkin
-  I want to configure how empty Scenarios (Scenarios without steps) are handled
-  So that I can control test behavior and tag incomplete specifications
+  I want to configure whether empty Scenarios (Scenarios without steps) generate a failing test
+  So that I can control how incomplete scenarios are reported during test execution
 
   Rule: Empty Scenarios generate a failing test method when "failScenariosWithNoSteps" option is enabled
 

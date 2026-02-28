@@ -64,9 +64,6 @@ Feature: GeneratedClassName
       import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit("features/payment.feature")
-      @Feature2JUnitOptions(
-        classSuffixIfAbstract = "TestCases"
-      )
       public class PaymentFeature {
       }
       """

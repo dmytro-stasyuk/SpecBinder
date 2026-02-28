@@ -423,7 +423,6 @@ Feature: UsingGlobPatterns
       import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnit("features/**/*.feature")
-      @Feature2JUnitOptions(classSuffixIfAbstract = "TestCases")
       public abstract class Features {
       }
       """

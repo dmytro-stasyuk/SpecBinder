@@ -1,4 +1,4 @@
-Feature: ConcreteTestClassGeneration
+Feature: ShouldBeAbstract
   As a developer
   I want step method bodies to be generated based on the shouldBeAbstract option
   So that I can choose between abstract step methods or concrete methods with fail() statements

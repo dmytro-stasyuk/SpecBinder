@@ -1,4 +1,4 @@
-Feature: CucumberStepAnnotations
+Feature: AddCucumberStepAnnotations
   As a developer
   I want Cucumber step annotations to be optionally added to the generated step method signatures
   So that IDE plugins can provide navigation between feature files and step implementations
