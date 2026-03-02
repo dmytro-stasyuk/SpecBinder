@@ -74,7 +74,7 @@ Feature: CompositeStepsWithNoParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserLogin.feature")
         public class UserLoginTest extends UserLogin {
-            protected void givenUserIsOnLoginPage(Runnable... composite) {
+            protected void userIsOnLoginPage(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -82,19 +82,19 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void givenNavigateToLoginForm() {
+            public void navigateToLoginForm() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenVerifyLoginFormIsDisplayed() {
+            public void verifyLoginFormIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCheckSecurityElementsArePresent() {
+            public void checkSecurityElementsArePresent() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void whenUserSubmitsCredentials(Runnable... composite) {
+            protected void userSubmitsCredentials(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -102,19 +102,19 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void whenEnterUsername() {
+            public void enterUsername() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenEnterPassword() {
+            public void enterPassword() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenClickLoginButton() {
+            public void clickLoginButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void thenUserShouldBeLoggedIn(Runnable... composite) {
+            protected void userShouldBeLoggedIn(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -122,15 +122,15 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void thenVerifyDashboardIsDisplayed() {
+            public void verifyDashboardIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenCheckUserProfileIsLoaded() {
+            public void checkUserProfileIsLoaded() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenConfirmSessionIsActive() {
+            public void confirmSessionIsActive() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -141,26 +141,26 @@ Feature: CompositeStepsWithNoParameters
                 /*
                  * Given user is on login page
                  */
-                givenUserIsOnLoginPage(() -> {
-                    givenNavigateToLoginForm();
-                    givenVerifyLoginFormIsDisplayed();
-                    givenCheckSecurityElementsArePresent();
+                userIsOnLoginPage(() -> {
+                    navigateToLoginForm();
+                    verifyLoginFormIsDisplayed();
+                    checkSecurityElementsArePresent();
                 });
                 /*
                  * When user submits credentials
                  */
-                whenUserSubmitsCredentials(() -> {
-                    whenEnterUsername();
-                    whenEnterPassword();
-                    whenClickLoginButton();
+                userSubmitsCredentials(() -> {
+                    enterUsername();
+                    enterPassword();
+                    clickLoginButton();
                 });
                 /*
                  * Then user should be logged in
                  */
-                thenUserShouldBeLoggedIn(() -> {
-                    thenVerifyDashboardIsDisplayed();
-                    thenCheckUserProfileIsLoaded();
-                    thenConfirmSessionIsActive();
+                userShouldBeLoggedIn(() -> {
+                    verifyDashboardIsDisplayed();
+                    checkUserProfileIsLoaded();
+                    confirmSessionIsActive();
                 });
             }
         }
@@ -223,7 +223,7 @@ Feature: CompositeStepsWithNoParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserRegistration.feature")
         public class UserRegistrationTest extends UserRegistration {
-            protected void givenUserIsOnRegistrationPage(Runnable... composite) {
+            protected void userIsOnRegistrationPage(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -231,15 +231,15 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void givenNavigateToRegistrationForm() {
+            public void navigateToRegistrationForm() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenVerifyFormFieldsArePresent() {
+            public void verifyFormFieldsArePresent() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void givenUserHasValidEmailAddress(Runnable... composite) {
+            protected void userHasValidEmailAddress(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -247,15 +247,15 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void givenCheckEmailFormat() {
+            public void checkEmailFormat() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenVerifyEmailDomainExists() {
+            public void verifyEmailDomainExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void givenUserPasswordIsWeak(Runnable... composite) {
+            protected void userPasswordIsWeak(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -263,19 +263,19 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void givenPasswordIsTooShort() {
+            public void passwordIsTooShort() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenPasswordLacksSpecialCharacters() {
+            public void passwordLacksSpecialCharacters() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserSubmitsRegistrationForm() {
+            public void userSubmitsRegistrationForm() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenRegistrationShouldBeSuccessful() {
+            public void registrationShouldBeSuccessful() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -286,32 +286,32 @@ Feature: CompositeStepsWithNoParameters
                 /*
                  * Given user is on registration page
                  */
-                givenUserIsOnRegistrationPage(() -> {
-                    givenNavigateToRegistrationForm();
-                    givenVerifyFormFieldsArePresent();
+                userIsOnRegistrationPage(() -> {
+                    navigateToRegistrationForm();
+                    verifyFormFieldsArePresent();
                 });
                 /*
                  * And user has valid email address
                  */
-                givenUserHasValidEmailAddress(() -> {
-                    givenCheckEmailFormat();
-                    givenVerifyEmailDomainExists();
+                userHasValidEmailAddress(() -> {
+                    checkEmailFormat();
+                    verifyEmailDomainExists();
                 });
                 /*
                  * But user password is weak
                  */
-                givenUserPasswordIsWeak(() -> {
-                    givenPasswordIsTooShort();
-                    givenPasswordLacksSpecialCharacters();
+                userPasswordIsWeak(() -> {
+                    passwordIsTooShort();
+                    passwordLacksSpecialCharacters();
                 });
                 /*
                  * When user submits registration form
                  */
-                whenUserSubmitsRegistrationForm();
+                userSubmitsRegistrationForm();
                 /*
                  * Then registration should be successful
                  */
-                thenRegistrationShouldBeSuccessful();
+                registrationShouldBeSuccessful();
             }
         }
         """
@@ -370,7 +370,7 @@ Feature: CompositeStepsWithNoParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserPayment.feature")
         public class UserPaymentTest extends UserPayment {
-            protected void whenUserInitiatesPaymentProcess(Runnable... composite) {
+            protected void userInitiatesPaymentProcess(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -378,15 +378,15 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void whenSelectPaymentMethod() {
+            public void selectPaymentMethod() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenEnterPaymentDetails() {
+            public void enterPaymentDetails() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void whenUserConfirmsPaymentAmount(Runnable... composite) {
+            protected void userConfirmsPaymentAmount(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -394,15 +394,15 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void whenVerifyTotalAmount() {
+            public void verifyTotalAmount() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenCheckCurrencyConversion() {
+            public void checkCurrencyConversion() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void whenUserPaymentMethodHasIssues(Runnable... composite) {
+            protected void userPaymentMethodHasIssues(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -410,15 +410,15 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void whenCardIsExpired() {
+            public void cardIsExpired() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenInsufficientFundsDetected() {
+            public void insufficientFundsDetected() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenPaymentShouldBeProcessed() {
+            public void paymentShouldBeProcessed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -429,28 +429,28 @@ Feature: CompositeStepsWithNoParameters
                 /*
                  * When user initiates payment process
                  */
-                whenUserInitiatesPaymentProcess(() -> {
-                    whenSelectPaymentMethod();
-                    whenEnterPaymentDetails();
+                userInitiatesPaymentProcess(() -> {
+                    selectPaymentMethod();
+                    enterPaymentDetails();
                 });
                 /*
                  * And user confirms payment amount
                  */
-                whenUserConfirmsPaymentAmount(() -> {
-                    whenVerifyTotalAmount();
-                    whenCheckCurrencyConversion();
+                userConfirmsPaymentAmount(() -> {
+                    verifyTotalAmount();
+                    checkCurrencyConversion();
                 });
                 /*
                  * But user payment method has issues
                  */
-                whenUserPaymentMethodHasIssues(() -> {
-                    whenCardIsExpired();
-                    whenInsufficientFundsDetected();
+                userPaymentMethodHasIssues(() -> {
+                    cardIsExpired();
+                    insufficientFundsDetected();
                 });
                 /*
                  * Then payment should be processed
                  */
-                thenPaymentShouldBeProcessed();
+                paymentShouldBeProcessed();
             }
         }
         """
@@ -511,15 +511,15 @@ Feature: CompositeStepsWithNoParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserProfile.feature")
         public class UserProfileTest extends UserProfile {
-            public void givenUserHasCompletedProfileSetup() {
+            public void userHasCompletedProfileSetup() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserProfileIsValidated() {
+            public void userProfileIsValidated() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void thenUserProfileShouldBeComplete(Runnable... composite) {
+            protected void userProfileShouldBeComplete(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -527,19 +527,19 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void thenVerifyAllRequiredFieldsAreFilled() {
+            public void verifyAllRequiredFieldsAreFilled() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenCheckProfilePhotoIsUploaded() {
+            public void checkProfilePhotoIsUploaded() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenConfirmContactInformationIsValid() {
+            public void confirmContactInformationIsValid() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void thenUserProfileShouldBeVisible(Runnable... composite) {
+            protected void userProfileShouldBeVisible(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -547,15 +547,15 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void thenProfileAppearsInSearchResults() {
+            public void profileAppearsInSearchResults() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenProfileShowsCorrectInformation() {
+            public void profileShowsCorrectInformation() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void thenUserProfileHasPrivacyRestrictions(Runnable... composite) {
+            protected void userProfileHasPrivacyRestrictions(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -563,11 +563,11 @@ Feature: CompositeStepsWithNoParameters
                 }
             }
 
-            public void thenSomeFieldsAreHiddenFromPublic() {
+            public void someFieldsAreHiddenFromPublic() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenContactDetailsRequirePermission() {
+            public void contactDetailsRequirePermission() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -578,32 +578,32 @@ Feature: CompositeStepsWithNoParameters
                 /*
                  * Given user has completed profile setup
                  */
-                givenUserHasCompletedProfileSetup();
+                userHasCompletedProfileSetup();
                 /*
                  * When user profile is validated
                  */
-                whenUserProfileIsValidated();
+                userProfileIsValidated();
                 /*
                  * Then user profile should be complete
                  */
-                thenUserProfileShouldBeComplete(() -> {
-                    thenVerifyAllRequiredFieldsAreFilled();
-                    thenCheckProfilePhotoIsUploaded();
-                    thenConfirmContactInformationIsValid();
+                userProfileShouldBeComplete(() -> {
+                    verifyAllRequiredFieldsAreFilled();
+                    checkProfilePhotoIsUploaded();
+                    confirmContactInformationIsValid();
                 });
                 /*
                  * And user profile should be visible
                  */
-                thenUserProfileShouldBeVisible(() -> {
-                    thenProfileAppearsInSearchResults();
-                    thenProfileShowsCorrectInformation();
+                userProfileShouldBeVisible(() -> {
+                    profileAppearsInSearchResults();
+                    profileShowsCorrectInformation();
                 });
                 /*
                  * But user profile has privacy restrictions
                  */
-                thenUserProfileHasPrivacyRestrictions(() -> {
-                    thenSomeFieldsAreHiddenFromPublic();
-                    thenContactDetailsRequirePermission();
+                userProfileHasPrivacyRestrictions(() -> {
+                    someFieldsAreHiddenFromPublic();
+                    contactDetailsRequirePermission();
                 });
             }
         }

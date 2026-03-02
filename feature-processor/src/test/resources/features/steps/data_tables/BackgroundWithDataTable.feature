@@ -50,7 +50,7 @@ Feature: BackgroundWithDataTable
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenTheFollowingProductsExist(List<Map<String, String>> data) {
+          public void theFollowingProductsExist(List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -60,7 +60,7 @@ Feature: BackgroundWithDataTable
               /*
                * Given the following products exist:
                */
-              givenTheFollowingProductsExist(createListOfMaps(\"\"\"
+              theFollowingProductsExist(createListOfMaps(\"\"\"
                       | name   | price |
                       | Apple  | 1.50  |
                       | Orange | 2.00  |
@@ -151,15 +151,15 @@ Feature: BackgroundWithDataTable
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenTheSystemIsInitialized() {
+          public void theSystemIsInitialized() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenTheFollowingUsersAreCreated(List<Map<String, String>> data) {
+          public void theFollowingUsersAreCreated(List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenPermissionsAreLoaded() {
+          public void permissionsAreLoaded() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -169,11 +169,11 @@ Feature: BackgroundWithDataTable
               /*
                * Given the system is initialized
                */
-              givenTheSystemIsInitialized();
+              theSystemIsInitialized();
               /*
                * And the following users are created:
                */
-              givenTheFollowingUsersAreCreated(createListOfMaps(\"\"\"
+              theFollowingUsersAreCreated(createListOfMaps(\"\"\"
                       | username | role  |
                       | alice    | admin |
                       | bob      | user  |
@@ -181,7 +181,7 @@ Feature: BackgroundWithDataTable
               /*
                * And permissions are loaded
                */
-              givenPermissionsAreLoaded();
+              permissionsAreLoaded();
           }
 
           protected List<Map<String, String>> createListOfMaps(String tableLines) {

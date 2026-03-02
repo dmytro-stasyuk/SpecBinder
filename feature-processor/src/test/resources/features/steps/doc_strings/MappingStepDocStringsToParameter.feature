@@ -51,7 +51,7 @@ Feature: MappingStepDocStringsToParameter
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenDocumentContains(String docString) {
+            public void documentContains(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -62,7 +62,7 @@ Feature: MappingStepDocStringsToParameter
                 /*
                  * Given document contains:
                  */
-                givenDocumentContains(\"\"\"
+                documentContains(\"\"\"
                         Hello World
                         This is a test document
                         \"\"\");
@@ -115,7 +115,7 @@ Feature: MappingStepDocStringsToParameter
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUser$p1SavesDocument(String p1, String docString) {
+            public void user$p1SavesDocument(String p1, String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -126,7 +126,7 @@ Feature: MappingStepDocStringsToParameter
                 /*
                  * When user "Alice" saves document:
                  */
-                whenUser$p1SavesDocument("Alice", \"\"\"
+                user$p1SavesDocument("Alice", \"\"\"
                         Meeting notes:
                         - Discuss project timeline
                         - Review budget
@@ -183,7 +183,7 @@ Feature: MappingStepDocStringsToParameter
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUser$p1SendsEmailTo$p2WithContent(String p1, String p2, String docString) {
+            public void user$p1SendsEmailTo$p2WithContent(String p1, String p2, String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -194,7 +194,7 @@ Feature: MappingStepDocStringsToParameter
                 /*
                  * When user "Bob" sends email to "alice@example.com" with content:
                  */
-                whenUser$p1SendsEmailTo$p2WithContent("Bob", "alice@example.com", \"\"\"
+                user$p1SendsEmailTo$p2WithContent("Bob", "alice@example.com", \"\"\"
                         Dear Alice,
 
                         Please review the attached document.

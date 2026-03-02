@@ -46,7 +46,7 @@ Feature: ShouldBeAbstract
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -57,7 +57,7 @@ Feature: ShouldBeAbstract
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
             }
         }
         """
@@ -104,7 +104,7 @@ Feature: ShouldBeAbstract
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void whenUser$p1LogsInWithPassword$p2(String p1, String p2) {
+            public void user$p1LogsInWithPassword$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -115,7 +115,7 @@ Feature: ShouldBeAbstract
                 /*
                  * When user "Alice" logs in with password "secret123"
                  */
-                whenUser$p1LogsInWithPassword$p2("Alice", "secret123");
+                user$p1LogsInWithPassword$p2("Alice", "secret123");
             }
         }
         """
@@ -162,7 +162,7 @@ Feature: ShouldBeAbstract
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+            public abstract void userExists();
 
             @Test
             @Order(1)
@@ -171,7 +171,7 @@ Feature: ShouldBeAbstract
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
             }
         }
         """
@@ -217,7 +217,7 @@ Feature: ShouldBeAbstract
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void whenUser$p1LogsInWithPassword$p2(String p1, String p2);
+            public abstract void user$p1LogsInWithPassword$p2(String p1, String p2);
 
             @Test
             @Order(1)
@@ -226,7 +226,7 @@ Feature: ShouldBeAbstract
                 /*
                  * When user "Alice" logs in with password "secret123"
                  */
-                whenUser$p1LogsInWithPassword$p2("Alice", "secret123");
+                user$p1LogsInWithPassword$p2("Alice", "secret123");
             }
         }
         """
@@ -275,9 +275,9 @@ Feature: ShouldBeAbstract
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+            public abstract void userExists();
 
-            public abstract void whenUserLogsIn();
+            public abstract void userLogsIn();
 
             @Test
             @Order(1)
@@ -286,16 +286,16 @@ Feature: ShouldBeAbstract
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user logs in
                  */
-                whenUserLogsIn();
+                userLogsIn();
             }
 
-            public abstract void givenAdminExists();
+            public abstract void adminExists();
 
-            public abstract void thenAdminDashboardIsDisplayed();
+            public abstract void adminDashboardIsDisplayed();
 
             @Test
             @Order(2)
@@ -304,11 +304,11 @@ Feature: ShouldBeAbstract
                 /*
                  * Given admin exists
                  */
-                givenAdminExists();
+                adminExists();
                 /*
                  * Then admin dashboard is displayed
                  */
-                thenAdminDashboardIsDisplayed();
+                adminDashboardIsDisplayed();
             }
         }
         """

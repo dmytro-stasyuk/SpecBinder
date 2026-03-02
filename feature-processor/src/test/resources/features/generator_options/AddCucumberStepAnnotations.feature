@@ -50,7 +50,7 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^user exists$")
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -61,7 +61,7 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
             }
         }
         """
@@ -109,7 +109,7 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @When("^user clicks button$")
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -120,7 +120,7 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * When user clicks button
                  */
-                whenUserClicksButton();
+                userClicksButton();
             }
         }
         """
@@ -168,7 +168,7 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Then("^result is displayed$")
-            public void thenResultIsDisplayed() {
+            public void resultIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -179,7 +179,7 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Then result is displayed
                  */
-                thenResultIsDisplayed();
+                resultIsDisplayed();
             }
         }
         """
@@ -236,32 +236,32 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^user exists$")
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^user is active$")
-            public void givenUserIsActive() {
+            public void userIsActive() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^user logs in$")
-            public void whenUserLogsIn() {
+            public void userLogsIn() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^user navigates to dashboard$")
-            public void whenUserNavigatesToDashboard() {
+            public void userNavigatesToDashboard() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^dashboard is displayed$")
-            public void thenDashboardIsDisplayed() {
+            public void dashboardIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^user menu is visible$")
-            public void thenUserMenuIsVisible() {
+            public void userMenuIsVisible() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -272,27 +272,27 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * And user is active
                  */
-                givenUserIsActive();
+                userIsActive();
                 /*
                  * When user logs in
                  */
-                whenUserLogsIn();
+                userLogsIn();
                 /*
                  * And user navigates to dashboard
                  */
-                whenUserNavigatesToDashboard();
+                userNavigatesToDashboard();
                 /*
                  * Then dashboard is displayed
                  */
-                thenDashboardIsDisplayed();
+                dashboardIsDisplayed();
                 /*
                  * And user menu is visible
                  */
-                thenUserMenuIsVisible();
+                userMenuIsVisible();
             }
         }
         """
@@ -347,32 +347,32 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^user is logged in$")
-            public void givenUserIsLoggedIn() {
+            public void userIsLoggedIn() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^user is not admin$")
-            public void givenUserIsNotAdmin() {
+            public void userIsNotAdmin() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^user requests admin page$")
-            public void whenUserRequestsAdminPage() {
+            public void userRequestsAdminPage() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^request is denied$")
-            public void whenRequestIsDenied() {
+            public void requestIsDenied() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^error message is shown$")
-            public void thenErrorMessageIsShown() {
+            public void errorMessageIsShown() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^user remains on current page$")
-            public void thenUserRemainsOnCurrentPage() {
+            public void userRemainsOnCurrentPage() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -383,27 +383,27 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Given user is logged in
                  */
-                givenUserIsLoggedIn();
+                userIsLoggedIn();
                 /*
                  * But user is not admin
                  */
-                givenUserIsNotAdmin();
+                userIsNotAdmin();
                 /*
                  * When user requests admin page
                  */
-                whenUserRequestsAdminPage();
+                userRequestsAdminPage();
                 /*
                  * But request is denied
                  */
-                whenRequestIsDenied();
+                requestIsDenied();
                 /*
                  * Then error message is shown
                  */
-                thenErrorMessageIsShown();
+                errorMessageIsShown();
                 /*
                  * But user remains on current page
                  */
-                thenUserRemainsOnCurrentPage();
+                userRemainsOnCurrentPage();
             }
         }
         """
@@ -458,32 +458,32 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^system is ready$")
-            public void givenSystemIsReady() {
+            public void systemIsReady() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^database is connected$")
-            public void givenDatabaseIsConnected() {
+            public void databaseIsConnected() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^user submits form$")
-            public void whenUserSubmitsForm() {
+            public void userSubmitsForm() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^validation passes$")
-            public void whenValidationPasses() {
+            public void validationPasses() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^form is saved$")
-            public void thenFormIsSaved() {
+            public void formIsSaved() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^confirmation is sent$")
-            public void thenConfirmationIsSent() {
+            public void confirmationIsSent() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -494,27 +494,27 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Given system is ready
                  */
-                givenSystemIsReady();
+                systemIsReady();
                 /*
                  * * database is connected
                  */
-                givenDatabaseIsConnected();
+                databaseIsConnected();
                 /*
                  * When user submits form
                  */
-                whenUserSubmitsForm();
+                userSubmitsForm();
                 /*
                  * * validation passes
                  */
-                whenValidationPasses();
+                validationPasses();
                 /*
                  * Then form is saved
                  */
-                thenFormIsSaved();
+                formIsSaved();
                 /*
                  * * confirmation is sent
                  */
-                thenConfirmationIsSent();
+                confirmationIsSent();
             }
         }
         """
@@ -565,7 +565,7 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^user (?<p1>.*) exists$")
-            public void givenUser$p1Exists(String p1) {
+            public void user$p1Exists(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -576,7 +576,7 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Given user "Alice" exists
                  */
-                givenUser$p1Exists("Alice");
+                user$p1Exists("Alice");
             }
         }
         """
@@ -625,7 +625,7 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @When("^user (?<p1>.*) sends message (?<p2>.*) to (?<p3>.*)$")
-            public void whenUser$p1SendsMessage$p2To$p3(String p1, String p2, String p3) {
+            public void user$p1SendsMessage$p2To$p3(String p1, String p2, String p3) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -636,7 +636,7 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * When user "Bob" sends message "Hello World" to "Alice"
                  */
-                whenUser$p1SendsMessage$p2To$p3("Bob", "Hello World", "Alice");
+                user$p1SendsMessage$p2To$p3("Bob", "Hello World", "Alice");
             }
         }
         """
@@ -686,7 +686,7 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Then("^balance is \\$100\\.50 \\(verified\\)$")
-            public void thenBalanceIs$10050Verified() {
+            public void balanceIs$10050Verified() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -697,7 +697,7 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Then balance is $100.50 (verified)
                  */
-                thenBalanceIs$10050Verified();
+                balanceIs$10050Verified();
             }
         }
         """
@@ -751,7 +751,7 @@ Feature: AddCucumberStepAnnotations
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
             @Given("^document contains:$")
-            public void givenDocumentContains(String docString) {
+            public void documentContains(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -762,7 +762,7 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Given document contains:
                  */
-                givenDocumentContains(\"\"\"
+                documentContains(\"\"\"
                         Sample content
                         \"\"\");
             }
@@ -823,7 +823,7 @@ Feature: AddCucumberStepAnnotations
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends MockedAnnotatedTestClass {
           @Given("^the following users exist:$")
-          public void givenTheFollowingUsersExist(List<Map<String, String>> data) {
+          public void theFollowingUsersExist(List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -834,7 +834,7 @@ Feature: AddCucumberStepAnnotations
               /*
                * Given the following users exist:
                */
-              givenTheFollowingUsersExist(createListOfMaps(\"\"\"
+              theFollowingUsersExist(createListOfMaps(\"\"\"
                       | name  | age |
                       | Alice | 30  |
                       | Bob   | 25  |
@@ -921,7 +921,7 @@ Feature: AddCucumberStepAnnotations
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -932,7 +932,7 @@ Feature: AddCucumberStepAnnotations
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
             }
         }
         """

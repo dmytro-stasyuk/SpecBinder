@@ -57,14 +57,12 @@ public @interface Feature2JUnitOptions {
         CUCUMBER_DATA_TABLE,
 
         /**
-         * -- EXPERIMENTAL OPTION --
-         * <br/><br/>
          * Represents data tables as {@code List<ObjectParam>} where ObjectParam is a generated inner type based on
          * table structure.
          * <p>
          * The generator creates an object type with fields corresponding to the table's column headers,
          * providing type-safe access to table data. Each row becomes an instance of the generated type.
-         * This type offers the strongest type safety but is currently experimental.
+         * This type offers the strongest type safety.
          * <p>
          * Example generated method signature:
          * <pre>
@@ -229,7 +227,7 @@ public @interface Feature2JUnitOptions {
      *     <li>LIST_OF_MAPS - (default) Each data table will be represented as a List of Maps, where each Map corresponds to a row in the table
      *     with column headers as keys.</li>
      *     <li>CUCUMBER_DATA_TABLE - Each data table will be represented using Cucumber's DataTable class, allowing for more advanced data table handling
-     *     <li>LIST_OF_OBJECT_PARAMS - (experimental) Each data table will be represented as a List of custom object types generated based on the data table structure.
+     *     <li>LIST_OF_OBJECT_PARAMS - Each data table will be represented as a List of custom object types generated based on the data table structure.
      *     features provided by Cucumber.</li>
      * </ul>
      *
@@ -241,6 +239,38 @@ public @interface Feature2JUnitOptions {
      * The rest of the options below are experimental and subject to change/removal.
      * =============================================================================
      */
+
+    /**
+     * Controls whether the Gherkin step keyword (Given, When, Then) is included as a prefix
+     * in generated step method names.
+     * <p>
+     * When {@code true}:
+     * <ul>
+     *     <li>The keyword is included as the first word of the method name</li>
+     *     <li>Each keyword produces a distinct method name for the same step text</li>
+     * </ul>
+     * <pre>
+     * Given user exists      → givenUserExists()
+     * When user exists       → whenUserExists()
+     * Then user exists       → thenUserExists()
+     * </pre>
+     * <p>
+     * When {@code false} (default):
+     * <ul>
+     *     <li>The keyword is omitted from the method name</li>
+     *     <li>The method name starts with the first word of the step text (in lowercase)</li>
+     *     <li>The same step text used with different keywords (Given/When/Then) resolves to a single shared method</li>
+     * </ul>
+     * <pre>
+     * Given user exists      → userExists()
+     * When user exists       → userExists()
+     * Then user exists       → userExists()
+     * </pre>
+     * This can reduce duplication when the same step text appears under different keywords.
+     *
+     * @return true if step keywords should be included in method names, false otherwise
+     */
+    boolean useStepKeywordInStepMethodName() default false;
 
     /**
      * If set to true, the generator will add Cucumber step annotations (e.g. @Given, @When, @Then) to the generated

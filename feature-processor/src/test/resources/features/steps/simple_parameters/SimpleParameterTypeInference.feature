@@ -55,11 +55,11 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUserIsActive$p1(Boolean p1) {
+          public void userIsActive$p1(Boolean p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserIsVerified$p1(Boolean p1) {
+          public void userIsVerified$p1(Boolean p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -70,11 +70,11 @@ Feature: SimpleParameterTypeInference
               /*
                * Given user is active "true"
                */
-              givenUserIsActive$p1(true);
+              userIsActive$p1(true);
               /*
                * When user is verified "false"
                */
-              whenUserIsVerified$p1(false);
+              userIsVerified$p1(false);
           }
       }
       """
@@ -127,15 +127,15 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUserHasAge$p1(Integer p1) {
+          public void userHasAge$p1(Integer p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserHasScore$p1(Integer p1) {
+          public void userHasScore$p1(Integer p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenUserHasBalance$p1(Integer p1) {
+          public void userHasBalance$p1(Integer p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -146,15 +146,15 @@ Feature: SimpleParameterTypeInference
               /*
                * Given user has age "25"
                */
-              givenUserHasAge$p1(25);
+              userHasAge$p1(25);
               /*
                * When user has score "100"
                */
-              whenUserHasScore$p1(100);
+              userHasScore$p1(100);
               /*
                * Then user has balance "-50"
                */
-              thenUserHasBalance$p1(-50);
+              userHasBalance$p1(-50);
           }
       }
       """
@@ -206,11 +206,11 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenAccountHasBalance$p1(Long p1) {
+          public void accountHasBalance$p1(Long p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenTransactionAmountIs$p1(Long p1) {
+          public void transactionAmountIs$p1(Long p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -221,11 +221,11 @@ Feature: SimpleParameterTypeInference
               /*
                * Given account has balance "2147483648"
                */
-              givenAccountHasBalance$p1(2147483648L);
+              accountHasBalance$p1(2147483648L);
               /*
                * When transaction amount is "-2147483649"
                */
-              whenTransactionAmountIs$p1(-2147483649L);
+              transactionAmountIs$p1(-2147483649L);
           }
       }
       """
@@ -278,15 +278,15 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenProductHasPrice$p1(Double p1) {
+          public void productHasPrice$p1(Double p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenDiscountIs$p1(Double p1) {
+          public void discountIs$p1(Double p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenTotalIs$p1(Double p1) {
+          public void totalIs$p1(Double p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -297,15 +297,15 @@ Feature: SimpleParameterTypeInference
               /*
                * Given product has price "19.99"
                */
-              givenProductHasPrice$p1(19.99);
+              productHasPrice$p1(19.99);
               /*
                * When discount is "0.15"
                */
-              whenDiscountIs$p1(0.15);
+              discountIs$p1(0.15);
               /*
                * Then total is "16.99"
                */
-              thenTotalIs$p1(16.99);
+              totalIs$p1(16.99);
           }
       }
       """
@@ -358,15 +358,15 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUserHasGrade$p1(Character p1) {
+          public void userHasGrade$p1(Character p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenOptionIs$p1(Character p1) {
+          public void optionIs$p1(Character p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenCategoryIs$p1(Character p1) {
+          public void categoryIs$p1(Character p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -377,15 +377,15 @@ Feature: SimpleParameterTypeInference
               /*
                * Given user has grade "A"
                */
-              givenUserHasGrade$p1('A');
+              userHasGrade$p1('A');
               /*
                * When option is "X"
                */
-              whenOptionIs$p1('X');
+              optionIs$p1('X');
               /*
                * Then category is "B"
                */
-              thenCategoryIs$p1('B');
+              categoryIs$p1('B');
           }
       }
       """
@@ -430,7 +430,7 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUserHasGrade$p1(String p1) {
+          public void userHasGrade$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -441,7 +441,7 @@ Feature: SimpleParameterTypeInference
               /*
                * Given user has grade "AB"
                */
-              givenUserHasGrade$p1("AB");
+              userHasGrade$p1("AB");
           }
       }
       """
@@ -492,11 +492,11 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUserNameIs$p1(String p1) {
+          public void userNameIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenStatusIs$p1(String p1) {
+          public void statusIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -507,21 +507,21 @@ Feature: SimpleParameterTypeInference
               /*
                * Given user name is "Alice"
                */
-              givenUserNameIs$p1("Alice");
+              userNameIs$p1("Alice");
               /*
                * When status is "active"
                */
-              whenStatusIs$p1("active");
+              statusIs$p1("active");
           }
       }
       """
 
-  Rule: Method overloading when same step called with different parameter types
-  - When the same step is called with parameters that convert to different types, generate overloaded methods
-  - Each overloaded method has parameters matching the types of the specific invocation
-  - The test scenario calls the appropriate overloaded method for each step invocation
+  Rule: Method deduplication when same step text used with different keywords
+  - When the same step text is used with different keywords (Given/When/Then), all produce the same method name
+  - Only the first occurrence generates a method declaration
+  - All invocations use the single generated method
 
-    Scenario: Same step with different parameter types generates overloaded methods
+    Scenario: Same step text with different keywords generates single method
       Given the following base class:
       """
       package features;
@@ -541,14 +541,12 @@ Feature: SimpleParameterTypeInference
           Then value is "hello"
       """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
       """
       package features;
 
       import dev.specbinder.annotations.output.FeatureFilePath;
-      import java.lang.Double;
       import java.lang.Integer;
-      import java.lang.String;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
@@ -565,15 +563,7 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValueIs$p1(Integer p1) {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          public void whenValueIs$p1(Double p1) {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          public void thenValueIs$p1(String p1) {
+          public void valueIs$p1(Integer p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -584,17 +574,21 @@ Feature: SimpleParameterTypeInference
               /*
                * Given value is "42"
                */
-              givenValueIs$p1(42);
+              valueIs$p1(42);
               /*
                * When value is "3.14"
                */
-              whenValueIs$p1(3.14);
+              valueIs$p1(3.14);
               /*
                * Then value is "hello"
                */
-              thenValueIs$p1("hello");
+              valueIs$p1("hello");
           }
       }
+      """
+      And the compilation error should contain the following text:
+      """
+      error: incompatible types: double cannot be converted to java.lang.Integer
       """
 
     Scenario: Same step pattern with different values of same type generates single method
@@ -639,15 +633,7 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUserHasAge$p1(Integer p1) {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          public void whenUserHasAge$p1(Integer p1) {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          public void thenUserHasAge$p1(Integer p1) {
+          public void userHasAge$p1(Integer p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -658,15 +644,15 @@ Feature: SimpleParameterTypeInference
               /*
                * Given user has age "25"
                */
-              givenUserHasAge$p1(25);
+              userHasAge$p1(25);
               /*
                * When user has age "30"
                */
-              whenUserHasAge$p1(30);
+              userHasAge$p1(30);
               /*
                * Then user has age "35"
                */
-              thenUserHasAge$p1(35);
+              userHasAge$p1(35);
           }
       }
       """
@@ -720,7 +706,7 @@ Feature: SimpleParameterTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1HasAge$p2AndIsActive$p3WithBalance$p4AndGrade$p5(String p1, Integer p2,
+          public void user$p1HasAge$p2AndIsActive$p3WithBalance$p4AndGrade$p5(String p1, Integer p2,
                   Boolean p3, Double p4, Character p5) {
               Assertions.fail("Step is not yet implemented");
           }
@@ -732,7 +718,7 @@ Feature: SimpleParameterTypeInference
               /*
                * Given user "Alice" has age "25" and is active "true" with balance "1000.50" and grade "A"
                */
-              givenUser$p1HasAge$p2AndIsActive$p3WithBalance$p4AndGrade$p5("Alice", 25, true, 1000.50, 'A');
+              user$p1HasAge$p2AndIsActive$p3WithBalance$p4AndGrade$p5("Alice", 25, true, 1000.50, 'A');
           }
       }
       """

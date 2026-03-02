@@ -25,7 +25,7 @@ Feature: UseQualifiedEnumConstants
               AVAILABLE, OUT_OF_STOCK, DISCONTINUED
           }
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -84,7 +84,7 @@ Feature: UseQualifiedEnumConstants
                *   | Mouse  | OUT_OF_STOCK |
                *   | Tablet | DISCONTINUED |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       "Laptop",
@@ -127,7 +127,7 @@ Feature: UseQualifiedEnumConstants
               LOW, MEDIUM, HIGH, URGENT
           }
 
-          public void givenTheFollowingOrders(List<OrdersParam> orders) {
+          public void theFollowingOrders(List<OrdersParam> orders) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -188,7 +188,7 @@ Feature: UseQualifiedEnumConstants
                *   | ORD-002  | SHIPPED   | MEDIUM   |
                *   | ORD-003  | DELIVERED | LOW      |
                */
-              givenTheFollowingOrders(
+              theFollowingOrders(
                       List.of(
                               new OrdersParam(
                                       "ORD-001",
@@ -234,7 +234,7 @@ Feature: UseQualifiedEnumConstants
               FULL_TIME, PART_TIME, CONTRACT
           }
 
-          public void givenTheFollowingEmployees(List<EmployeesParam> employees) {
+          public void theFollowingEmployees(List<EmployeesParam> employees) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -301,7 +301,7 @@ Feature: UseQualifiedEnumConstants
                *   | Bob   | 25  | SALES       | PART_TIME       | 45000.00 | false  |
                *   | Carol | 35  | MARKETING   | CONTRACT        | 65000.00 | true   |
                */
-              givenTheFollowingEmployees(
+              theFollowingEmployees(
                       List.of(
                               new EmployeesParam(
                                       "Alice",
@@ -360,7 +360,7 @@ Feature: UseQualifiedEnumConstants
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS, useQualifiedEnumConstants = true)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -421,7 +421,7 @@ Feature: UseQualifiedEnumConstants
                *   | Mouse  | OUT_OF_STOCK |
                *   | Tablet | DISCONTINUED |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       "Laptop",
@@ -474,7 +474,7 @@ Feature: UseQualifiedEnumConstants
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS, useQualifiedEnumConstants = true)
       public abstract class OrdersFeature {
 
-          public void givenTheFollowingOrders(List<OrdersParam> orders) {
+          public void theFollowingOrders(List<OrdersParam> orders) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -538,7 +538,7 @@ Feature: UseQualifiedEnumConstants
                *   | ORD-002  | SHIPPED   | MEDIUM   |
                *   | ORD-003  | DELIVERED | LOW      |
                */
-              givenTheFollowingOrders(
+              theFollowingOrders(
                       List.of(
                               new OrdersParam(
                                       "ORD-001",
@@ -589,7 +589,7 @@ Feature: UseQualifiedEnumConstants
               FULL_TIME, PART_TIME, CONTRACT
           }
 
-          public void givenTheFollowingEmployees(List<EmployeesParam> employees) {
+          public void theFollowingEmployees(List<EmployeesParam> employees) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -652,7 +652,7 @@ Feature: UseQualifiedEnumConstants
                *   | Bob   | SALES       | PART_TIME       |
                *   | Carol | MARKETING   | CONTRACT        |
                */
-              givenTheFollowingEmployees(
+              theFollowingEmployees(
                       List.of(
                               new EmployeesParam(
                                       "Alice",
@@ -696,7 +696,7 @@ Feature: UseQualifiedEnumConstants
               AVAILABLE, OUT_OF_STOCK, DISCONTINUED
           }
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -770,7 +770,7 @@ Feature: UseQualifiedEnumConstants
                *   | <productName> | <status>     |
                *   | DefaultItem   | DISCONTINUED |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -809,7 +809,7 @@ Feature: UseQualifiedEnumConstants
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS, useQualifiedEnumConstants = true)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -885,7 +885,7 @@ Feature: UseQualifiedEnumConstants
                *   | <productName> | <status>     |
                *   | DefaultItem   | DISCONTINUED |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -924,7 +924,7 @@ Feature: UseQualifiedEnumConstants
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS, useQualifiedEnumConstants = true)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -1000,7 +1000,7 @@ Feature: UseQualifiedEnumConstants
                *   | <productName> | AVAILABLE    |
                *   | DefaultItem   | DISCONTINUED |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,

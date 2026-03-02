@@ -158,9 +158,10 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
                 return Then.class;
             }
 
-            throw new ProcessingException(
-                    "Step on line - " + stepLine
-                            + " starts with '" + keyword + "', but there are no previous scenario steps defined that have a step annotation");
+            // When useStepKeywordInStepMethodName is false, method names don't have keyword prefixes,
+            // so we can't determine the annotation from the method name. Return null - the caller
+            // only uses the annotation when addCucumberStepAnnotations is enabled.
+            return null;
         }
 
         return null;
@@ -181,7 +182,8 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
 
         // Replace quoted strings with placeholders ($p1, $p2, etc.) for method naming
         String stepPattern = replaceParametersWithPlaceholders(parentStepText, parameterValues);
-        String methodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, stepLine);
+        String methodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, stepLine,
+                getOptions().isUseStepKeywordInStepMethodName());
 
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PROTECTED);

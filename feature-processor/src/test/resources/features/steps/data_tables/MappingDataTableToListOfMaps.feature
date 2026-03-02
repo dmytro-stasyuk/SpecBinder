@@ -62,7 +62,7 @@ Feature: MappingDataTableToListOfMaps
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
-            public void givenTheFollowingUsersExist(List<Map<String, String>> data) {
+            public void theFollowingUsersExist(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -73,7 +73,7 @@ Feature: MappingDataTableToListOfMaps
                 /*
                  * Given the following users exist:
                  */
-                givenTheFollowingUsersExist(createListOfMaps(\"\"\"
+                theFollowingUsersExist(createListOfMaps(\"\"\"
                         | name  | role  |
                         | Alice | Admin |
                         | Bob   | User  |
@@ -171,7 +171,7 @@ Feature: MappingDataTableToListOfMaps
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/Users.feature")
         public class UsersTest extends TestFeature {
-            public void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data) {
+            public void user$p1HasPermissions(String p1, List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -182,7 +182,7 @@ Feature: MappingDataTableToListOfMaps
                 /*
                  * When user "Alice" has permissions:
                  */
-                whenUser$p1HasPermissions("Alice", createListOfMaps(\"\"\"
+                user$p1HasPermissions("Alice", createListOfMaps(\"\"\"
                         | permission | enabled |
                         | read       | true    |
                         | write      | false   |
@@ -285,11 +285,11 @@ Feature: MappingDataTableToListOfMaps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends TestFeature {
-          public void givenTheFollowingTeamMembersExist(List<Map<String, String>> data) {
+          public void theFollowingTeamMembersExist(List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenTheFollowingTeamMembersAreAssignedTasks(List<Map<String, String>> data) {
+          public void theFollowingTeamMembersAreAssignedTasks(List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -300,7 +300,7 @@ Feature: MappingDataTableToListOfMaps
               /*
                * Given the following team members exist:
                */
-              givenTheFollowingTeamMembersExist(createListOfMaps(\"\"\"
+              theFollowingTeamMembersExist(createListOfMaps(\"\"\"
                       | name    | role      |
                       | Charlie | Manager   |
                       | Dana    | Developer |
@@ -308,7 +308,7 @@ Feature: MappingDataTableToListOfMaps
               /*
                * When the following team members are assigned tasks:
                */
-              whenTheFollowingTeamMembersAreAssignedTasks(createListOfMaps(\"\"\"
+              theFollowingTeamMembersAreAssignedTasks(createListOfMaps(\"\"\"
                       | name    | task         |
                       | Charlie | Project Lead |
                       | Dana    | Coding       |
@@ -408,7 +408,7 @@ Feature: MappingDataTableToListOfMaps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Permissions.feature")
       public class PermissionsTest extends TestFeature {
-          public void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data) {
+          public void user$p1HasPermissions(String p1, List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -419,7 +419,7 @@ Feature: MappingDataTableToListOfMaps
               /*
                * When user "Alice" has permissions:
                */
-              whenUser$p1HasPermissions("Alice", createListOfMaps(\"\"\"
+              user$p1HasPermissions("Alice", createListOfMaps(\"\"\"
                       | permission | enabled |
                       | read       | true    |
                       | write      | false   |
@@ -521,7 +521,7 @@ Feature: MappingDataTableToListOfMaps
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/Permissions.feature")
         public class PermissionsTest extends TestFeature {
-            public void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data) {
+            public void user$p1HasPermissions(String p1, List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -532,7 +532,7 @@ Feature: MappingDataTableToListOfMaps
                 /*
                  * When user "Alice" has permissions:
                  */
-                whenUser$p1HasPermissions("Alice", createListOfMaps(\"\"\"
+                user$p1HasPermissions("Alice", createListOfMaps(\"\"\"
                         | permission | enabled |
                         | read       | true    |
                         | write      | false   |
@@ -611,7 +611,7 @@ Feature: MappingDataTableToListOfMaps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Permissions.feature")
       public class PermissionsTest extends TestFeature {
-          public void whenUser$p1HasPermissions(String p1, List<Map<String, String>> data) {
+          public void user$p1HasPermissions(String p1, List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -622,7 +622,7 @@ Feature: MappingDataTableToListOfMaps
               /*
                * When user "Alice" has permissions:
                */
-              whenUser$p1HasPermissions("Alice", createListOfMaps(\"\"\"
+              user$p1HasPermissions("Alice", createListOfMaps(\"\"\"
                       | permission | enabled |
                       | read       | true    |
                       | write      | false   |

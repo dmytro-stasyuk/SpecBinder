@@ -48,7 +48,7 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/features/UserFeatures.feature")
       public class UserFeaturesTest extends UserFeatures {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -59,7 +59,7 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -111,7 +111,7 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/features/UserLogin.feature")
       public class UserLoginTest extends UserFeatures {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -122,7 +122,7 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -147,7 +147,7 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/features/UserRegistration.feature")
       public class UserRegistrationTest extends UserFeatures {
-          public void givenUserRegisters() {
+          public void userRegisters() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -158,7 +158,7 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
               /*
                * Given user registers
                */
-              givenUserRegisters();
+              userRegisters();
           }
       }
       """
@@ -217,7 +217,7 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/user/Login.feature")
       public class LoginTest extends UserFeatures {
-          public void givenUserLogsIn() {
+          public void userLogsIn() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -228,7 +228,7 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
               /*
                * Given user logs in
                */
-              givenUserLogsIn();
+              userLogsIn();
           }
       }
       """

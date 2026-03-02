@@ -101,11 +101,11 @@ Feature: GherkinComments
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenABackgroundStep() {
+          public void aBackgroundStep() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenAnotherBackgroundStep() {
+          public void anotherBackgroundStep() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -115,42 +115,42 @@ Feature: GherkinComments
               /*
                * Given a background step
                */
-              givenABackgroundStep();
+              aBackgroundStep();
               /*
                * And another background step
                */
-              givenAnotherBackgroundStep();
+              anotherBackgroundStep();
           }
 
-          public void givenARuleStep() {
+          public void aRuleStep() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenAnotherRuleStep() {
+          public void anotherRuleStep() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenAStep() {
+          public void aStep() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenAnotherStep() {
+          public void anotherStep() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenFinalStep() {
+          public void finalStep() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenYetAnotherStep() {
+          public void yetAnotherStep() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenIHave$p1(String p1) {
+          public void iHave$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenIUse$p1(String p1) {
+          public void iUse$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -166,11 +166,11 @@ Feature: GherkinComments
                   /*
                    * Given a rule step
                    */
-                  givenARuleStep();
+                  aRuleStep();
                   /*
                    * When another rule step
                    */
-                  whenAnotherRuleStep();
+                  anotherRuleStep();
               }
 
               @Test
@@ -180,15 +180,15 @@ Feature: GherkinComments
                   /*
                    * Given a step
                    */
-                  givenAStep();
+                  aStep();
                   /*
                    * When another step
                    */
-                  whenAnotherStep();
+                  anotherStep();
                   /*
                    * Then final step
                    */
-                  thenFinalStep();
+                  finalStep();
               }
 
               @Test
@@ -198,7 +198,7 @@ Feature: GherkinComments
                   /*
                    * Given yet another step
                    */
-                  givenYetAnotherStep();
+                  yetAnotherStep();
               }
 
               @ParameterizedTest(
@@ -219,11 +219,11 @@ Feature: GherkinComments
                   /*
                    * Given I have <value>
                    */
-                  givenIHave$p1(value);
+                  iHave$p1(value);
                   /*
                    * When I use <value>
                    */
-                  whenIUse$p1(value);
+                  iUse$p1(value);
               }
           }
       }

@@ -22,7 +22,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenUserWithName$p1(String name) {
+          protected void userWithName$p1(String name) {
               // Implementation with String parameter
           }
       }
@@ -61,7 +61,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given user with name "Alice"
                  */
-                givenUserWithName$p1("Alice");
+                userWithName$p1("Alice");
             }
         }
         """
@@ -77,7 +77,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenAge$p1(int age) {
+          protected void age$p1(int age) {
               // Implementation with int parameter
           }
       }
@@ -116,7 +116,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given age "42"
                  */
-                givenAge$p1(42);
+                age$p1(42);
             }
         }
         """
@@ -130,7 +130,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenCount$p1(Integer count) {
+          protected void count$p1(Integer count) {
               // Implementation with Integer parameter
           }
       }
@@ -169,7 +169,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given count "100"
                  */
-                givenCount$p1(100);
+                count$p1(100);
             }
         }
         """
@@ -183,7 +183,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenQuantity$p1(int quantity) {
+          protected void quantity$p1(int quantity) {
               // Implementation with int parameter
           }
       }
@@ -217,7 +217,7 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenQuantity$p1(Boolean p1) {
+            public void quantity$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -228,7 +228,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given quantity "true"
                  */
-                givenQuantity$p1(true);
+                quantity$p1(true);
             }
         }
         """
@@ -242,7 +242,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenQuantity$p1(Object quantity) {
+          protected void quantity$p1(Object quantity) {
               // Implementation with Object parameter
           }
       }
@@ -276,7 +276,7 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenQuantity$p1(Boolean p1) {
+            public void quantity$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -287,7 +287,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given quantity "true"
                  */
-                givenQuantity$p1(true);
+                quantity$p1(true);
             }
         }
         """
@@ -303,7 +303,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenTimestamp$p1(long timestamp) {
+          protected void timestamp$p1(long timestamp) {
               // Implementation with long parameter
           }
       }
@@ -342,7 +342,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given timestamp "1234567890"
                  */
-                givenTimestamp$p1(1234567890L);
+                timestamp$p1(1234567890L);
             }
         }
         """
@@ -356,7 +356,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenDuration$p1(Long duration) {
+          protected void duration$p1(Long duration) {
               // Implementation with Long parameter
           }
       }
@@ -395,7 +395,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given duration "5000"
                  */
-                givenDuration$p1(5000L);
+                duration$p1(5000L);
             }
         }
         """
@@ -409,7 +409,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenAmount$p1(long amount) {
+          protected void amount$p1(long amount) {
               // Implementation with long parameter
           }
       }
@@ -443,7 +443,7 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenAmount$p1(Boolean p1) {
+            public void amount$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -454,7 +454,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given amount "false"
                  */
-                givenAmount$p1(false);
+                amount$p1(false);
             }
         }
         """
@@ -470,7 +470,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenPrice$p1(double price) {
+          protected void price$p1(double price) {
               // Implementation with double parameter
           }
       }
@@ -509,7 +509,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given price "19.99"
                  */
-                givenPrice$p1(19.99);
+                price$p1(19.99);
             }
         }
         """
@@ -523,7 +523,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenTemperature$p1(Double temperature) {
+          protected void temperature$p1(Double temperature) {
               // Implementation with Double parameter
           }
       }
@@ -562,7 +562,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given temperature "98.6"
                  */
-                givenTemperature$p1(98.6);
+                temperature$p1(98.6);
             }
         }
         """
@@ -576,7 +576,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenRate$p1(double rate) {
+          protected void rate$p1(double rate) {
               // Implementation with double parameter
           }
       }
@@ -610,7 +610,7 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenRate$p1(Boolean p1) {
+            public void rate$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -621,7 +621,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given rate "true"
                  */
-                givenRate$p1(true);
+                rate$p1(true);
             }
         }
         """
@@ -637,7 +637,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenFeatureEnabled$p1(boolean enabled) {
+          protected void featureEnabled$p1(boolean enabled) {
               // Implementation with boolean parameter
           }
       }
@@ -676,7 +676,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given feature enabled "true"
                  */
-                givenFeatureEnabled$p1(true);
+                featureEnabled$p1(true);
             }
         }
         """
@@ -690,7 +690,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenFlagSet$p1(Boolean flag) {
+          protected void flagSet$p1(Boolean flag) {
               // Implementation with Boolean parameter
           }
       }
@@ -729,7 +729,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given flag set "false"
                  */
-                givenFlagSet$p1(false);
+                flagSet$p1(false);
             }
         }
         """
@@ -743,7 +743,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenValue$p1(boolean value) {
+          protected void value$p1(boolean value) {
               // Implementation with boolean parameter
           }
       }
@@ -777,7 +777,7 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenValue$p1(Integer p1) {
+            public void value$p1(Integer p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -788,7 +788,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given value "42"
                  */
-                givenValue$p1(42);
+                value$p1(42);
             }
         }
         """
@@ -804,7 +804,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenGrade$p1(char grade) {
+          protected void grade$p1(char grade) {
               // Implementation with char parameter
           }
       }
@@ -843,7 +843,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given grade "A"
                  */
-                givenGrade$p1('A');
+                grade$p1('A');
             }
         }
         """
@@ -857,7 +857,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenSymbol$p1(Character symbol) {
+          protected void symbol$p1(Character symbol) {
               // Implementation with Character parameter
           }
       }
@@ -896,7 +896,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given symbol "X"
                  */
-                givenSymbol$p1('X');
+                symbol$p1('X');
             }
         }
         """
@@ -910,7 +910,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenCode$p1(char code) {
+          protected void code$p1(char code) {
               // Implementation with char parameter
           }
       }
@@ -944,7 +944,7 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenCode$p1(String p1) {
+            public void code$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -955,7 +955,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given code "AB"
                  */
-                givenCode$p1("AB");
+                code$p1("AB");
             }
         }
         """
@@ -971,7 +971,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenUserWithName$p1AndAge$p2(String name, int age) {
+          protected void userWithName$p1AndAge$p2(String name, int age) {
               // Implementation with String and int parameters
           }
       }
@@ -1010,7 +1010,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given user with name "Bob" and age "25"
                  */
-                givenUserWithName$p1AndAge$p2("Bob", 25);
+                userWithName$p1AndAge$p2("Bob", 25);
             }
         }
         """
@@ -1024,7 +1024,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenDataWithValues$p1$p2$p3$p4(int count, long timestamp, double price, boolean enabled) {
+          protected void dataWithValues$p1$p2$p3$p4(int count, long timestamp, double price, boolean enabled) {
               // Implementation with int, long, double, and boolean parameters
           }
       }
@@ -1063,7 +1063,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given data with values "42" "1234567890" "19.99" "true"
                  */
-                givenDataWithValues$p1$p2$p3$p4(42, 1234567890L, 19.99, true);
+                dataWithValues$p1$p2$p3$p4(42, 1234567890L, 19.99, true);
             }
         }
         """
@@ -1077,7 +1077,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenProductWithName$p1AndPrice$p2(String name, double price) {
+          protected void productWithName$p1AndPrice$p2(String name, double price) {
               // Implementation with String and double parameters
           }
       }
@@ -1112,7 +1112,7 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenProductWithName$p1AndPrice$p2(String p1, Boolean p2) {
+            public void productWithName$p1AndPrice$p2(String p1, Boolean p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1123,7 +1123,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given product with name "Widget" and price "true"
                  */
-                givenProductWithName$p1AndPrice$p2("Widget", true);
+                productWithName$p1AndPrice$p2("Widget", true);
             }
         }
         """
@@ -1137,7 +1137,7 @@ Feature: InheritedStepAndParameterTypeInference
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenConfigWithValues$p1$p2$p3(Integer count, double rate, Boolean enabled) {
+          protected void configWithValues$p1$p2$p3(Integer count, double rate, Boolean enabled) {
               // Implementation with Integer, double, and Boolean parameters
           }
       }
@@ -1176,7 +1176,7 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given config with values "100" "3.14" "false"
                  */
-                givenConfigWithValues$p1$p2$p3(100, 3.14, false);
+                configWithValues$p1$p2$p3(100, 3.14, false);
             }
         }
         """

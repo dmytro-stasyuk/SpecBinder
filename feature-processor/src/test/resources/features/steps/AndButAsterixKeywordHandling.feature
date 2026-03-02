@@ -47,11 +47,11 @@ Feature: AndButAsterixKeywordHandling
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserIsAuthenticated() {
+            public void userIsAuthenticated() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -62,11 +62,11 @@ Feature: AndButAsterixKeywordHandling
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * And user is authenticated
                  */
-                givenUserIsAuthenticated();
+                userIsAuthenticated();
             }
         }
         """
@@ -111,11 +111,11 @@ Feature: AndButAsterixKeywordHandling
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUserLogsIn() {
+            public void userLogsIn() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -126,11 +126,11 @@ Feature: AndButAsterixKeywordHandling
                 /*
                  * When user logs in
                  */
-                whenUserLogsIn();
+                userLogsIn();
                 /*
                  * And user clicks button
                  */
-                whenUserClicksButton();
+                userClicksButton();
             }
         }
         """
@@ -175,11 +175,11 @@ Feature: AndButAsterixKeywordHandling
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void thenPasswordIsVisible() {
+            public void passwordIsVisible() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenUsernameIsNotVisible() {
+            public void usernameIsNotVisible() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -190,11 +190,11 @@ Feature: AndButAsterixKeywordHandling
                 /*
                  * Then password is visible
                  */
-                thenPasswordIsVisible();
+                passwordIsVisible();
                 /*
                  * But username is not visible
                  */
-                thenUsernameIsNotVisible();
+                usernameIsNotVisible();
             }
         }
         """
@@ -239,11 +239,11 @@ Feature: AndButAsterixKeywordHandling
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenSystemIsReady() {
+            public void systemIsReady() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenDatabaseIsConnected() {
+            public void databaseIsConnected() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -254,11 +254,11 @@ Feature: AndButAsterixKeywordHandling
                 /*
                  * Given system is ready
                  */
-                givenSystemIsReady();
+                systemIsReady();
                 /*
                  * * database is connected
                  */
-                givenDatabaseIsConnected();
+                databaseIsConnected();
             }
         }
         """
@@ -304,15 +304,15 @@ Feature: AndButAsterixKeywordHandling
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserIsActive() {
+            public void userIsActive() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserHasPermissions() {
+            public void userHasPermissions() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -323,15 +323,15 @@ Feature: AndButAsterixKeywordHandling
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * And user is active
                  */
-                givenUserIsActive();
+                userIsActive();
                 /*
                  * And user has permissions
                  */
-                givenUserHasPermissions();
+                userHasPermissions();
             }
         }
         """
@@ -378,19 +378,19 @@ Feature: AndButAsterixKeywordHandling
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserIsActive() {
+            public void userIsActive() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserIsNotLocked() {
+            public void userIsNotLocked() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserHasPermissions() {
+            public void userHasPermissions() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -401,19 +401,19 @@ Feature: AndButAsterixKeywordHandling
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * And user is active
                  */
-                givenUserIsActive();
+                userIsActive();
                 /*
                  * But user is not locked
                  */
-                givenUserIsNotLocked();
+                userIsNotLocked();
                 /*
                  * * user has permissions
                  */
-                givenUserHasPermissions();
+                userHasPermissions();
             }
         }
         """
@@ -460,19 +460,19 @@ Feature: AndButAsterixKeywordHandling
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserIsActive() {
+            public void userIsActive() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserHasPermissions() {
+            public void userHasPermissions() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserIsNotLocked() {
+            public void userIsNotLocked() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -483,19 +483,19 @@ Feature: AndButAsterixKeywordHandling
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * * user is active
                  */
-                givenUserIsActive();
+                userIsActive();
                 /*
                  * And user has permissions
                  */
-                givenUserHasPermissions();
+                userHasPermissions();
                 /*
                  * But user is not locked
                  */
-                givenUserIsNotLocked();
+                userIsNotLocked();
             }
         }
         """

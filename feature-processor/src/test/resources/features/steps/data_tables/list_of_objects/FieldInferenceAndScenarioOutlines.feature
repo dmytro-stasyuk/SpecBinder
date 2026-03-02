@@ -57,7 +57,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/PlaceholderOnlyFeature.feature")
         public class PlaceholderOnlyFeatureTest extends PlaceholderOnlyFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -81,7 +81,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | quantity   |
                  *   | <name> | <quantity> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -163,7 +163,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MixedExamplesFeature.feature")
         public class MixedExamplesFeatureTest extends MixedExamplesFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -188,7 +188,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | quantity   |
                  *   | <name> | <quantity> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -272,7 +272,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MixedExamplesLiteralNumbersFeature.feature")
         public class MixedExamplesLiteralNumbersFeatureTest extends MixedExamplesLiteralNumbersFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -299,7 +299,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Mango  | 15         |
                  *   | Grape  | 20         |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -391,7 +391,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LiteralTextFeature.feature")
         public class LiteralTextFeatureTest extends LiteralTextFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -417,7 +417,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Mango  | unknown    |
                  *   | Grape  | 15         |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -519,7 +519,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MultipleStepsFeature.feature")
         public class MultipleStepsFeatureTest extends MultipleStepsFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -544,7 +544,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Apple  | 10       |
                  *   | Banana | 20       |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Apple",
@@ -561,7 +561,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Mango | many     |
                  *   | Grape | 15       |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Mango",
@@ -577,7 +577,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | quantity   |
                  *   | <name> | <quantity> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -664,7 +664,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MixedLiteralPlaceholderCellFeature.feature")
         public class MixedLiteralPlaceholderCellFeatureTest extends MixedLiteralPlaceholderCellFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -689,7 +689,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | <name> | High <quantity> |
                  *   | Backup | 10              |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -777,7 +777,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LongPlaceholderOnlyFeature.feature")
         public class LongPlaceholderOnlyFeatureTest extends LongPlaceholderOnlyFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -801,7 +801,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | fileSize   |
                  *   | <name> | <fileSize> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -883,7 +883,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LongMixedExamplesFeature.feature")
         public class LongMixedExamplesFeatureTest extends LongMixedExamplesFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -908,7 +908,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | fileSize   |
                  *   | <name> | <fileSize> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -992,7 +992,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LongMixedExamplesLiteralLongsFeature.feature")
         public class LongMixedExamplesLiteralLongsFeatureTest extends LongMixedExamplesLiteralLongsFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1019,7 +1019,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Extra1 | 5555555555555 |
                  *   | Extra2 | 6666666666666 |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -1111,7 +1111,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LongLiteralTextFeature.feature")
         public class LongLiteralTextFeatureTest extends LongLiteralTextFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1137,7 +1137,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Extra1 | unknown       |
                  *   | Extra2 | 5555555555555 |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -1239,7 +1239,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LongMultipleStepsFeature.feature")
         public class LongMultipleStepsFeatureTest extends LongMultipleStepsFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1264,7 +1264,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | File1 | 9876543210    |
                  *   | File2 | 1234567890123 |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "File1",
@@ -1281,7 +1281,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | File3 | unknown  |
                  *   | File4 | 5555555  |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "File3",
@@ -1297,7 +1297,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | fileSize   |
                  *   | <name> | <fileSize> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -1384,7 +1384,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MixedLiteralLongPlaceholderFeature.feature")
         public class MixedLiteralLongPlaceholderFeatureTest extends MixedLiteralLongPlaceholderFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1409,7 +1409,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | <name> | Size: <fileSize> B |
                  *   | Backup | 500                |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -1497,7 +1497,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/DoublePlaceholderOnlyFeature.feature")
         public class DoublePlaceholderOnlyFeatureTest extends DoublePlaceholderOnlyFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1521,7 +1521,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | price   |
                  *   | <name> | <price> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -1603,7 +1603,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/DoubleMixedExamplesFeature.feature")
         public class DoubleMixedExamplesFeatureTest extends DoubleMixedExamplesFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1628,7 +1628,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | price   |
                  *   | <name> | <price> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -1712,7 +1712,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/DoubleMixedExamplesLiteralDoublesFeature.feature")
         public class DoubleMixedExamplesLiteralDoublesFeatureTest extends DoubleMixedExamplesLiteralDoublesFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1739,7 +1739,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Extra1 | 49.99   |
                  *   | Extra2 | 99.50   |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -1831,7 +1831,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/DoubleLiteralTextFeature.feature")
         public class DoubleLiteralTextFeatureTest extends DoubleLiteralTextFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1857,7 +1857,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Extra1 | unknown |
                  *   | Extra2 | 49.99   |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -1959,7 +1959,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/DoubleMultipleStepsFeature.feature")
         public class DoubleMultipleStepsFeatureTest extends DoubleMultipleStepsFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1984,7 +1984,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Item1 | 19.99 |
                  *   | Item2 | 29.50 |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Item1",
@@ -2001,7 +2001,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Item3 | unknown |
                  *   | Item4 | 49.99   |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Item3",
@@ -2017,7 +2017,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | price   |
                  *   | <name> | <price> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -2104,7 +2104,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MixedLiteralDoublePlaceholderFeature.feature")
         public class MixedLiteralDoublePlaceholderFeatureTest extends MixedLiteralDoublePlaceholderFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -2129,7 +2129,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | <name> | USD <price> |
                  *   | Backup | 0.00        |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -2217,7 +2217,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/BooleanPlaceholderOnlyFeature.feature")
         public class BooleanPlaceholderOnlyFeatureTest extends BooleanPlaceholderOnlyFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -2241,7 +2241,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | enabled   |
                  *   | <name> | <enabled> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -2323,7 +2323,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/BooleanMixedExamplesFeature.feature")
         public class BooleanMixedExamplesFeatureTest extends BooleanMixedExamplesFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -2348,7 +2348,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | enabled   |
                  *   | <name> | <enabled> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -2432,7 +2432,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/BooleanMixedExamplesLiteralBooleansFeature.feature")
         public class BooleanMixedExamplesLiteralBooleansFeatureTest extends BooleanMixedExamplesLiteralBooleansFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -2459,7 +2459,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Extra1 | true      |
                  *   | Extra2 | false     |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -2551,7 +2551,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/BooleanLiteralTextFeature.feature")
         public class BooleanLiteralTextFeatureTest extends BooleanLiteralTextFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -2577,7 +2577,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Extra1 | maybe     |
                  *   | Extra2 | true      |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -2679,7 +2679,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/BooleanMultipleStepsFeature.feature")
         public class BooleanMultipleStepsFeatureTest extends BooleanMultipleStepsFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -2704,7 +2704,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Flag1 | true    |
                  *   | Flag2 | false   |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Flag1",
@@ -2721,7 +2721,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Flag3 | maybe   |
                  *   | Flag4 | true    |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Flag3",
@@ -2737,7 +2737,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | enabled   |
                  *   | <name> | <enabled> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -2824,7 +2824,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MixedLiteralBooleanPlaceholderFeature.feature")
         public class MixedLiteralBooleanPlaceholderFeatureTest extends MixedLiteralBooleanPlaceholderFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -2849,7 +2849,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | <name> | Active: <enabled> |
                  *   | Backup | false             |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -2937,7 +2937,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/CharacterPlaceholderOnlyFeature.feature")
         public class CharacterPlaceholderOnlyFeatureTest extends CharacterPlaceholderOnlyFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -2961,7 +2961,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | grade   |
                  *   | <name> | <grade> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -3043,7 +3043,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/CharacterMixedExamplesFeature.feature")
         public class CharacterMixedExamplesFeatureTest extends CharacterMixedExamplesFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -3068,7 +3068,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | grade   |
                  *   | <name> | <grade> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -3152,7 +3152,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/CharacterMixedExamplesLiteralCharsFeature.feature")
         public class CharacterMixedExamplesLiteralCharsFeatureTest extends CharacterMixedExamplesLiteralCharsFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -3179,7 +3179,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Extra1 | C       |
                  *   | Extra2 | D       |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -3271,7 +3271,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/CharacterLiteralTextFeature.feature")
         public class CharacterLiteralTextFeatureTest extends CharacterLiteralTextFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -3297,7 +3297,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Extra1 | NA      |
                  *   | Extra2 | C       |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -3399,7 +3399,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/CharacterMultipleStepsFeature.feature")
         public class CharacterMultipleStepsFeatureTest extends CharacterMultipleStepsFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -3424,7 +3424,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Alice | A     |
                  *   | Bob   | B     |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Alice",
@@ -3441,7 +3441,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | Charlie | NA    |
                  *   | Dave    | C     |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Charlie",
@@ -3457,7 +3457,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | name   | grade   |
                  *   | <name> | <grade> |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,
@@ -3544,7 +3544,7 @@ Feature: FieldInferenceAndScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MixedLiteralCharacterPlaceholderFeature.feature")
         public class MixedLiteralCharacterPlaceholderFeatureTest extends MixedLiteralCharacterPlaceholderFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -3569,7 +3569,7 @@ Feature: FieldInferenceAndScenarioOutlines
                  *   | <name> | Grade: <grade> |
                  *   | Backup | X              |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         name,

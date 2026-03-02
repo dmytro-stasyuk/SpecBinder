@@ -2,6 +2,7 @@ package dev.specbinder.feature2junit.utils;
 
 import java.lang.annotation.Annotation;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
@@ -98,5 +99,52 @@ public class TypeMirrorUtils {
         // Reverse the list so parent annotations come first
         Collections.reverse(annotations);
         return annotations;
+    }
+
+    /**
+     * Collects all AnnotationMirror instances of a specific annotation from a class hierarchy,
+     * starting from the given class and traversing up through its superclasses.
+     * <p>
+     * Unlike {@link #collectAnnotationsFromHierarchy}, this method returns AnnotationMirror instances
+     * which allow callers to distinguish between explicitly set values and annotation defaults
+     * via {@link AnnotationMirror#getElementValues()}.
+     *
+     * @param start            the starting TypeElement to search
+     * @param annotationClass  the annotation class to collect
+     * @param processingEnv    the processing environment
+     * @return a list of AnnotationMirror instances ordered from parent to child (most distant ancestor first)
+     */
+    public static List<AnnotationMirror> collectAnnotationMirrorsFromHierarchy(
+            TypeElement start, Class<? extends Annotation> annotationClass, ProcessingEnvironment processingEnv
+    ) {
+
+        String annotationName = annotationClass.getCanonicalName();
+        Types typeUtils = processingEnv.getTypeUtils();
+        TypeElement current = start;
+        List<AnnotationMirror> mirrors = new ArrayList<>();
+
+        while (current != null && !"java.lang.Object".equals(current.getQualifiedName().toString())) {
+            for (AnnotationMirror mirror : current.getAnnotationMirrors()) {
+                if (annotationName.equals(mirror.getAnnotationType().toString())) {
+                    mirrors.add(mirror);
+                    break;
+                }
+            }
+
+            TypeMirror superMirror = current.getSuperclass();
+            if (superMirror == null || superMirror.getKind() == TypeKind.NONE) {
+                break;
+            }
+
+            Element superElement = typeUtils.asElement(superMirror);
+            if (!(superElement instanceof TypeElement)) {
+                break;
+            }
+            current = (TypeElement) superElement;
+        }
+
+        // Reverse the list so parent annotations come first
+        Collections.reverse(mirrors);
+        return mirrors;
     }
 }

@@ -56,7 +56,7 @@ Feature: GeneratorOptionsInheritance
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends TestFeature {
           @Given("^user exists$")
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -67,7 +67,7 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -126,7 +126,7 @@ Feature: GeneratorOptionsInheritance
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends TestFeature {
           @Given("^user exists$")
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -137,7 +137,7 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -200,7 +200,7 @@ Feature: GeneratorOptionsInheritance
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends TestFeature {
           @Given("^user exists$")
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -211,7 +211,7 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -269,7 +269,7 @@ Feature: GeneratorOptionsInheritance
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends TestFeature {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -280,7 +280,7 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -344,7 +344,7 @@ Feature: GeneratorOptionsInheritance
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends TestFeature {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -355,7 +355,7 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -420,7 +420,7 @@ Feature: GeneratorOptionsInheritance
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureSpec extends TestFeature {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -431,7 +431,7 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -497,7 +497,7 @@ Feature: GeneratorOptionsInheritance
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureSpec extends TestFeature {
           @Given("^user exists$")
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -508,7 +508,7 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -577,7 +577,7 @@ Feature: GeneratorOptionsInheritance
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureCases extends TestFeature {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -588,7 +588,7 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
 
           @Test
@@ -677,7 +677,7 @@ Feature: GeneratorOptionsInheritance
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureCases extends TestFeature {
           @Given("^user exists$")
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -689,13 +689,13 @@ Feature: GeneratorOptionsInheritance
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
 
           @Test
           @Order(2)
-          @SourceLine(4)
           @Tag("addSteps")
+          @SourceLine(4)
           @DisplayName("Scenario: Empty test")
           public void scenario_2() {
               Assumptions.assumeTrue(false, "Scenario has no steps");

@@ -14,7 +14,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenAge$p1(Integer age) {
+          protected void age$p1(Integer age) {
               // Implementation with int parameter
           }
       }
@@ -70,7 +70,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given age "<age>"
                  */
-                givenAge$p1(age);
+                age$p1(age);
             }
         }
         """
@@ -84,7 +84,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenCount$p1(Integer count) {
+          protected void count$p1(Integer count) {
               // Implementation with Integer parameter
           }
       }
@@ -140,7 +140,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given count "<count>"
                  */
-                givenCount$p1(count);
+                count$p1(count);
             }
         }
         """
@@ -154,7 +154,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenQuantity$p1(int quantity) {
+          protected void quantity$p1(int quantity) {
               // Implementation with int parameter
           }
       }
@@ -193,7 +193,7 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenQuantity$p1(String p1) {
+            public void quantity$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -215,7 +215,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given quantity "<quantity>"
                  */
-                givenQuantity$p1(quantity);
+                quantity$p1(quantity);
             }
         }
         """
@@ -231,7 +231,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenTimestamp$p1(long timestamp) {
+          protected void timestamp$p1(long timestamp) {
               // Implementation with long parameter
           }
       }
@@ -287,7 +287,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given timestamp "<timestamp>"
                  */
-                givenTimestamp$p1(timestamp);
+                timestamp$p1(timestamp);
             }
         }
         """
@@ -301,7 +301,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenAmount$p1(long amount) {
+          protected void amount$p1(long amount) {
               // Implementation with long parameter
           }
       }
@@ -340,7 +340,7 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenAmount$p1(String p1) {
+            public void amount$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -362,7 +362,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given amount "<amount>"
                  */
-                givenAmount$p1(amount);
+                amount$p1(amount);
             }
         }
         """
@@ -378,7 +378,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenPrice$p1(double price) {
+          protected void price$p1(double price) {
               // Implementation with double parameter
           }
       }
@@ -434,7 +434,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given price "<price>"
                  */
-                givenPrice$p1(price);
+                price$p1(price);
             }
         }
         """
@@ -448,7 +448,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenRate$p1(double rate) {
+          protected void rate$p1(double rate) {
               // Implementation with double parameter
           }
       }
@@ -504,7 +504,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given rate "<rate>"
                  */
-                givenRate$p1(rate);
+                rate$p1(rate);
             }
         }
         """
@@ -518,7 +518,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenTemperature$p1(double temperature) {
+          protected void temperature$p1(double temperature) {
               // Implementation with double parameter
           }
       }
@@ -557,7 +557,7 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTemperature$p1(String p1) {
+            public void temperature$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -579,7 +579,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given temperature "<temperature>"
                  */
-                givenTemperature$p1(temperature);
+                temperature$p1(temperature);
             }
         }
         """
@@ -595,7 +595,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenFeatureEnabled$p1(boolean enabled) {
+          protected void featureEnabled$p1(boolean enabled) {
               // Implementation with boolean parameter
           }
       }
@@ -651,7 +651,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given feature enabled "<enabled>"
                  */
-                givenFeatureEnabled$p1(enabled);
+                featureEnabled$p1(enabled);
             }
         }
         """
@@ -665,7 +665,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenValue$p1(boolean value) {
+          protected void value$p1(boolean value) {
               // Implementation with boolean parameter
           }
       }
@@ -704,7 +704,7 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenValue$p1(String p1) {
+            public void value$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -726,7 +726,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given value "<value>"
                  */
-                givenValue$p1(value);
+                value$p1(value);
             }
         }
         """
@@ -743,7 +743,7 @@ Feature: ParameterTypeInferenceAndExampleTables
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
 
@@ -808,7 +808,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given the following day of the week "<day>"
                  */
-                givenTheFollowingDayOfTheWeek$p1(day);
+                theFollowingDayOfTheWeek$p1(day);
             }
         }
         """
@@ -823,7 +823,7 @@ Feature: ParameterTypeInferenceAndExampleTables
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
 
@@ -872,7 +872,7 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingDayOfTheWeek$p1(String p1) {
+            public void theFollowingDayOfTheWeek$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -894,7 +894,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given the following day of the week "<day>"
                  */
-                givenTheFollowingDayOfTheWeek$p1(day);
+                theFollowingDayOfTheWeek$p1(day);
             }
         }
         """
@@ -909,11 +909,11 @@ Feature: ParameterTypeInferenceAndExampleTables
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenStatus$p1(Status status) {
+          protected void status$p1(Status status) {
               // Implementation with Status enum parameter
           }
 
-          protected void givenPriority$p1(Priority priority) {
+          protected void priority$p1(Priority priority) {
               // Implementation with Priority enum parameter
           }
 
@@ -980,7 +980,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given status "<status>"
                  */
-                givenStatus$p1(status);
+                status$p1(status);
             }
         }
         """
@@ -995,7 +995,7 @@ Feature: ParameterTypeInferenceAndExampleTables
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenColor$p1(Color color) {
+          protected void color$p1(Color color) {
               // Implementation with enum parameter
           }
 
@@ -1041,7 +1041,7 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenColor$p1(String p1) {
+            public void color$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1064,7 +1064,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given color "<color>"
                  */
-                givenColor$p1(color);
+                color$p1(color);
             }
         }
         """
@@ -1079,7 +1079,7 @@ Feature: ParameterTypeInferenceAndExampleTables
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenAnswer$p1(Answer answer) {
+          protected void answer$p1(Answer answer) {
               // Implementation with enum parameter
           }
 
@@ -1140,7 +1140,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given answer "<answer>"
                  */
-                givenAnswer$p1(answer);
+                answer$p1(answer);
             }
         }
         """
@@ -1155,7 +1155,7 @@ Feature: ParameterTypeInferenceAndExampleTables
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTaskWithStatus$p1AndPriority$p2(Status status, int priority) {
+          protected void taskWithStatus$p1AndPriority$p2(Status status, int priority) {
               // Implementation with enum and int parameters
           }
 
@@ -1219,7 +1219,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given task with status "<status>" and priority "<priority>"
                  */
-                givenTaskWithStatus$p1AndPriority$p2(status, priority);
+                taskWithStatus$p1AndPriority$p2(status, priority);
             }
         }
         """
@@ -1234,7 +1234,7 @@ Feature: ParameterTypeInferenceAndExampleTables
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenLevel$p1(Level level) {
+          protected void level$p1(Level level) {
               // Implementation with enum parameter
           }
 
@@ -1295,7 +1295,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given level "<level>"
                  */
-                givenLevel$p1(level);
+                level$p1(level);
             }
         }
         """
@@ -1311,7 +1311,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenUserWithName$p1AndAge$p2(String name, int age) {
+          protected void userWithName$p1AndAge$p2(String name, int age) {
               // Implementation with String and int parameters
           }
       }
@@ -1368,7 +1368,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given user with name "<name>" and age "<age>"
                  */
-                givenUserWithName$p1AndAge$p2(name, age);
+                userWithName$p1AndAge$p2(name, age);
             }
         }
         """
@@ -1382,7 +1382,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenProductWithName$p1AndPrice$p2(String name, double price) {
+          protected void productWithName$p1AndPrice$p2(String name, double price) {
               // Implementation with String and double parameters
           }
       }
@@ -1421,7 +1421,7 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenProductWithName$p1AndPrice$p2(String p1, String p2) {
+            public void productWithName$p1AndPrice$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1443,7 +1443,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given product with name "<name>" and price "<price>"
                  */
-                givenProductWithName$p1AndPrice$p2(name, price);
+                productWithName$p1AndPrice$p2(name, price);
             }
         }
         """
@@ -1457,7 +1457,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenDataWithValues$p1$p2$p3$p4(int count, long timestamp, double price, boolean enabled) {
+          protected void dataWithValues$p1$p2$p3$p4(int count, long timestamp, double price, boolean enabled) {
               // Implementation with int, long, double, and boolean parameters
           }
       }
@@ -1516,7 +1516,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given data with values "<count>" "<timestamp>" "<price>" "<enabled>"
                  */
-                givenDataWithValues$p1$p2$p3$p4(count, timestamp, price, enabled);
+                dataWithValues$p1$p2$p3$p4(count, timestamp, price, enabled);
             }
         }
         """
@@ -1532,7 +1532,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenUserWithRole$p1AndAge$p2(String role, int age) {
+          protected void userWithRole$p1AndAge$p2(String role, int age) {
               // Implementation with String and int parameters
           }
       }
@@ -1588,7 +1588,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given user with role "admin" and age "<age>"
                  */
-                givenUserWithRole$p1AndAge$p2("admin", age);
+                userWithRole$p1AndAge$p2("admin", age);
             }
         }
         """
@@ -1602,7 +1602,7 @@ Feature: ParameterTypeInferenceAndExampleTables
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenConfigWithEnabled$p1AndCount$p2(boolean enabled, int count) {
+          protected void configWithEnabled$p1AndCount$p2(boolean enabled, int count) {
               // Implementation with boolean and int parameters
           }
       }
@@ -1642,7 +1642,7 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenConfigWithEnabled$p1AndCount$p2(String p1, Integer p2) {
+            public void configWithEnabled$p1AndCount$p2(String p1, Integer p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1664,7 +1664,7 @@ Feature: ParameterTypeInferenceAndExampleTables
                 /*
                  * Given config with enabled "maybe" and count "<count>"
                  */
-                givenConfigWithEnabled$p1AndCount$p2("maybe", count);
+                configWithEnabled$p1AndCount$p2("maybe", count);
             }
         }
         """

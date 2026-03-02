@@ -23,7 +23,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -97,7 +97,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | age   |
                *   | <name> | <age> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -123,7 +123,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -197,7 +197,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | age   |
                *   | <name> | <age> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -225,7 +225,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -297,7 +297,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | age   |
                *   | <name> | <age> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -329,7 +329,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -400,7 +400,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | age   |
                *   | <name> | <age> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -432,7 +432,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -504,7 +504,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | age       |
                *   | <name> | age-<age> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -536,7 +536,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class OrdersFeature {
 
-          public void givenTheFollowingOrders(List<OrdersParam> orders) {
+          public void theFollowingOrders(List<OrdersParam> orders) {
           }
 
           public static class OrdersParam {
@@ -608,7 +608,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | order id | quantity     |
                *   | ORD-001  | <tens><ones> |
                */
-              givenTheFollowingOrders(
+              theFollowingOrders(
                       List.of(
                               new OrdersParam(
                                       "ORD-001",
@@ -643,7 +643,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class TransactionsFeature {
 
-          public void givenTheFollowingTransactions(List<TransactionsParam> transactions) {
+          public void theFollowingTransactions(List<TransactionsParam> transactions) {
           }
 
           public static class TransactionsParam {
@@ -717,7 +717,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | transaction id  | amount   |
                *   | <transactionId> | <amount> |
                */
-              givenTheFollowingTransactions(
+              theFollowingTransactions(
                       List.of(
                               new TransactionsParam(
                                       transactionId,
@@ -743,7 +743,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class AccountsFeature {
 
-          public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+          public void theFollowingAccounts(List<AccountsParam> accounts) {
           }
 
           public static class AccountsParam {
@@ -816,7 +816,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | account number  | balance   |
                *   | <accountNumber> | <balance> |
                */
-              givenTheFollowingAccounts(
+              theFollowingAccounts(
                       List.of(
                               new AccountsParam(
                                       accountNumber,
@@ -844,7 +844,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class TransactionsFeature {
 
-          public void givenTheFollowingTransactions(List<TransactionsParam> transactions) {
+          public void theFollowingTransactions(List<TransactionsParam> transactions) {
           }
 
           public static class TransactionsParam {
@@ -918,7 +918,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | transaction id  | amount   |
                *   | <transactionId> | <amount> |
                */
-              givenTheFollowingTransactions(
+              theFollowingTransactions(
                       List.of(
                               new TransactionsParam(
                                       transactionId,
@@ -946,7 +946,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class TransactionsFeature {
 
-          public void givenTheFollowingTransactions(List<TransactionsParam> transactions) {
+          public void theFollowingTransactions(List<TransactionsParam> transactions) {
           }
 
           public static class TransactionsParam {
@@ -1018,7 +1018,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | transaction id  | amount   |
                *   | <transactionId> | <amount> |
                */
-              givenTheFollowingTransactions(
+              theFollowingTransactions(
                       List.of(
                               new TransactionsParam(
                                       transactionId,
@@ -1050,7 +1050,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class AccountsFeature {
 
-          public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+          public void theFollowingAccounts(List<AccountsParam> accounts) {
           }
 
           public static class AccountsParam {
@@ -1121,7 +1121,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | account number  | balance   |
                *   | <accountNumber> | <balance> |
                */
-              givenTheFollowingAccounts(
+              theFollowingAccounts(
                       List.of(
                               new AccountsParam(
                                       accountNumber,
@@ -1153,7 +1153,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class TransactionsFeature {
 
-          public void givenTheFollowingTransactions(List<TransactionsParam> transactions) {
+          public void theFollowingTransactions(List<TransactionsParam> transactions) {
           }
 
           public static class TransactionsParam {
@@ -1225,7 +1225,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | transaction id  | amount          |
                *   | <transactionId> | amount-<amount> |
                */
-              givenTheFollowingTransactions(
+              theFollowingTransactions(
                       List.of(
                               new TransactionsParam(
                                       transactionId,
@@ -1257,7 +1257,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class TransactionsFeature {
 
-          public void givenTheFollowingTransactions(List<TransactionsParam> transactions) {
+          public void theFollowingTransactions(List<TransactionsParam> transactions) {
           }
 
           public static class TransactionsParam {
@@ -1329,7 +1329,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | transaction id | amount               |
                *   | TXN-001        | <billions><millions> |
                */
-              givenTheFollowingTransactions(
+              theFollowingTransactions(
                       List.of(
                               new TransactionsParam(
                                       "TXN-001",
@@ -1364,7 +1364,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -1438,7 +1438,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name          | price   |
                *   | <productName> | <price> |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -1464,7 +1464,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -1538,7 +1538,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name          | price   |
                *   | <productName> | <price> |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -1566,7 +1566,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -1640,7 +1640,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name          | price   |
                *   | <productName> | <price> |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -1668,7 +1668,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -1739,7 +1739,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name          | price   |
                *   | <productName> | <price> |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -1771,7 +1771,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -1843,7 +1843,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name          | price         |
                *   | <productName> | price-<price> |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -1875,7 +1875,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -1947,7 +1947,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | price             |
                *   | Laptop | <dollars>.<cents> |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       "Laptop",
@@ -1982,7 +1982,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -2056,7 +2056,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | active   |
                *   | <name> | <active> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -2082,7 +2082,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -2156,7 +2156,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | active   |
                *   | <name> | <active> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -2184,7 +2184,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -2255,7 +2255,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | active   |
                *   | <name> | <active> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -2287,7 +2287,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -2359,7 +2359,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | active          |
                *   | <name> | active-<active> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -2391,7 +2391,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -2463,7 +2463,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name  | active           |
                *   | Alice | <prefix><suffix> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -2498,7 +2498,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class GradesFeature {
 
-          public void givenTheFollowingGrades(List<GradesParam> grades) {
+          public void theFollowingGrades(List<GradesParam> grades) {
           }
 
           public static class GradesParam {
@@ -2572,7 +2572,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | student   | grade   |
                *   | <student> | <grade> |
                */
-              givenTheFollowingGrades(
+              theFollowingGrades(
                       List.of(
                               new GradesParam(
                                       student,
@@ -2598,7 +2598,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class GradesFeature {
 
-          public void givenTheFollowingGrades(List<GradesParam> grades) {
+          public void theFollowingGrades(List<GradesParam> grades) {
           }
 
           public static class GradesParam {
@@ -2672,7 +2672,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | student   | grade   |
                *   | <student> | <grade> |
                */
-              givenTheFollowingGrades(
+              theFollowingGrades(
                       List.of(
                               new GradesParam(
                                       student,
@@ -2700,7 +2700,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class GradesFeature {
 
-          public void givenTheFollowingGrades(List<GradesParam> grades) {
+          public void theFollowingGrades(List<GradesParam> grades) {
           }
 
           public static class GradesParam {
@@ -2771,7 +2771,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | student   | grade   |
                *   | <student> | <grade> |
                */
-              givenTheFollowingGrades(
+              theFollowingGrades(
                       List.of(
                               new GradesParam(
                                       student,
@@ -2803,7 +2803,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class GradesFeature {
 
-          public void givenTheFollowingGrades(List<GradesParam> grades) {
+          public void theFollowingGrades(List<GradesParam> grades) {
           }
 
           public static class GradesParam {
@@ -2875,7 +2875,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | student   | grade         |
                *   | <student> | grade-<grade> |
                */
-              givenTheFollowingGrades(
+              theFollowingGrades(
                       List.of(
                               new GradesParam(
                                       student,
@@ -2907,7 +2907,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class GradesFeature {
 
-          public void givenTheFollowingGrades(List<GradesParam> grades) {
+          public void theFollowingGrades(List<GradesParam> grades) {
           }
 
           public static class GradesParam {
@@ -2979,7 +2979,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | student | grade           |
                *   | Alice   | <first><second> |
                */
-              givenTheFollowingGrades(
+              theFollowingGrades(
                       List.of(
                               new GradesParam(
                                       "Alice",
@@ -3014,7 +3014,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -3091,7 +3091,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name          | stock | price   |
                *   | <productName> | 100   | <price> |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -3118,7 +3118,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class EmployeesFeature {
 
-          public void givenTheFollowingEmployees(List<EmployeesParam> employees) {
+          public void theFollowingEmployees(List<EmployeesParam> employees) {
           }
 
           public static class EmployeesParam {
@@ -3196,7 +3196,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | <employee> | <empId>     | <status> |
                *   | Manager    | 9999        | true     |
                */
-              givenTheFollowingEmployees(
+              theFollowingEmployees(
                       List.of(
                               new EmployeesParam(
                                       employee,
@@ -3228,7 +3228,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -3300,7 +3300,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | username | email              |
                *   | <user>   | <user>@example.com |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       user,
@@ -3326,7 +3326,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class EmployeesFeature {
 
-          public void givenTheFollowingEmployees(List<EmployeesParam> employees) {
+          public void theFollowingEmployees(List<EmployeesParam> employees) {
           }
 
           public static class EmployeesParam {
@@ -3404,7 +3404,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name   | identifier  | description                           | status text                   |
                *   | <name> | EMP-<empId> | <name> (age: <age>, active: <active>) | Status: <active>, ID: <empId> |
                */
-              givenTheFollowingEmployees(
+              theFollowingEmployees(
                       List.of(
                               new EmployeesParam(
                                       name,
@@ -3439,7 +3439,7 @@ Feature: TypeInferenceWithScenarioOutlines
               AVAILABLE, OUT_OF_STOCK, DISCONTINUED
           }
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -3511,7 +3511,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | name          | status   |
                *   | <productName> | <status> |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       productName,
@@ -3540,7 +3540,7 @@ Feature: TypeInferenceWithScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
           }
 
           public static class UsersParam {
@@ -3614,7 +3614,7 @@ Feature: TypeInferenceWithScenarioOutlines
                *   | Alice | 30  |
                *   | Bob   | 25  |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",

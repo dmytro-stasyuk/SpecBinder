@@ -60,7 +60,7 @@ Feature: DataTableInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
-            public void whenCheckingInventoryForProduct(List<Map<String, String>> data) {
+            public void checkingInventoryForProduct(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -82,7 +82,7 @@ Feature: DataTableInScenarioOutlines
                 /*
                  * When checking inventory for product:
                  */
-                whenCheckingInventoryForProduct(createListOfMaps(\"\"\"
+                checkingInventoryForProduct(createListOfMaps(\"\"\"
                         | name           | status         |
                         | <Product Name> | <Stock Status> |
                         \"\"\"
@@ -186,7 +186,7 @@ Feature: DataTableInScenarioOutlines
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends TestFeature {
-          public void thenOrder$p1ContainsItems(String p1, List<Map<String, String>> data) {
+          public void order$p1ContainsItems(String p1, List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -208,7 +208,7 @@ Feature: DataTableInScenarioOutlines
               /*
                * Then order "<orderId>" contains items:
                */
-              thenOrder$p1ContainsItems(orderId, createListOfMaps(\"\"\"
+              order$p1ContainsItems(orderId, createListOfMaps(\"\"\"
                       | product   | quantity | status   |
                       | <product> | <qty>    | pending  |
                       | Keyboard  | 1        | <status> |
@@ -315,11 +315,11 @@ Feature: DataTableInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
-            public void givenSystemConfiguration(List<Map<String, String>> data) {
+            public void systemConfiguration(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUser$p1PerformsAction$p2(String p1, String p2) {
+            public void user$p1PerformsAction$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -341,7 +341,7 @@ Feature: DataTableInScenarioOutlines
                 /*
                  * Given system configuration:
                  */
-                givenSystemConfiguration(createListOfMaps(\"\"\"
+                systemConfiguration(createListOfMaps(\"\"\"
                         | setting | value |
                         | timeout | 30    |
                         | retries | 3     |
@@ -349,7 +349,7 @@ Feature: DataTableInScenarioOutlines
                 /*
                  * When user "<username>" performs action "<action>"
                  */
-                whenUser$p1PerformsAction$p2(username, action);
+                user$p1PerformsAction$p2(username, action);
             }
 
             protected List<Map<String, String>> createListOfMaps(String tableLines) {
@@ -443,11 +443,11 @@ Feature: DataTableInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
-            public void givenNotificationSettings(List<Map<String, String>> data) {
+            public void notificationSettings(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenAction$p1IsTriggeredWithPriority$p2(String p1, String p2) {
+            public void action$p1IsTriggeredWithPriority$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -469,7 +469,7 @@ Feature: DataTableInScenarioOutlines
                 /*
                  * Given notification settings:
                  */
-                givenNotificationSettings(createListOfMaps(\"\"\"
+                notificationSettings(createListOfMaps(\"\"\"
                         | recipient  | template     |
                         | <username> | welcome-user |
                         \"\"\"
@@ -477,7 +477,7 @@ Feature: DataTableInScenarioOutlines
                 /*
                  * When action "<action>" is triggered with priority "<priority>"
                  */
-                whenAction$p1IsTriggeredWithPriority$p2(action, priority);
+                action$p1IsTriggeredWithPriority$p2(action, priority);
             }
 
             protected List<Map<String, String>> createListOfMaps(String tableLines) {

@@ -67,7 +67,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/ProductCatalog.feature")
         public class ProductCatalogTest extends ProductCatalog {
-            protected void givenUserSearchesForProduct$p1(String p1, Consumer<String>... composite) {
+            protected void userSearchesForProduct$p1(String p1, Consumer<String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1));
                 } else {
@@ -75,27 +75,27 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenOpenSearchPage() {
+            public void openSearchPage() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenEnterSearchTerm$p1(String p1) {
+            public void enterSearchTerm$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenClickSearchButton() {
+            public void clickSearchButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenFilterResultsByCategory() {
+            public void filterResultsByCategory() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenSearchResultsAreDisplayed() {
+            public void searchResultsAreDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenProduct$p1ShouldBeFound(String p1) {
+            public void product$p1ShouldBeFound(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -106,20 +106,20 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given user searches for product "Laptop"
                  */
-                givenUserSearchesForProduct$p1("Laptop", (p1) -> {
-                    givenOpenSearchPage();
-                    givenEnterSearchTerm$p1("Laptop");
-                    givenClickSearchButton();
-                    givenFilterResultsByCategory();
+                userSearchesForProduct$p1("Laptop", (p1) -> {
+                    openSearchPage();
+                    enterSearchTerm$p1("Laptop");
+                    clickSearchButton();
+                    filterResultsByCategory();
                 });
                 /*
                  * When search results are displayed
                  */
-                whenSearchResultsAreDisplayed();
+                searchResultsAreDisplayed();
                 /*
                  * Then product "Laptop" should be found
                  */
-                thenProduct$p1ShouldBeFound("Laptop");
+                product$p1ShouldBeFound("Laptop");
             }
         }
         """
@@ -175,7 +175,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserManagement.feature")
         public class UserManagementTest extends UserManagement {
-            protected void givenAdmin$p1WantsToCreateANewUser$p2(String p1, String p2,
+            protected void admin$p1WantsToCreateANewUser$p2(String p1, String p2,
                     BiConsumer<String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2));
@@ -184,23 +184,23 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenNavigateTo$p1Page(String p1) {
+            public void navigateTo$p1Page(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenClickOn$p1Button(String p1) {
+            public void clickOn$p1Button(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenFillInUserDetailsFor$p1(String p1) {
+            public void fillInUserDetailsFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSubmitTheForm() {
+            public void submitTheForm() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenVerifyUser$p1IsCreated(String p1) {
+            public void verifyUser$p1IsCreated(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -211,12 +211,12 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given admin "Bob" wants to create a new user "Alex"
                  */
-                givenAdmin$p1WantsToCreateANewUser$p2("Bob", "Alex", (p1, p2) -> {
-                    givenNavigateTo$p1Page("User Management");
-                    givenClickOn$p1Button("Create User");
-                    givenFillInUserDetailsFor$p1("Alex");
-                    givenSubmitTheForm();
-                    givenVerifyUser$p1IsCreated("Alex");
+                admin$p1WantsToCreateANewUser$p2("Bob", "Alex", (p1, p2) -> {
+                    navigateTo$p1Page("User Management");
+                    clickOn$p1Button("Create User");
+                    fillInUserDetailsFor$p1("Alex");
+                    submitTheForm();
+                    verifyUser$p1IsCreated("Alex");
                 });
             }
         }
@@ -275,7 +275,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/BookingSystem.feature")
         public class BookingSystemTest extends BookingSystem {
-            protected void givenCustomer$p1BooksRoom$p2ForDate$p3(String p1, String p2, String p3,
+            protected void customer$p1BooksRoom$p2ForDate$p3(String p1, String p2, String p3,
                     TriConsumer<String, String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2, p3));
@@ -284,31 +284,31 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenVerifyCustomer$p1HasValidAccount(String p1) {
+            public void verifyCustomer$p1HasValidAccount(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCheckRoom$p1IsAvailableOn$p2(String p1, String p2) {
+            public void checkRoom$p1IsAvailableOn$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCalculatePriceFor$p1On$p2(String p1, String p2) {
+            public void calculatePriceFor$p1On$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenReserveRoom$p1ForCustomer$p2(String p1, String p2) {
+            public void reserveRoom$p1ForCustomer$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSendConfirmationToCustomer$p1(String p1) {
+            public void sendConfirmationToCustomer$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenBookingIsProcessed() {
+            public void bookingIsProcessed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenBookingShouldBeConfirmedFor$p1(String p1) {
+            public void bookingShouldBeConfirmedFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -319,21 +319,21 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given customer "Sarah" books room "Deluxe Suite" for date "2024-12-25"
                  */
-                givenCustomer$p1BooksRoom$p2ForDate$p3("Sarah", "Deluxe Suite", "2024-12-25", (p1, p2, p3) -> {
-                    givenVerifyCustomer$p1HasValidAccount(p1);
-                    givenCheckRoom$p1IsAvailableOn$p2(p2, p3);
-                    givenCalculatePriceFor$p1On$p2(p2, p3);
-                    givenReserveRoom$p1ForCustomer$p2(p2, p1);
-                    givenSendConfirmationToCustomer$p1(p1);
+                customer$p1BooksRoom$p2ForDate$p3("Sarah", "Deluxe Suite", "2024-12-25", (p1, p2, p3) -> {
+                    verifyCustomer$p1HasValidAccount(p1);
+                    checkRoom$p1IsAvailableOn$p2(p2, p3);
+                    calculatePriceFor$p1On$p2(p2, p3);
+                    reserveRoom$p1ForCustomer$p2(p2, p1);
+                    sendConfirmationToCustomer$p1(p1);
                 });
                 /*
                  * When booking is processed
                  */
-                whenBookingIsProcessed();
+                bookingIsProcessed();
                 /*
                  * Then booking should be confirmed for "Sarah"
                  */
-                thenBookingShouldBeConfirmedFor$p1("Sarah");
+                bookingShouldBeConfirmedFor$p1("Sarah");
             }
         }
         """
@@ -422,8 +422,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/CustomerService.feature")
         public class CustomerServiceTest extends CustomerService {
-            protected void givenCustomer$p1SubmitsASupportRequest(String p1,
-                    Consumer<String>... composite) {
+            protected void customer$p1SubmitsASupportRequest(String p1, Consumer<String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1));
                 } else {
@@ -431,27 +430,27 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenVerifyCustomer$p1IsRegistered(String p1) {
+            public void verifyCustomer$p1IsRegistered(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCreateTicketForCustomer$p1(String p1) {
+            public void createTicketForCustomer$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenAssignAgentToCustomer$p1(String p1) {
+            public void assignAgentToCustomer$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSendConfirmationTo$p1(String p1) {
+            public void sendConfirmationTo$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenRequestIsProcessed() {
+            public void requestIsProcessed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenCustomer$p1ShouldReceiveConfirmation(String p1) {
+            public void customer$p1ShouldReceiveConfirmation(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -462,20 +461,20 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given customer "Alice" submits a support request
                  */
-                givenCustomer$p1SubmitsASupportRequest("Alice", (p1) -> {
-                    givenVerifyCustomer$p1IsRegistered(p1);
-                    givenCreateTicketForCustomer$p1(p1);
-                    givenAssignAgentToCustomer$p1(p1);
-                    givenSendConfirmationTo$p1(p1);
+                customer$p1SubmitsASupportRequest("Alice", (p1) -> {
+                    verifyCustomer$p1IsRegistered(p1);
+                    createTicketForCustomer$p1(p1);
+                    assignAgentToCustomer$p1(p1);
+                    sendConfirmationTo$p1(p1);
                 });
                 /*
                  * When request is processed
                  */
-                whenRequestIsProcessed();
+                requestIsProcessed();
                 /*
                  * Then customer "Alice" should receive confirmation
                  */
-                thenCustomer$p1ShouldReceiveConfirmation("Alice");
+                customer$p1ShouldReceiveConfirmation("Alice");
             }
         }
         """
@@ -532,7 +531,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/OrderProcessing.feature")
         public class OrderProcessingTest extends OrderProcessing {
-            protected void givenCustomer$p1PlacesOrderFor$p2(String p1, String p2,
+            protected void customer$p1PlacesOrderFor$p2(String p1, String p2,
                     BiConsumer<String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2));
@@ -541,27 +540,27 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenVerifyCustomer$p1IsRegistered(String p1) {
+            public void verifyCustomer$p1IsRegistered(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCheckProduct$p1IsAvailable(String p1) {
+            public void checkProduct$p1IsAvailable(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCalculatePriceFor$p1(String p1) {
+            public void calculatePriceFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCreateOrderForCustomer$p1(String p1) {
+            public void createOrderForCustomer$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenOrderIsSubmitted() {
+            public void orderIsSubmitted() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenOrderShouldBeConfirmedFor$p1(String p1) {
+            public void orderShouldBeConfirmedFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -572,20 +571,20 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given customer "John" places order for "Smartphone"
                  */
-                givenCustomer$p1PlacesOrderFor$p2("John", "Smartphone", (p1, p2) -> {
-                    givenVerifyCustomer$p1IsRegistered(p1);
-                    givenCheckProduct$p1IsAvailable(p2);
-                    givenCalculatePriceFor$p1(p2);
-                    givenCreateOrderForCustomer$p1(p1);
+                customer$p1PlacesOrderFor$p2("John", "Smartphone", (p1, p2) -> {
+                    verifyCustomer$p1IsRegistered(p1);
+                    checkProduct$p1IsAvailable(p2);
+                    calculatePriceFor$p1(p2);
+                    createOrderForCustomer$p1(p1);
                 });
                 /*
                  * When order is submitted
                  */
-                whenOrderIsSubmitted();
+                orderIsSubmitted();
                 /*
                  * Then order should be confirmed for "John"
                  */
-                thenOrderShouldBeConfirmedFor$p1("John");
+                orderShouldBeConfirmedFor$p1("John");
             }
         }
         """
@@ -643,7 +642,7 @@ Feature: CompositeStepsWithSimpleParameters
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TravelBooking.feature")
       public class TravelBookingTest extends TravelBooking {
-          protected void givenTraveler$p1BooksFlight$p2AndHotel$p3(String p1, String p2, String p3,
+          protected void traveler$p1BooksFlight$p2AndHotel$p3(String p1, String p2, String p3,
                   TriConsumer<String, String, String>... composite) {
               if (composite.length > 0) {
                   stream(composite).forEach(action -> action.accept(p1, p2, p3));
@@ -652,31 +651,31 @@ Feature: CompositeStepsWithSimpleParameters
               }
           }
 
-          public void givenVerifyTraveler$p1HasValidPassport(String p1) {
+          public void verifyTraveler$p1HasValidPassport(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenCheckFlight$p1AvailabilityOn$p2(String p1, String p2) {
+          public void checkFlight$p1AvailabilityOn$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenCheckHotel$p1AvailabilityOn$p2(String p1, String p2) {
+          public void checkHotel$p1AvailabilityOn$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenReserveFlight$p1ForTraveler$p2(String p1, String p2) {
+          public void reserveFlight$p1ForTraveler$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenReserveHotel$p1ForTraveler$p2(String p1, String p2) {
+          public void reserveHotel$p1ForTraveler$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenBookingIsCompleted() {
+          public void bookingIsCompleted() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenBookingConfirmationShouldBeSentTo$p1(String p1) {
+          public void bookingConfirmationShouldBeSentTo$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -687,21 +686,21 @@ Feature: CompositeStepsWithSimpleParameters
               /*
                * Given traveler "Emma" books flight "FL123" and hotel "Grand Hotel"
                */
-              givenTraveler$p1BooksFlight$p2AndHotel$p3("Emma", "FL123", "Grand Hotel", (p1, p2, p3) -> {
-                  givenVerifyTraveler$p1HasValidPassport(p1);
-                  givenCheckFlight$p1AvailabilityOn$p2(p2, p3);
-                  givenCheckHotel$p1AvailabilityOn$p2(p3, p3);
-                  givenReserveFlight$p1ForTraveler$p2(p2, p1);
-                  givenReserveHotel$p1ForTraveler$p2(p3, p1);
+              traveler$p1BooksFlight$p2AndHotel$p3("Emma", "FL123", "Grand Hotel", (p1, p2, p3) -> {
+                  verifyTraveler$p1HasValidPassport(p1);
+                  checkFlight$p1AvailabilityOn$p2(p2, p3);
+                  checkHotel$p1AvailabilityOn$p2(p3, p3);
+                  reserveFlight$p1ForTraveler$p2(p2, p1);
+                  reserveHotel$p1ForTraveler$p2(p3, p1);
               });
               /*
                * When booking is completed
                */
-              whenBookingIsCompleted();
+              bookingIsCompleted();
               /*
                * Then booking confirmation should be sent to "Emma"
                */
-              thenBookingConfirmationShouldBeSentTo$p1("Emma");
+              bookingConfirmationShouldBeSentTo$p1("Emma");
           }
       }
       """
@@ -759,7 +758,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/NotificationService.feature")
         public class NotificationServiceTest extends NotificationService {
-            protected void givenUser$p1ReceivesANotification(String p1, Consumer<String>... composite) {
+            protected void user$p1ReceivesANotification(String p1, Consumer<String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1));
                 } else {
@@ -767,23 +766,23 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenSendEmailTo$p1WithSubject$p2(String p1, String p2) {
+            public void sendEmailTo$p1WithSubject$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSendSmsTo$p1WithMessage$p2(String p1, String p2) {
+            public void sendSmsTo$p1WithMessage$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenLogNotificationSentTo$p1WithStatus$p2(String p1, String p2) {
+            public void logNotificationSentTo$p1WithStatus$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenNotificationIsDelivered() {
+            public void notificationIsDelivered() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenUser$p1ShouldBeNotified(String p1) {
+            public void user$p1ShouldBeNotified(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -794,19 +793,19 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given user "Bob" receives a notification
                  */
-                givenUser$p1ReceivesANotification("Bob", (p1) -> {
-                    givenSendEmailTo$p1WithSubject$p2(p1, "Welcome");
-                    givenSendSmsTo$p1WithMessage$p2(p1, "Thank you");
-                    givenLogNotificationSentTo$p1WithStatus$p2(p1, "Success");
+                user$p1ReceivesANotification("Bob", (p1) -> {
+                    sendEmailTo$p1WithSubject$p2(p1, "Welcome");
+                    sendSmsTo$p1WithMessage$p2(p1, "Thank you");
+                    logNotificationSentTo$p1WithStatus$p2(p1, "Success");
                 });
                 /*
                  * When notification is delivered
                  */
-                whenNotificationIsDelivered();
+                notificationIsDelivered();
                 /*
                  * Then user "Bob" should be notified
                  */
-                thenUser$p1ShouldBeNotified("Bob");
+                user$p1ShouldBeNotified("Bob");
             }
         }
         """
@@ -865,7 +864,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/PaymentProcessing.feature")
         public class PaymentProcessingTest extends PaymentProcessing {
-            protected void givenCustomer$p1MakesPaymentOf$p2(String p1, String p2,
+            protected void customer$p1MakesPaymentOf$p2(String p1, String p2,
                     BiConsumer<String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2));
@@ -874,31 +873,31 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenValidateCustomer$p1WithMethod$p2(String p1, String p2) {
+            public void validateCustomer$p1WithMethod$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenChargeAmount$p1ToCustomer$p2(String p1, String p2) {
+            public void chargeAmount$p1ToCustomer$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSendReceiptTo$p1WithAmount$p2(String p1, String p2) {
+            public void sendReceiptTo$p1WithAmount$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSendReceipt$p1To$p2(Integer p1, String p2) {
+            public void sendReceipt$p1To$p2(Integer p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenLogTransactionFor$p1WithStatus$p2(String p1, String p2) {
+            public void logTransactionFor$p1WithStatus$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenPaymentIsProcessed() {
+            public void paymentIsProcessed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenPaymentShouldBeConfirmedFor$p1(String p1) {
+            public void paymentShouldBeConfirmedFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -909,21 +908,21 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given customer "Alice" makes payment of "100.00"
                  */
-                givenCustomer$p1MakesPaymentOf$p2("Alice", "100.00", (p1, p2) -> {
-                    givenValidateCustomer$p1WithMethod$p2(p1, "Credit Card");
-                    givenChargeAmount$p1ToCustomer$p2(p2, p1);
-                    givenSendReceiptTo$p1WithAmount$p2(p1, p2);
-                    givenSendReceipt$p1To$p2(120, p1);
-                    givenLogTransactionFor$p1WithStatus$p2(p1, "Completed");
+                customer$p1MakesPaymentOf$p2("Alice", "100.00", (p1, p2) -> {
+                    validateCustomer$p1WithMethod$p2(p1, "Credit Card");
+                    chargeAmount$p1ToCustomer$p2(p2, p1);
+                    sendReceiptTo$p1WithAmount$p2(p1, p2);
+                    sendReceipt$p1To$p2(120, p1);
+                    logTransactionFor$p1WithStatus$p2(p1, "Completed");
                 });
                 /*
                  * When payment is processed
                  */
-                whenPaymentIsProcessed();
+                paymentIsProcessed();
                 /*
                  * Then payment should be confirmed for "Alice"
                  */
-                thenPaymentShouldBeConfirmedFor$p1("Alice");
+                paymentShouldBeConfirmedFor$p1("Alice");
             }
         }
         """
@@ -980,7 +979,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/DataProcessing.feature")
         public class DataProcessingTest extends DataProcessing {
-            protected void givenUser$p1ProcessesDatasetWithId$p2(String p1, String p2,
+            protected void user$p1ProcessesDatasetWithId$p2(String p1, String p2,
                     BiConsumer<String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2));
@@ -989,23 +988,23 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenLoadDataset$p1FromStorage(Long p1) {
+            public void loadDataset$p1FromStorage(Long p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenValidateUser$p1HasAccessToDataset$p2(String p1, Long p2) {
+            public void validateUser$p1HasAccessToDataset$p2(String p1, Long p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCalculateChecksumForDataset$p1(Long p1) {
+            public void calculateChecksumForDataset$p1(Long p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenProcessingIsComplete() {
+            public void processingIsComplete() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenUser$p1ShouldSeeResults(String p1) {
+            public void user$p1ShouldSeeResults(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1016,19 +1015,19 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given user "Bob" processes dataset with ID "999999999999"
                  */
-                givenUser$p1ProcessesDatasetWithId$p2("Bob", "999999999999", (p1, p2) -> {
-                    givenLoadDataset$p1FromStorage(999999999999L);
-                    givenValidateUser$p1HasAccessToDataset$p2(p1, 999999999999L);
-                    givenCalculateChecksumForDataset$p1(999999999999L);
+                user$p1ProcessesDatasetWithId$p2("Bob", "999999999999", (p1, p2) -> {
+                    loadDataset$p1FromStorage(999999999999L);
+                    validateUser$p1HasAccessToDataset$p2(p1, 999999999999L);
+                    calculateChecksumForDataset$p1(999999999999L);
                 });
                 /*
                  * When processing is complete
                  */
-                whenProcessingIsComplete();
+                processingIsComplete();
                 /*
                  * Then user "Bob" should see results
                  */
-                thenUser$p1ShouldSeeResults("Bob");
+                user$p1ShouldSeeResults("Bob");
             }
         }
         """
@@ -1086,7 +1085,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/FeatureToggle.feature")
         public class FeatureToggleTest extends FeatureToggle {
-            protected void givenUser$p1EnablesFeatureWithDebug$p2(String p1, String p2,
+            protected void user$p1EnablesFeatureWithDebug$p2(String p1, String p2,
                     BiConsumer<String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2));
@@ -1095,27 +1094,27 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenCheckIfUser$p1HasAdminRights(String p1) {
+            public void checkIfUser$p1HasAdminRights(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenEnableFeatureFlag$p1ForUser$p2(Boolean p1, String p2) {
+            public void enableFeatureFlag$p1ForUser$p2(Boolean p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSetDebugModeTo$p1(Boolean p1) {
+            public void setDebugModeTo$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSendNotification$p1ToUser$p2(Boolean p1, String p2) {
+            public void sendNotification$p1ToUser$p2(Boolean p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenConfigurationIsSaved() {
+            public void configurationIsSaved() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenFeatureShouldBeEnabledFor$p1(String p1) {
+            public void featureShouldBeEnabledFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1126,20 +1125,20 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given user "Alice" enables feature with debug "true"
                  */
-                givenUser$p1EnablesFeatureWithDebug$p2("Alice", "true", (p1, p2) -> {
-                    givenCheckIfUser$p1HasAdminRights(p1);
-                    givenEnableFeatureFlag$p1ForUser$p2(true, p1);
-                    givenSetDebugModeTo$p1(true);
-                    givenSendNotification$p1ToUser$p2(false, p1);
+                user$p1EnablesFeatureWithDebug$p2("Alice", "true", (p1, p2) -> {
+                    checkIfUser$p1HasAdminRights(p1);
+                    enableFeatureFlag$p1ForUser$p2(true, p1);
+                    setDebugModeTo$p1(true);
+                    sendNotification$p1ToUser$p2(false, p1);
                 });
                 /*
                  * When configuration is saved
                  */
-                whenConfigurationIsSaved();
+                configurationIsSaved();
                 /*
                  * Then feature should be enabled for "Alice"
                  */
-                thenFeatureShouldBeEnabledFor$p1("Alice");
+                featureShouldBeEnabledFor$p1("Alice");
             }
         }
         """
@@ -1198,7 +1197,7 @@ Feature: CompositeStepsWithSimpleParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/PricingEngine.feature")
         public class PricingEngineTest extends PricingEngine {
-            protected void givenCustomer$p1PurchasesItemWithPrice$p2(String p1, String p2,
+            protected void customer$p1PurchasesItemWithPrice$p2(String p1, String p2,
                     BiConsumer<String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2));
@@ -1207,27 +1206,27 @@ Feature: CompositeStepsWithSimpleParameters
                 }
             }
 
-            public void givenLoadProductWithPrice$p1FromCatalog(Double p1) {
+            public void loadProductWithPrice$p1FromCatalog(Double p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenApplyDiscountRate$p1ForCustomer$p2(Double p1, String p2) {
+            public void applyDiscountRate$p1ForCustomer$p2(Double p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCalculateTaxWithRate$p1OnPrice$p2(Double p1, Double p2) {
+            public void calculateTaxWithRate$p1OnPrice$p2(Double p1, Double p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenRoundFinalPriceTo$p1Decimals(Integer p1) {
+            public void roundFinalPriceTo$p1Decimals(Integer p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenOrderIsFinalized() {
+            public void orderIsFinalized() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenCustomer$p1ShouldSeeTotalPrice(String p1) {
+            public void customer$p1ShouldSeeTotalPrice(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1238,20 +1237,20 @@ Feature: CompositeStepsWithSimpleParameters
                 /*
                  * Given customer "John" purchases item with price "99.99"
                  */
-                givenCustomer$p1PurchasesItemWithPrice$p2("John", "99.99", (p1, p2) -> {
-                    givenLoadProductWithPrice$p1FromCatalog(99.99);
-                    givenApplyDiscountRate$p1ForCustomer$p2(0.15, p1);
-                    givenCalculateTaxWithRate$p1OnPrice$p2(8.5, 99.99);
-                    givenRoundFinalPriceTo$p1Decimals(2);
+                customer$p1PurchasesItemWithPrice$p2("John", "99.99", (p1, p2) -> {
+                    loadProductWithPrice$p1FromCatalog(99.99);
+                    applyDiscountRate$p1ForCustomer$p2(0.15, p1);
+                    calculateTaxWithRate$p1OnPrice$p2(8.5, 99.99);
+                    roundFinalPriceTo$p1Decimals(2);
                 });
                 /*
                  * When order is finalized
                  */
-                whenOrderIsFinalized();
+                orderIsFinalized();
                 /*
                  * Then customer "John" should see total price
                  */
-                thenCustomer$p1ShouldSeeTotalPrice("John");
+                customer$p1ShouldSeeTotalPrice("John");
             }
         }
         """

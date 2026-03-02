@@ -47,7 +47,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UserLogin.feature")
       public class UserLoginTest extends UserFeatures {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -58,7 +58,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -110,7 +110,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UserLogin.feature")
       public class UserLoginTest extends UserFeatures {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -121,7 +121,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """
@@ -147,7 +147,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UserRegistration.feature")
       public class UserRegistrationTest extends UserFeatures {
-          public void givenUserRegisters() {
+          public void userRegisters() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -158,7 +158,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user registers
                */
-              givenUserRegisters();
+              userRegisters();
           }
       }
       """
@@ -216,7 +216,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/user/Login.feature")
       public class LoginTest extends AllFeatures {
-          public void givenUserLogsIn() {
+          public void userLogsIn() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -227,7 +227,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user logs in
                */
-              givenUserLogsIn();
+              userLogsIn();
           }
       }
       """
@@ -253,7 +253,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/user/Registration.feature")
       public class RegistrationTest extends AllFeatures {
-          public void givenUserRegisters() {
+          public void userRegisters() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -264,7 +264,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user registers
                */
-              givenUserRegisters();
+              userRegisters();
           }
       }
       """
@@ -290,7 +290,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/admin/Dashboard.feature")
       public class DashboardTest extends AllFeatures {
-          public void givenAdminViewsDashboard() {
+          public void adminViewsDashboard() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -301,7 +301,7 @@ Feature: UsingGlobPatterns
               /*
                * Given admin views dashboard
                */
-              givenAdminViewsDashboard();
+              adminViewsDashboard();
           }
       }
       """
@@ -359,7 +359,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/user/Login.feature")
       public class LoginTest extends UserFeatures {
-          public void givenUserLogsIn() {
+          public void userLogsIn() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -370,7 +370,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user logs in
                */
-              givenUserLogsIn();
+              userLogsIn();
           }
       }
       """
@@ -396,7 +396,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/user/auth/TwoFactor.feature")
       public class TwoFactorTest extends UserFeatures {
-          public void givenUserEnablesTwoFactorAuthentication() {
+          public void userEnablesTwoFactorAuthentication() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -407,7 +407,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user enables two factor authentication
                */
-              givenUserEnablesTwoFactorAuthentication();
+              userEnablesTwoFactorAuthentication();
           }
       }
       """
@@ -461,7 +461,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Login.feature")
       public class LoginTest extends Features {
-          public void givenUserLogsIn() {
+          public void userLogsIn() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -472,7 +472,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user logs in
                */
-              givenUserLogsIn();
+              userLogsIn();
           }
       }
       """
@@ -498,7 +498,7 @@ Feature: UsingGlobPatterns
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Logout.feature")
       public class LogoutTest extends Features {
-          public void givenUserLogsOut() {
+          public void userLogsOut() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -509,7 +509,7 @@ Feature: UsingGlobPatterns
               /*
                * Given user logs out
                */
-              givenUserLogsOut();
+              userLogsOut();
           }
       }
       """

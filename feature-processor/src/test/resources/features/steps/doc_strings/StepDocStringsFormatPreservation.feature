@@ -66,7 +66,7 @@ Feature: StepDocStringsFormatPreservation
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void thenFileShouldContain(String docString) {
+            public void fileShouldContain(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -77,7 +77,7 @@ Feature: StepDocStringsFormatPreservation
                 /*
                  * Then file should contain:
                  */
-                thenFileShouldContain(\"\"\"
+                fileShouldContain(\"\"\"
                         {
                           "name": "project",
                           "version": "1.0.0",
@@ -137,7 +137,7 @@ Feature: StepDocStringsFormatPreservation
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTextWithSymbols(String docString) {
+            public void textWithSymbols(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -148,7 +148,7 @@ Feature: StepDocStringsFormatPreservation
                 /*
                  * Given text with symbols:
                  */
-                givenTextWithSymbols(\"\"\"
+                textWithSymbols(\"\"\"
                         Special chars: @#$%^&*()
                         Quotes: "single" and 'double'
                         Backslash: \\path\\to\\file
@@ -211,7 +211,7 @@ Feature: StepDocStringsFormatPreservation
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingJsonPayload(String docString) {
+            public void theFollowingJsonPayload(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -222,7 +222,7 @@ Feature: StepDocStringsFormatPreservation
                 /*
                  * Given the following JSON payload:
                  */
-                givenTheFollowingJsonPayload(\"\"\"
+                theFollowingJsonPayload(\"\"\"
                         {
                           "userId": 123,
                           "action": "create",
@@ -282,7 +282,7 @@ Feature: StepDocStringsFormatPreservation
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenSystemProcessesXml(String docString) {
+            public void systemProcessesXml(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -293,7 +293,7 @@ Feature: StepDocStringsFormatPreservation
                 /*
                  * When system processes XML:
                  */
-                whenSystemProcessesXml(\"\"\"
+                systemProcessesXml(\"\"\"
                         <?xml version="1.0" encoding="UTF-8"?>
                         <document>
                           <title>Sample Document</title>
@@ -352,7 +352,7 @@ Feature: StepDocStringsFormatPreservation
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void thenOutputShouldMatch(String docString) {
+            public void outputShouldMatch(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -363,7 +363,7 @@ Feature: StepDocStringsFormatPreservation
                 /*
                  * Then output should match:
                  */
-                thenOutputShouldMatch(\"\"\"
+                outputShouldMatch(\"\"\"
                         version: 2.0
                         services:
                           web:

@@ -58,7 +58,7 @@ Feature: EnableCompositeSteps
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/CheckoutProcess.feature")
         public class CheckoutProcessTest extends CheckoutProcess {
-            protected void givenUserInitiatesCheckout(Runnable... composite) {
+            protected void userInitiatesCheckout(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -66,23 +66,23 @@ Feature: EnableCompositeSteps
                 }
             }
 
-            public void givenNavigateToCheckoutPage() {
+            public void navigateToCheckoutPage() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenVerifyCartIsNotEmpty() {
+            public void verifyCartIsNotEmpty() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenClickOnProceedButton() {
+            public void clickOnProceedButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenPaymentIsProcessed() {
+            public void paymentIsProcessed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenOrderIsConfirmed() {
+            public void orderIsConfirmed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -93,19 +93,19 @@ Feature: EnableCompositeSteps
                 /*
                  * Given user initiates checkout
                  */
-                givenUserInitiatesCheckout(() -> {
-                    givenNavigateToCheckoutPage();
-                    givenVerifyCartIsNotEmpty();
-                    givenClickOnProceedButton();
+                userInitiatesCheckout(() -> {
+                    navigateToCheckoutPage();
+                    verifyCartIsNotEmpty();
+                    clickOnProceedButton();
                 });
                 /*
                  * When payment is processed
                  */
-                whenPaymentIsProcessed();
+                paymentIsProcessed();
                 /*
                  * Then order is confirmed
                  */
-                thenOrderIsConfirmed();
+                orderIsConfirmed();
             }
         }
         """
@@ -162,27 +162,27 @@ Feature: EnableCompositeSteps
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/CheckoutProcess.feature")
         public class CheckoutProcessTest extends CheckoutProcess {
-            public void givenUserInitiatesCheckout() {
+            public void userInitiatesCheckout() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenNavigateToCheckoutPage() {
+            public void navigateToCheckoutPage() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenVerifyCartIsNotEmpty() {
+            public void verifyCartIsNotEmpty() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenClickOnProceedButton() {
+            public void clickOnProceedButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenPaymentIsProcessed() {
+            public void paymentIsProcessed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenOrderIsConfirmed() {
+            public void orderIsConfirmed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -193,27 +193,27 @@ Feature: EnableCompositeSteps
                 /*
                  * Given user initiates checkout
                  */
-                givenUserInitiatesCheckout();
+                userInitiatesCheckout();
                 /*
                  * * navigate to checkout page
                  */
-                givenNavigateToCheckoutPage();
+                navigateToCheckoutPage();
                 /*
                  * * verify cart is not empty
                  */
-                givenVerifyCartIsNotEmpty();
+                verifyCartIsNotEmpty();
                 /*
                  * * click on proceed button
                  */
-                givenClickOnProceedButton();
+                clickOnProceedButton();
                 /*
                  * When payment is processed
                  */
-                whenPaymentIsProcessed();
+                paymentIsProcessed();
                 /*
                  * Then order is confirmed
                  */
-                thenOrderIsConfirmed();
+                orderIsConfirmed();
             }
         }
         """

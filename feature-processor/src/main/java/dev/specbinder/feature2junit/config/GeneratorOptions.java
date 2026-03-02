@@ -95,6 +95,12 @@ public class GeneratorOptions {
     private final boolean useQualifiedEnumConstants;
 
     /**
+     * Controls whether the Gherkin step keyword (Given, When, Then) is included as a prefix
+     * in generated step method names.
+     */
+    private final boolean useStepKeywordInStepMethodName;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -112,6 +118,7 @@ public class GeneratorOptions {
         this.dataTableParameterType = LIST_OF_MAPS.name();
         this.enableCompositeSteps = false;
         this.useQualifiedEnumConstants = false;
+        this.useStepKeywordInStepMethodName = false;
     }
 
     /**
@@ -131,6 +138,7 @@ public class GeneratorOptions {
      * @param dataTableParameterType       see {@link #dataTableParameterType}
      * @param enableCompositeSteps         see {@link #enableCompositeSteps}
      * @param useQualifiedEnumConstants    see {@link #useQualifiedEnumConstants}
+     * @param useStepKeywordInStepMethodName see {@link #useStepKeywordInStepMethodName}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -146,7 +154,8 @@ public class GeneratorOptions {
             boolean placeGeneratedClassNextToAnnotatedClass,
             String dataTableParameterType,
             boolean enableCompositeSteps,
-            boolean useQualifiedEnumConstants
+            boolean useQualifiedEnumConstants,
+            boolean useStepKeywordInStepMethodName
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -162,6 +171,7 @@ public class GeneratorOptions {
         this.dataTableParameterType = dataTableParameterType;
         this.enableCompositeSteps = enableCompositeSteps;
         this.useQualifiedEnumConstants = useQualifiedEnumConstants;
+        this.useStepKeywordInStepMethodName = useStepKeywordInStepMethodName;
     }
 
 }

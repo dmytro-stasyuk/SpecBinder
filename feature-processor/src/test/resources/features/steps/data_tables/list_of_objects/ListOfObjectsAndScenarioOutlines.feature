@@ -60,7 +60,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UsersFeature.feature")
       public class UsersFeatureTest extends UsersFeature {
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -85,7 +85,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                *   | <name> | <role> |
                *   | John   | Smith  |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -172,7 +172,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UsersFeature.feature")
       public class UsersFeatureTest extends UsersFeature {
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -197,7 +197,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                *   | <name> | Admin  |
                *   | Bob    | <role> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -285,7 +285,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MessagesFeature.feature")
       public class MessagesFeatureTest extends MessagesFeature {
-          public void givenTheFollowingMessages(List<MessagesParam> messages) {
+          public void theFollowingMessages(List<MessagesParam> messages) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -309,7 +309,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                *   | recipient | content       |
                *   | <name>    | Hello <name>! |
                */
-              givenTheFollowingMessages(
+              theFollowingMessages(
                       List.of(
                               new MessagesParam(
                                       name,
@@ -394,7 +394,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/NotificationsFeature.feature")
       public class NotificationsFeatureTest extends NotificationsFeature {
-          public void givenTheFollowingNotifications(List<NotificationsParam> notifications) {
+          public void theFollowingNotifications(List<NotificationsParam> notifications) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -421,7 +421,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                *   | admin     | New user: <name>     | User <name> (<email>) joined  | <level>  |
                *   | support   | Support notification | Standard support message      | low      |
                */
-              givenTheFollowingNotifications(
+              theFollowingNotifications(
                       List.of(
                               new NotificationsParam(
                                       name,
@@ -533,7 +533,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/ContactsFeature.feature")
       public class ContactsFeatureTest extends ContactsFeature {
-          public void givenTheFollowingContacts(List<ContactsParam> contacts) {
+          public void theFollowingContacts(List<ContactsParam> contacts) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -557,7 +557,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                *   | fullName               | email                           |
                *   | <firstName> <lastName> | <firstName>.<lastName>@test.com |
                */
-              givenTheFollowingContacts(
+              theFollowingContacts(
                       List.of(
                               new ContactsParam(
                                       "<firstName> <lastName>".replaceAll("<firstName>", firstName).replaceAll("<lastName>", lastName),
@@ -643,7 +643,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/OrdersFeature.feature")
       public class OrdersFeatureTest extends OrdersFeature {
-          public void givenTheFollowingOrders(List<OrdersParam> orders) {
+          public void theFollowingOrders(List<OrdersParam> orders) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -669,7 +669,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                *   | admin      | Widget    | completed |
                *   | <customer> | Gadget    | <status>  |
                */
-              givenTheFollowingOrders(
+              theFollowingOrders(
                       List.of(
                               new OrdersParam(
                                       customer,
@@ -775,7 +775,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/CartFeature.feature")
       public class CartFeatureTest extends CartFeature {
-          public void givenUser$p1HasTheFollowingItems(String p1, List<ItemsParam> items) {
+          public void user$p1HasTheFollowingItems(String p1, List<ItemsParam> items) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -800,7 +800,7 @@ Feature: MappingDataTableToListOfObjectsAndScenarioOutlines
                *   | <item> | <category> | active   |
                *   | Bonus  | gift       | <status> |
                */
-              givenUser$p1HasTheFollowingItems(username,
+              user$p1HasTheFollowingItems(username,
                       List.of(
                               new ItemsParam(
                                       item,

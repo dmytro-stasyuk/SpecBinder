@@ -17,7 +17,7 @@ Feature: StepMethodInheritance
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenUserExists() {
+          protected void userExists() {
               // Implementation provided in base class
           }
       }
@@ -51,7 +51,7 @@ Feature: StepMethodInheritance
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUserLogsIn() {
+            public void userLogsIn() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -62,11 +62,11 @@ Feature: StepMethodInheritance
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user logs in
                  */
-                whenUserLogsIn();
+                userLogsIn();
             }
         }
         """
@@ -80,11 +80,11 @@ Feature: StepMethodInheritance
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenUserExists() {
+          protected void userExists() {
               // Implementation provided in base class
           }
 
-          protected void whenUserLogsIn() {
+          protected void userLogsIn() {
               // Implementation provided in base class
           }
       }
@@ -119,7 +119,7 @@ Feature: StepMethodInheritance
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void thenDashboardIsDisplayed() {
+            public void dashboardIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -130,15 +130,15 @@ Feature: StepMethodInheritance
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user logs in
                  */
-                whenUserLogsIn();
+                userLogsIn();
                 /*
                  * Then dashboard is displayed
                  */
-                thenDashboardIsDisplayed();
+                dashboardIsDisplayed();
             }
         }
         """
@@ -149,7 +149,7 @@ Feature: StepMethodInheritance
       package features;
 
       public abstract class BaseSteps {
-          protected void givenUserExists() {
+          protected void userExists() {
               // Implementation in grandparent class
           }
       }
@@ -193,7 +193,7 @@ Feature: StepMethodInheritance
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUserPerformsAction() {
+            public void userPerformsAction() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -204,11 +204,11 @@ Feature: StepMethodInheritance
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user performs action
                  */
-                whenUserPerformsAction();
+                userPerformsAction();
             }
         }
         """
@@ -224,7 +224,7 @@ Feature: StepMethodInheritance
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenUserWithName$p1(String name) {
+          protected void userWithName$p1(String name) {
               // Implementation with parameter
           }
       }
@@ -258,7 +258,7 @@ Feature: StepMethodInheritance
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenActionIsPerformed() {
+            public void actionIsPerformed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -269,11 +269,11 @@ Feature: StepMethodInheritance
                 /*
                  * Given user with name "Alice"
                  */
-                givenUserWithName$p1("Alice");
+                userWithName$p1("Alice");
                 /*
                  * When action is performed
                  */
-                whenActionIsPerformed();
+                actionIsPerformed();
             }
         }
         """
@@ -287,7 +287,7 @@ Feature: StepMethodInheritance
 
       @Feature2JUnit
       public abstract class MyFeature {
-          protected void givenUserWithName(String name) {
+          protected void userWithName(String name) {
               // Implementation with one parameter
           }
       }
@@ -322,7 +322,7 @@ Feature: StepMethodInheritance
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUserWithName$p1AndAge$p2(String p1, Integer p2) {
+            public void userWithName$p1AndAge$p2(String p1, Integer p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -333,7 +333,7 @@ Feature: StepMethodInheritance
                 /*
                  * Given user with name "Bob" and age "30"
                  */
-                givenUserWithName$p1AndAge$p2("Bob", 30);
+                userWithName$p1AndAge$p2("Bob", 30);
             }
         }
         """

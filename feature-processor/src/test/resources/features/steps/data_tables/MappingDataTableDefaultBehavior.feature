@@ -53,11 +53,11 @@ Feature: MappingDataTableDefaultBehavior
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenInitialState() {
+            public void initialState() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenAnAndStepHasADatatable(List<Map<String, String>> data) {
+            public void anAndStepHasADatatable(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -68,11 +68,11 @@ Feature: MappingDataTableDefaultBehavior
                 /*
                  * Given initial state
                  */
-                givenInitialState();
+                initialState();
                 /*
                  * And an And step has a DataTable:
                  */
-                givenAnAndStepHasADatatable(createListOfMaps(\"\"\"
+                anAndStepHasADatatable(createListOfMaps(\"\"\"
                         | col |
                         | val |
                         \"\"\"));
@@ -166,19 +166,19 @@ Feature: MappingDataTableDefaultBehavior
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenInitialState() {
+            public void initialState() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenActionIsPerformed() {
+            public void actionIsPerformed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenResultIsVerified() {
+            public void resultIsVerified() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenExceptionsExist(List<Map<String, String>> data) {
+            public void exceptionsExist(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -189,19 +189,19 @@ Feature: MappingDataTableDefaultBehavior
                 /*
                  * Given initial state
                  */
-                givenInitialState();
+                initialState();
                 /*
                  * When action is performed
                  */
-                whenActionIsPerformed();
+                actionIsPerformed();
                 /*
                  * Then result is verified
                  */
-                thenResultIsVerified();
+                resultIsVerified();
                 /*
                  * But exceptions exist:
                  */
-                thenExceptionsExist(createListOfMaps(\"\"\"
+                exceptionsExist(createListOfMaps(\"\"\"
                         | exception | reason    |
                         | error1    | invalid   |
                         | error2    | not found |
@@ -294,11 +294,11 @@ Feature: MappingDataTableDefaultBehavior
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenInitialContext() {
+            public void initialContext() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenAWildcardStepHasADatatable(List<Map<String, String>> data) {
+            public void aWildcardStepHasADatatable(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -309,11 +309,11 @@ Feature: MappingDataTableDefaultBehavior
                 /*
                  * Given initial context
                  */
-                givenInitialContext();
+                initialContext();
                 /*
                  * * a wildcard step has a DataTable:
                  */
-                givenAWildcardStepHasADatatable(createListOfMaps(\"\"\"
+                aWildcardStepHasADatatable(createListOfMaps(\"\"\"
                         | item | value |
                         | key1 | val1  |
                         | key2 | val2  |
@@ -408,7 +408,7 @@ Feature: MappingDataTableDefaultBehavior
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenAvailablePermissions(List<Map<String, String>> data) {
+            public void availablePermissions(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -419,7 +419,7 @@ Feature: MappingDataTableDefaultBehavior
                 /*
                  * Given available permissions:
                  */
-                givenAvailablePermissions(createListOfMaps(\"\"\"
+                availablePermissions(createListOfMaps(\"\"\"
                         | permission |
                         | read       |
                         | write      |
@@ -512,7 +512,7 @@ Feature: MappingDataTableDefaultBehavior
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenDataWithVaryingWidths(List<Map<String, String>> data) {
+            public void dataWithVaryingWidths(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -523,7 +523,7 @@ Feature: MappingDataTableDefaultBehavior
                 /*
                  * Given data with varying widths:
                  */
-                givenDataWithVaryingWidths(createListOfMaps(\"\"\"
+                dataWithVaryingWidths(createListOfMaps(\"\"\"
                         | short | very long column name | mid    |
                         | x     | value                 | abc    |
                         | y     | another value         | defghi |
@@ -616,7 +616,7 @@ Feature: MappingDataTableDefaultBehavior
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenADatatable(List<Map<String, String>> data) {
+            public void aDatatable(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -627,7 +627,7 @@ Feature: MappingDataTableDefaultBehavior
                 /*
                  * Given a DataTable:
                  */
-                givenADatatable(createListOfMaps(\"\"\"
+                aDatatable(createListOfMaps(\"\"\"
                         | name | email |
                         \"\"\"));
             }

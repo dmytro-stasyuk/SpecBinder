@@ -21,7 +21,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -92,7 +92,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  | alice@gmail.com |
                *   | Bob   | 25  | bob@gmail.com   |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new BaseUserParam(
                                       "Alice",
@@ -125,7 +125,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -196,7 +196,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  | alice@gmail.com |
                *   | Bob   | 25  | bob@gmail.com   |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new BaseUserParam(
                                       "alice@gmail.com",
@@ -229,7 +229,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -278,7 +278,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  | alice@gmail.com |
                *   | Bob   | 25  | bob@gmail.com   |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new BaseUserParam(
                                       "Alice",
@@ -311,7 +311,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -360,7 +360,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  | alice@gmail.com |
                *   | Bob   | 25  | bob@gmail.com   |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new BaseUserParam(
                                       "alice@gmail.com",
@@ -395,7 +395,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -453,7 +453,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UsersFeature.feature")
       public class UsersFeatureTest extends UsersFeature {
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -467,7 +467,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  | alice@gmail.com |
                *   | Bob   | 25  | bob@gmail.com   |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -511,7 +511,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       """
       And the compilation error should contain the following text:
         """
-        name clash: givenTheFollowingUsers(java.util.List<features.UsersFeatureTest.UsersParam>) in features.UsersFeatureTest and givenTheFollowingUsers(java.util.List<features.UsersFeature.BaseUserParam>) in features.UsersFeature have the same erasure, yet neither overrides the other
+        name clash: theFollowingUsers(java.util.List<features.UsersFeatureTest.UsersParam>) in features.UsersFeatureTest and theFollowingUsers(java.util.List<features.UsersFeature.BaseUserParam>) in features.UsersFeature have the same erasure, yet neither overrides the other
         """
 
     Example: not all data table columns can be matched to fields of custom record type
@@ -530,7 +530,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -572,7 +572,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UsersFeature.feature")
       public class UsersFeatureTest extends UsersFeature {
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -586,7 +586,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  | alice@gmail.com |
                *   | Bob   | 25  | bob@gmail.com   |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -630,7 +630,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       """
       And the compilation error should contain the following text:
         """
-        name clash: givenTheFollowingUsers(java.util.List<features.UsersFeatureTest.UsersParam>) in features.UsersFeatureTest and givenTheFollowingUsers(java.util.List<features.UsersFeature.BaseUserParam>) in features.UsersFeature have the same erasure, yet neither overrides the other
+        name clash: theFollowingUsers(java.util.List<features.UsersFeatureTest.UsersParam>) in features.UsersFeatureTest and theFollowingUsers(java.util.List<features.UsersFeature.BaseUserParam>) in features.UsersFeature have the same erasure, yet neither overrides the other
         """
 
   Rule: custom object/record type can have more fields than the specified data table columns
@@ -651,7 +651,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -728,7 +728,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  |
                *   | Bob   | 25  |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -763,7 +763,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -824,7 +824,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  |
                *   | Bob   | 25  |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       null,
@@ -862,7 +862,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
           public record UsersParam(String name, String age, String email, String phone) {
           }
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
       }
@@ -908,7 +908,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  |
                *   | Bob   | 25  |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -947,7 +947,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
           public record UsersParam(String email, String name,  String phone, String age) {
           }
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
       }
@@ -993,7 +993,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice | 30  |
                *   | Bob   | 25  |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       null,
@@ -1031,7 +1031,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1102,7 +1102,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice      | 30  |
                *   | Bob        | 25  |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -1136,7 +1136,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1207,7 +1207,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice      | 30       | alice@gmail.com |
                *   | Bob        | 25       | bob@gmail.com   |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -1241,7 +1241,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUsersFeature> users) {
+          public void theFollowingUsers(List<BaseUsersFeature> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1314,7 +1314,7 @@ Ability: InheritedStepMethodsAndCustomObjectTypes
                *   | Alice     | 30       | alice@gmail.com |
                *   | Bob       | 25       | bob@gmail.com   |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new BaseUsersFeature(
                                       "Alice",

@@ -49,15 +49,15 @@ Feature: ScenarioTags
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenAPaymentRequest() {
+          public void aPaymentRequest() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenPaymentIsProcessed() {
+          public void paymentIsProcessed() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenPaymentShouldSucceed() {
+          public void paymentShouldSucceed() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -69,15 +69,15 @@ Feature: ScenarioTags
               /*
                * Given a payment request
                */
-              givenAPaymentRequest();
+              aPaymentRequest();
               /*
                * When payment is processed
                */
-              whenPaymentIsProcessed();
+              paymentIsProcessed();
               /*
                * Then payment should succeed
                */
-              thenPaymentShouldSucceed();
+              paymentShouldSucceed();
           }
       }
       """
@@ -129,15 +129,15 @@ Feature: ScenarioTags
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenAUserAccount() {
+          public void aUserAccount() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserLogsIn() {
+          public void userLogsIn() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenLoginShouldSucceed() {
+          public void loginShouldSucceed() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -153,15 +153,15 @@ Feature: ScenarioTags
               /*
                * Given a user account
                */
-              givenAUserAccount();
+              aUserAccount();
               /*
                * When user logs in
                */
-              whenUserLogsIn();
+              userLogsIn();
               /*
                * Then login should succeed
                */
-              thenLoginShouldSucceed();
+              loginShouldSucceed();
           }
       }
       """
@@ -219,15 +219,15 @@ Feature: ScenarioTags
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenATransaction() {
+          public void aTransaction() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenProcessingOccurs() {
+          public void processingOccurs() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenTransactionCompletes() {
+          public void transactionCompletes() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -245,15 +245,15 @@ Feature: ScenarioTags
                   /*
                    * Given a transaction
                    */
-                  givenATransaction();
+                  aTransaction();
                   /*
                    * When processing occurs
                    */
-                  whenProcessingOccurs();
+                  processingOccurs();
                   /*
                    * Then transaction completes
                    */
-                  thenTransactionCompletes();
+                  transactionCompletes();
               }
           }
       }
@@ -311,15 +311,15 @@ Feature: ScenarioTags
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenCriticalSetup() {
+          public void criticalSetup() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenCriticalAction() {
+          public void criticalAction() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenCriticalResult() {
+          public void criticalResult() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -331,26 +331,26 @@ Feature: ScenarioTags
               /*
                * Given critical setup
                */
-              givenCriticalSetup();
+              criticalSetup();
               /*
                * When critical action
                */
-              whenCriticalAction();
+              criticalAction();
               /*
                * Then critical result
                */
-              thenCriticalResult();
+              criticalResult();
           }
 
-          public void givenOptionalSetup() {
+          public void optionalSetup() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenOptionalAction() {
+          public void optionalAction() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenOptionalResult() {
+          public void optionalResult() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -362,15 +362,15 @@ Feature: ScenarioTags
               /*
                * Given optional setup
                */
-              givenOptionalSetup();
+              optionalSetup();
               /*
                * When optional action
                */
-              whenOptionalAction();
+              optionalAction();
               /*
                * Then optional result
                */
-              thenOptionalResult();
+              optionalResult();
           }
       }
       """

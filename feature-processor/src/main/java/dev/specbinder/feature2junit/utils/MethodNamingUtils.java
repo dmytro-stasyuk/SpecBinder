@@ -24,7 +24,8 @@ public class MethodNamingUtils {
      * @param stepLine                 the line number of the step in the feature file
      * @return a sanitized method name suitable for use in Java code
      */
-    public static String getStepMethodName(String stepFirstLine, List<MethodSpec> scenarioStepsMethodSpecs, long stepLine) {
+    public static String getStepMethodName(String stepFirstLine, List<MethodSpec> scenarioStepsMethodSpecs, long stepLine,
+                                               boolean useStepKeywordInStepMethodName) {
 
         StringBuilder methodNameBuilder = new StringBuilder();
 
@@ -33,13 +34,26 @@ public class MethodNamingUtils {
 
             String word = words[i];
 
-            if (i == 0 &&
-                    (word.equalsIgnoreCase("and")
-                            || word.equalsIgnoreCase("but")
-                            || word.equalsIgnoreCase("*")
-                    )
-            ) {
-                word = getPreviousGWTStepWord(stepFirstLine, scenarioStepsMethodSpecs, stepLine);
+            if (i == 0) {
+                boolean isAndButAsterisk = word.equalsIgnoreCase("and")
+                        || word.equalsIgnoreCase("but")
+                        || word.equalsIgnoreCase("*");
+
+                if (isAndButAsterisk) {
+                    // Always validate that And/But/* have a previous step
+                    validatePreviousStepExists(scenarioStepsMethodSpecs, stepLine);
+
+                    if (useStepKeywordInStepMethodName) {
+                        word = getPreviousGWTStepWord(scenarioStepsMethodSpecs, stepLine);
+                    } else {
+                        continue;
+                    }
+                } else {
+                    // Given/When/Then keyword
+                    if (!useStepKeywordInStepMethodName) {
+                        continue;
+                    }
+                }
             }
 
             StringBuilder sanitizedWordBuilder = new StringBuilder();
@@ -105,16 +119,15 @@ public class MethodNamingUtils {
         return sanitizedMethodName;
     }
 
-    private static String getPreviousGWTStepWord(String stepFirstLine, List<MethodSpec> scenarioStepsMethodSpecs, long stepLine) {
-
-        /**
-         * need to replace the 'And' or 'But' keywords with one from GWT as those are just aliases
-         */
+    private static void validatePreviousStepExists(List<MethodSpec> scenarioStepsMethodSpecs, long stepLine) {
         if (scenarioStepsMethodSpecs.isEmpty()) {
             throw new ProcessingException(
                     "Step on line - " + stepLine
                             + " starts with 'And', but there are no previous scenario steps defined");
         }
+    }
+
+    private static String getPreviousGWTStepWord(List<MethodSpec> scenarioStepsMethodSpecs, long stepLine) {
 
         MethodSpec lastScenarioMethodSpec = scenarioStepsMethodSpecs.get(scenarioStepsMethodSpecs.size() - 1);
         String lastMethodName = lastScenarioMethodSpec.name;

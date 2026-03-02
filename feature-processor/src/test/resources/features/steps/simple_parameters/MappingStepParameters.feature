@@ -46,7 +46,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUser$p1Exists(String p1) {
+            public void user$p1Exists(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -57,7 +57,7 @@ Feature: MappingStepParameters
                 /*
                  * Given user "John" exists
                  */
-                givenUser$p1Exists("John");
+                user$p1Exists("John");
             }
         }
         """
@@ -102,7 +102,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUser$p1SendsMessage$p2(String p1, String p2) {
+            public void user$p1SendsMessage$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -113,7 +113,7 @@ Feature: MappingStepParameters
                 /*
                  * When user "Alice" sends message "Hello"
                  */
-                whenUser$p1SendsMessage$p2("Alice", "Hello");
+                user$p1SendsMessage$p2("Alice", "Hello");
             }
         }
         """
@@ -159,7 +159,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void thenOrder$p1ForCustomer$p2HasStatus$p3(Integer p1, String p2, String p3) {
+            public void order$p1ForCustomer$p2HasStatus$p3(Integer p1, String p2, String p3) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -170,7 +170,7 @@ Feature: MappingStepParameters
                 /*
                  * Then order "12345" for customer "Bob" has status "shipped"
                  */
-                thenOrder$p1ForCustomer$p2HasStatus$p3(12345, "Bob", "shipped");
+                order$p1ForCustomer$p2HasStatus$p3(12345, "Bob", "shipped");
             }
         }
         """
@@ -215,7 +215,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenISearchFor$p1(String p1) {
+            public void iSearchFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -226,7 +226,7 @@ Feature: MappingStepParameters
                 /*
                  * When I search for "hello world"
                  */
-                whenISearchFor$p1("hello world");
+                iSearchFor$p1("hello world");
             }
         }
         """
@@ -271,7 +271,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenPasswordIs$p1(String p1) {
+            public void passwordIs$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -282,7 +282,7 @@ Feature: MappingStepParameters
                 /*
                  * Given password is "P@ssw0rd!"
                  */
-                givenPasswordIs$p1("P@ssw0rd!");
+                passwordIs$p1("P@ssw0rd!");
             }
         }
         """
@@ -327,7 +327,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void given$p1RoleIsAssigned(String p1) {
+            public void $p1RoleIsAssigned(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -338,7 +338,7 @@ Feature: MappingStepParameters
                 /*
                  * Given "Admin" role is assigned
                  */
-                given$p1RoleIsAssigned("Admin");
+                $p1RoleIsAssigned("Admin");
             }
         }
         """
@@ -383,7 +383,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTransferFrom$p1To$p2Completes(String p1, String p2) {
+            public void transferFrom$p1To$p2Completes(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -394,7 +394,7 @@ Feature: MappingStepParameters
                 /*
                  * Given transfer from "ACC001" to "ACC002" completes
                  */
-                givenTransferFrom$p1To$p2Completes("ACC001", "ACC002");
+                transferFrom$p1To$p2Completes("ACC001", "ACC002");
             }
         }
         """
@@ -440,7 +440,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenFieldIsSetTo() {
+            public void fieldIsSetTo() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -451,7 +451,7 @@ Feature: MappingStepParameters
                 /*
                  * When field is set to ""
                  */
-                whenFieldIsSetTo();
+                fieldIsSetTo();
             }
         }
         """
@@ -498,7 +498,7 @@ Feature: MappingStepParameters
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenNameIs$p1(String p1) {
+          public void nameIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -509,7 +509,7 @@ Feature: MappingStepParameters
               /*
                * Given name is "   "
                */
-              givenNameIs$p1("   ");
+              nameIs$p1("   ");
           }
       }
       """
@@ -557,7 +557,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenQuantityIsSetTo$p1(Integer p1) {
+            public void quantityIsSetTo$p1(Integer p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -568,7 +568,7 @@ Feature: MappingStepParameters
                 /*
                  * When quantity is set to "42"
                  */
-                whenQuantityIsSetTo$p1(42);
+                quantityIsSetTo$p1(42);
             }
         }
         """
@@ -613,7 +613,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenFeatureFlagIs$p1(Boolean p1) {
+            public void featureFlagIs$p1(Boolean p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -624,7 +624,7 @@ Feature: MappingStepParameters
                 /*
                  * Given feature flag is "true"
                  */
-                givenFeatureFlagIs$p1(true);
+                featureFlagIs$p1(true);
             }
         }
         """
@@ -669,7 +669,7 @@ Feature: MappingStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenDateIsSetTo$p1(String p1) {
+            public void dateIsSetTo$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -680,7 +680,7 @@ Feature: MappingStepParameters
                 /*
                  * When date is set to "2024-12-20"
                  */
-                whenDateIsSetTo$p1("2024-12-20");
+                dateIsSetTo$p1("2024-12-20");
             }
         }
         """

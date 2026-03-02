@@ -63,7 +63,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/IntegerFieldFeature.feature")
         public class IntegerFieldFeatureTest extends IntegerFieldFeature {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -77,7 +77,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Alice | 30  | 100   |
                  *   | Bob   | 25  | -50   |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",
@@ -169,7 +169,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/IntegerWithEmptyCellsFeature.feature")
         public class IntegerWithEmptyCellsFeatureTest extends IntegerWithEmptyCellsFeature {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -184,7 +184,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Bob   |     | -50   |
                  *   | Carol | 28  |       |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",
@@ -286,7 +286,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LongFieldFeature.feature")
         public class LongFieldFeatureTest extends LongFieldFeature {
-            public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+            public void theFollowingAccounts(List<AccountsParam> accounts) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -300,7 +300,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Savings  | 2147483648  |
                  *   | Checking | -2147483649 |
                  */
-                givenTheFollowingAccounts(
+                theFollowingAccounts(
                         List.of(
                                 new AccountsParam(
                                         "Savings",
@@ -383,7 +383,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LongWithEmptyCellsFeature.feature")
         public class LongWithEmptyCellsFeatureTest extends LongWithEmptyCellsFeature {
-            public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+            public void theFollowingAccounts(List<AccountsParam> accounts) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -398,7 +398,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Checking   |             | -2147483649 |
                  *   | Investment | -9000000000 |             |
                  */
-                givenTheFollowingAccounts(
+                theFollowingAccounts(
                         List.of(
                                 new AccountsParam(
                                         "Savings",
@@ -500,7 +500,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/DoubleFieldFeature.feature")
         public class DoubleFieldFeatureTest extends DoubleFieldFeature {
-            public void givenTheFollowingProducts(List<ProductsParam> products) {
+            public void theFollowingProducts(List<ProductsParam> products) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -514,7 +514,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Widget | 19.99 | 0.15     |
                  *   | Gadget | 29.50 | 0.20     |
                  */
-                givenTheFollowingProducts(
+                theFollowingProducts(
                         List.of(
                                 new ProductsParam(
                                         "Widget",
@@ -606,7 +606,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/DoubleWithEmptyCellsFeature.feature")
         public class DoubleWithEmptyCellsFeatureTest extends DoubleWithEmptyCellsFeature {
-            public void givenTheFollowingProducts(List<ProductsParam> products) {
+            public void theFollowingProducts(List<ProductsParam> products) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -621,7 +621,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Gadget |       | 0.20     |
                  *   | Tool   | 29.50 |          |
                  */
-                givenTheFollowingProducts(
+                theFollowingProducts(
                         List.of(
                                 new ProductsParam(
                                         "Widget",
@@ -722,7 +722,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/BooleanFieldFeature.feature")
         public class BooleanFieldFeatureTest extends BooleanFieldFeature {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -736,7 +736,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Alice | true     |
                  *   | Bob   | false    |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",
@@ -819,7 +819,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/BooleanWithEmptyCellsFeature.feature")
         public class BooleanWithEmptyCellsFeatureTest extends BooleanWithEmptyCellsFeature {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -834,7 +834,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Bob   |          | true      |
                  *   | Carol | false    |           |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",
@@ -937,7 +937,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/CharacterFieldFeature.feature")
         public class CharacterFieldFeatureTest extends CharacterFieldFeature {
-            public void givenTheFollowingStudents(List<StudentsParam> students) {
+            public void theFollowingStudents(List<StudentsParam> students) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -952,7 +952,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Bob   | B     |
                  *   | Carol | C     |
                  */
-                givenTheFollowingStudents(
+                theFollowingStudents(
                         List.of(
                                 new StudentsParam(
                                         "Alice",
@@ -1039,7 +1039,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/CharacterWithEmptyCellsFeature.feature")
         public class CharacterWithEmptyCellsFeatureTest extends CharacterWithEmptyCellsFeature {
-            public void givenTheFollowingStudents(List<StudentsParam> students) {
+            public void theFollowingStudents(List<StudentsParam> students) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1054,7 +1054,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Bob   |       | Y       |
                  *   | Carol | C     |         |
                  */
-                givenTheFollowingStudents(
+                theFollowingStudents(
                         List.of(
                                 new StudentsParam(
                                         "Alice",
@@ -1149,7 +1149,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MultiCharFeature.feature")
         public class MultiCharFeatureTest extends MultiCharFeature {
-            public void givenTheFollowingStudents(List<StudentsParam> students) {
+            public void theFollowingStudents(List<StudentsParam> students) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1163,7 +1163,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Alice | AB    |
                  *   | Bob   | BC    |
                  */
-                givenTheFollowingStudents(
+                theFollowingStudents(
                         List.of(
                                 new StudentsParam(
                                         "Alice",
@@ -1249,7 +1249,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/StringFieldFeature.feature")
         public class StringFieldFeatureTest extends StringFieldFeature {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1263,7 +1263,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Alice | active   |
                  *   | Bob   | inactive |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",
@@ -1345,7 +1345,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/StringWithEmptyCellsFeature.feature")
         public class StringWithEmptyCellsFeatureTest extends StringWithEmptyCellsFeature {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1360,7 +1360,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Bob   |          | user  |
                  *   | Carol | inactive |       |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",
@@ -1461,7 +1461,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MixedTypeFeature.feature")
         public class MixedTypeFeatureTest extends MixedTypeFeature {
-            public void givenTheFollowingItems(List<ItemsParam> items) {
+            public void theFollowingItems(List<ItemsParam> items) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1476,7 +1476,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Item2 | text  |
                  *   | Item3 | 3.14  |
                  */
-                givenTheFollowingItems(
+                theFollowingItems(
                         List.of(
                                 new ItemsParam(
                                         "Item1",
@@ -1570,7 +1570,7 @@ Feature: ListOfObjectsAndFieldInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MultiTypeFeature.feature")
         public class MultiTypeFeatureTest extends MultiTypeFeature {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -1584,7 +1584,7 @@ Feature: ListOfObjectsAndFieldInference
                  *   | Alice | 30  | 1000.50 | true     | A     |
                  *   | Bob   | 25  | 500.75  | false    | B     |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",

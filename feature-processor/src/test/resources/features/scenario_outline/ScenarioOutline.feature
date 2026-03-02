@@ -54,15 +54,15 @@ Feature: ScenarioOutline
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenIHave$p1And$p2(String p1, String p2) {
+          public void iHave$p1And$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenIConcatenateThem() {
+          public void iConcatenateThem() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenTheResultIs$p1(String p1) {
+          public void theResultIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -83,15 +83,15 @@ Feature: ScenarioOutline
               /*
                * Given I have <first> and <second>
                */
-              givenIHave$p1And$p2(first, second);
+              iHave$p1And$p2(first, second);
               /*
                * When I concatenate them
                */
-              whenIConcatenateThem();
+              iConcatenateThem();
               /*
                * Then the result is <combined>
                */
-              thenTheResultIs$p1(combined);
+              theResultIs$p1(combined);
           }
       }
       """
@@ -143,7 +143,7 @@ Feature: ScenarioOutline
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2And$p3(String p1, String p2, String p3) {
+          public void $p1And$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -165,7 +165,7 @@ Feature: ScenarioOutline
               /*
                * Given <shortValue> and <mediumValue> and <veryLongValue>
                */
-              given$p1And$p2And$p3(shortValue, mediumValue, veryLongValue);
+              $p1And$p2And$p3(shortValue, mediumValue, veryLongValue);
           }
       }
       """
@@ -218,15 +218,15 @@ Feature: ScenarioOutline
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenIHave$p1And$p2(String p1, String p2) {
+          public void iHave$p1And$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenIConcatenateThem() {
+          public void iConcatenateThem() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenTheResultIs$p1(String p1) {
+          public void theResultIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -247,15 +247,15 @@ Feature: ScenarioOutline
               /*
                * Given I have <first> and <second>
                */
-              givenIHave$p1And$p2(first, second);
+              iHave$p1And$p2(first, second);
               /*
                * When I concatenate them
                */
-              whenIConcatenateThem();
+              iConcatenateThem();
               /*
                * Then the result is <combined>
                */
-              thenTheResultIs$p1(combined);
+              theResultIs$p1(combined);
           }
       }
       """

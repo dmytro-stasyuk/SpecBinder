@@ -131,11 +131,11 @@ Feature: MappingFeatureBackgroundBlock
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenPreconditionOne() {
+          public void preconditionOne() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenPreconditionTwo() {
+          public void preconditionTwo() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -145,11 +145,11 @@ Feature: MappingFeatureBackgroundBlock
               /*
                * Given precondition one
                */
-              givenPreconditionOne();
+              preconditionOne();
               /*
                * And precondition two
                */
-              givenPreconditionTwo();
+              preconditionTwo();
           }
       }
       """
@@ -207,7 +207,7 @@ Feature: MappingFeatureBackgroundBlock
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenSharedPrecondition() {
+          public void sharedPrecondition() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -217,14 +217,14 @@ Feature: MappingFeatureBackgroundBlock
               /*
                * Given shared precondition
                */
-              givenSharedPrecondition();
+              sharedPrecondition();
           }
 
-          public void whenActionOneIsPerformed() {
+          public void actionOneIsPerformed() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenOutcomeOneIsExpected() {
+          public void outcomeOneIsExpected() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -235,18 +235,18 @@ Feature: MappingFeatureBackgroundBlock
               /*
                * When action one is performed
                */
-              whenActionOneIsPerformed();
+              actionOneIsPerformed();
               /*
                * Then outcome one is expected
                */
-              thenOutcomeOneIsExpected();
+              outcomeOneIsExpected();
           }
 
-          public void whenActionTwoIsPerformed() {
+          public void actionTwoIsPerformed() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenOutcomeTwoIsExpected() {
+          public void outcomeTwoIsExpected() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -257,15 +257,15 @@ Feature: MappingFeatureBackgroundBlock
               /*
                * Given shared precondition
                */
-              givenSharedPrecondition();
+              sharedPrecondition();
               /*
                * When action two is performed
                */
-              whenActionTwoIsPerformed();
+              actionTwoIsPerformed();
               /*
                * Then outcome two is expected
                */
-              thenOutcomeTwoIsExpected();
+              outcomeTwoIsExpected();
           }
       }
       """
@@ -381,7 +381,7 @@ Feature: MappingFeatureBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenCustomerDatabaseIsConnected() {
+          public void customerDatabaseIsConnected() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -391,14 +391,14 @@ Feature: MappingFeatureBackgroundBlock
               /*
                * Given customer database is connected
                */
-              givenCustomerDatabaseIsConnected();
+              customerDatabaseIsConnected();
           }
 
-          public void whenNewCustomerIsCreated() {
+          public void newCustomerIsCreated() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenCustomerShouldExistInDatabase() {
+          public void customerShouldExistInDatabase() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -409,26 +409,26 @@ Feature: MappingFeatureBackgroundBlock
               /*
                * When new customer is created
                */
-              whenNewCustomerIsCreated();
+              newCustomerIsCreated();
               /*
                * Then customer should exist in database
                */
-              thenCustomerShouldExistInDatabase();
+              customerShouldExistInDatabase();
           }
 
-          public void whenCustomerDetailsAreUpdated() {
+          public void customerDetailsAreUpdated() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenChangesShouldBeSaved() {
+          public void changesShouldBeSaved() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenCustomerIsDeleted() {
+          public void customerIsDeleted() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenCustomerShouldBeRemoved() {
+          public void customerShouldBeRemoved() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -444,11 +444,11 @@ Feature: MappingFeatureBackgroundBlock
                   /*
                    * When customer details are updated
                    */
-                  whenCustomerDetailsAreUpdated();
+                  customerDetailsAreUpdated();
                   /*
                    * Then changes should be saved
                    */
-                  thenChangesShouldBeSaved();
+                  changesShouldBeSaved();
               }
 
               @Test
@@ -458,11 +458,11 @@ Feature: MappingFeatureBackgroundBlock
                   /*
                    * When customer is deleted
                    */
-                  whenCustomerIsDeleted();
+                  customerIsDeleted();
                   /*
                    * Then customer should be removed
                    */
-                  thenCustomerShouldBeRemoved();
+                  customerShouldBeRemoved();
               }
           }
       }

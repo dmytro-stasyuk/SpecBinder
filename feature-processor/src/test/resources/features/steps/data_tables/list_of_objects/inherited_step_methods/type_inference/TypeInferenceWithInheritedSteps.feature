@@ -65,7 +65,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/ScoresFeature.feature")
       public class ScoresFeatureTest extends ScoresFeature {
-          public void givenTheFollowingScores(List<ScoresParam> scores) {
+          public void theFollowingScores(List<ScoresParam> scores) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -79,7 +79,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Alice       | 100   |
                *   | Bob         | 250   |
                */
-              givenTheFollowingScores(
+              theFollowingScores(
                       List.of(
                               new ScoresParam(
                                       "Alice",
@@ -154,7 +154,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/InventoryFeature.feature")
       public class InventoryFeatureTest extends InventoryFeature {
-          public void givenTheFollowingInventory(List<InventoryParam> inventory) {
+          public void theFollowingInventory(List<InventoryParam> inventory) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -168,7 +168,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Laptop    | 50       |
                *   | Mouse     | 200      |
                */
-              givenTheFollowingInventory(
+              theFollowingInventory(
                       List.of(
                               new InventoryParam(
                                       "Laptop",
@@ -244,7 +244,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/InventoryFeature.feature")
       public class InventoryFeatureTest extends InventoryFeature {
-          public void givenTheFollowingInventory(List<InventoryParam> inventory) {
+          public void theFollowingInventory(List<InventoryParam> inventory) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -259,7 +259,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Mouse     |          |
                *   | Keyboard  | 200      |
                */
-              givenTheFollowingInventory(
+              theFollowingInventory(
                       List.of(
                               new InventoryParam(
                                       "Laptop",
@@ -295,7 +295,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ScoresFeature {
 
-          public void givenTheFollowingScores(List<ScoresParam> scores) {
+          public void theFollowingScores(List<ScoresParam> scores) {
           }
 
           public static class ScoresParam {
@@ -350,7 +350,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | player name | score   |
                *   | Alice       | hundred |
                */
-              givenTheFollowingScores(
+              theFollowingScores(
                       List.of(
                               new ScoresParam(
                                       "Alice",
@@ -380,7 +380,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class InventoryFeature {
 
-          public void givenTheFollowingInventory(List<InventoryParam> inventory) {
+          public void theFollowingInventory(List<InventoryParam> inventory) {
           }
 
           public static class InventoryParam {
@@ -434,7 +434,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | item name | quantity |
                *   | Laptop    | many     |
                */
-              givenTheFollowingInventory(
+              theFollowingInventory(
                       List.of(
                               new InventoryParam(
                                       "Laptop",
@@ -511,7 +511,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/TransactionsFeature.feature")
       public class TransactionsFeatureTest extends TransactionsFeature {
-          public void givenTheFollowingTransactions(List<TransactionsParam> transactions) {
+          public void theFollowingTransactions(List<TransactionsParam> transactions) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -525,7 +525,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | TXN-001        | 1609459200000 |
                *   | TXN-002        | 1609545600000 |
                */
-              givenTheFollowingTransactions(
+              theFollowingTransactions(
                       List.of(
                               new TransactionsParam(
                                       "TXN-001",
@@ -600,7 +600,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/AccountsFeature.feature")
       public class AccountsFeatureTest extends AccountsFeature {
-          public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+          public void theFollowingAccounts(List<AccountsParam> accounts) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -614,7 +614,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Savings      | 9876543210     |
                *   | Checking     | 1234567890     |
                */
-              givenTheFollowingAccounts(
+              theFollowingAccounts(
                       List.of(
                               new AccountsParam(
                                       "Savings",
@@ -690,7 +690,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/AccountsFeature.feature")
       public class AccountsFeatureTest extends AccountsFeature {
-          public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+          public void theFollowingAccounts(List<AccountsParam> accounts) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -705,7 +705,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Pending      |                |
                *   | Checking     | 1234567890     |
                */
-              givenTheFollowingAccounts(
+              theFollowingAccounts(
                       List.of(
                               new AccountsParam(
                                       "Savings",
@@ -741,7 +741,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class TransactionsFeature {
 
-          public void givenTheFollowingTransactions(List<TransactionsParam> transactions) {
+          public void theFollowingTransactions(List<TransactionsParam> transactions) {
           }
 
           public static class TransactionsParam {
@@ -795,7 +795,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | transaction id | timestamp |
                *   | TXN-001        | yesterday |
                */
-              givenTheFollowingTransactions(
+              theFollowingTransactions(
                       List.of(
                               new TransactionsParam(
                                       "TXN-001",
@@ -825,7 +825,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class AccountsFeature {
 
-          public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+          public void theFollowingAccounts(List<AccountsParam> accounts) {
           }
 
           public static class AccountsParam {
@@ -879,7 +879,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | account name | account number |
                *   | Savings      | ACCOUNT-123    |
                */
-              givenTheFollowingAccounts(
+              theFollowingAccounts(
                       List.of(
                               new AccountsParam(
                                       "Savings",
@@ -956,7 +956,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MeasurementsFeature.feature")
       public class MeasurementsFeatureTest extends MeasurementsFeature {
-          public void givenTheFollowingMeasurements(List<MeasurementsParam> measurements) {
+          public void theFollowingMeasurements(List<MeasurementsParam> measurements) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -970,7 +970,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | SAMPLE-01 | 36.6        |
                *   | SAMPLE-02 | 98.4        |
                */
-              givenTheFollowingMeasurements(
+              theFollowingMeasurements(
                       List.of(
                               new MeasurementsParam(
                                       "SAMPLE-01",
@@ -1045,7 +1045,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/RatingsFeature.feature")
       public class RatingsFeatureTest extends RatingsFeature {
-          public void givenTheFollowingRatings(List<RatingsParam> ratings) {
+          public void theFollowingRatings(List<RatingsParam> ratings) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1059,7 +1059,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Laptop       | 4.5    |
                *   | Mouse        | 3.8    |
                */
-              givenTheFollowingRatings(
+              theFollowingRatings(
                       List.of(
                               new RatingsParam(
                                       "Laptop",
@@ -1135,7 +1135,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/RatingsFeature.feature")
       public class RatingsFeatureTest extends RatingsFeature {
-          public void givenTheFollowingRatings(List<RatingsParam> ratings) {
+          public void theFollowingRatings(List<RatingsParam> ratings) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1150,7 +1150,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Tablet       |        |
                *   | Mouse        | 3.8    |
                */
-              givenTheFollowingRatings(
+              theFollowingRatings(
                       List.of(
                               new RatingsParam(
                                       "Laptop",
@@ -1186,7 +1186,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MeasurementsFeature {
 
-          public void givenTheFollowingMeasurements(List<MeasurementsParam> measurements) {
+          public void theFollowingMeasurements(List<MeasurementsParam> measurements) {
           }
 
           public static class MeasurementsParam {
@@ -1240,7 +1240,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | sample id | temperature |
                *   | SAMPLE-01 | hot         |
                */
-              givenTheFollowingMeasurements(
+              theFollowingMeasurements(
                       List.of(
                               new MeasurementsParam(
                                       "SAMPLE-01",
@@ -1270,7 +1270,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class RatingsFeature {
 
-          public void givenTheFollowingRatings(List<RatingsParam> ratings) {
+          public void theFollowingRatings(List<RatingsParam> ratings) {
           }
 
           public static class RatingsParam {
@@ -1324,7 +1324,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | product name | rating    |
                *   | Laptop       | excellent |
                */
-              givenTheFollowingRatings(
+              theFollowingRatings(
                       List.of(
                               new RatingsParam(
                                       "Laptop",
@@ -1401,7 +1401,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/FlagsFeature.feature")
       public class FlagsFeatureTest extends FlagsFeature {
-          public void givenTheFollowingFlags(List<FlagsParam> flags) {
+          public void theFollowingFlags(List<FlagsParam> flags) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1415,7 +1415,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | dark-mode    | true    |
                *   | beta-access  | false   |
                */
-              givenTheFollowingFlags(
+              theFollowingFlags(
                       List.of(
                               new FlagsParam(
                                       "dark-mode",
@@ -1490,7 +1490,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/SettingsFeature.feature")
       public class SettingsFeatureTest extends SettingsFeature {
-          public void givenTheFollowingSettings(List<SettingsParam> settings) {
+          public void theFollowingSettings(List<SettingsParam> settings) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1504,7 +1504,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | notifications | true  |
                *   | auto-save     | false |
                */
-              givenTheFollowingSettings(
+              theFollowingSettings(
                       List.of(
                               new SettingsParam(
                                       "notifications",
@@ -1580,7 +1580,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/SettingsFeature.feature")
       public class SettingsFeatureTest extends SettingsFeature {
-          public void givenTheFollowingSettings(List<SettingsParam> settings) {
+          public void theFollowingSettings(List<SettingsParam> settings) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1595,7 +1595,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | theme         |       |
                *   | auto-save     | false |
                */
-              givenTheFollowingSettings(
+              theFollowingSettings(
                       List.of(
                               new SettingsParam(
                                       "notifications",
@@ -1631,7 +1631,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class FlagsFeature {
 
-          public void givenTheFollowingFlags(List<FlagsParam> flags) {
+          public void theFollowingFlags(List<FlagsParam> flags) {
           }
 
           public static class FlagsParam {
@@ -1685,7 +1685,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | feature name | enabled |
                *   | dark-mode    | yes     |
                */
-              givenTheFollowingFlags(
+              theFollowingFlags(
                       List.of(
                               new FlagsParam(
                                       "dark-mode",
@@ -1715,7 +1715,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class SettingsFeature {
 
-          public void givenTheFollowingSettings(List<SettingsParam> settings) {
+          public void theFollowingSettings(List<SettingsParam> settings) {
           }
 
           public static class SettingsParam {
@@ -1769,7 +1769,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | setting name  | value   |
                *   | notifications | enabled |
                */
-              givenTheFollowingSettings(
+              theFollowingSettings(
                       List.of(
                               new SettingsParam(
                                       "notifications",
@@ -1846,7 +1846,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/CodesFeature.feature")
       public class CodesFeatureTest extends CodesFeature {
-          public void givenTheFollowingCodes(List<CodesParam> codes) {
+          public void theFollowingCodes(List<CodesParam> codes) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1860,7 +1860,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | MATH101 | A     |
                *   | PHYS201 | B     |
                */
-              givenTheFollowingCodes(
+              theFollowingCodes(
                       List.of(
                               new CodesParam(
                                       "MATH101",
@@ -1935,7 +1935,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/LabelsFeature.feature")
       public class LabelsFeatureTest extends LabelsFeature {
-          public void givenTheFollowingLabels(List<LabelsParam> labels) {
+          public void theFollowingLabels(List<LabelsParam> labels) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1949,7 +1949,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Priority | A     |
                *   | Status   | X     |
                */
-              givenTheFollowingLabels(
+              theFollowingLabels(
                       List.of(
                               new LabelsParam(
                                       "Priority",
@@ -2025,7 +2025,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/LabelsFeature.feature")
       public class LabelsFeatureTest extends LabelsFeature {
-          public void givenTheFollowingLabels(List<LabelsParam> labels) {
+          public void theFollowingLabels(List<LabelsParam> labels) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -2040,7 +2040,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Draft    |       |
                *   | Status   | X     |
                */
-              givenTheFollowingLabels(
+              theFollowingLabels(
                       List.of(
                               new LabelsParam(
                                       "Priority",
@@ -2076,7 +2076,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class GradesFeature {
 
-          public void givenTheFollowingGrades(List<GradesParam> grades) {
+          public void theFollowingGrades(List<GradesParam> grades) {
           }
 
           public static class GradesParam {
@@ -2131,7 +2131,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | student name | grade |
                *   | Alice        | AB    |
                */
-              givenTheFollowingGrades(
+              theFollowingGrades(
                       List.of(
                               new GradesParam(
                                       "Alice",
@@ -2161,7 +2161,7 @@ Feature: TypeInferenceWithInheritedSteps
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class RatingsFeature {
 
-          public void givenTheFollowingRatings(List<RatingsParam> ratings) {
+          public void theFollowingRatings(List<RatingsParam> ratings) {
           }
 
           public static class RatingsParam {
@@ -2215,7 +2215,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | product name | rating    |
                *   | Laptop       | excellent |
                */
-              givenTheFollowingRatings(
+              theFollowingRatings(
                       List.of(
                               new RatingsParam(
                                       "Laptop",
@@ -2298,7 +2298,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UsersFeature.feature")
       public class UsersFeatureTest extends UsersFeature {
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -2312,7 +2312,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Alice | 30  | 1993      | 5.7    | true   |
                *   | Bob   | 25  | 1998      | 6.0    | false  |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -2398,7 +2398,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/ProductsFeature.feature")
       public class ProductsFeatureTest extends ProductsFeature {
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -2412,7 +2412,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Laptop | 10    | 1001       | 999.99 | true     |
                *   | Mouse  | 50    | 1002       | 19.99  | false    |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       "Laptop",
@@ -2499,7 +2499,7 @@ Feature: TypeInferenceWithInheritedSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/EmployeesFeature.feature")
       public class EmployeesFeatureTest extends EmployeesFeature {
-          public void givenTheFollowingEmployees(List<EmployeesParam> employees) {
+          public void theFollowingEmployees(List<EmployeesParam> employees) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -2514,7 +2514,7 @@ Feature: TypeInferenceWithInheritedSteps
                *   | Bob     | 3             | 1002        | 55000.00 | false      |
                *   | Charlie | 5             | 1003        | 82000.75 | true       |
                */
-              givenTheFollowingEmployees(
+              theFollowingEmployees(
                       List.of(
                               new EmployeesParam(
                                       "Alice",

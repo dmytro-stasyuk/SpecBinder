@@ -50,15 +50,15 @@ Feature: StepMethodJavaDocComments
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUser$p1Exists(String p1) {
+            public void user$p1Exists(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicks$p1Button(String p1) {
+            public void userClicks$p1Button(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenMessage$p1IsDisplayed(String p1) {
+            public void message$p1IsDisplayed(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -69,15 +69,15 @@ Feature: StepMethodJavaDocComments
                 /*
                  * Given user "Alice" exists
                  */
-                givenUser$p1Exists("Alice");
+                user$p1Exists("Alice");
                 /*
                  * When user clicks "Submit" button
                  */
-                whenUserClicks$p1Button("Submit");
+                userClicks$p1Button("Submit");
                 /*
                  * Then message "Success" is displayed
                  */
-                thenMessage$p1IsDisplayed("Success");
+                message$p1IsDisplayed("Success");
             }
         }
         """
@@ -123,15 +123,15 @@ Feature: StepMethodJavaDocComments
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserIsActive() {
+            public void userIsActive() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserHasPermissions() {
+            public void userHasPermissions() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -142,15 +142,15 @@ Feature: StepMethodJavaDocComments
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * And user is active
                  */
-                givenUserIsActive();
+                userIsActive();
                 /*
                  * And user has permissions
                  */
-                givenUserHasPermissions();
+                userHasPermissions();
             }
         }
         """
@@ -195,11 +195,11 @@ Feature: StepMethodJavaDocComments
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void thenUsernameIsVisible() {
+            public void usernameIsVisible() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenPasswordIsNotVisible() {
+            public void passwordIsNotVisible() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -210,11 +210,11 @@ Feature: StepMethodJavaDocComments
                 /*
                  * Then username is visible
                  */
-                thenUsernameIsVisible();
+                usernameIsVisible();
                 /*
                  * But password is not visible
                  */
-                thenPasswordIsNotVisible();
+                passwordIsNotVisible();
             }
         }
         """
@@ -260,15 +260,15 @@ Feature: StepMethodJavaDocComments
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenSystemIsReady() {
+            public void systemIsReady() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenDatabaseIsConnected() {
+            public void databaseIsConnected() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCacheIsWarm() {
+            public void cacheIsWarm() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -279,15 +279,15 @@ Feature: StepMethodJavaDocComments
                 /*
                  * Given system is ready
                  */
-                givenSystemIsReady();
+                systemIsReady();
                 /*
                  * * database is connected
                  */
-                givenDatabaseIsConnected();
+                databaseIsConnected();
                 /*
                  * * cache is warm
                  */
-                givenCacheIsWarm();
+                cacheIsWarm();
             }
         }
         """

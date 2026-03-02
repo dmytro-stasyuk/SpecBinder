@@ -58,7 +58,7 @@ Feature: MappingDataTableToListOfObjects
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/UsersFeature.feature")
       public class UsersFeatureTest extends UsersFeature {
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -73,7 +73,7 @@ Feature: MappingDataTableToListOfObjects
                *   | Bob   | User   |
                *   | John  | Client |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       "Alice",
@@ -159,7 +159,7 @@ Feature: MappingDataTableToListOfObjects
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/PermissionsFeature.feature")
         public class PermissionsFeatureTest extends PermissionsFeature {
-            public void whenUser$p1HasPermissions(String p1, List<PermissionsParam> permissions) {
+            public void user$p1HasPermissions(String p1, List<PermissionsParam> permissions) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -173,7 +173,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | read       | yes     |
                  *   | write      | no      |
                  */
-                whenUser$p1HasPermissions("Alice",
+                user$p1HasPermissions("Alice",
                         List.of(
                                 new PermissionsParam(
                                         "read",
@@ -256,7 +256,7 @@ Feature: MappingDataTableToListOfObjects
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/SimpleWordFeature.feature")
         public class SimpleWordFeatureTest extends SimpleWordFeature {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -269,7 +269,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | name  | age    |
                  *   | Alice | thirty |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",
@@ -346,7 +346,7 @@ Feature: MappingDataTableToListOfObjects
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/HyphenatedWordFeature.feature")
         public class HyphenatedWordFeatureTest extends HyphenatedWordFeature {
-            public void givenTheFollowingUserSettings(List<UserSettingsParam> userSettings) {
+            public void theFollowingUserSettings(List<UserSettingsParam> userSettings) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -359,7 +359,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | theme | language |
                  *   | dark  | en       |
                  */
-                givenTheFollowingUserSettings(
+                theFollowingUserSettings(
                         List.of(
                                 new UserSettingsParam(
                                         "dark",
@@ -436,7 +436,7 @@ Feature: MappingDataTableToListOfObjects
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/LowercaseWordFeature.feature")
         public class LowercaseWordFeatureTest extends LowercaseWordFeature {
-            public void givenTheFollowingProducts(List<ProductsParam> products) {
+            public void theFollowingProducts(List<ProductsParam> products) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -449,7 +449,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | name   | price |
                  *   | Widget | high  |
                  */
-                givenTheFollowingProducts(
+                theFollowingProducts(
                         List.of(
                                 new ProductsParam(
                                         "Widget",
@@ -526,7 +526,7 @@ Feature: MappingDataTableToListOfObjects
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/AllCapsWordFeature.feature")
         public class AllCapsWordFeatureTest extends AllCapsWordFeature {
-            public void givenTheFollowingApi(List<ApiParam> api) {
+            public void theFollowingApi(List<ApiParam> api) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -539,7 +539,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | endpoint | method |
                  *   | /users   | GET    |
                  */
-                givenTheFollowingApi(
+                theFollowingApi(
                         List.of(
                                 new ApiParam(
                                         "/users",
@@ -622,11 +622,11 @@ Feature: MappingDataTableToListOfObjects
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/AccountsFeature.feature")
         public class AccountsFeatureTest extends AccountsFeature {
-            public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+            public void theFollowingAccounts(List<AccountsParam> accounts) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUpdateAccounts(List<AccountsParam> accounts) {
+            public void updateAccounts(List<AccountsParam> accounts) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -640,7 +640,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | Alice | alice@test.com |
                  *   | Bob   | bob@test.com   |
                  */
-                givenTheFollowingAccounts(
+                theFollowingAccounts(
                         List.of(
                                 new AccountsParam(
                                         "Alice",
@@ -656,7 +656,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | name  | email          |
                  *   | Alice | alice@test.com |
                  */
-                whenUpdateAccounts(
+                updateAccounts(
                         List.of(
                                 new AccountsParam(
                                         "Alice",
@@ -741,11 +741,11 @@ Feature: MappingDataTableToListOfObjects
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/UsersFeature.feature")
         public class UsersFeatureTest extends UsersFeature {
-            public void givenTheFollowingAccounts(List<AccountsParam> accounts) {
+            public void theFollowingAccounts(List<AccountsParam> accounts) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUpdateAccounts(List<AccountsParam> accounts) {
+            public void updateAccounts(List<AccountsParam> accounts) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -759,7 +759,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | Alice | alice@test.com |
                  *   | Bob   | bob@test.com   |
                  */
-                givenTheFollowingAccounts(
+                theFollowingAccounts(
                         List.of(
                                 new AccountsParam(
                                         "Alice",
@@ -779,7 +779,7 @@ Feature: MappingDataTableToListOfObjects
                  *   | id | name  | status |
                  *   | 10 | Alice | active |
                  */
-                whenUpdateAccounts(
+                updateAccounts(
                         List.of(
                                 new AccountsParam(
                                         "Alice",

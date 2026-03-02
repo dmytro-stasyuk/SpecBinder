@@ -126,7 +126,7 @@ Feature: CompositeSteps
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/ShoppingCart.feature")
       public class ShoppingCartTest extends TestFeature {
-          protected void givenCustomer$p1HasProduct$p2InShoppingCart(String p1, String p2,
+          protected void customer$p1HasProduct$p2InShoppingCart(String p1, String p2,
                   BiConsumer<String, String>... composite) {
               if (composite.length > 0) {
                   stream(composite).forEach(action -> action.accept(p1, p2));
@@ -135,23 +135,23 @@ Feature: CompositeSteps
               }
           }
 
-          public void givenLoginAsCustomer$p1(String p1) {
+          public void loginAsCustomer$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenSearchForProduct$p1(String p1) {
+          public void searchForProduct$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenAddProductToCart() {
+          public void addProductToCart() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenVerifyCartContains$p1(String p1) {
+          public void verifyCartContains$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          protected void whenCustomerProceedsToCheckout(Runnable... composite) {
+          protected void customerProceedsToCheckout(Runnable... composite) {
               if (composite.length > 0) {
                   stream(composite).forEach(r -> r.run());
               } else {
@@ -159,19 +159,19 @@ Feature: CompositeSteps
               }
           }
 
-          public void whenClickOnButton$p1(String p1) {
+          public void clickOnButton$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenSelectPaymentMethod$p1(String p1) {
+          public void selectPaymentMethod$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenClickOnThe$p1Button(String p1) {
+          public void clickOnThe$p1Button(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenOrderIsConfirmed() {
+          public void orderIsConfirmed() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -182,24 +182,24 @@ Feature: CompositeSteps
               /*
                * Given customer "Alice" has product "Laptop" in shopping cart
                */
-              givenCustomer$p1HasProduct$p2InShoppingCart("Alice", "Laptop", (p1, p2) -> {
-                  givenLoginAsCustomer$p1(p1);
-                  givenSearchForProduct$p1(p2);
-                  givenAddProductToCart();
-                  givenVerifyCartContains$p1(p2);
+              customer$p1HasProduct$p2InShoppingCart("Alice", "Laptop", (p1, p2) -> {
+                  loginAsCustomer$p1(p1);
+                  searchForProduct$p1(p2);
+                  addProductToCart();
+                  verifyCartContains$p1(p2);
               });
               /*
                * When customer proceeds to checkout
                */
-              whenCustomerProceedsToCheckout(() -> {
-                  whenClickOnButton$p1("Checkout");
-                  whenSelectPaymentMethod$p1("Credit Card");
-                  whenClickOnThe$p1Button("Confirm Order");
+              customerProceedsToCheckout(() -> {
+                  clickOnButton$p1("Checkout");
+                  selectPaymentMethod$p1("Credit Card");
+                  clickOnThe$p1Button("Confirm Order");
               });
               /*
                * Then order is confirmed
                */
-              thenOrderIsConfirmed();
+              orderIsConfirmed();
           }
       }
       """

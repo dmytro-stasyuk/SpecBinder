@@ -60,7 +60,7 @@ Feature: StepDocStringsInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUserSendsMessage(String docString) {
+            public void userSendsMessage(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -82,7 +82,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * When user sends message:
                  */
-                whenUserSendsMessage(\"\"\"
+                userSendsMessage(\"\"\"
                         Hello <recipient>,
 
                         This is an automated message.
@@ -150,7 +150,7 @@ Feature: StepDocStringsInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenEmailTemplate(String docString) {
+            public void emailTemplate(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -172,7 +172,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * Given email template:
                  */
-                givenEmailTemplate(\"\"\"
+                emailTemplate(\"\"\"
                         From: <sender>
                         To: <recipient>
                         Subject: <subject>
@@ -243,7 +243,7 @@ Feature: StepDocStringsInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUser$p1SendsNotificationOfType$p2WithMessage(String p1, String p2,
+            public void user$p1SendsNotificationOfType$p2WithMessage(String p1, String p2,
                     String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
@@ -266,7 +266,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * When user "admin" sends notification of type "<type>" with message:
                  */
-                whenUser$p1SendsNotificationOfType$p2WithMessage("admin", type, \"\"\"
+                user$p1SendsNotificationOfType$p2WithMessage("admin", type, \"\"\"
                         Notification: <type>
 
                         <message>
@@ -328,7 +328,7 @@ Feature: StepDocStringsInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUser$p1SendsNotificationOfType$p2WithMessage(String p1, String p2,
+            public void user$p1SendsNotificationOfType$p2WithMessage(String p1, String p2,
                     String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
@@ -351,7 +351,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * When user "admin" sends notification of type <dialog type> with message:
                  */
-                whenUser$p1SendsNotificationOfType$p2WithMessage("admin", dialogType, \"\"\"
+                user$p1SendsNotificationOfType$p2WithMessage("admin", dialogType, \"\"\"
                         Notification: <dialog type>
 
                         <message text>
@@ -421,11 +421,11 @@ Feature: StepDocStringsInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenSystemConfiguration(String docString) {
+            public void systemConfiguration(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUser$p1PerformsTransactionOfType$p2(String p1, String p2) {
+            public void user$p1PerformsTransactionOfType$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -447,7 +447,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * Given system configuration:
                  */
-                givenSystemConfiguration(\"\"\"
+                systemConfiguration(\"\"\"
                         {
                           "logging": true,
                           "notifications": true,
@@ -457,7 +457,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * When user "<username>" performs transaction of type "<type>"
                  */
-                whenUser$p1PerformsTransactionOfType$p2(username, type);
+                user$p1PerformsTransactionOfType$p2(username, type);
             }
         }
         """
@@ -519,11 +519,11 @@ Feature: StepDocStringsInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenDefaultConfiguration(String docString) {
+            public void defaultConfiguration(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenMessageIsSentTo$p1WithContent(String p1, String docString) {
+            public void messageIsSentTo$p1WithContent(String p1, String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -545,7 +545,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * Given default configuration:
                  */
-                givenDefaultConfiguration(\"\"\"
+                defaultConfiguration(\"\"\"
                         {
                           "mode": "production",
                           "debug": false
@@ -554,7 +554,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * When message is sent to "<recipient>" with content:
                  */
-                whenMessageIsSentTo$p1WithContent(recipient, \"\"\"
+                messageIsSentTo$p1WithContent(recipient, \"\"\"
                         Hello <recipient>,
                         This is a test message.
                         \"\"\"
@@ -620,11 +620,11 @@ Feature: StepDocStringsInScenarioOutlines
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenNotificationTemplate(String docString) {
+            public void notificationTemplate(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenAction$p1IsPerformedWithPriority$p2(String p1, String p2) {
+            public void action$p1IsPerformedWithPriority$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -646,7 +646,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * Given notification template:
                  */
-                givenNotificationTemplate(\"\"\"
+                notificationTemplate(\"\"\"
                         Subject: Account Update for <username>
 
                         Dear <username>,
@@ -660,7 +660,7 @@ Feature: StepDocStringsInScenarioOutlines
                 /*
                  * When action "<action>" is performed with priority "<priority>"
                  */
-                whenAction$p1IsPerformedWithPriority$p2(action, priority);
+                action$p1IsPerformedWithPriority$p2(action, priority);
             }
         }
         """

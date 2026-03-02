@@ -47,7 +47,7 @@ Feature: ClassSuffixIfAbstract
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+            public abstract void userExists();
 
             @Test
             @Order(1)
@@ -56,7 +56,7 @@ Feature: ClassSuffixIfAbstract
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
             }
         }
         """
@@ -106,9 +106,9 @@ Feature: ClassSuffixIfAbstract
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public abstract class TestFeatureSteps extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+            public abstract void userExists();
 
-            public abstract void whenUserClicksButton();
+            public abstract void userClicksButton();
 
             @Test
             @Order(1)
@@ -117,11 +117,11 @@ Feature: ClassSuffixIfAbstract
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user clicks button
                  */
-                whenUserClicksButton();
+                userClicksButton();
             }
         }
         """
@@ -171,7 +171,7 @@ Feature: ClassSuffixIfAbstract
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -182,7 +182,7 @@ Feature: ClassSuffixIfAbstract
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
             }
         }
         """

@@ -52,7 +52,7 @@ Feature: StepDocParameterWithDollarSigns
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenDocumentContains(String docString) {
+            public void documentContains(String docString) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -63,7 +63,7 @@ Feature: StepDocParameterWithDollarSigns
                 /*
                  * Given document contains:
                  */
-                givenDocumentContains(\"\"\"
+                documentContains(\"\"\"
                         Price: $100
                         Tax: $15
                         Total: $115

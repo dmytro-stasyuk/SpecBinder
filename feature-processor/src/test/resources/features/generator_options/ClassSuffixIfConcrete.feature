@@ -48,7 +48,7 @@ Feature: ClassSuffixIfConcrete
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -59,7 +59,7 @@ Feature: ClassSuffixIfConcrete
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
             }
         }
         """
@@ -110,11 +110,11 @@ Feature: ClassSuffixIfConcrete
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureSpec extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -125,11 +125,11 @@ Feature: ClassSuffixIfConcrete
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user clicks button
                  */
-                whenUserClicksButton();
+                userClicksButton();
             }
         }
         """
@@ -178,7 +178,7 @@ Feature: ClassSuffixIfConcrete
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public abstract class TestFeatureScenarios extends MockedAnnotatedTestClass {
-            public abstract void givenUserExists();
+            public abstract void userExists();
 
             @Test
             @Order(1)
@@ -187,7 +187,7 @@ Feature: ClassSuffixIfConcrete
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
             }
         }
         """

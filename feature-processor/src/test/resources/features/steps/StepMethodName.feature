@@ -48,7 +48,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser() {
+          public void user() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -59,7 +59,7 @@ Feature: StepMethodName
               /*
                * Given user
                */
-              givenUser();
+              user();
           }
       }
       """
@@ -103,7 +103,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void whenTheUserClicksTheButton() {
+          public void theUserClicksTheButton() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -114,7 +114,7 @@ Feature: StepMethodName
               /*
                * When the user clicks the button
                */
-              whenTheUserClicksTheButton();
+              theUserClicksTheButton();
           }
       }
       """
@@ -158,7 +158,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void thenTheApiResponseIsSuccessful() {
+          public void theApiResponseIsSuccessful() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -169,7 +169,7 @@ Feature: StepMethodName
               /*
                * Then the API response is successful
                */
-              thenTheApiResponseIsSuccessful();
+              theApiResponseIsSuccessful();
           }
       }
       """
@@ -215,7 +215,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void thenTheUsersEmailDomainComIsVerified() {
+          public void theUsersEmailDomainComIsVerified() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -226,7 +226,7 @@ Feature: StepMethodName
               /*
                * Then the user's email@domain.com is verified!
                */
-              thenTheUsersEmailDomainComIsVerified();
+              theUsersEmailDomainComIsVerified();
           }
       }
       """
@@ -272,7 +272,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser123Exists() {
+          public void user123Exists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -283,7 +283,7 @@ Feature: StepMethodName
               /*
                * Given user123 exists
                */
-              givenUser123Exists();
+              user123Exists();
           }
       }
       """
@@ -327,7 +327,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given3UsersExistInTheSystem() {
+          public void usersExistInTheSystem() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -338,7 +338,7 @@ Feature: StepMethodName
               /*
                * Given 3 users exist in the system
                */
-              given3UsersExistInTheSystem();
+              usersExistInTheSystem();
           }
       }
       """
@@ -384,7 +384,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenPriceIs$100() {
+          public void priceIs$100() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -395,7 +395,7 @@ Feature: StepMethodName
               /*
                * Given price is $100
                */
-              givenPriceIs$100();
+              priceIs$100();
           }
       }
       """
@@ -441,7 +441,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void whenTheUser_nameIsValid() {
+          public void theUser_nameIsValid() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -452,7 +452,7 @@ Feature: StepMethodName
               /*
                * When the user_name is valid
                */
-              whenTheUser_nameIsValid();
+              theUser_nameIsValid();
           }
       }
       """
@@ -499,7 +499,7 @@ Feature: StepMethodName
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void whenIEnter$p1And$p2(String p1, String p2) {
+          public void iEnter$p1And$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -510,7 +510,7 @@ Feature: StepMethodName
               /*
                * When I enter "username" and "password"
                */
-              whenIEnter$p1And$p2("username", "password");
+              iEnter$p1And$p2("username", "password");
           }
       }
       """

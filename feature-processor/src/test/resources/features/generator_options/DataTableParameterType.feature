@@ -59,7 +59,7 @@ Feature: DataTableParameterType
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserManagement.feature")
         public class UserManagementTest extends UserManagement {
-            public void givenTheFollowingUsers(List<Map<String, String>> data) {
+            public void theFollowingUsers(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -70,7 +70,7 @@ Feature: DataTableParameterType
                 /*
                  * Given the following users:
                  */
-                givenTheFollowingUsers(createListOfMaps(\"\"\"
+                theFollowingUsers(createListOfMaps(\"\"\"
                         | name  | role  |
                         | Alice | Admin |
                         | Bob   | User  |
@@ -174,7 +174,7 @@ Feature: DataTableParameterType
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserManagement.feature")
         public class UserManagementTest extends UserManagement {
-            public void givenTheFollowingUsers(DataTable dataTable) {
+            public void theFollowingUsers(DataTable dataTable) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -185,7 +185,7 @@ Feature: DataTableParameterType
                 /*
                  * Given the following users:
                  */
-                givenTheFollowingUsers(createDataTable(\"\"\"
+                theFollowingUsers(createDataTable(\"\"\"
                         | name  | role  |
                         | Alice | Admin |
                         | Bob   | User  |
@@ -269,7 +269,7 @@ Feature: DataTableParameterType
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserManagement.feature")
         public class UserManagementTest extends UserManagement {
-            public void givenTheFollowingUsers(List<UsersParam> users) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -283,7 +283,7 @@ Feature: DataTableParameterType
                  *   | Alice | Admin |
                  *   | Bob   | User  |
                  */
-                givenTheFollowingUsers(
+                theFollowingUsers(
                         List.of(
                                 new UsersParam(
                                         "Alice",

@@ -48,7 +48,7 @@ Feature: BackgroundWithDocString
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenTheServerRespondsWith(String docString) {
+          public void theServerRespondsWith(String docString) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -58,7 +58,7 @@ Feature: BackgroundWithDocString
               /*
                * Given the server responds with:
                */
-              givenTheServerRespondsWith(\"\"\"
+              theServerRespondsWith(\"\"\"
                       {
                         "status": "ok",
                         "version": "1.0"
@@ -111,15 +111,15 @@ Feature: BackgroundWithDocString
       @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenTheEmailServiceIsAvailable() {
+          public void theEmailServiceIsAvailable() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenTheEmailTemplateIs(String docString) {
+          public void theEmailTemplateIs(String docString) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenEmailSendingIsEnabled() {
+          public void emailSendingIsEnabled() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -129,18 +129,18 @@ Feature: BackgroundWithDocString
               /*
                * Given the email service is available
                */
-              givenTheEmailServiceIsAvailable();
+              theEmailServiceIsAvailable();
               /*
                * And the email template is:
                */
-              givenTheEmailTemplateIs(\"\"\"
+              theEmailTemplateIs(\"\"\"
                       Dear User,
                       Welcome to our service!
                       \"\"\");
               /*
                * And email sending is enabled
                */
-              givenEmailSendingIsEnabled();
+              emailSendingIsEnabled();
           }
       }
       """

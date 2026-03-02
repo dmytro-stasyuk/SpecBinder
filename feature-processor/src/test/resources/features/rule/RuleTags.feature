@@ -53,15 +53,15 @@ Feature: RuleTags
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenAnEmailAddress() {
+          public void anEmailAddress() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenValidationIsPerformed() {
+          public void validationIsPerformed() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenTheEmailFormatShouldBeValid() {
+          public void theEmailFormatShouldBeValid() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -78,15 +78,15 @@ Feature: RuleTags
                   /*
                    * Given an email address
                    */
-                  givenAnEmailAddress();
+                  anEmailAddress();
                   /*
                    * When validation is performed
                    */
-                  whenValidationIsPerformed();
+                  validationIsPerformed();
                   /*
                    * Then the email format should be valid
                    */
-                  thenTheEmailFormatShouldBeValid();
+                  theEmailFormatShouldBeValid();
               }
           }
       }
@@ -143,15 +143,15 @@ Feature: RuleTags
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenAPassword() {
+          public void aPassword() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenStrengthValidationIsPerformed() {
+          public void strengthValidationIsPerformed() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenThePasswordShouldMeetRequirements() {
+          public void thePasswordShouldMeetRequirements() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -172,15 +172,15 @@ Feature: RuleTags
                   /*
                    * Given a password
                    */
-                  givenAPassword();
+                  aPassword();
                   /*
                    * When strength validation is performed
                    */
-                  whenStrengthValidationIsPerformed();
+                  strengthValidationIsPerformed();
                   /*
                    * Then the password should meet requirements
                    */
-                  thenThePasswordShouldMeetRequirements();
+                  thePasswordShouldMeetRequirements();
               }
           }
       }
@@ -242,15 +242,15 @@ Feature: RuleTags
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValidInput() {
+          public void validInput() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenValidationRuns() {
+          public void validationRuns() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenInputShouldBeAccepted() {
+          public void inputShouldBeAccepted() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -270,15 +270,15 @@ Feature: RuleTags
                   /*
                    * Given valid input
                    */
-                  givenValidInput();
+                  validInput();
                   /*
                    * When validation runs
                    */
-                  whenValidationRuns();
+                  validationRuns();
                   /*
                    * Then input should be accepted
                    */
-                  thenInputShouldBeAccepted();
+                  inputShouldBeAccepted();
               }
           }
       }

@@ -64,7 +64,7 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/users.feature")
         public class UsersTest extends TestFeature {
-            public void givenTheFollowingUsersExist(DataTable dataTable) {
+            public void theFollowingUsersExist(DataTable dataTable) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -75,7 +75,7 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * Given the following users exist:
                  */
-                givenTheFollowingUsersExist(createDataTable(\"\"\"
+                theFollowingUsersExist(createDataTable(\"\"\"
                         | name  | role  |
                         | Alice | Admin |
                         | Bob   | User  |
@@ -161,7 +161,7 @@ Feature: MappingDataTableToCucumberDataTable
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Permissions.feature")
       public class PermissionsTest extends TestFeature {
-          public void whenUser$p1HasPermissions(String p1, DataTable dataTable) {
+          public void user$p1HasPermissions(String p1, DataTable dataTable) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -172,7 +172,7 @@ Feature: MappingDataTableToCucumberDataTable
               /*
                * When user "Alice" has permissions:
                */
-              whenUser$p1HasPermissions("Alice", createDataTable(\"\"\"
+              user$p1HasPermissions("Alice", createDataTable(\"\"\"
                       | permission | enabled |
                       | read       | true    |
                       | write      | false   |
@@ -259,7 +259,7 @@ Feature: MappingDataTableToCucumberDataTable
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/Products.feature")
       public class ProductsTest extends TestFeature {
-          public void thenOrder$p1ForCustomer$p2Contains(Integer p1, String p2, DataTable dataTable) {
+          public void order$p1ForCustomer$p2Contains(Integer p1, String p2, DataTable dataTable) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -270,7 +270,7 @@ Feature: MappingDataTableToCucumberDataTable
               /*
                * Then order "12345" for customer "Bob" contains:
                */
-              thenOrder$p1ForCustomer$p2Contains(12345, "Bob", createDataTable(\"\"\"
+              order$p1ForCustomer$p2Contains(12345, "Bob", createDataTable(\"\"\"
                       | product | quantity |
                       | Laptop  | 1        |
                       | Mouse   | 2        |
@@ -353,11 +353,11 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenScenarioHasStep1WithADatatable(List<Map<String, String>> data) {
+            public void scenarioHasStep1WithADatatable(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenScenarioHasStep2WithADatatable(List<Map<String, String>> data) {
+            public void scenarioHasStep2WithADatatable(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -368,14 +368,14 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * Given scenario has step 1 with a DataTable:
                  */
-                givenScenarioHasStep1WithADatatable(createListOfMaps(\"\"\"
+                scenarioHasStep1WithADatatable(createListOfMaps(\"\"\"
                         | col1 | col2 |
                         | a    | b    |
                         \"\"\"));
                 /*
                  * And scenario has step 2 with a DataTable:
                  */
-                givenScenarioHasStep2WithADatatable(createListOfMaps(\"\"\"
+                scenarioHasStep2WithADatatable(createListOfMaps(\"\"\"
                         | col3 | col4 |
                         | c    | d    |
                         \"\"\"));
@@ -468,7 +468,7 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingUsersExist(List<Map<String, String>> data) {
+            public void theFollowingUsersExist(List<Map<String, String>> data) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -479,7 +479,7 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * Given the following users exist:
                  */
-                givenTheFollowingUsersExist(createListOfMaps(\"\"\"
+                theFollowingUsersExist(createListOfMaps(\"\"\"
                         | name  | role  |
                         | Alice | Admin |
                         | Bob   | User  |
@@ -581,7 +581,7 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/Permissions.feature")
         public class PermissionsTest extends TestFeature {
-            public void whenUser$p1HasPermissions(String p1, DataTable dataTable) {
+            public void user$p1HasPermissions(String p1, DataTable dataTable) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -592,7 +592,7 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * When user "Alice" has permissions:
                  */
-                whenUser$p1HasPermissions("Alice", createDataTable(\"\"\"
+                user$p1HasPermissions("Alice", createDataTable(\"\"\"
                         | permission | enabled |
                         | read       | true    |
                         | write      | false   |
@@ -655,7 +655,7 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
-            public void thenOrder$p1Contains(Integer p1, DataTable dataTable) {
+            public void order$p1Contains(Integer p1, DataTable dataTable) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -666,7 +666,7 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * Then order "12345" contains:
                  */
-                thenOrder$p1Contains(12345, createDataTable(\"\"\"
+                order$p1Contains(12345, createDataTable(\"\"\"
                         | product | quantity |
                         | Laptop  | 1        |
                         | Mouse   | 2        |
@@ -762,7 +762,7 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/Inventory.feature")
         public class InventoryTest extends TestFeature {
-            public void givenInventoryItems(DataTable dataTable) {
+            public void inventoryItems(DataTable dataTable) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -773,7 +773,7 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * Given inventory items:
                  */
-                givenInventoryItems(createDataTable(\"\"\"
+                inventoryItems(createDataTable(\"\"\"
                         | item   | quantity |
                         | Widget | 100      |
                         | Gadget | 50       |
@@ -843,7 +843,7 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
-            public void whenCustomerOrders(DataTable dataTable) {
+            public void customerOrders(DataTable dataTable) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -854,7 +854,7 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * When customer orders:
                  */
-                whenCustomerOrders(createDataTable(\"\"\"
+                customerOrders(createDataTable(\"\"\"
                         | product | quantity |
                         | Book    | 3        |
                         \"\"\"));
@@ -923,7 +923,7 @@ Feature: MappingDataTableToCucumberDataTable
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
-            public void givenEmployeesInSystem(DataTable dataTable) {
+            public void employeesInSystem(DataTable dataTable) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -934,7 +934,7 @@ Feature: MappingDataTableToCucumberDataTable
                 /*
                  * Given employees in system:
                  */
-                givenEmployeesInSystem(createDataTable(\"\"\"
+                employeesInSystem(createDataTable(\"\"\"
                         | name  | department  |
                         | Alice | Engineering |
                         \"\"\"));

@@ -64,7 +64,7 @@ Feature: CompositeStepsAndCucumberAnnotations
         @FeatureFilePath("com/example/CheckoutProcess.feature")
         public class CheckoutProcessTest extends CheckoutProcess {
             @Given("^user initiates checkout$")
-            protected void givenUserInitiatesCheckout(Runnable... composite) {
+            protected void userInitiatesCheckout(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -73,27 +73,27 @@ Feature: CompositeStepsAndCucumberAnnotations
             }
 
             @Given("^navigate to checkout page$")
-            public void givenNavigateToCheckoutPage() {
+            public void navigateToCheckoutPage() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^verify cart is not empty$")
-            public void givenVerifyCartIsNotEmpty() {
+            public void verifyCartIsNotEmpty() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^click on proceed button$")
-            public void givenClickOnProceedButton() {
+            public void clickOnProceedButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^payment is processed$")
-            public void whenPaymentIsProcessed() {
+            public void paymentIsProcessed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^order is confirmed$")
-            public void thenOrderIsConfirmed() {
+            public void orderIsConfirmed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -104,19 +104,19 @@ Feature: CompositeStepsAndCucumberAnnotations
                 /*
                  * Given user initiates checkout
                  */
-                givenUserInitiatesCheckout(() -> {
-                    givenNavigateToCheckoutPage();
-                    givenVerifyCartIsNotEmpty();
-                    givenClickOnProceedButton();
+                userInitiatesCheckout(() -> {
+                    navigateToCheckoutPage();
+                    verifyCartIsNotEmpty();
+                    clickOnProceedButton();
                 });
                 /*
                  * When payment is processed
                  */
-                whenPaymentIsProcessed();
+                paymentIsProcessed();
                 /*
                  * Then order is confirmed
                  */
-                thenOrderIsConfirmed();
+                orderIsConfirmed();
             }
         }
         """
@@ -180,7 +180,7 @@ Feature: CompositeStepsAndCucumberAnnotations
         @FeatureFilePath("com/example/AccountManagement.feature")
         public class AccountManagementTest extends AccountManagement {
             @Given("^user (?<p1>.*) updates account details$")
-            protected void givenUser$p1UpdatesAccountDetails(String p1, Consumer<String>... composite) {
+            protected void user$p1UpdatesAccountDetails(String p1, Consumer<String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1));
                 } else {
@@ -189,32 +189,32 @@ Feature: CompositeStepsAndCucumberAnnotations
             }
 
             @Given("^login as user (?<p1>.*)$")
-            public void givenLoginAsUser$p1(String p1) {
+            public void loginAsUser$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^navigate to account settings$")
-            public void givenNavigateToAccountSettings() {
+            public void navigateToAccountSettings() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^modify profile information$")
-            public void givenModifyProfileInformation() {
+            public void modifyProfileInformation() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^save changes for user (?<p1>.*)$")
-            public void givenSaveChangesForUser$p1(String p1) {
+            public void saveChangesForUser$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^update is submitted$")
-            public void whenUpdateIsSubmitted() {
+            public void updateIsSubmitted() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^account should be updated for (?<p1>.*)$")
-            public void thenAccountShouldBeUpdatedFor$p1(String p1) {
+            public void accountShouldBeUpdatedFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -225,20 +225,20 @@ Feature: CompositeStepsAndCucumberAnnotations
                 /*
                  * Given user "Alice" updates account details
                  */
-                givenUser$p1UpdatesAccountDetails("Alice", (p1) -> {
-                    givenLoginAsUser$p1(p1);
-                    givenNavigateToAccountSettings();
-                    givenModifyProfileInformation();
-                    givenSaveChangesForUser$p1(p1);
+                user$p1UpdatesAccountDetails("Alice", (p1) -> {
+                    loginAsUser$p1(p1);
+                    navigateToAccountSettings();
+                    modifyProfileInformation();
+                    saveChangesForUser$p1(p1);
                 });
                 /*
                  * When update is submitted
                  */
-                whenUpdateIsSubmitted();
+                updateIsSubmitted();
                 /*
                  * Then account should be updated for "Alice"
                  */
-                thenAccountShouldBeUpdatedFor$p1("Alice");
+                accountShouldBeUpdatedFor$p1("Alice");
             }
         }
         """
@@ -302,7 +302,7 @@ Feature: CompositeStepsAndCucumberAnnotations
         @FeatureFilePath("com/example/InventoryManagement.feature")
         public class InventoryManagementTest extends InventoryManagement {
             @Given("^warehouse (?<p1>.*) receives product (?<p2>.*)$")
-            protected void givenWarehouse$p1ReceivesProduct$p2(String p1, String p2,
+            protected void warehouse$p1ReceivesProduct$p2(String p1, String p2,
                     BiConsumer<String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2));
@@ -312,32 +312,32 @@ Feature: CompositeStepsAndCucumberAnnotations
             }
 
             @Given("^verify warehouse (?<p1>.*) is operational$")
-            public void givenVerifyWarehouse$p1IsOperational(String p1) {
+            public void verifyWarehouse$p1IsOperational(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^check product (?<p1>.*) exists in catalog$")
-            public void givenCheckProduct$p1ExistsInCatalog(String p1) {
+            public void checkProduct$p1ExistsInCatalog(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^update stock level for (?<p1>.*) in (?<p2>.*)$")
-            public void givenUpdateStockLevelFor$p1In$p2(String p1, String p2) {
+            public void updateStockLevelFor$p1In$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^send notification about (?<p1>.*) to (?<p2>.*)$")
-            public void givenSendNotificationAbout$p1To$p2(String p1, String p2) {
+            public void sendNotificationAbout$p1To$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^stock is updated$")
-            public void whenStockIsUpdated() {
+            public void stockIsUpdated() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^inventory should reflect changes for (?<p1>.*)$")
-            public void thenInventoryShouldReflectChangesFor$p1(String p1) {
+            public void inventoryShouldReflectChangesFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -348,20 +348,20 @@ Feature: CompositeStepsAndCucumberAnnotations
                 /*
                  * Given warehouse "WH-01" receives product "Widget"
                  */
-                givenWarehouse$p1ReceivesProduct$p2("WH-01", "Widget", (p1, p2) -> {
-                    givenVerifyWarehouse$p1IsOperational(p1);
-                    givenCheckProduct$p1ExistsInCatalog(p2);
-                    givenUpdateStockLevelFor$p1In$p2(p2, p1);
-                    givenSendNotificationAbout$p1To$p2(p2, p1);
+                warehouse$p1ReceivesProduct$p2("WH-01", "Widget", (p1, p2) -> {
+                    verifyWarehouse$p1IsOperational(p1);
+                    checkProduct$p1ExistsInCatalog(p2);
+                    updateStockLevelFor$p1In$p2(p2, p1);
+                    sendNotificationAbout$p1To$p2(p2, p1);
                 });
                 /*
                  * When stock is updated
                  */
-                whenStockIsUpdated();
+                stockIsUpdated();
                 /*
                  * Then inventory should reflect changes for "WH-01"
                  */
-                thenInventoryShouldReflectChangesFor$p1("WH-01");
+                inventoryShouldReflectChangesFor$p1("WH-01");
             }
         }
         """
@@ -426,7 +426,7 @@ Feature: CompositeStepsAndCucumberAnnotations
         @FeatureFilePath("com/example/MultiStepProcess.feature")
         public class MultiStepProcessTest extends MultiStepProcess {
             @Given("^system is initialized$")
-            protected void givenSystemIsInitialized(Runnable... composite) {
+            protected void systemIsInitialized(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -435,17 +435,17 @@ Feature: CompositeStepsAndCucumberAnnotations
             }
 
             @Given("^start services$")
-            public void givenStartServices() {
+            public void startServices() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Given("^load configuration$")
-            public void givenLoadConfiguration() {
+            public void loadConfiguration() {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^user (?<p1>.*) performs action$")
-            protected void whenUser$p1PerformsAction(String p1, Consumer<String>... composite) {
+            protected void user$p1PerformsAction(String p1, Consumer<String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1));
                 } else {
@@ -454,17 +454,17 @@ Feature: CompositeStepsAndCucumberAnnotations
             }
 
             @When("^authenticate user (?<p1>.*)$")
-            public void whenAuthenticateUser$p1(String p1) {
+            public void authenticateUser$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @When("^execute operation for (?<p1>.*)$")
-            public void whenExecuteOperationFor$p1(String p1) {
+            public void executeOperationFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
             @Then("^result is successful for (?<p1>.*)$")
-            public void thenResultIsSuccessfulFor$p1(String p1) {
+            public void resultIsSuccessfulFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -475,21 +475,21 @@ Feature: CompositeStepsAndCucumberAnnotations
                 /*
                  * Given system is initialized
                  */
-                givenSystemIsInitialized(() -> {
-                    givenStartServices();
-                    givenLoadConfiguration();
+                systemIsInitialized(() -> {
+                    startServices();
+                    loadConfiguration();
                 });
                 /*
                  * When user "Bob" performs action
                  */
-                whenUser$p1PerformsAction("Bob", (p1) -> {
-                    whenAuthenticateUser$p1(p1);
-                    whenExecuteOperationFor$p1(p1);
+                user$p1PerformsAction("Bob", (p1) -> {
+                    authenticateUser$p1(p1);
+                    executeOperationFor$p1(p1);
                 });
                 /*
                  * Then result is successful for "Bob"
                  */
-                thenResultIsSuccessfulFor$p1("Bob");
+                resultIsSuccessfulFor$p1("Bob");
             }
         }
         """

@@ -51,7 +51,7 @@ Feature: ScenarioOutlineStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUser$p1Exists(String p1) {
+            public void user$p1Exists(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -73,7 +73,7 @@ Feature: ScenarioOutlineStepParameters
                 /*
                  * Given user <username> exists
                  */
-                givenUser$p1Exists(username);
+                user$p1Exists(username);
             }
         }
         """
@@ -123,7 +123,7 @@ Feature: ScenarioOutlineStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void whenUser$p1SendsMessage$p2To$p3(String p1, String p2, String p3) {
+            public void user$p1SendsMessage$p2To$p3(String p1, String p2, String p3) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -145,7 +145,7 @@ Feature: ScenarioOutlineStepParameters
                 /*
                  * When user <username> sends message <message> to <recipient>
                  */
-                whenUser$p1SendsMessage$p2To$p3(username, message, recipient);
+                user$p1SendsMessage$p2To$p3(username, message, recipient);
             }
         }
         """
@@ -195,7 +195,7 @@ Feature: ScenarioOutlineStepParameters
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUser$p1AssignsRole$p2ToUser$p3(String p1, String p2, String p3) {
+            public void user$p1AssignsRole$p2ToUser$p3(String p1, String p2, String p3) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -217,7 +217,7 @@ Feature: ScenarioOutlineStepParameters
                 /*
                  * Given user "admin" assigns role <role> to user <username>
                  */
-                givenUser$p1AssignsRole$p2ToUser$p3("admin", role, username);
+                user$p1AssignsRole$p2ToUser$p3("admin", role, username);
             }
         }
         """

@@ -54,7 +54,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1Has$p2And$p3(String p1, String p2, String p3) {
+          public void user$p1Has$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -75,7 +75,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given user <first name> has <last name> and <user id>
                */
-              givenUser$p1Has$p2And$p3(firstName, lastName, userId);
+              user$p1Has$p2And$p3(firstName, lastName, userId);
           }
       }
       """
@@ -124,7 +124,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1Has$p2And$p3(String p1, String p2, String p3) {
+          public void user$p1Has$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -145,7 +145,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given user <first.name> has <last.name> and <user.id>
                */
-              givenUser$p1Has$p2And$p3(firstName, lastName, userId);
+              user$p1Has$p2And$p3(firstName, lastName, userId);
           }
       }
       """
@@ -194,7 +194,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2And$p3(String p1, String p2, String p3) {
+          public void $p1And$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -215,7 +215,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <value1> and <user 2 id> and <test_3_name>
                */
-              given$p1And$p2And$p3(value1, user2Id, test_3_name);
+              $p1And$p2And$p3(value1, user2Id, test_3_name);
           }
       }
       """
@@ -264,7 +264,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2(String p1, String p2) {
+          public void $p1And$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -285,7 +285,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <first-name_value> and <user.id-number>
                */
-              given$p1And$p2(firstname_value, userIdnumber);
+              $p1And$p2(firstname_value, userIdnumber);
           }
       }
       """
@@ -336,7 +336,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2(String p1, String p2) {
+          public void $p1And$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -357,7 +357,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <a> and <x y z>
                */
-              given$p1And$p2(a, xYZ);
+              $p1And$p2(a, xYZ);
           }
       }
       """
@@ -411,7 +411,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1Has$p2And$p3(String p1, String p2, String p3) {
+          public void user$p1Has$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -432,7 +432,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given user <first_name> has <last_name> and <user_id>
                */
-              givenUser$p1Has$p2And$p3(first_name, last_name, user_id);
+              user$p1Has$p2And$p3(first_name, last_name, user_id);
           }
       }
       """
@@ -481,7 +481,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2(String p1, String p2) {
+          public void $p1And$p2(String p1, String p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -502,7 +502,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <first  name> and <user__id>
                */
-              given$p1And$p2(firstName, user__id);
+              $p1And$p2(firstName, user__id);
           }
       }
       """
@@ -553,7 +553,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1Has$p2And$p3(String p1, String p2, String p3) {
+          public void user$p1Has$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -574,7 +574,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given user <user-id> has <user.name> and <order#number>
                */
-              givenUser$p1Has$p2And$p3(userid, userName, ordernumber);
+              user$p1Has$p2And$p3(userid, userName, ordernumber);
           }
       }
       """
@@ -623,7 +623,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2And$p3(String p1, String p2, String p3) {
+          public void $p1And$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -644,7 +644,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <!firstName> and <lastName@> and <_userId_>
                */
-              given$p1And$p2And$p3(firstName, lastName, _userId_);
+              $p1And$p2And$p3(firstName, lastName, _userId_);
           }
       }
       """
@@ -696,7 +696,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2And$p3(String p1, String p2, String p3) {
+          public void $p1And$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -717,7 +717,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <user iD> and <first NaMe> and <order ToTal>
                */
-              given$p1And$p2And$p3(userID, firstNaMe, orderToTal);
+              $p1And$p2And$p3(userID, firstNaMe, orderToTal);
           }
       }
       """
@@ -766,7 +766,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2And$p3(String p1, String p2, String p3) {
+          public void $p1And$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -787,7 +787,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <First Name> and <Last Name> and <User ID>
                */
-              given$p1And$p2And$p3(firstName, lastName, userID);
+              $p1And$p2And$p3(firstName, lastName, userID);
           }
       }
       """
@@ -836,7 +836,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2And$p3(String p1, String p2, String p3) {
+          public void $p1And$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -857,7 +857,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <xml Data> and <json Payload> and <http Request>
                */
-              given$p1And$p2And$p3(xmlData, jsonPayload, httpRequest);
+              $p1And$p2And$p3(xmlData, jsonPayload, httpRequest);
           }
       }
       """
@@ -911,7 +911,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2And$p3(String p1, String p2, String p3) {
+          public void $p1And$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -932,7 +932,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <USER_ID> and <FIRST_NAME> and <LAST NAME>
                */
-              given$p1And$p2And$p3(USER_ID, FIRST_NAME, LASTNAME);
+              $p1And$p2And$p3(USER_ID, FIRST_NAME, LASTNAME);
           }
       }
       """
@@ -984,7 +984,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void given$p1And$p2And$p3(String p1, String p2, String p3) {
+          public void $p1And$p2And$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1005,7 +1005,7 @@ Feature: ScenarioOutlineTestMethodParameterNaming
               /*
                * Given <firstName> and <userId> and <orderTotal>
                */
-              given$p1And$p2And$p3(firstName, userId, orderTotal);
+              $p1And$p2And$p3(firstName, userId, orderTotal);
           }
       }
       """

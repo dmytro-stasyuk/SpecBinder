@@ -61,7 +61,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1WithAdmin$p2AndActive$p3(String p1, Boolean p2, Boolean p3) {
+          public void user$p1WithAdmin$p2AndActive$p3(String p1, Boolean p2, Boolean p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -83,7 +83,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given user <username> with admin <isAdmin> and active <isActive>
                */
-              givenUser$p1WithAdmin$p2AndActive$p3(username, isAdmin, isActive);
+              user$p1WithAdmin$p2AndActive$p3(username, isAdmin, isActive);
           }
       }
       """
@@ -134,7 +134,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenFlagIs$p1(Boolean p1) {
+          public void flagIs$p1(Boolean p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -157,7 +157,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given flag is <enabled>
                */
-              givenFlagIs$p1(enabled);
+              flagIs$p1(enabled);
           }
       }
       """
@@ -209,7 +209,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1WithAdmin$p2AndPremium$p3(String p1, Boolean p2, Boolean p3) {
+          public void user$p1WithAdmin$p2AndPremium$p3(String p1, Boolean p2, Boolean p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -232,7 +232,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given user <name> with admin <isAdmin> and premium <isPremium>
                */
-              givenUser$p1WithAdmin$p2AndPremium$p3(name, isAdmin, isPremium);
+              user$p1WithAdmin$p2AndPremium$p3(name, isAdmin, isPremium);
           }
       }
       """
@@ -283,7 +283,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenStatusIs$p1(String p1) {
+          public void statusIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -306,7 +306,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given status is <status>
                */
-              givenStatusIs$p1(status);
+              statusIs$p1(status);
           }
       }
       """
@@ -365,7 +365,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1WithAge$p2AndScore$p3(String p1, Integer p2, Integer p3) {
+          public void user$p1WithAge$p2AndScore$p3(String p1, Integer p2, Integer p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -388,7 +388,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given user <username> with age <age> and score <score>
                */
-              givenUser$p1WithAge$p2AndScore$p3(username, age, score);
+              user$p1WithAge$p2AndScore$p3(username, age, score);
           }
       }
       """
@@ -438,7 +438,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValueIs$p1(Integer p1) {
+          public void valueIs$p1(Integer p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -460,7 +460,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given value is <value>
                */
-              givenValueIs$p1(value);
+              valueIs$p1(value);
           }
       }
       """
@@ -511,7 +511,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValueIs$p1(Double p1) {
+          public void valueIs$p1(Double p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -534,7 +534,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given value is <value>
                */
-              givenValueIs$p1(value);
+              valueIs$p1(value);
           }
       }
       """
@@ -586,7 +586,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1WithAge$p2AndScore$p3(String p1, Integer p2, Integer p3) {
+          public void user$p1WithAge$p2AndScore$p3(String p1, Integer p2, Integer p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -609,7 +609,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given user <username> with age <age> and score <score>
                */
-              givenUser$p1WithAge$p2AndScore$p3(username, age, score);
+              user$p1WithAge$p2AndScore$p3(username, age, score);
           }
       }
       """
@@ -668,7 +668,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenAccount$p1HasBalance$p2(String p1, Long p2) {
+          public void account$p1HasBalance$p2(String p1, Long p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -691,7 +691,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given account <account> has balance <balance>
                */
-              givenAccount$p1HasBalance$p2(account, balance);
+              account$p1HasBalance$p2(account, balance);
           }
       }
       """
@@ -741,7 +741,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValueIs$p1(Long p1) {
+          public void valueIs$p1(Long p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -763,7 +763,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given value is <value>
                */
-              givenValueIs$p1(value);
+              valueIs$p1(value);
           }
       }
       """
@@ -815,7 +815,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenAccount$p1HasBalance$p2AndLimit$p3(String p1, Long p2, Long p3) {
+          public void account$p1HasBalance$p2AndLimit$p3(String p1, Long p2, Long p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -838,7 +838,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given account <account> has balance <balance> and limit <limit>
                */
-              givenAccount$p1HasBalance$p2AndLimit$p3(account, balance, limit);
+              account$p1HasBalance$p2AndLimit$p3(account, balance, limit);
           }
       }
       """
@@ -888,7 +888,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValueIs$p1(Double p1) {
+          public void valueIs$p1(Double p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -910,7 +910,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given value is <value>
                */
-              givenValueIs$p1(value);
+              valueIs$p1(value);
           }
       }
       """
@@ -969,7 +969,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenProduct$p1WithPrice$p2AndTax$p3(String p1, Double p2, Double p3) {
+          public void product$p1WithPrice$p2AndTax$p3(String p1, Double p2, Double p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -992,7 +992,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given product <product> with price <price> and tax <tax>
                */
-              givenProduct$p1WithPrice$p2AndTax$p3(product, price, tax);
+              product$p1WithPrice$p2AndTax$p3(product, price, tax);
           }
       }
       """
@@ -1045,7 +1045,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenProduct$p1WithPrice$p2(String p1, Double p2) {
+          public void product$p1WithPrice$p2(String p1, Double p2) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1069,7 +1069,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given product <product> with price <price>
                */
-              givenProduct$p1WithPrice$p2(product, price);
+              product$p1WithPrice$p2(product, price);
           }
       }
       """
@@ -1120,7 +1120,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValueIs$p1(Double p1) {
+          public void valueIs$p1(Double p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1143,7 +1143,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given value is <value>
                */
-              givenValueIs$p1(value);
+              valueIs$p1(value);
           }
       }
       """
@@ -1195,7 +1195,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenProduct$p1WithPrice$p2AndDiscount$p3(String p1, Double p2, Double p3) {
+          public void product$p1WithPrice$p2AndDiscount$p3(String p1, Double p2, Double p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1218,7 +1218,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given product <product> with price <price> and discount <discount>
                */
-              givenProduct$p1WithPrice$p2AndDiscount$p3(product, price, discount);
+              product$p1WithPrice$p2AndDiscount$p3(product, price, discount);
           }
       }
       """
@@ -1269,7 +1269,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValueIs$p1(String p1) {
+          public void valueIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1292,7 +1292,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given value is <value>
                */
-              givenValueIs$p1(value);
+              valueIs$p1(value);
           }
       }
       """
@@ -1349,7 +1349,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenOption$p1WithGrade$p2AndCategory$p3(Character p1, Character p2, Character p3) {
+          public void option$p1WithGrade$p2AndCategory$p3(Character p1, Character p2, Character p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1372,7 +1372,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given option <option> with grade <grade> and category <category>
                */
-              givenOption$p1WithGrade$p2AndCategory$p3(option, grade, category);
+              option$p1WithGrade$p2AndCategory$p3(option, grade, category);
           }
       }
       """
@@ -1424,7 +1424,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenStudent$p1WithGrade$p2AndSection$p3(String p1, Character p2, Character p3) {
+          public void student$p1WithGrade$p2AndSection$p3(String p1, Character p2, Character p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1447,7 +1447,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given student <name> with grade <grade> and section <section>
                */
-              givenStudent$p1WithGrade$p2AndSection$p3(name, grade, section);
+              student$p1WithGrade$p2AndSection$p3(name, grade, section);
           }
       }
       """
@@ -1498,7 +1498,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValueIs$p1(String p1) {
+          public void valueIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1521,7 +1521,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given value is <value>
                */
-              givenValueIs$p1(value);
+              valueIs$p1(value);
           }
       }
       """
@@ -1579,7 +1579,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenInputIs$p1(String p1) {
+          public void inputIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1603,7 +1603,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given input is <input>
                */
-              givenInputIs$p1(input);
+              inputIs$p1(input);
           }
       }
       """
@@ -1654,7 +1654,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1WithStatus$p2AndRole$p3(String p1, String p2, String p3) {
+          public void user$p1WithStatus$p2AndRole$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1677,7 +1677,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given user <name> with status <status> and role <role>
                */
-              givenUser$p1WithStatus$p2AndRole$p3(name, status, role);
+              user$p1WithStatus$p2AndRole$p3(name, status, role);
           }
       }
       """
@@ -1728,7 +1728,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1WithValue$p2AndStatus$p3(String p1, String p2, String p3) {
+          public void user$p1WithValue$p2AndStatus$p3(String p1, String p2, String p3) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -1751,7 +1751,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given user <name> with value <value> and status <status>
                */
-              givenUser$p1WithValue$p2AndStatus$p3(name, value, status);
+              user$p1WithValue$p2AndStatus$p3(name, value, status);
           }
       }
       """
@@ -1811,7 +1811,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenUser$p1WithAge$p2AndActive$p3AndScore$p4AndGrade$p5(String p1, Integer p2,
+          public void user$p1WithAge$p2AndActive$p3AndScore$p4AndGrade$p5(String p1, Integer p2,
                   Boolean p3, Double p4, Character p5) {
               Assertions.fail("Step is not yet implemented");
           }
@@ -1836,7 +1836,7 @@ Feature: ScenarioOutlineArgumentsTypeInference
               /*
                * Given user <name> with age <age> and active <active> and score <score> and grade <grade>
                */
-              givenUser$p1WithAge$p2AndActive$p3AndScore$p4AndGrade$p5(name, age, active, score, grade);
+              user$p1WithAge$p2AndActive$p3AndScore$p4AndGrade$p5(name, age, active, score, grade);
           }
       }
       """

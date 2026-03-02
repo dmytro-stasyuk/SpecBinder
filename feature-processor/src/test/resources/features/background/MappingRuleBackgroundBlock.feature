@@ -56,15 +56,15 @@ Feature: MappingRuleBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenPaymentGatewayIsConfigured() {
+          public void paymentGatewayIsConfigured() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserSubmitsValidPayment() {
+          public void userSubmitsValidPayment() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenPaymentShouldBeProcessed() {
+          public void paymentShouldBeProcessed() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -79,7 +79,7 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * Given payment gateway is configured
                    */
-                  givenPaymentGatewayIsConfigured();
+                  paymentGatewayIsConfigured();
               }
 
               @Test
@@ -89,11 +89,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When user submits valid payment
                    */
-                  whenUserSubmitsValidPayment();
+                  userSubmitsValidPayment();
                   /*
                    * Then payment should be processed
                    */
-                  thenPaymentShouldBeProcessed();
+                  paymentShouldBeProcessed();
               }
           }
       }
@@ -152,23 +152,23 @@ Feature: MappingRuleBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenAuthenticationServiceIsStarted() {
+          public void authenticationServiceIsStarted() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenUserDatabaseIsConnected() {
+          public void userDatabaseIsConnected() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenSessionManagerIsInitialized() {
+          public void sessionManagerIsInitialized() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserLogsInWithValidCredentials() {
+          public void userLogsInWithValidCredentials() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenUserShouldBeAuthenticated() {
+          public void userShouldBeAuthenticated() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -183,15 +183,15 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * Given authentication service is started
                    */
-                  givenAuthenticationServiceIsStarted();
+                  authenticationServiceIsStarted();
                   /*
                    * And user database is connected
                    */
-                  givenUserDatabaseIsConnected();
+                  userDatabaseIsConnected();
                   /*
                    * And session manager is initialized
                    */
-                  givenSessionManagerIsInitialized();
+                  sessionManagerIsInitialized();
               }
 
               @Test
@@ -201,11 +201,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When user logs in with valid credentials
                    */
-                  whenUserLogsInWithValidCredentials();
+                  userLogsInWithValidCredentials();
                   /*
                    * Then user should be authenticated
                    */
-                  thenUserShouldBeAuthenticated();
+                  userShouldBeAuthenticated();
               }
           }
       }
@@ -265,19 +265,19 @@ Feature: MappingRuleBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenEmailServerIsConfigured() {
+          public void emailServerIsConfigured() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenEmailTemplatesAreLoaded() {
+          public void emailTemplatesAreLoaded() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenNewUserRegisters() {
+          public void newUserRegisters() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenWelcomeEmailShouldBeSent() {
+          public void welcomeEmailShouldBeSent() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -296,11 +296,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * Given email server is configured
                    */
-                  givenEmailServerIsConfigured();
+                  emailServerIsConfigured();
                   /*
                    * And email templates are loaded
                    */
-                  givenEmailTemplatesAreLoaded();
+                  emailTemplatesAreLoaded();
               }
 
               @Test
@@ -310,11 +310,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When new user registers
                    */
-                  whenNewUserRegisters();
+                  newUserRegisters();
                   /*
                    * Then welcome email should be sent
                    */
-                  thenWelcomeEmailShouldBeSent();
+                  welcomeEmailShouldBeSent();
               }
           }
       }
@@ -377,15 +377,15 @@ Feature: MappingRuleBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenValidationRulesAreLoaded() {
+          public void validationRulesAreLoaded() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserEnters$p1(String p1) {
+          public void userEnters$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenValidationResultShouldBe$p1(String p1) {
+          public void validationResultShouldBe$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -400,7 +400,7 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * Given validation rules are loaded
                    */
-                  givenValidationRulesAreLoaded();
+                  validationRulesAreLoaded();
               }
 
               @ParameterizedTest(
@@ -421,11 +421,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When user enters "<input>"
                    */
-                  whenUserEnters$p1(input);
+                  userEnters$p1(input);
                   /*
                    * Then validation result should be "<result>"
                    */
-                  thenValidationResultShouldBe$p1(result);
+                  validationResultShouldBe$p1(result);
               }
           }
       }
@@ -491,15 +491,15 @@ Feature: MappingRuleBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenTheFollowingServicesAreConfigured(List<Map<String, String>> data) {
+          public void theFollowingServicesAreConfigured(List<Map<String, String>> data) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenConfigurationIsValidated() {
+          public void configurationIsValidated() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenAllServicesShouldBeReady() {
+          public void allServicesShouldBeReady() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -549,7 +549,7 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * Given the following services are configured:
                    */
-                  givenTheFollowingServicesAreConfigured(createListOfMaps(\"\"\"
+                  theFollowingServicesAreConfigured(createListOfMaps(\"\"\"
                           | service  | port |
                           | api      | 8080 |
                           | database | 5432 |
@@ -563,11 +563,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When configuration is validated
                    */
-                  whenConfigurationIsValidated();
+                  configurationIsValidated();
                   /*
                    * Then all services should be ready
                    */
-                  thenAllServicesShouldBeReady();
+                  allServicesShouldBeReady();
               }
           }
       }
@@ -625,11 +625,11 @@ Feature: MappingRuleBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void whenLogRotationIsTriggered() {
+          public void logRotationIsTriggered() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenOldLogsShouldBeArchived() {
+          public void oldLogsShouldBeArchived() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -650,11 +650,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When log rotation is triggered
                    */
-                  whenLogRotationIsTriggered();
+                  logRotationIsTriggered();
                   /*
                    * Then old logs should be archived
                    */
-                  thenOldLogsShouldBeArchived();
+                  oldLogsShouldBeArchived();
               }
           }
       }
@@ -719,7 +719,7 @@ Feature: MappingRuleBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenSystemIsInitialized() {
+          public void systemIsInitialized() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -729,18 +729,18 @@ Feature: MappingRuleBackgroundBlock
               /*
                * Given system is initialized
                */
-              givenSystemIsInitialized();
+              systemIsInitialized();
           }
 
-          public void givenInventoryDatabaseIsConnected() {
+          public void inventoryDatabaseIsConnected() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserChecksStockForProduct() {
+          public void userChecksStockForProduct() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenStockLevelShouldBeDisplayed() {
+          public void stockLevelShouldBeDisplayed() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -755,7 +755,7 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * Given inventory database is connected
                    */
-                  givenInventoryDatabaseIsConnected();
+                  inventoryDatabaseIsConnected();
               }
 
               @Test
@@ -765,11 +765,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When user checks stock for product
                    */
-                  whenUserChecksStockForProduct();
+                  userChecksStockForProduct();
                   /*
                    * Then stock level should be displayed
                    */
-                  thenStockLevelShouldBeDisplayed();
+                  stockLevelShouldBeDisplayed();
               }
           }
       }
@@ -837,27 +837,27 @@ Feature: MappingRuleBackgroundBlock
       @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @FeatureFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void givenShoppingCartServiceIsInitialized() {
+          public void shoppingCartServiceIsInitialized() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserAddsItemToCart() {
+          public void userAddsItemToCart() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenItemShouldBeInCart() {
+          public void itemShouldBeInCart() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void givenPaymentProcessorIsInitialized() {
+          public void paymentProcessorIsInitialized() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void whenUserCompletesCheckout() {
+          public void userCompletesCheckout() {
               Assertions.fail("Step is not yet implemented");
           }
 
-          public void thenOrderShouldBeConfirmed() {
+          public void orderShouldBeConfirmed() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -872,7 +872,7 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * Given shopping cart service is initialized
                    */
-                  givenShoppingCartServiceIsInitialized();
+                  shoppingCartServiceIsInitialized();
               }
 
               @Test
@@ -882,11 +882,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When user adds item to cart
                    */
-                  whenUserAddsItemToCart();
+                  userAddsItemToCart();
                   /*
                    * Then item should be in cart
                    */
-                  thenItemShouldBeInCart();
+                  itemShouldBeInCart();
               }
           }
 
@@ -901,7 +901,7 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * Given payment processor is initialized
                    */
-                  givenPaymentProcessorIsInitialized();
+                  paymentProcessorIsInitialized();
               }
 
               @Test
@@ -911,11 +911,11 @@ Feature: MappingRuleBackgroundBlock
                   /*
                    * When user completes checkout
                    */
-                  whenUserCompletesCheckout();
+                  userCompletesCheckout();
                   /*
                    * Then order should be confirmed
                    */
-                  thenOrderShouldBeConfirmed();
+                  orderShouldBeConfirmed();
               }
           }
       }

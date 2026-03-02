@@ -27,7 +27,7 @@ Feature: TypeInferenceWithEnumFields
               AVAILABLE, OUT_OF_STOCK, DISCONTINUED
           }
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -90,7 +90,7 @@ Feature: TypeInferenceWithEnumFields
                *   | Mouse  | OUT_OF_STOCK |
                *   | Tablet | DISCONTINUED |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       "Laptop",
@@ -133,7 +133,7 @@ Feature: TypeInferenceWithEnumFields
               LOW, MEDIUM, HIGH, URGENT
           }
 
-          public void givenTheFollowingOrders(List<OrdersParam> orders) {
+          public void theFollowingOrders(List<OrdersParam> orders) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -201,7 +201,7 @@ Feature: TypeInferenceWithEnumFields
                *   | ORD-002  | SHIPPED   | MEDIUM   |
                *   | ORD-003  | DELIVERED | LOW      |
                */
-              givenTheFollowingOrders(
+              theFollowingOrders(
                       List.of(
                               new OrdersParam(
                                       "ORD-001",
@@ -247,7 +247,7 @@ Feature: TypeInferenceWithEnumFields
               FULL_TIME, PART_TIME, CONTRACT
           }
 
-          public void givenTheFollowingEmployees(List<EmployeesParam> employees) {
+          public void theFollowingEmployees(List<EmployeesParam> employees) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -321,7 +321,7 @@ Feature: TypeInferenceWithEnumFields
                *   | Bob   | 25  | SALES       | PART_TIME       | 45000.00 | false  |
                *   | Carol | 35  | MARKETING   | CONTRACT        | 65000.00 | true   |
                */
-              givenTheFollowingEmployees(
+              theFollowingEmployees(
                       List.of(
                               new EmployeesParam(
                                       "Alice",
@@ -374,7 +374,7 @@ Feature: TypeInferenceWithEnumFields
               AVAILABLE, OUT_OF_STOCK, DISCONTINUED
           }
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -428,7 +428,7 @@ Feature: TypeInferenceWithEnumFields
                *   | name   | status     |
                *   | Laptop | IN_TRANSIT |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       "Laptop",
@@ -464,7 +464,7 @@ Feature: TypeInferenceWithEnumFields
               AVAILABLE, OUT_OF_STOCK, DISCONTINUED
           }
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
           }
 
           public static class ProductsParam {
@@ -518,7 +518,7 @@ Feature: TypeInferenceWithEnumFields
                *   | name   | status |
                *   | Laptop |        |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       "Laptop",
@@ -558,7 +558,7 @@ Feature: TypeInferenceWithEnumFields
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
-          public void givenTheFollowingProducts(List<ProductsParam> products) {
+          public void theFollowingProducts(List<ProductsParam> products) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -621,7 +621,7 @@ Feature: TypeInferenceWithEnumFields
                *   | Mouse  | OUT_OF_STOCK |
                *   | Tablet | DISCONTINUED |
                */
-              givenTheFollowingProducts(
+              theFollowingProducts(
                       List.of(
                               new ProductsParam(
                                       "Laptop",
@@ -673,7 +673,7 @@ Feature: TypeInferenceWithEnumFields
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class OrdersFeature {
 
-          public void givenTheFollowingOrders(List<OrdersParam> orders) {
+          public void theFollowingOrders(List<OrdersParam> orders) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -745,7 +745,7 @@ Feature: TypeInferenceWithEnumFields
                *   | ORD-003  | SHIPPED    | URGENT   |
                *   | ORD-004  | DELIVERED  | LOW      |
                */
-              givenTheFollowingOrders(
+              theFollowingOrders(
                       List.of(
                               new OrdersParam(
                                       "ORD-001",

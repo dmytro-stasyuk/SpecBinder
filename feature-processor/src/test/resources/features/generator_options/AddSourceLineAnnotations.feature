@@ -49,15 +49,15 @@ Feature: AddSourceLineAnnotations
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenResultIsDisplayed() {
+            public void resultIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -69,15 +69,15 @@ Feature: AddSourceLineAnnotations
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user clicks button
                  */
-                whenUserClicksButton();
+                userClicksButton();
                 /*
                  * Then result is displayed
                  */
-                thenResultIsDisplayed();
+                resultIsDisplayed();
             }
         }
         """
@@ -131,11 +131,11 @@ Feature: AddSourceLineAnnotations
         @TestClassOrder(ClassOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -153,11 +153,11 @@ Feature: AddSourceLineAnnotations
                     /*
                      * Given user exists
                      */
-                    givenUserExists();
+                    userExists();
                     /*
                      * When user clicks button
                      */
-                    whenUserClicksButton();
+                    userClicksButton();
                 }
             }
         }
@@ -212,11 +212,11 @@ Feature: AddSourceLineAnnotations
         @TestClassOrder(ClassOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -234,7 +234,7 @@ Feature: AddSourceLineAnnotations
                     /*
                      * Given user exists
                      */
-                    givenUserExists();
+                    userExists();
                 }
             }
 
@@ -252,7 +252,7 @@ Feature: AddSourceLineAnnotations
                     /*
                      * When user clicks button
                      */
-                    whenUserClicksButton();
+                    userClicksButton();
                 }
             }
         }

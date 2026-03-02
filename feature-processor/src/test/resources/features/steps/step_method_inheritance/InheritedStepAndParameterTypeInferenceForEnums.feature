@@ -15,7 +15,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
 
@@ -66,7 +66,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "MONDAY"
                  */
-                givenTheFollowingDayOfTheWeek$p1(MONDAY);
+                theFollowingDayOfTheWeek$p1(MONDAY);
             }
         }
         """
@@ -95,7 +95,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
       }
@@ -136,7 +136,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "MONDAY"
                  */
-                givenTheFollowingDayOfTheWeek$p1(MONDAY);
+                theFollowingDayOfTheWeek$p1(MONDAY);
             }
         }
         """
@@ -166,7 +166,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
       }
@@ -207,7 +207,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "MONDAY"
                  */
-                givenTheFollowingDayOfTheWeek$p1(MONDAY);
+                theFollowingDayOfTheWeek$p1(MONDAY);
             }
         }
         """
@@ -240,7 +240,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
       }
@@ -281,7 +281,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "MONDAY"
                  */
-                givenTheFollowingDayOfTheWeek$p1(MONDAY);
+                theFollowingDayOfTheWeek$p1(MONDAY);
             }
         }
         """
@@ -296,7 +296,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
 
@@ -340,7 +340,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingDayOfTheWeek$p1(String p1) {
+            public void theFollowingDayOfTheWeek$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -351,7 +351,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "INVALID_DAY"
                  */
-                givenTheFollowingDayOfTheWeek$p1("INVALID_DAY");
+                theFollowingDayOfTheWeek$p1("INVALID_DAY");
             }
         }
         """
@@ -370,7 +370,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
 
@@ -414,7 +414,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingDayOfTheWeek$p1(String p1) {
+            public void theFollowingDayOfTheWeek$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -425,7 +425,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "monday"
                  */
-                givenTheFollowingDayOfTheWeek$p1("monday");
+                theFollowingDayOfTheWeek$p1("monday");
             }
         }
         """
@@ -454,7 +454,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
       }
@@ -488,7 +488,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingDayOfTheWeek$p1(String p1) {
+            public void theFollowingDayOfTheWeek$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -499,7 +499,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "Monday"
                  */
-                givenTheFollowingDayOfTheWeek$p1("Monday");
+                theFollowingDayOfTheWeek$p1("Monday");
             }
         }
         """
@@ -529,7 +529,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
       }
@@ -563,7 +563,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingDayOfTheWeek$p1(String p1) {
+            public void theFollowingDayOfTheWeek$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -574,7 +574,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "MONDAY "
                  */
-                givenTheFollowingDayOfTheWeek$p1("MONDAY ");
+                theFollowingDayOfTheWeek$p1("MONDAY ");
             }
         }
         """
@@ -607,7 +607,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       @Feature2JUnit
       public abstract class MyFeature {
 
-          protected void givenTheFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
+          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
               // Implementation with enum parameter
           }
       }
@@ -641,7 +641,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenTheFollowingDayOfTheWeek$p1(String p1) {
+            public void theFollowingDayOfTheWeek$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -652,7 +652,7 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
                 /*
                  * Given the following day of the week "MoNdAy"
                  */
-                givenTheFollowingDayOfTheWeek$p1("MoNdAy");
+                theFollowingDayOfTheWeek$p1("MoNdAy");
             }
         }
         """

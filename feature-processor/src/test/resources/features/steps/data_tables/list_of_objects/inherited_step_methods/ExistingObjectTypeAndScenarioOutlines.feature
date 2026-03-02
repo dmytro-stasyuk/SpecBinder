@@ -22,7 +22,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -108,7 +108,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | name   | age   | email   |
                *   | <name> | <age> | <email> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new BaseUserParam(
                                       name,
@@ -136,7 +136,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -222,7 +222,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | name   | age   | email   |
                *   | <name> | <age> | <email> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new BaseUserParam(
                                       email,
@@ -250,7 +250,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<BaseUserParam> users) {
+          public void theFollowingUsers(List<BaseUserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -336,7 +336,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | name   | role  | email   |
                *   | <name> | Admin | <email> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new BaseUserParam(
                                       name,
@@ -366,7 +366,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MessagesFeature {
 
-          public void givenTheFollowingMessages(List<MessageParam> messages) {
+          public void theFollowingMessages(List<MessageParam> messages) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -446,7 +446,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | recipient | content       |
                *   | <name>    | Hello <name>! |
                */
-              givenTheFollowingMessages(
+              theFollowingMessages(
                       List.of(
                               new MessageParam(
                                       name,
@@ -475,7 +475,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ContactsFeature {
 
-          public void givenTheFollowingContacts(List<ContactParam> contacts) {
+          public void theFollowingContacts(List<ContactParam> contacts) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -555,7 +555,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | fullName               | email                           |
                *   | <firstName> <lastName> | <firstName>.<lastName>@test.com |
                */
-              givenTheFollowingContacts(
+              theFollowingContacts(
                       List.of(
                               new ContactParam(
                                       "<firstName> <lastName>".replaceAll("<firstName>", firstName).replaceAll("<lastName>", lastName),
@@ -585,7 +585,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UserParam> users) {
+          public void theFollowingUsers(List<UserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -677,7 +677,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | name   | age   |
                *   | <name> | <age> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UserParam(
                                       name,
@@ -706,7 +706,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
-          public void givenTheFollowingUsers(List<UserParam> users) {
+          public void theFollowingUsers(List<UserParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -782,7 +782,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | name   | age   |
                *   | <name> | <age> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UserParam(
                                       null,
@@ -818,7 +818,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
 
           public record UsersParam(String name, String age, String email) {}
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
       }
@@ -879,7 +879,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | name   | age   | email   |
                *   | <name> | <age> | <email> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       name,
@@ -909,7 +909,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
 
           public record UsersParam(String email, String name, String phone, String age) {}
 
-          public void givenTheFollowingUsers(List<UsersParam> users) {
+          public void theFollowingUsers(List<UsersParam> users) {
               Assertions.fail("Step is not yet implemented");
           }
       }
@@ -970,7 +970,7 @@ Ability: ExistingObjectTypeAndScenarioOutlines
                *   | name   | age   |
                *   | <name> | <age> |
                */
-              givenTheFollowingUsers(
+              theFollowingUsers(
                       List.of(
                               new UsersParam(
                                       null,

@@ -20,6 +20,7 @@ Feature: GeneratorOptionsDefaults
       | dataTableParameterType                  | LIST_OF_MAPS  |
       | enableCompositeSteps                    | false         |
       | useQualifiedEnumConstants               | false         |
+      | useStepKeywordInStepMethodName          | false         |
 
     Scenario: No options defined in hierarchy
       Given the following base class:
@@ -67,7 +68,7 @@ Feature: GeneratorOptionsDefaults
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @FeatureFilePath("com/example/TestFeature.feature")
       public class TestFeatureTest extends TestFeature {
-          public void givenUserExists() {
+          public void userExists() {
               Assertions.fail("Step is not yet implemented");
           }
 
@@ -78,7 +79,7 @@ Feature: GeneratorOptionsDefaults
               /*
                * Given user exists
                */
-              givenUserExists();
+              userExists();
           }
       }
       """

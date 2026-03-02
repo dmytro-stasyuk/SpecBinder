@@ -51,15 +51,15 @@ Feature: AddSourceLineBeforeStepCalls
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenResultIsDisplayed() {
+            public void resultIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -71,17 +71,17 @@ Feature: AddSourceLineBeforeStepCalls
                  * Given user exists
                  * (source line - 3)
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user clicks button
                  * (source line - 4)
                  */
-                whenUserClicksButton();
+                userClicksButton();
                 /*
                  * Then result is displayed
                  * (source line - 5)
                  */
-                thenResultIsDisplayed();
+                resultIsDisplayed();
             }
         }
         """
@@ -133,11 +133,11 @@ Feature: AddSourceLineBeforeStepCalls
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -149,12 +149,12 @@ Feature: AddSourceLineBeforeStepCalls
                  * Given user exists
                  * (source line - 3)
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user clicks button
                  * (source line - 4)
                  */
-                whenUserClicksButton();
+                userClicksButton();
             }
         }
         """
@@ -203,19 +203,19 @@ Feature: AddSourceLineBeforeStepCalls
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends MockedAnnotatedTestClass {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUserIsActive() {
+            public void userIsActive() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenResultIsDisplayed() {
+            public void resultIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -227,22 +227,22 @@ Feature: AddSourceLineBeforeStepCalls
                  * Given user exists
                  * (source line - 3)
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * And user is active
                  * (source line - 4)
                  */
-                givenUserIsActive();
+                userIsActive();
                 /*
                  * When user clicks button
                  * (source line - 5)
                  */
-                whenUserClicksButton();
+                userClicksButton();
                 /*
                  * Then result is displayed
                  * (source line - 6)
                  */
-                thenResultIsDisplayed();
+                resultIsDisplayed();
             }
         }
         """
@@ -293,15 +293,15 @@ Feature: AddSourceLineBeforeStepCalls
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void givenUserExists() {
+            public void userExists() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUserClicksButton() {
+            public void userClicksButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenResultIsDisplayed() {
+            public void resultIsDisplayed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -312,15 +312,15 @@ Feature: AddSourceLineBeforeStepCalls
                 /*
                  * Given user exists
                  */
-                givenUserExists();
+                userExists();
                 /*
                  * When user clicks button
                  */
-                whenUserClicksButton();
+                userClicksButton();
                 /*
                  * Then result is displayed
                  */
-                thenResultIsDisplayed();
+                resultIsDisplayed();
             }
         }
         """
@@ -378,7 +378,7 @@ Feature: AddSourceLineBeforeStepCalls
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/CheckoutProcess.feature")
         public class CheckoutProcessTest extends CheckoutProcess {
-            protected void givenUserInitiatesCheckout(Runnable... composite) {
+            protected void userInitiatesCheckout(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -386,23 +386,23 @@ Feature: AddSourceLineBeforeStepCalls
                 }
             }
 
-            public void givenNavigateToCheckoutPage() {
+            public void navigateToCheckoutPage() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenVerifyCartIsNotEmpty() {
+            public void verifyCartIsNotEmpty() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenClickOnProceedButton() {
+            public void clickOnProceedButton() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenPaymentIsProcessed() {
+            public void paymentIsProcessed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenOrderIsConfirmed() {
+            public void orderIsConfirmed() {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -414,21 +414,21 @@ Feature: AddSourceLineBeforeStepCalls
                  * Given user initiates checkout
                  * (source line - 3)
                  */
-                givenUserInitiatesCheckout(() -> {
-                    givenNavigateToCheckoutPage();
-                    givenVerifyCartIsNotEmpty();
-                    givenClickOnProceedButton();
+                userInitiatesCheckout(() -> {
+                    navigateToCheckoutPage();
+                    verifyCartIsNotEmpty();
+                    clickOnProceedButton();
                 });
                 /*
                  * When payment is processed
                  * (source line - 7)
                  */
-                whenPaymentIsProcessed();
+                paymentIsProcessed();
                 /*
                  * Then order is confirmed
                  * (source line - 8)
                  */
-                thenOrderIsConfirmed();
+                orderIsConfirmed();
             }
         }
         """
@@ -485,7 +485,7 @@ Feature: AddSourceLineBeforeStepCalls
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/AccountManagement.feature")
         public class AccountManagementTest extends AccountManagement {
-            protected void givenUser$p1UpdatesAccountDetails(String p1, Consumer<String>... composite) {
+            protected void user$p1UpdatesAccountDetails(String p1, Consumer<String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1));
                 } else {
@@ -493,27 +493,27 @@ Feature: AddSourceLineBeforeStepCalls
                 }
             }
 
-            public void givenLoginAsUser$p1(String p1) {
+            public void loginAsUser$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenNavigateToAccountSettings() {
+            public void navigateToAccountSettings() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenModifyProfileInformation() {
+            public void modifyProfileInformation() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSaveChangesForUser$p1(String p1) {
+            public void saveChangesForUser$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenUpdateIsSubmitted() {
+            public void updateIsSubmitted() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenAccountShouldBeUpdatedFor$p1(String p1) {
+            public void accountShouldBeUpdatedFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -525,22 +525,22 @@ Feature: AddSourceLineBeforeStepCalls
                  * Given user "Alice" updates account details
                  * (source line - 3)
                  */
-                givenUser$p1UpdatesAccountDetails("Alice", (p1) -> {
-                    givenLoginAsUser$p1(p1);
-                    givenNavigateToAccountSettings();
-                    givenModifyProfileInformation();
-                    givenSaveChangesForUser$p1(p1);
+                user$p1UpdatesAccountDetails("Alice", (p1) -> {
+                    loginAsUser$p1(p1);
+                    navigateToAccountSettings();
+                    modifyProfileInformation();
+                    saveChangesForUser$p1(p1);
                 });
                 /*
                  * When update is submitted
                  * (source line - 8)
                  */
-                whenUpdateIsSubmitted();
+                updateIsSubmitted();
                 /*
                  * Then account should be updated for "Alice"
                  * (source line - 9)
                  */
-                thenAccountShouldBeUpdatedFor$p1("Alice");
+                accountShouldBeUpdatedFor$p1("Alice");
             }
         }
         """
@@ -597,7 +597,7 @@ Feature: AddSourceLineBeforeStepCalls
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/InventoryManagement.feature")
         public class InventoryManagementTest extends InventoryManagement {
-            protected void givenWarehouse$p1ReceivesProduct$p2(String p1, String p2,
+            protected void warehouse$p1ReceivesProduct$p2(String p1, String p2,
                     BiConsumer<String, String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1, p2));
@@ -606,27 +606,27 @@ Feature: AddSourceLineBeforeStepCalls
                 }
             }
 
-            public void givenVerifyWarehouse$p1IsOperational(String p1) {
+            public void verifyWarehouse$p1IsOperational(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenCheckProduct$p1ExistsInCatalog(String p1) {
+            public void checkProduct$p1ExistsInCatalog(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenUpdateStockLevelFor$p1In$p2(String p1, String p2) {
+            public void updateStockLevelFor$p1In$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenSendNotificationAbout$p1To$p2(String p1, String p2) {
+            public void sendNotificationAbout$p1To$p2(String p1, String p2) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenStockIsUpdated() {
+            public void stockIsUpdated() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenInventoryShouldReflectChangesFor$p1(String p1) {
+            public void inventoryShouldReflectChangesFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -638,22 +638,22 @@ Feature: AddSourceLineBeforeStepCalls
                  * Given warehouse "WH-01" receives product "Widget"
                  * (source line - 3)
                  */
-                givenWarehouse$p1ReceivesProduct$p2("WH-01", "Widget", (p1, p2) -> {
-                    givenVerifyWarehouse$p1IsOperational(p1);
-                    givenCheckProduct$p1ExistsInCatalog(p2);
-                    givenUpdateStockLevelFor$p1In$p2(p2, p1);
-                    givenSendNotificationAbout$p1To$p2(p2, p1);
+                warehouse$p1ReceivesProduct$p2("WH-01", "Widget", (p1, p2) -> {
+                    verifyWarehouse$p1IsOperational(p1);
+                    checkProduct$p1ExistsInCatalog(p2);
+                    updateStockLevelFor$p1In$p2(p2, p1);
+                    sendNotificationAbout$p1To$p2(p2, p1);
                 });
                 /*
                  * When stock is updated
                  * (source line - 8)
                  */
-                whenStockIsUpdated();
+                stockIsUpdated();
                 /*
                  * Then inventory should reflect changes for "WH-01"
                  * (source line - 9)
                  */
-                thenInventoryShouldReflectChangesFor$p1("WH-01");
+                inventoryShouldReflectChangesFor$p1("WH-01");
             }
         }
         """
@@ -711,7 +711,7 @@ Feature: AddSourceLineBeforeStepCalls
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/MultiStepProcess.feature")
         public class MultiStepProcessTest extends MultiStepProcess {
-            protected void givenSystemIsInitialized(Runnable... composite) {
+            protected void systemIsInitialized(Runnable... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(r -> r.run());
                 } else {
@@ -719,15 +719,15 @@ Feature: AddSourceLineBeforeStepCalls
                 }
             }
 
-            public void givenStartServices() {
+            public void startServices() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void givenLoadConfiguration() {
+            public void loadConfiguration() {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            protected void whenUser$p1PerformsAction(String p1, Consumer<String>... composite) {
+            protected void user$p1PerformsAction(String p1, Consumer<String>... composite) {
                 if (composite.length > 0) {
                     stream(composite).forEach(action -> action.accept(p1));
                 } else {
@@ -735,15 +735,15 @@ Feature: AddSourceLineBeforeStepCalls
                 }
             }
 
-            public void whenAuthenticateUser$p1(String p1) {
+            public void authenticateUser$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void whenExecuteOperationFor$p1(String p1) {
+            public void executeOperationFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
-            public void thenResultIsSuccessfulFor$p1(String p1) {
+            public void resultIsSuccessfulFor$p1(String p1) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -755,23 +755,23 @@ Feature: AddSourceLineBeforeStepCalls
                  * Given system is initialized
                  * (source line - 3)
                  */
-                givenSystemIsInitialized(() -> {
-                    givenStartServices();
-                    givenLoadConfiguration();
+                systemIsInitialized(() -> {
+                    startServices();
+                    loadConfiguration();
                 });
                 /*
                  * When user "Bob" performs action
                  * (source line - 6)
                  */
-                whenUser$p1PerformsAction("Bob", (p1) -> {
-                    whenAuthenticateUser$p1(p1);
-                    whenExecuteOperationFor$p1(p1);
+                user$p1PerformsAction("Bob", (p1) -> {
+                    authenticateUser$p1(p1);
+                    executeOperationFor$p1(p1);
                 });
                 /*
                  * Then result is successful for "Bob"
                  * (source line - 9)
                  */
-                thenResultIsSuccessfulFor$p1("Bob");
+                resultIsSuccessfulFor$p1("Bob");
             }
         }
         """

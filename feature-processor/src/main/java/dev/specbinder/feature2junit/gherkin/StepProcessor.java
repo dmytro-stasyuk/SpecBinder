@@ -242,7 +242,8 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             stepPattern = processWithParameterPattern(stepPattern, scenarioParametersPattern, parameterValues);
         }
 
-        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, step.getLocation().getLine());
+        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, step.getLocation().getLine(),
+                getOptions().isUseStepKeywordInStepMethodName());
 
         // Determine if step has a DataTable or DocString parameter
         boolean hasDataTableOrDocString = step.getDataTable().isPresent() || step.getDocString().isPresent();
@@ -1261,7 +1262,8 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                     parameterValues);
         }
 
-        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, stepLine);
+        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, stepLine,
+                getOptions().isUseStepKeywordInStepMethodName());
 
         // Infer parameter types from values
         List<Class<?>> parameterTypes = new ArrayList<>();
