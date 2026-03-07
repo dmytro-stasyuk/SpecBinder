@@ -15,6 +15,7 @@ import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.utils.*;
 import io.cucumber.messages.types.*;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -181,27 +182,24 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         // Add tag for empty scenarios before @DisplayName
         if (scenarioSteps.isEmpty()) {
-            String tagForEmptyScenarios = options.getTagForScenariosWithNoSteps();
+            String tagForEmptyScenarios = options.getTagForEmptyScenarios();
             if (StringUtils.isNotBlank(tagForEmptyScenarios)) {
                 AnnotationSpec jUnitTagsAnnotation = TagUtils.toJUnitTagsAnnotation(tagForEmptyScenarios);
                 scenarioMethodBuilder.addAnnotation(jUnitTagsAnnotation);
             }
         }
 
-        if (options.isAddSourceLineAnnotations()) {
-            AnnotationSpec locationAnnotation = LocationUtils.toJUnitTagsAnnotation(scenario.getLocation());
-            scenarioMethodBuilder.addAnnotation(locationAnnotation);
-        }
-
         addDisplayNameAnnotation(scenarioMethodBuilder, scenario);
 
         if (scenarioSteps.isEmpty()) {
 
-            if (options.isFailScenariosWithNoSteps()) {
-                /**
-                 * add an empty method that throws an exception
-                 */
-                scenarioMethodBuilder.addStatement("$T.assumeTrue(false, \"Scenario has no steps\")", Assumptions.class);
+            if (!"NONE".equals(options.getEmptyScenarioBehavior())) {
+                if ("SKIP".equals(options.getEmptyScenarioBehavior())) {
+                    scenarioMethodBuilder.addStatement("$T.assumeTrue(false, \"Scenario has no steps\")", Assumptions.class);
+                } else {
+                    // Default to FAIL behavior
+                    scenarioMethodBuilder.addStatement("$T.fail(\"Scenario has no steps\")", Assertions.class);
+                }
             }
 
         } else {
@@ -305,9 +303,16 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                 scenarioName = " " + scenarioName;
             }
         }
+        String displayNameValue;
+        if (options.isAddSourceLineNumbers()) {
+            long line = scenario.getLocation().getLine();
+            displayNameValue = scenarioKeyword + " [" + line + "]:" + scenarioName;
+        } else {
+            displayNameValue = scenarioKeyword + ":" + scenarioName;
+        }
         AnnotationSpec displayNameAnnotation = AnnotationSpec
                 .builder(DisplayName.class)
-                .addMember("value", "\"" + scenarioKeyword + ":" + scenarioName + "\"")
+                .addMember("value", "\"" + displayNameValue + "\"")
                 .build();
         scenarioMethodBuilder.addAnnotation(displayNameAnnotation);
     }

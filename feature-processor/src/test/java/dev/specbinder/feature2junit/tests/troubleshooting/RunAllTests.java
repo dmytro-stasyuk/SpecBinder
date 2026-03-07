@@ -1,7 +1,5 @@
 package dev.specbinder.feature2junit.tests.troubleshooting;
 
-import dev.specbinder.feature2junit.steps.Steps;
-import io.cucumber.java.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;

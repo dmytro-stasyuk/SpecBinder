@@ -1,22 +1,12 @@
 package dev.specbinder.feature2junit.utils;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Utility class useful when working with base class's methods.
@@ -229,6 +219,93 @@ public class ElementMethodUtils {
         }
 
         return (TypeElement) argElement;
+    }
+
+    private static final Set<String> CUCUMBER_STEP_ANNOTATION_TYPES = Set.of(
+            "io.cucumber.java.en.Given",
+            "io.cucumber.java.en.When",
+            "io.cucumber.java.en.Then"
+    );
+
+    /**
+     * Holds information about a Cucumber annotation match entry, including the compiled regex
+     * pattern, the method name, and the original Cucumber expression (if applicable).
+     *
+     * @param pattern the compiled regex pattern for matching step text
+     * @param methodName the name of the annotated method
+     * @param cucumberExpression the original Cucumber expression (null for regex-based entries)
+     */
+    public record CucumberAnnotationEntry(
+            Pattern pattern,
+            String methodName,
+            String cucumberExpression
+    ) {
+        /**
+         * Returns {@code true} if this entry was derived from a Cucumber expression
+         * (e.g. {@code "I have {int} items"}) rather than a raw regex pattern.
+         * @return true if this entry is based on a Cucumber expression, false if it's based on a raw regex
+         */
+        public boolean isCucumberExpression() {
+            return cucumberExpression != null;
+        }
+    }
+
+    /**
+     * Builds a list of Cucumber annotation entries by scanning Cucumber step annotations
+     * ({@code @Given}, {@code @When}, {@code @Then}) on methods in the base class hierarchy.
+     * <p>
+     * Annotation values are handled as follows:
+     * <ul>
+     *     <li>If the value is a Cucumber expression (contains {@code {type}} placeholders),
+     *         it is converted to a regex pattern using {@link CucumberExpressionUtils}</li>
+     *     <li>Otherwise, the value is compiled directly as a Java regex pattern</li>
+     * </ul>
+     *
+     * @param processingEnv the processing environment
+     * @param baseType the base type element to scan
+     * @return a list of annotation entries for step matching
+     */
+    public static List<CucumberAnnotationEntry> getCucumberAnnotationStepEntries(
+            ProcessingEnvironment processingEnv, TypeElement baseType) {
+
+        Elements elementUtils = processingEnv.getElementUtils();
+        List<? extends Element> allMembers = elementUtils.getAllMembers(baseType);
+        List<CucumberAnnotationEntry> entries = new ArrayList<>();
+
+        allMembers.stream()
+                .filter(element ->
+                        element.getKind() == ElementKind.METHOD
+                                && (element.getModifiers().isEmpty() || !element.getModifiers().contains(Modifier.PRIVATE))
+                )
+                .forEach(element -> {
+                    ExecutableElement method = (ExecutableElement) element;
+                    String methodName = method.getSimpleName().toString();
+
+                    for (AnnotationMirror mirror : method.getAnnotationMirrors()) {
+                        String annotationType = mirror.getAnnotationType().toString();
+                        if (!CUCUMBER_STEP_ANNOTATION_TYPES.contains(annotationType)) {
+                            continue;
+                        }
+
+                        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry :
+                                mirror.getElementValues().entrySet()) {
+                            if ("value".equals(entry.getKey().getSimpleName().toString())) {
+                                String annotationValue = (String) entry.getValue().getValue();
+
+                                if (CucumberExpressionUtils.isCucumberExpression(annotationValue)) {
+                                    String regex = CucumberExpressionUtils.toRegex(annotationValue);
+                                    Pattern compiledPattern = Pattern.compile(regex);
+                                    entries.add(new CucumberAnnotationEntry(compiledPattern, methodName, annotationValue));
+                                } else {
+                                    Pattern compiledPattern = Pattern.compile(annotationValue);
+                                    entries.add(new CucumberAnnotationEntry(compiledPattern, methodName, null));
+                                }
+                            }
+                        }
+                    }
+                });
+
+        return entries;
     }
 
 }

@@ -11,7 +11,6 @@ import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
 import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.utils.ElementMethodUtils;
 import dev.specbinder.feature2junit.utils.JavaDocUtils;
-import dev.specbinder.feature2junit.utils.LocationUtils;
 import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.Step;
 import org.apache.commons.lang3.StringUtils;
@@ -83,11 +82,6 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
                 .methodBuilder(backgroundMethodName)
                 .addModifiers(Modifier.PUBLIC);
 
-        if (options.isAddSourceLineAnnotations()) {
-            AnnotationSpec locationAnnotation = LocationUtils.toJUnitTagsAnnotation(background.getLocation());
-            backgroundMethodBuilder.addAnnotation(locationAnnotation);
-        }
-
         String description = background.getDescription();
         if (StringUtils.isNotBlank(description)) {
             description = JavaDocUtils.trimLeadingAndTrailingWhitespace(description);
@@ -129,10 +123,18 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
         String backgroundName = background.getName();
         String displayNameValue;
         if (StringUtils.isBlank(backgroundName)) {
-            displayNameValue = background.getKeyword() + ":";
+            if (options.isAddSourceLineNumbers()) {
+                displayNameValue = background.getKeyword() + " [" + background.getLocation().getLine() + "]:";
+            } else {
+                displayNameValue = background.getKeyword() + ":";
+            }
         } else {
             backgroundName = backgroundName.replaceAll("\"", "\\\\\"");
-            displayNameValue = "Background: " + backgroundName;
+            if (options.isAddSourceLineNumbers()) {
+                displayNameValue = "Background [" + background.getLocation().getLine() + "]: " + backgroundName;
+            } else {
+                displayNameValue = "Background: " + backgroundName;
+            }
         }
         AnnotationSpec displayNameAnnotation = AnnotationSpec
                 .builder(DisplayName.class)

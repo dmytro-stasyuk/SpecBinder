@@ -233,8 +233,8 @@ Feature: ScenarioTags
 
           @Nested
           @Order(1)
-          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @Tag("rule-tag")
+          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @DisplayName("Rule: Processing rules")
           public class Rule_1 {
               @Test

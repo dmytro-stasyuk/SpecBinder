@@ -361,8 +361,8 @@ Feature: GeneratorOptionsInheritance
       """
 
   Rule: Options can be partially overridden, with non-overridden options still inherited from the annotations on ancestor(s)
-    For string-valued options (classSuffixIfConcrete, classSuffixIfAbstract, tagForScenariosWithNoSteps,
-    tagForRulesWithNoScenarios), partial inheritance is supported: if a child annotation leaves a string
+    For string-valued options (classSuffixIfConcrete, classSuffixIfAbstract, tagForEmptyScenarios,
+    tagForEmptyRules), partial inheritance is supported: if a child annotation leaves a string
     option at its annotation-level default value, the parent's non-default value is preserved.
     Boolean options always take the value from the closest annotation in the hierarchy.
 
@@ -522,7 +522,7 @@ Feature: GeneratorOptionsInheritance
 
       @Feature2JUnitOptions(
         classSuffixIfConcrete = "Spec",
-        tagForScenariosWithNoSteps = "pending"
+        tagForEmptyScenarios = "pending"
       )
       public abstract class GrandparentFeature {
       }
@@ -561,7 +561,6 @@ Feature: GeneratorOptionsInheritance
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
-      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -596,7 +595,7 @@ Feature: GeneratorOptionsInheritance
           @Tag("pending")
           @DisplayName("Scenario: Empty test")
           public void scenario_2() {
-              Assumptions.assumeTrue(false, "Scenario has no steps");
+              Assertions.fail("Scenario has no steps");
           }
       }
       """
@@ -622,8 +621,8 @@ Feature: GeneratorOptionsInheritance
       import dev.specbinder.annotations.Feature2JUnitOptions;
 
       @Feature2JUnitOptions(
-        tagForScenariosWithNoSteps = "draft",
-        addSourceLineAnnotations = true
+        tagForEmptyScenarios = "draft",
+        addSourceLineNumbers = true
       )
       public abstract class ParentFeature extends GrandparentFeature {
       }
@@ -638,7 +637,7 @@ Feature: GeneratorOptionsInheritance
       @Feature2JUnit
       @Feature2JUnitOptions(
         classSuffixIfConcrete = "Cases",
-        tagForScenariosWithNoSteps = "addSteps"
+        tagForEmptyScenarios = "addSteps"
       )
       public abstract class TestFeature extends ParentFeature {
       }
@@ -656,11 +655,9 @@ Feature: GeneratorOptionsInheritance
       package com.example;
 
       import dev.specbinder.annotations.output.FeatureFilePath;
-      import dev.specbinder.annotations.output.SourceLine;
       import io.cucumber.java.en.Given;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
-      import org.junit.jupiter.api.Assumptions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -683,11 +680,10 @@ Feature: GeneratorOptionsInheritance
 
           @Test
           @Order(1)
-          @SourceLine(2)
-          @DisplayName("Scenario: Simple test")
+          @DisplayName("Scenario [2]: Simple test")
           public void scenario_1() {
               /*
-               * Given user exists
+               * [3] Given user exists
                */
               userExists();
           }
@@ -695,10 +691,9 @@ Feature: GeneratorOptionsInheritance
           @Test
           @Order(2)
           @Tag("addSteps")
-          @SourceLine(4)
-          @DisplayName("Scenario: Empty test")
+          @DisplayName("Scenario [4]: Empty test")
           public void scenario_2() {
-              Assumptions.assumeTrue(false, "Scenario has no steps");
+              Assertions.fail("Scenario has no steps");
           }
       }
       """

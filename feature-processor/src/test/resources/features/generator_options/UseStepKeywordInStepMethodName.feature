@@ -3,7 +3,7 @@ Feature: UseStepKeywordInStepMethodName
   I want to control whether the Gherkin keyword (Given/When/Then) is included in generated step method names
   So that I can reuse the same step method across different keywords when the step text is identical
 
-  Rule: When useStepKeywordInStepMethodName is true (default), step methods are prefixed with the keyword
+  Rule: When useStepKeywordInStepMethodName is true, step methods are prefixed with the keyword
   - Given user exists → givenUserExists()
   - When user clicks  → whenUserClicks()
   - Then result shown → thenResultShown()

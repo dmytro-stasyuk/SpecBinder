@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>dev.specbinder</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>spec-binder</artifactId>
         <version>0.1.20-SNAPSHOT</version>
     </parent>
     <groupId>dev.specbinder.examples</groupId>
@@ -13,12 +13,19 @@
     <description>Grouping project for examples</description>
     <packaging>pom</packaging>
     <modules>
-        <module>examples-feature-processor</module>
+        <module>getting-started</module>
+        <module>common-use-cases</module>
     </modules>
     <dependencies>
         <dependency>
             <groupId>dev.specbinder</groupId>
             <artifactId>annotations</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.specbinder</groupId>
+            <artifactId>feature-processor</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -32,6 +39,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit.jupiter.platform.suite}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -51,6 +64,14 @@
                 <version>3.1.4</version>
                 <configuration>
                     <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <configuration>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>

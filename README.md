@@ -1,41 +1,90 @@
 # Spec Binder
 
 **Spec Binder** turns natural-language Gherkin specs into **pure JUnit** test code at **compile time**.
-No regex “glue,” no runtime step discovery. Your `.feature` files become first-class Java code that compiles, runs, and fails fast.
+No runtime step discovery, no Cucumber runner. Your `.feature` files become first-class Java code that compiles, runs,
+and fails fast.
 
-> Built around an annotation-processor approach (`feature2junit`) that parses feature files during `javac`, generating JUnit test skeletons where each **Given/When/Then** is converted into a strongly-named Java method call.
+> Built around an annotation-processor approach that parses feature files during `javac`, generating JUnit test
+> skeletons where each **Given/When/Then** is converted into a strongly-named Java method call.
 
 ---
 
 ## Why Spec Binder?
 
-* **Compile-time safety:** Eliminates “undefined step” surprises at runtime—mismatches surface as **compiler errors**.
+### 1. Compile-time safety
 
-* **No regex glue:** Avoids brittle annotation regexes and accidental ambiguous matches.
+Eliminates “undefined step” surprises at runtime — mismatches surface as **compiler errors**. Type-inferred parameters
+mean the compiler catches issues like providing a String where a number is expected, or referencing an enum value that
+doesn't exist — all before tests execute.
 
-* **Plain JUnit 5 (no Cucumber runner):** Generated tests are ordinary JUnit 5 test classes, making execution straightforward in IDEs and CI. Run or debug individual Scenarios/Rules, set breakpoints, and use Find Usages like with any other test.
+### 2. Plain JUnit 5 (no Cucumber runner)
 
-* **Spec-driven automation:** The **text of your Feature** drives generated method names and call sequence. Steps are **per-feature**, not pulled from a global library.
-  * **Unblocked formulation:** You don’t have to hunt for existing steps or bend wording to fit a catalog. Write the most natural Given/When/Then for each Feature; the generator creates feature-scoped step methods, avoiding the tendency to shoehorn newly discovered behaviour into ill-fitting steps.
+Generated tests are ordinary JUnit 5 test classes, making execution straightforward in IDEs and CI. Run or debug
+individual Scenarios and Rules easily, set breakpoints directly inside the generated scenario test methods and use Find
+Usages like with any other test. Stack traces point straight to the failing assertion in your code — no indirection
+through a framework runner.
 
+### 3. Feature-scoped step methods
 
-* **TDD-friendly:** Enables straightforward, **iterative** test‑first development—before any application or even test code exists. Start with an abstract, implementation‑free spec (e.g., only Rule and/or Scenario titles). The generator creates a failing JUnit method for each empty Rule/Scenario, so you immediately have red tests to drive development.
-  * **Iterate:** list Rules → add Scenario titles under the first Rule → pick one Scenario and add concrete steps in the Gherkin feature (still red; the generator turns them into failing step methods in the test) → implement those step methods → then implement just enough application code to make it pass (green) → repeat for the next Scenario. When all Scenarios under a Rule are green, move on to the next Rule.
-  * **Keep discovering:** As implementation reveals new cases, jot them down as additional `Rule` or `Scenario` titles; they immediately appear as failing tests, ready for red→green.
+Each feature’s step methods are scoped to its own class hierarchy through standard Java inheritance and method
+overriding — no global step catalog, no classpath scanning. This provides isolation: you focus on a set of step methods
+for one feature (or a small group of features) without worrying about impacting other features elsewhere — all supported
+through standard Java language features.
+
+### 4. Simple state management
+
+Sharing state between steps is just instance fields on your test class — no DI framework (PicoContainer, Spring, Guice)
+required. No “scenario context” god objects that grow without bound. Standard Java patterns apply because steps are
+regular methods on a regular class.
+
+### 5. Type-safe data tables
+
+DataTable rows are automatically mapped to generated Java record-like classes with type-inferred fields — no manual
+`Map<String, String>` parsing, no custom converters. Column headers become strongly-typed accessors, so you work with
+`item.name()` and `item.quantity()` instead of `row.get("name")`. This eliminates the repetitive boilerplate of mapping
+string-based table data to domain objects, while the compiler catches mismatched columns or wrong types before tests
+ever run.
+
+### 6. TDD-friendly
+
+Enables straightforward, **iterative** test‑first development—before any application or even test code exists. Start
+with an abstract, implementation‑free spec (e.g., only Rule and/or Scenario titles). The generator creates a failing
+JUnit method for each empty Rule/Scenario, so you immediately have red tests to drive development.
+
+* **Iterate:** list Rules → add Scenario titles under the first Rule → pick one Scenario and add concrete steps in the
+  Gherkin feature (still red; the generator turns them into failing step methods in the test) → implement those step
+  methods → then implement just enough application code to make it pass (green) → repeat for the next Scenario. When all
+  Scenarios under a Rule are green, move on to the next Rule.
+* **Keep discovering:** As implementation reveals new cases, jot them down as additional `Rule` or `Scenario` titles;
+  they immediately appear as failing tests, ready for red→green.
 
 ---
 
 ## How it works (at a glance)
 
-1. Create an **abstract marker class** annotated with `@Feature2JUnit("relative/path/to.feature")` — this points the annotation processor at the feature.
-2. During compilation, `feature2junit` parses the feature and generates:
+1. Create a **marker class** annotated with `@Feature2JUnit("relative/path/to.feature")` — this points the annotation
+   processor at the feature. The path is optional: a bare `@Feature2JUnit` (no value) uses **convention-based discovery**, processing all `.feature` files found in the same package as the annotated class.
+2. During compilation, the annotation processor parses the feature and generates:
 
-   * An **abstract JUnit test class** (one per feature).
-   * For each Scenario, a `@Test` method that calls **per-step methods** derived from step text.
-   * Parts of step's text that are wrapped in double quotes become step method arguments. [Doc Strings](https://cucumber.io/docs/gherkin/reference/#doc-strings) and [Data Tables](https://cucumber.io/docs/gherkin/reference/#data-tables) are also supported. 
-   * Gherkin `Rule` elements are generated as nested test classes, and `Rule` and `Scenario` titles populate JUnit's `@DisplayName` annotations.
-   * Each step method is generated as **abstract** (no body).
-3. You create a subclass extending the generated abstract test class and implement the abstract step methods.
+    * A **JUnit test class** (one per feature).
+    * For each Scenario, a `@Test` method that calls **per-step methods** derived from step text.
+    * Parts of step's text that are wrapped in double quotes become step method
+      arguments. [Doc Strings](https://cucumber.io/docs/gherkin/reference/#doc-strings)
+      and [Data Tables](https://cucumber.io/docs/gherkin/reference/#data-tables) are also supported.
+    * Gherkin `Rule` elements are generated as nested test classes, and `Rule` and `Scenario` titles populate JUnit's
+      `@DisplayName` annotations.
+
+   The generated class operates in one of two modes:
+
+   **Concrete mode (default):**
+    * The generated class is **concrete** and extends the marker class.
+    * Each step method contains an `Assertions.fail("Step is not yet implemented")` stub, so you immediately know what needs implementing.
+    * You implement the step methods **in the marker class**. On the next build, the generator detects these methods in the parent class and **stops generating stubs** for them — the generated test class simply inherits and calls your implementations.
+
+   **Abstract mode** (`@Feature2JUnitOptions(shouldBeAbstract = true)`):
+    * The generated class is **abstract** with abstract step methods.
+    * You create a **concrete subclass** extending the generated test class and override the step methods with real
+      implementations.
 
 ---
 
@@ -74,25 +123,19 @@ public abstract class CartFeature {
 }
 ```
 
-2. **Build** the project. The generator writes JUnit sources under your build's generated-sources dir.
-3. **Implement the step methods:**
+3. **Compile** the marker class. The generator writes JUnit sources under your build's generated-sources dir.
 
-* First compile: the generator produces an **abstract** test class; each step method is **abstract** (no body).
-
-* You create a subclass and implement the step methods.
-
-* Rebuild and run; the subclass is executed by JUnit.
-
-<details>
- 
-<summary>Generated class:</summary>
+**Generated class:**
 
 ```java
 package org.mycompany.app;
 
 import dev.specbinder.annotations.output.FeatureFilePath;
+
 import java.lang.String;
 import javax.annotation.processing.Generated;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -103,24 +146,34 @@ import org.junit.jupiter.api.TestClassOrder;
 import org.junit.jupiter.api.TestMethodOrder;
 
 /**
- * To implement tests in this generated class, extend it and implement all abstract methods.
+ * Feature: online shopping cart
  */
 @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+@DisplayName("cart")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @FeatureFilePath("specs/cart.feature")
-public abstract class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: online shopping cart
-         */
+public class CartFeatureTest extends CartFeature {
+
+    public void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, Integer p2, Double p3) {
+        Assertions.fail("Step is not yet implemented");
     }
 
-    public abstract void givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, String p2, String p3);
+    public void iChangeTheQuantityTo$p1(Integer p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void whenIChangeTheQuantityTo$p1(String p1);
+    public void myCartSubtotalIs$p1(Double p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void thenMyCartSubtotalIs$p1(String p1);
+    public void iViewTheCart() {
+        Assertions.fail("Step is not yet implemented");
+    }
+
+    public void iSeeThe$p1Banner(String p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
     @Test
     @Order(1)
@@ -129,22 +182,16 @@ public abstract class CartFeatureScenarios extends CartFeature {
         /**
          * Given my cart contains "Wireless Headphones" with quantity "1" and unit price "60.00"
          */
-        givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3("Wireless Headphones", "1", "60.00");
+        myCartContains$p1WithQuantity$p2AndUnitPrice$p3("Wireless Headphones", 1, 60.00);
         /**
          * When I change the quantity to "2"
          */
-        whenIChangeTheQuantityTo$p1("2");
+        iChangeTheQuantityTo$p1(2);
         /**
          * Then my cart subtotal is "120.00"
          */
-        thenMyCartSubtotalIs$p1("120.00");
+        myCartSubtotalIs$p1(120.00);
     }
-
-    public abstract void givenMyCartSubtotalIs$p1(String p1);
-
-    public abstract void whenIViewTheCart();
-
-    public abstract void thenISeeThe$p1Banner(String p1);
 
     @Nested
     @Order(1)
@@ -158,70 +205,93 @@ public abstract class CartFeatureScenarios extends CartFeature {
             /**
              * Given my cart subtotal is "55.00"
              */
-            givenMyCartSubtotalIs$p1("55.00");
+            myCartSubtotalIs$p1(55.00);
             /**
              * When I view the cart
              */
-            whenIViewTheCart();
+            iViewTheCart();
             /**
              * Then I see the "Free shipping" banner
              */
-            thenISeeThe$p1Banner("Free shipping");
+            iSeeThe$p1Banner("Free shipping");
         }
     }
 }
 ```
 
-</details>
+4. **Implement the step methods** and recompile — see [How it works](#how-it-works-at-a-glance) above for details on concrete vs abstract mode.
 
-<details>
-
-<summary>Your implementation:</summary>
+**Your implementation (in the marker class):**
 
 ```java
 package org.mycompany.app;
 
-public class CartFeatureTest extends CartFeatureScenarios {
+import dev.specbinder.feature2junit.Feature2JUnit;
 
-    @Override
-    public void givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, String p2, String p3) {
-       /* real implementation here */
-    }
+@Feature2JUnit("specs/cart.feature")
+public abstract class CartFeature {
 
-    @Override
-    public void whenIChangeTheQuantityTo$p1(String p1) {
-       /* real implementation here */
-    }
-
-    @Override
-    public void thenMyCartSubtotalIs$p1(String p1) {
-       /* real implementation here */
-    }
-
-    @Override
-    public void givenMyCartSubtotalIs$p1(String p1) {
+    public void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String itemName, Integer quantity, Double unitPrice) {
         /* real implementation here */
     }
 
-    @Override
-    public void whenIViewTheCart() {
+    public void iChangeTheQuantityTo$p1(Integer newQuantity) {
         /* real implementation here */
     }
 
-    @Override
-    public void thenISeeThe$p1Banner(String p1) {
+    public void myCartSubtotalIs$p1(Double expectedSubtotal) {
+        /* real implementation here */
+    }
+
+    public void iViewTheCart() {
+        /* real implementation here */
+    }
+
+    public void iSeeThe$p1Banner(String bannerText) {
         /* real implementation here */
     }
 }
 ```
 
-</details>
+After rebuilding, the generator sees these methods in `CartFeature` and no longer emits stubs for them in
+`CartFeatureTest`. The generated test class inherits and calls your implementations directly.
 
 ---
 
-## Details of mapping Gherkin → Jnit  
+## Examples
 
-All elements of [Gherkin](https://cucumber.io/docs/gherkin/reference/) are supported, please refer to below sections for details
+The [`examples/`](examples/) directory contains ready-to-run Maven modules organized in two tracks:
+
+<table>
+<tr><td colspan="2"><code>examples/</code></td></tr>
+<tr><td colspan="2">├── <code>getting-started/</code> — <em>Fundamentals, one concept at a time</em></td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-1/README.md">Hello World</a></td><td>Simplest possible feature</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-2/README.md">Step Parameters</a></td><td>Type inference (String, Integer, Double, Boolean, Character)</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-3/README.md">Concrete Mode E2E</a></td><td>Implementing step methods with real logic</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-4/README.md">Rules</a></td><td>Nested scenarios with Rule blocks</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-5/README.md">Background</a></td><td>Feature-level and rule-level backgrounds</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-6/README.md">Scenario Outline</a></td><td>Parameterized tests with Examples tables</td></tr>
+<tr><td>│ &ensp; └── <a href="examples/getting-started/example-7/README.md">Tags</a></td><td>@Tag annotations and test filtering</td></tr>
+<tr><td>│</td><td></td></tr>
+<tr><td colspan="2">└── <code>common-use-cases/</code> — <em>Real-world patterns and advanced features</em></td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-1/README.md">Data Tables</a></td><td>LIST_OF_OBJECT_PARAMS (default mode)</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-2/README.md">Cucumber DataTable</a></td><td>CUCUMBER_DATA_TABLE integration</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-3/README.md">TDD Workflow</a></td><td>Iterative red-green development with @new tags</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-4/README.md">Abstract Mode</a></td><td>Compile-time step enforcement</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-5/README.md">DocStrings</a></td><td>Multi-line input (JSON, plain text)</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-6/README.md">Convention Discovery</a></td><td>Co-located .feature files, bare @Feature2JUnit</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-7/README.md">Glob Patterns</a></td><td>Multiple features from a single marker class</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-8/README.md">Type Refinement</a></td><td>Enum refinement of generated Param classes</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-9/README.md">Config Inheritance</a></td><td>@Feature2JUnitOptions inheritance and override</td></tr>
+<tr><td>&ensp; &ensp; └── <a href="examples/common-use-cases/example-10/README.md">Cucumber Annotations</a></td><td>@Given/@When/@Then and annotation-based matching</td></tr>
+</table>
+
+---
+
+## Details of mapping Gherkin → JUnit
+
+All elements of [Gherkin](https://cucumber.io/docs/gherkin/reference/) are supported, please refer to below sections for
+details
 
 ### Primary keywords:
 
@@ -229,7 +299,9 @@ All elements of [Gherkin](https://cucumber.io/docs/gherkin/reference/) are suppo
 
 <summary>Feature</summary>
 
-+ The feature’s keyword, title, and description lines appear in a block comment at the top of the generated class.
++ The feature’s keyword, title, and description lines appear as a **class-level JavaDoc** comment on the generated
+  class. A `@DisplayName` annotation is also added, using the **feature file name** (without `.feature` extension) — not
+  the Feature title.
 
 <table>
   <tr>
@@ -246,29 +318,28 @@ Feature: Shopping cart totals and shipping
   I want the cart to keep item totals accurate and show free shipping when eligible
   So that I can check out with confidence and avoid extra costs
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
- public class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         *   As a shopper
-         *   I want the cart to keep item totals accurate and show free shipping when eligible
-         *   So that I can check out with confidence and avoid extra costs
-         */
-    }
+/**
+ * Feature: Shopping cart totals and shipping
+ *   As a shopper
+ *   I want the cart to keep item totals accurate and show free shipping when eligible
+ *   So that I can check out with confidence and avoid extra costs
+ */
+public class CartFeatureTest extends CartFeature {
 }
 ```
- 
+
 </code></pre></td>
 </tr>
 </table>
- 
+
 </details>
 
 <details>
@@ -277,11 +348,11 @@ Feature: Shopping cart totals and shipping
 
 + Rule sections are mapped to nested test classes inside the generated test class.
 
-+ Rule's keyword & title are put into 
-the value of the @DisplayName JUnit annotation.
++ Rule's keyword & title are put into
+  the value of the @DisplayName JUnit annotation.
 
 + If a rule additionally has description lines then those are put into
-a JavaDoc comment above the nested class.
+  a JavaDoc comment above the nested class.
 
 <table>
   <tr>
@@ -299,22 +370,22 @@ Feature: Shopping cart totals and shipping
   Rule: Free shipping applies when subtotal is at least €50
     Orders at or above €50 show a "Free shipping" banner; lower subtotals show the shipping cost.
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
-public class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
-    }
+/**
+ * Feature: Shopping cart totals and shipping
+ */
+public class CartFeatureTest extends CartFeature {
 
     @Nested
     @Order(1)
+    @Tag("new")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("Rule: Cannot checkout with an empty cart")
     public class Rule_1 {
@@ -329,6 +400,7 @@ public class CartFeatureScenarios extends CartFeature {
      */
     @Nested
     @Order(2)
+    @Tag("new")
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("Rule: Free shipping applies when subtotal is at least €50")
     public class Rule_2 {
@@ -339,11 +411,11 @@ public class CartFeatureScenarios extends CartFeature {
     }
 }
 ```
- 
+
 </code></pre></td>
 </tr>
 </table>
- 
+
 </details>
 
 <details>
@@ -373,25 +445,25 @@ Feature: Shopping cart totals and shipping
   Rule: Free shipping applies when subtotal is at least €50
 
     Scenario: Show free-shipping banner when threshold is met
-      It covers the visual banner only; actual shipping cost calculation is out of scope.
+    It covers the visual banner only; actual shipping cost calculation is out of scope.
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
-public class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
-    }
+/**
+ * Feature: Shopping cart totals and shipping
+ */
+public class CartFeatureTest extends CartFeature {
 
     @Test
     @Order(1)
+    @Tag("new")
     @DisplayName("Scenario: Update quantity updates subtotal")
     public void scenario_1() {
         Assertions.fail("Scenario has no steps");
@@ -407,6 +479,7 @@ public class CartFeatureScenarios extends CartFeature {
          */
         @Test
         @Order(1)
+        @Tag("new")
         @DisplayName("Scenario: Show free-shipping banner when threshold is met")
         public void scenario_1() {
             Assertions.fail("Scenario has no steps");
@@ -415,47 +488,53 @@ public class CartFeatureScenarios extends CartFeature {
 }
 
 ```
- 
+
 </code></pre></td>
 </tr>
 </table>
- 
+
 </details>
 
 <details>
 
 <summary>Given, When, Then, And & But steps</summary>
 
-#### Step keywords → method prefixes
+#### Step keywords → method names
 
-+ Given … → method starts with given…
++ By default, the step keyword (Given/When/Then/And/But) is **not included** in the method name. Only the step text
+  drives the name.
 
-+ When … → when…
++ This means identical step text under different keywords (e.g., `Given my cart subtotal is "55.00"` and
+  `Then my cart subtotal is "120.00"`) produces a **single shared method**.
 
-+ Then … → then…
++ And … / But … → inherit the previous step’s keyword for annotation purposes, but the keyword is still omitted from the
+  method name.
 
-+ And … / But … → inherit the previous step’s keyword (e.g., after a When, And becomes when…)
++ To include keywords as method prefixes (e.g., `givenMyCart…`, `whenI…`, `thenMyCart…`), set
+  `@Feature2JUnitOptions(useStepKeywordInStepMethodName = true)`.
 
 #### Method name derivation (from step text)
 
-+ Take the step’s **plain text** (minus any quoted arguments), split into words, and **CamelCase** them.
++ Take the step’s **plain text** (minus the keyword and any quoted arguments), split into words, and **CamelCase** them.
 
 + **Invalid Java identifier** characters (at the start or in the middle) are **removed**.
 
-+ The keyword prefix (`given/when/then`) is prepended.
++ Where the step had quoted arguments, the method name includes **positional placeholders** to indicate argument slots (
+  e.g., `$p1`, `$p2`, …).
 
-+ Where the step had quoted arguments, the method name includes **positional placeholders** to indicate argument slots (e.g., `$p1`, `$p2`, …).
-
-> Resulting shape: 
-`given` + `CamelCasedWordsAroundArgsWithPlaceholders`
-> 
-> e.g., `givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3(...)` 
+> Resulting shape:
+`camelCasedWordsAroundArgsWithPlaceholders`
+>
+> e.g., `myCartContains$p1WithQuantity$p2AndUnitPrice$p3(...)`
 
 #### Quoted arguments → method parameters & call sites
 
-+ Every "**&lt;value&gt;**" in the step becomes a String parameter (current support is String only).
++ Every "**&lt;value&gt;**" in the step becomes a method parameter. The generator infers the type from the quoted value:
+  `"true"`/`"false"` → `Boolean`, integer literals → `Integer` (or `Long` if too large), decimal literals → `Double`,
+  single characters → `Character`, everything else → `String`.
 
-+ The quoted values are removed from the method name and passed as arguments from the generated scenario method in left-to-right order.
++ The quoted values are removed from the method name and passed as arguments from the generated scenario method in
+  left-to-right order.
 
 + Parameter names in the generated code are generic (e.g., p1, p2, …).
 
@@ -472,31 +551,43 @@ Given my cart contains "Wireless Headphones" with quantity "1" and unit price "6
 When I change the quantity to "2"
 Then my cart subtotal is "120.00"
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
-// Generated step methods (signatures)
-void givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, String p2, String p3);
-void whenIChangeTheQuantityTo$p1(String p1);
-void thenMyCartSubtotalIs$p1(String p1);
+// Generated step methods (with failing stubs)
+void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, Integer p2, Double p3) {
+    Assertions.fail("Step is not yet implemented");
+}
+
+void iChangeTheQuantityTo$p1(Integer p1) {
+    Assertions.fail("Step is not yet implemented");
+}
+
+void myCartSubtotalIs$p1(Double p1) {
+    Assertions.fail("Step is not yet implemented");
+}
 
 // Generated scenario method (calls)
-givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3("Wireless Headphones", "1", "60.00");
-whenIChangeTheQuantityTo$p1("2");
-thenMyCartSubtotalIs$p1("120.00");
+myCartContains$p1WithQuantity$p2AndUnitPrice$p3("Wireless Headphones", 1, 60.00);
+
+iChangeTheQuantityTo$p1(2);
+
+myCartSubtotalIs$p1(120.00);
 
 ```
- 
+
 </code></pre></td>
 </tr>
 </table>
 
-+ The original textual representation of each of the step methods is placed into a block java comment above each method call to aid readability
++ The original textual representation of each of the step methods is placed into a block java comment above each method
+  call to aid readability
 
 ##### Complete example:
 
@@ -523,27 +614,40 @@ Feature: Shopping cart totals and shipping
       When I view the cart
       Then I see the "Free shipping" banner
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
-public abstract class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
+/**
+ * Feature: Shopping cart totals and shipping
+ */
+public class CartFeatureTest extends CartFeature {
+
+    public void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, Integer p2,
+                                                                Double p3) {
+        Assertions.fail("Step is not yet implemented");
     }
 
-    public abstract void givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, String p2,
-            String p3);
+    public void iChangeTheQuantityTo$p1(Integer p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void whenIChangeTheQuantityTo$p1(String p1);
+    public void myCartSubtotalIs$p1(Double p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void thenMyCartSubtotalIs$p1(String p1);
+    public void iViewTheCart() {
+        Assertions.fail("Step is not yet implemented");
+    }
+
+    public void iSeeThe$p1Banner(String p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
     @Test
     @Order(1)
@@ -552,22 +656,16 @@ public abstract class CartFeatureScenarios extends CartFeature {
         /**
          * Given my cart contains "Wireless Headphones" with quantity "1" and unit price "60.00"
          */
-        givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3("Wireless Headphones", "1", "60.00");
+        myCartContains$p1WithQuantity$p2AndUnitPrice$p3("Wireless Headphones", 1, 60.00);
         /**
          * When I change the quantity to "2"
          */
-        whenIChangeTheQuantityTo$p1("2");
+        iChangeTheQuantityTo$p1(2);
         /**
          * Then my cart subtotal is "120.00"
          */
-        thenMyCartSubtotalIs$p1("120.00");
+        myCartSubtotalIs$p1(120.00);
     }
-
-    public abstract void givenMyCartSubtotalIs$p1(String p1);
-
-    public abstract void whenIViewTheCart();
-
-    public abstract void thenISeeThe$p1Banner(String p1);
 
     @Nested
     @Order(1)
@@ -581,29 +679,24 @@ public abstract class CartFeatureScenarios extends CartFeature {
             /**
              * Given my cart subtotal is "55.00"
              */
-            givenMyCartSubtotalIs$p1("55.00");
+            myCartSubtotalIs$p1(55.00);
             /**
              * When I view the cart
              */
-            whenIViewTheCart();
+            iViewTheCart();
             /**
              * Then I see the "Free shipping" banner
              */
-            thenISeeThe$p1Banner("Free shipping");
+            iSeeThe$p1Banner("Free shipping");
         }
     }
 }
 
 ```
- 
+
 </code></pre></td>
 </tr>
 </table>
-
-#### Limited support for using '*' as step keyword
-
-+ Currently if you use the '*' character in place of Given/When/Then/And/But step keywords - the generation will work in some cases and in
-other cases it may fail - so this type of usage is discoraged. 
 
 #### DocStrings & Data Tables (if present)
 
@@ -612,7 +705,7 @@ other cases it may fail - so this type of usage is discoraged.
 + They’re passed along to the step method (appended after quoted String params).
 
 + See below sections for examples of how these are passed down to step method calls.
- 
+
 </details>
 
 <details>
@@ -621,21 +714,28 @@ other cases it may fail - so this type of usage is discoraged.
 
 #### Rules
 
-* **Lifecycle hook:** Every `Background` becomes a `@BeforeEach` method that runs **before each Scenario** (and Example row).
+* **Lifecycle hook:** Every `Background` becomes a `@BeforeEach` method that runs **before each Scenario** (and Example
+  row).
 
-* **Feature-level Background:** A `Background` declared **before any** `Rule` **or** `Scenario` is generated as a member method of the outer test class.
+* **Feature-level Background:** A `Background` declared **before any** `Rule` **or** `Scenario` is generated as a member
+  method of the outer test class.
 
-* **Rule-level Background:** A `Background` declared as the **first element inside a** `Rule` is generated as a member method of that `@Nested` rule class.
+* **Rule-level Background:** A `Background` declared as the **first element inside a** `Rule` is generated as a member
+  method of that `@Nested` rule class.
 
-* **Display name:** If the `Background` has a **title** (text on the same line as `Background:`), that title is used in a `@DisplayName` on the generated `@BeforeEach` method.
+* **Display name:** If the `Background` has a **title** (text on the same line as `Background:`), that title is used in
+  a `@DisplayName` on the generated `@BeforeEach` method.
 
-* **Description lines:** If the `Background` has description lines under it, they are emitted as a **JavaDoc comment** above the generated `@BeforeEach` method.
+* **Description lines:** If the `Background` has description lines under it, they are emitted as a **JavaDoc comment**
+  above the generated `@BeforeEach` method.
 
-* **Steps inside Background:** The body of the `@BeforeEach` method **calls the generated step methods** in the same order, using the same string-argument extraction rules as normal steps (text in quotes → `String` parameters).
+* **Steps inside Background:** The body of the `@BeforeEach` method **calls the generated step methods** in the same
+  order, using the same argument extraction and type inference rules as normal steps.
 
 #### Order of execution (Feature + Rule)
 
-If both a **feature-level** and a **rule-level** `Background` exist, JUnit 5 runs the outer class’s `@BeforeEach` **first**, then the nested rule class’s `@BeforeEach`, then the scenario’s test method.
+If both a **feature-level** and a **rule-level** `Background` exist, JUnit 5 runs the outer class’s `@BeforeEach` *
+*first**, then the nested rule class’s `@BeforeEach`, then the scenario’s test method.
 Order: **Feature** `@BeforeEach` → **Rule** `@BeforeEach` → **Scenario** `@Test`.
 
 > Notes:
@@ -659,31 +759,36 @@ Order: **Feature** `@BeforeEach` → **Rule** `@BeforeEach` → **Scenario** `@T
 Feature: Shopping cart totals and shipping
 
   Background: Start with a clean cart
-    Ensures cart and session are reset before each test.
+  Ensures cart and session are reset before each test.
     Given I am a signed-in shopper "alice@example.com"
     And my cart is empty
     And the currency is "EUR"
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
-public abstract class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
+/**
+ * Feature: Shopping cart totals and shipping
+ */
+public class CartFeatureTest extends CartFeature {
+
+    public void iAmASignedinShopper$p1(String p1) {
+        Assertions.fail("Step is not yet implemented");
     }
 
-    public abstract void givenIAmASignedinShopper$p1(String p1);
+    public void myCartIsEmpty() {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void givenMyCartIsEmpty();
-
-    public abstract void givenTheCurrencyIs$p1(String p1);
+    public void theCurrencyIs$p1(String p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
     /**
      * Ensures cart and session are reset before each test.
@@ -694,20 +799,20 @@ public abstract class CartFeatureScenarios extends CartFeature {
         /**
          * Given I am a signed-in shopper "alice@example.com"
          */
-        givenIAmASignedinShopper$p1("alice@example.com");
+        iAmASignedinShopper$p1("alice@example.com");
         /**
          * And my cart is empty
          */
-        givenMyCartIsEmpty();
+        myCartIsEmpty();
         /**
          * And the currency is "EUR"
          */
-        givenTheCurrencyIs$p1("EUR");
+        theCurrencyIs$p1("EUR");
     }
 }
 
 ```
- 
+
 </code></pre></td>
 </tr>
 </table>
@@ -727,49 +832,52 @@ Feature: Shopping cart totals and shipping
 
   Rule: Free shipping applies when subtotal is at least €50
 
-   Background:
-     Sets up a cart close to the free-shipping threshold.
-     Given my cart subtotal is "45.00"
+    Background:
+    Sets up a cart close to the free-shipping threshold.
+      Given my cart subtotal is "45.00"
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
-public abstract class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
-    }
+/**
+ * Feature: Shopping cart totals and shipping
+ */
+public class CartFeatureTest extends CartFeature {
 
-    public abstract void givenMyCartSubtotalIs$p1(String p1);
+    public void myCartSubtotalIs$p1(Double p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
     @Nested
     @Order(1)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     @DisplayName("Rule: Free shipping applies when subtotal is at least €50")
     public class Rule_1 {
+        /**
+         * Sets up a cart close to the free-shipping threshold.
+         */
         @BeforeEach
-        @DisplayName("Background: sets up a cart close to the free-shipping threshold.")
+        @DisplayName("Background:")
         public void ruleBackground(TestInfo testInfo) {
             /**
              * Given my cart subtotal is "45.00"
              */
-            givenMyCartSubtotalIs$p1("45.00");
+            myCartSubtotalIs$p1(45.00);
         }
     }
 }
 
 ```
- 
+
 </code></pre></td>
 </tr>
 </table>
-
 
 #### 3) Both Backgrounds + a Scenario under the Rule (full flow)
 
@@ -798,28 +906,32 @@ Feature: Shopping cart totals and shipping
       When I view the cart
       Then I see the "Free shipping" banner
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
+/**
+ * Feature: Shopping cart totals and shipping
+ */
 @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+@DisplayName("cart")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @FeatureFilePath("specs/cart.feature")
-public abstract class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
+public class CartFeatureTest extends CartFeature {
+
+    public void iAmASignedinShopper$p1(String p1) {
+        Assertions.fail("Step is not yet implemented");
     }
 
-    public abstract void givenIAmASignedinShopper$p1(String p1);
-
-    public abstract void givenMyCartIsEmpty();
+    public void myCartIsEmpty() {
+        Assertions.fail("Step is not yet implemented");
+    }
 
     @BeforeEach
     @DisplayName("Background: Start with a clean cart")
@@ -827,20 +939,28 @@ public abstract class CartFeatureScenarios extends CartFeature {
         /**
          * Given I am a signed-in shopper "alice@example.com"
          */
-        givenIAmASignedinShopper$p1("alice@example.com");
+        iAmASignedinShopper$p1("alice@example.com");
         /**
          * And my cart is empty
          */
-        givenMyCartIsEmpty();
+        myCartIsEmpty();
     }
 
-    public abstract void givenTheCurrencyIs$p1(String p1);
+    public void theCurrencyIs$p1(String p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void givenMyCartSubtotalIs$p1(String p1);
+    public void myCartSubtotalIs$p1(Double p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void whenIViewTheCart();
+    public void iViewTheCart() {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void thenISeeThe$p1Banner(String p1);
+    public void iSeeThe$p1Banner(String p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
     @Nested
     @Order(1)
@@ -848,16 +968,16 @@ public abstract class CartFeatureScenarios extends CartFeature {
     @DisplayName("Rule: Free shipping applies when subtotal is at least €50")
     public class Rule_1 {
         @BeforeEach
-        @DisplayName("Background: ")
+        @DisplayName("Background:")
         public void ruleBackground(TestInfo testInfo) {
             /**
              * Given the currency is "EUR"
              */
-            givenTheCurrencyIs$p1("EUR");
+            theCurrencyIs$p1("EUR");
             /**
              * And my cart subtotal is "55.00"
              */
-            givenMyCartSubtotalIs$p1("55.00");
+            myCartSubtotalIs$p1(55.00);
         }
 
         @Test
@@ -867,11 +987,11 @@ public abstract class CartFeatureScenarios extends CartFeature {
             /**
              * When I view the cart
              */
-            whenIViewTheCart();
+            iViewTheCart();
             /**
              * Then I see the "Free shipping" banner
              */
-            thenISeeThe$p1Banner("Free shipping");
+            iSeeThe$p1Banner("Free shipping");
         }
     }
 }
@@ -887,7 +1007,7 @@ public abstract class CartFeatureScenarios extends CartFeature {
 1. `featureBackground()` (feature-level `@BeforeEach`)
 2. `ruleBackground()` (rule-level `@BeforeEach`)
 3. `scenario_1()` (`@Test`)
- 
+
 </details>
 
 <details>
@@ -902,18 +1022,19 @@ Its body is the *template* of the outline; the concrete values come from the `Ex
 #### Generated example:
 
 ```java
+
 @ParameterizedTest(name = "Example {index}: [{arguments}]")
 @CsvSource(
-    useHeadersInDisplayName = true,
-    delimiter = '|',
-    textBlock = """
-            name                | startQty | price | newQty | expectedSubtotal
-            Wireless Headphones | 1        | 60.00 | 2      | 120.00
-            Coffee Beans 1kg    | 2        | 15.50 | 3      | 46.50
-            """
+        useHeadersInDisplayName = true,
+        delimiter = '|',
+        textBlock = """
+                name                | startQty | price | newQty | expectedSubtotal
+                Wireless Headphones | 1        | 60.00 | 2      | 120.00
+                Coffee Beans 1kg    | 2        | 15.50 | 3      | 46.50
+                """
 )
-@DisplayName("Scenario: Subtotal updates when quantity changes")
-public void scenario_1(String name, String startQty, String price, String newQty, String expectedSubtotal) { ... }
+@DisplayName("Scenario Outline: Subtotal updates when quantity changes")
+public void scenario_1(String name, Integer startQty, Double price, Integer newQty, Double expectedSubtotal) { ...}
 ```
 
 #### 2) `Examples` table → `@CsvSource(textBlock = …)`
@@ -922,25 +1043,27 @@ public void scenario_1(String name, String startQty, String price, String newQty
 
 * The **column order** in the table becomes the **parameter order** in the test method.
 
-* The **header row** supplies the **parameter names** (`name`, `startQty`, `price`, `newQty`, `expectedSubtotal`) after being sanitized into valid Java identifiers (spaces/punctuation removed, etc.).
+* The **header row** supplies the **parameter names** (`name`, `startQty`, `price`, `newQty`, `expectedSubtotal`) after
+  being sanitized into valid Java identifiers (spaces/punctuation removed, etc.).
 
 * The **cell delimiter** mirrors the table separator (`|`), specified via `delimiter = '|'`.
 
 * The display name pattern `name = "Example {index}: [{arguments}]"` makes IDE/CI output like:
-  `Example 1: [12, 5, 7]`, `Example 2: [20, 5, 15]`.
+  `Example 1: [Wireless Headphones, 1, 60.00, 2, 120.00]`, `Example 2: [Coffee Beans 1kg, 2, 15.50, 3, 46.50]`.
 
 #### 3) Placeholders `<…>` in steps → argument variables
 
-* Each placeholder in the outline text (e.g., `<name>`, `<startQty>`, `<price>`, `<newQty>`, `<expectedSubtotal>`) becomes a **method parameter** on the parameterized test.
+* Each placeholder in the outline text (e.g., `<name>`, `<startQty>`, `<price>`, `<newQty>`, `<expectedSubtotal>`)
+  becomes a **method parameter** on the parameterized test.
 
 * Inside the test body, the generated calls **pass those variables** in left-to-right order to the step methods:
 
 ```java
-givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3(name, startQty, price);
+myCartContains$p1WithQuantity$p2AndUnitPrice$p3(name, startQty, price);
 
-whenIChangeTheQuantityTo$p1(newQty);
+iChangeTheQuantityTo$p1(newQty);
 
-thenMyCartSubtotalIs$p1(expectedSubtotal);
+myCartSubtotalIs$p1(expectedSubtotal);
 ```
 
 #### Full example
@@ -966,27 +1089,32 @@ Feature: Shopping cart totals and shipping
       | Wireless Headphones | 1        | 60.00 | 2      | 120.00           |
       | Coffee Beans 1kg    | 2        | 15.50 | 3      | 46.50            |
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
-public abstract class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
+/**
+ * Feature: Shopping cart totals and shipping
+ */
+public class CartFeatureTest extends CartFeature {
+
+    public void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, Integer p2,
+                                                                Double p3) {
+        Assertions.fail("Step is not yet implemented");
     }
 
-    public abstract void givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, String p2,
-            String p3);
+    public void iChangeTheQuantityTo$p1(Integer p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
-    public abstract void whenIChangeTheQuantityTo$p1(String p1);
-
-    public abstract void thenMyCartSubtotalIsExpectedsubtotal();
+    public void myCartSubtotalIs$p1(Double p1) {
+        Assertions.fail("Step is not yet implemented");
+    }
 
     @ParameterizedTest(
             name = "Example {index}: [{arguments}]"
@@ -996,25 +1124,25 @@ public abstract class CartFeatureScenarios extends CartFeature {
             delimiter = '|',
             textBlock = """
                     name                | startQty | price | newQty | expected subtotal
-                    Wireless Headphones | 1        | 60.00 | 2      | 120.00           
-                    Coffee Beans 1kg    | 2        | 15.50 | 3      | 46.50            
+                    Wireless Headphones | 1        | 60.00 | 2      | 120.00
+                    Coffee Beans 1kg    | 2        | 15.50 | 3      | 46.50
                     """
     )
     @Order(1)
-    public void scenario_1(String name, String startqty, String price, String newqty,
-            String expectedSubtotal) {
+    public void scenario_1(String name, Integer startqty, Double price, Integer newqty,
+                           Double expectedSubtotal) {
         /**
          * Given my cart contains <name> with quantity <startQty> and unit price <price>
          */
-        givenMyCartContains$p1WithQuantity$p2AndUnitPrice$p3(name, startqty, price);
+        myCartContains$p1WithQuantity$p2AndUnitPrice$p3(name, startqty, price);
         /**
          * When I change the quantity to <newQty>
          */
-        whenIChangeTheQuantityTo$p1(newqty);
+        iChangeTheQuantityTo$p1(newqty);
         /**
          * Then my cart subtotal is <expectedSubtotal>
          */
-        thenMyCartSubtotalIsExpectedsubtotal();
+        myCartSubtotalIs$p1(expectedSubtotal);
     }
 }
 
@@ -1024,17 +1152,22 @@ public abstract class CartFeatureScenarios extends CartFeature {
 </tr>
 </table>
 
-
 #### Edge cases & notes
 
-* **Multiple `Examples` blocks:** Currently not supported. The generator expects exactly one `Examples` block per `Scenario Outline`; specifying more than one will cause conversion to fail with an error.
+* **Multiple `Examples` blocks:** Supported, as long as all blocks have **identical header columns in the same order**.
+  Each block generates a separate repeatable `@CsvSource` annotation on the same test method.
 
-* **Header sanitization:** If a header isn’t a valid Java identifier (e.g., `start qty`), it’s sanitized to something like `startQty`.
+* **Parameter name sanitization:** Column headers are preserved as-is in the `@CsvSource` text block, but the
+  corresponding method parameter names are sanitized to valid Java identifiers (e.g., `start qty` → `startQty`).
 
-* **Empty cells / quoting:** Empty cells are passed as empty strings. Cells containing separators or spaces are handled by the CSV parser; text blocks keep formatting readable.
+* **Empty cells / quoting:** JUnit's `@CsvSource` parser automatically trims leading and trailing whitespace from
+  cell values. Empty cells become `null` by default; use `''` (two single quotes) to represent an empty string.
 
-* **Types:** Current generator emits `String` parameters only; you can parse/convert inside your step methods.
- 
+* **Types:** The generator infers parameter types from cell values: `"true"`/`"false"` → `Boolean`, integer literals →
+  `Integer` (or `Long`), decimal literals → `Double`, single characters → `Character`, everything else → `String`. All
+  values in a column must be compatible with the inferred type; if any value doesn't fit, the column falls back to
+  `String`.
+
 </details>
 
 ### Secondary keywords:
@@ -1049,7 +1182,8 @@ public abstract class CartFeatureScenarios extends CartFeature {
 
 * **Method naming is unaffected** by the DocString (no extra `$p…` placeholder in the name).
 
-* The **DocString body** (the lines between the triple quotes) is passed **verbatim**: newlines and indentation are **preserved**.
+* The **DocString body** (the lines between the triple quotes) is passed **verbatim**: newlines and indentation are *
+  *preserved**.
 
 * At the call site, the generator uses a **Java text block** (`"""…"""`) so formatting is retained.
 
@@ -1067,7 +1201,7 @@ public abstract class CartFeatureScenarios extends CartFeature {
 
 ```gherkin
 When I submit a shipping address:
-  """
+"""
   {
     "line1": "Baker St 221B",
     "city": "London",
@@ -1075,17 +1209,20 @@ When I submit a shipping address:
   }
   """
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
-abstract void whenISubmitAShippingAddress(String docString);
+void iSubmitAShippingAddress(String docString) {
+    Assertions.fail("Step is not yet implemented");
+}
 
-whenISubmitAShippingAddress("""
+iSubmitAShippingAddress("""
 {
   "line1": "Baker St 221B",
   "city": "London",
@@ -1111,7 +1248,7 @@ whenISubmitAShippingAddress("""
 
 ```gherkin
 Given I add item "Wireless Headphones" with options
-  """
+"""
   {
     "color": "Black",
     "warranty": "2 years",
@@ -1119,17 +1256,20 @@ Given I add item "Wireless Headphones" with options
   }
   """
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
-abstract void givenIAddItem$p1WithOptions(String p1, String docString);
+void iAddItem$p1WithOptions(String p1, String docString) {
+    Assertions.fail("Step is not yet implemented");
+}
 
-givenIAddItem$p1WithOptions("Wireless Headphones", """
+iAddItem$p1WithOptions("Wireless Headphones","""
         {
           "color": "Black",
           "warranty": "2 years",
@@ -1142,163 +1282,274 @@ givenIAddItem$p1WithOptions("Wireless Headphones", """
 </code></pre></td>
 </tr>
 </table>
- 
+
 </details>
 
 <details>
 
 <summary>Data Tables (|)</summary>
 
-#### What the generator emits
+The `dataTableParameterType` option controls how Gherkin data tables are represented in the generated Java code.
+There are three modes — set via `@Feature2JUnitOptions(dataTableParameterType = ...)`.
 
-* **Step parameter type:** A step that has a Gherkin **Data Table** receives **one trailing parameter of type** `io.cucumber.datatable.DataTable`.
-
-  * If the step also has **quoted arguments**, those come **first** (as `String`s), and the `DataTable` comes **last**.
-    
-* **Call site:** The scenario (or Background) calls the step with a helper:
-  * The generator includes a `createDataTable(String tableLines)` method that parses a **pipe-delimited Java text block** into a rectangular `List<List<String>>`, then calls `DataTable.create(...)`. If you already have a method with this name in your marker/base test class then generation of this method is omitted and your method is called instead.
-  * It also declares a `protected abstract DataTable.TableConverter getTableConverter()` that your implementation must provide. This lets your step code later use `asList(...)`, etc., if you want typed conversions.
-
-**Example:**
-
-<table>
-  <tr>
-    <th align="left">Gherkin</th>
-    <th align="left">Generated signature & call</th>
-  </tr>
-  <tr>
-    <td valign="top" class="diffTable" style="padding: 0px; font-size: larger;"><pre><code class="language-gherkin" data-lang="gherkin">
+All three examples below use the same Gherkin input:
 
 ```gherkin
-
 Feature: Shopping cart totals and shipping
 
   Background:
-    Given my cart contains:
-      | name                | qty | price |
-      | Wireless Headphones | 1   | 60.00 |
-      | Coffee Beans 1kg    | 2   | 15.50 |
-
+    Given my cart contains the following items:
+      | name                | qty | price | category    |
+      | Wireless Headphones | 1   | 60.00 | electronics |
+      | Coffee Beans 1kg    | 2   | 15.50 | grocery     |
 ```
 
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+---
+
+#### `LIST_OF_OBJECT_PARAMS` (default)
+
+Generates a **record-like inner class** per table (named after the last word of the step text + `Param` suffix).
+Each column header becomes a typed field with automatic type inference (precedence: `Boolean`, `Integer`, `Long`,
+`Double`, `Character`, then `String`). Each data row becomes a `new ParamType(...)` constructor call inside `List.of(...)`.
+
+<table>
+  <tr>
+    <th align=”left”>Gherkin</th>
+    <th align=”left”>Generated code</th>
+  </tr>
+  <tr>
+    <td valign=”top”><pre><code class=”language-gherkin” data-lang=”gherkin”>
+
+```gherkin
+Given my cart contains the following items:
+  | name                | qty | price | category    |
+  | Wireless Headphones | 1   | 60.00 | electronics |
+  | Coffee Beans 1kg    | 2   | 15.50 | grocery     |
+```
+
+</code></pre></td>
+<td valign=”top”><pre><code class=”language-java” data-lang=”java”>
 
 ```java
-
-public abstract class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
-    }
-
-    public abstract void givenMyCartContains(DataTable dataTable);
-
-    @BeforeEach
-    @DisplayName("Background: ")
-    public void featureBackground(TestInfo testInfo) {
-        /**
-         * Given my cart contains:
-         */
-        givenMyCartContains(createDataTable("""
-                |name               |qty|price|
-                |Wireless Headphones|1  |60.00|
-                |Coffee Beans 1kg   |2  |15.50|
-                """));
-    }
-
-    protected abstract DataTable.TableConverter getTableConverter();
-
-    /**
-     * Generation of this method is skipped if you already have it in your marker/base class.
-     * 
-     * @param tableLines the table lines as in the feature file
-     * @return DataTable instance
-     */
-    protected DataTable createDataTable(String tableLines) {
-
-        String[] tableRows = tableLines.split("\\n");
-        List<List<String>> rawDataTable = new ArrayList<>(tableRows.length);
-
-        for (String tableRow : tableRows) {
-            String trimmedLine = tableRow.trim();
-            if (!trimmedLine.isEmpty()) {
-                String[] columns = trimmedLine.split("\\|");
-                List<String> rowColumns = new ArrayList<>(columns.length);
-                for (int i = 1; i < columns.length; i++) {
-                    String column = columns[i].trim();
-                    rowColumns.add(column);
-                }
-                rawDataTable.add(rowColumns);
-            }
-        }
-
-        DataTable dataTable = DataTable.create(rawDataTable, getTableConverter());
-        return dataTable;
-    }
+// Step method signature
+public void myCartContainsTheFollowingItems(List<ItemsParam> items) {
+    Assertions.fail(“Step is not yet implemented”);
 }
 
+// Call site
+myCartContainsTheFollowingItems(
+        List.of(
+                new ItemsParam(
+                        “Wireless Headphones”,
+                        1,
+                        60.00,
+                        “electronics”
+                ),
+                new ItemsParam(
+                        “Coffee Beans 1kg”,
+                        2,
+                        15.50,
+                        “grocery”
+                )
+        ));
+
+// Generated inner class
+public static class ItemsParam {
+    private final String name;
+    private final Integer qty;
+    private final Double price;
+    private final String category;
+
+    public ItemsParam(String name, Integer qty,
+                         Double price, String category) {
+        this.name = name;
+        this.qty = qty;
+        this.price = price;
+        this.category = category;
+    }
+
+    public String name()      { return this.name; }
+    public Integer qty()      { return this.qty; }
+    public Double price()     { return this.price; }
+    public String category()  { return this.category; }
+}
 ```
 
 </code></pre></td>
 </tr>
 </table>
 
-#### What this means in practice
-
-* **No “List<Map<…>>” in the signature.** The generator **always** passes a `DataTable`. You decide in your step how to consume it.
-* **Cells are strings**. The helper **trims** each cell; otherwise values are untouched. There’s **no automatic typing**.
-* **Header vs raw** is **up to your step**: if your first row is a header, treat it as such in your implementation.
-
-**Example implementation** of `getTableConverter()` and mapping to an object type using `DataTableTypeRegistry` facility from the `cucumber-java` library.
+**Improving type safety further:** Once the code is generated, you can move the step method stub and
+the `ItemsParam` class into your marker/base class and refine the field types — for example, changing a
+`String` field to an `enum`. On the next generation run, the generator detects your class in the hierarchy
+and uses it instead of generating a new one. If a value in the feature file doesn't match a valid enum constant,
+you get a **compilation error** — catching data mismatches at compile time rather than at runtime.
 
 ```java
+// In your marker class — refined from the generated version
+public enum Category { electronics, grocery }
 
-package org.mycompany.app;
+public static class ItemsParam {
+    private final String name;
+    private final Integer qty;
+    private final Double price;
+    private final Category category;  // was String, now enum
 
-import io.cucumber.datatable.DataTable;
-import io.cucumber.datatable.DataTableType;
-import io.cucumber.datatable.DataTableTypeRegistry;
-import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
-
-import java.util.Locale;
-import java.util.Map;
-
-public class CartFeatureTest extends CartFeatureScenarios {
-
-    protected DataTableTypeRegistry dataTableRegistry;
-
-    protected DataTable.TableConverter tableConverter;
-
-    public CartFeatureTest() {
-
-        dataTableRegistry = new DataTableTypeRegistry(Locale.ENGLISH);
-
-        dataTableRegistry.defineDataTableType(new DataTableType(
-                CartItem.class,
-                (Map<String, String> row) ->
-                        new CartItem(
-                                row.get("name"),
-                                Integer.parseInt(row.get("qty")),
-                                Double.parseDouble(row.get("price"))
-                        ))
-        );
-        tableConverter = new DataTableTypeRegistryTableConverter(dataTableRegistry);
-
-    }
-
-    @Override
-    protected DataTable.TableConverter getTableConverter() {
-        return tableConverter;
-    }
+    // constructor, accessors ...
 }
 
+public void myCartContainsTheFollowingItems(List<ItemsParam> items) {
+    // your implementation goes here
+}
 ```
- 
+
+Now suppose someone adds a row to the feature file with an invalid category:
+
+```gherkin
+Given my cart contains the following items:
+  | name                | qty | price | category    |
+  | Wireless Headphones | 1   | 60.00 | electronics |
+  | Coffee Beans 1kg    | 2   | 15.50 | grocery     |
+  | Yoga Mat            | 1   | 25.00 | sports      |
+```
+
+The generator uses your `ItemsParam` class from the base class and the generated test class now calls the inherited step method:
+
+```java
+// Generated test class — compilation error!
+myCartContainsTheFollowingItems(
+        List.of(
+                new ItemsParam(
+                        "Wireless Headphones",
+                        1,
+                        60.00,
+                        Category.electronics
+                ),
+                new ItemsParam(
+                        "Coffee Beans 1kg",
+                        2,
+                        15.50,
+                        Category.grocery
+                ),
+                new ItemsParam(
+                        "Yoga Mat",
+                        1,
+                        25.00,
+                        "sports"  // ❌ compile error: String cannot be converted to Category
+                )
+        ));
+```
+
+The mismatch is caught **at compile time** — you must either add `sports` to the `Category` enum or fix the
+feature file before the project compiles.
+
+---
+
+#### `CUCUMBER_DATA_TABLE`
+
+Uses Cucumber's `DataTable` as the parameter type. The generator includes a `createDataTable()` helper
+that parses the text block into a `DataTable`. Requires a `getTableConverter()` method in your class hierarchy.
+Gives access to the full Cucumber DataTable API for type conversions.
+
+<table>
+  <tr>
+    <th align=”left”>Gherkin</th>
+    <th align=”left”>Generated code</th>
+  </tr>
+  <tr>
+    <td valign=”top”><pre><code class=”language-gherkin” data-lang=”gherkin”>
+
+```gherkin
+Given my cart contains the following items:
+  | name                | qty | price | category    |
+  | Wireless Headphones | 1   | 60.00 | electronics |
+  | Coffee Beans 1kg    | 2   | 15.50 | grocery     |
+```
+
+</code></pre></td>
+<td valign=”top”><pre><code class=”language-java” data-lang=”java”>
+
+```java
+// Step method signature
+public void myCartContainsTheFollowingItems(DataTable dataTable) {
+    Assertions.fail(“Step is not yet implemented”);
+}
+
+// Call site
+myCartContainsTheFollowingItems(createDataTable(“””
+        |name               |qty|price|category   |
+        |Wireless Headphones|1  |60.00|electronics|
+        |Coffee Beans 1kg   |2  |15.50|grocery    |
+        “””));
+
+// Generated helper (skipped if already in your base class)
+protected DataTable createDataTable(String tableLines) {
+    // parses pipe-delimited text block into DataTable
+    // using getTableConverter()
+    ...
+}
+
+// You must provide this in your base class
+protected abstract DataTable.TableConverter
+        getTableConverter();
+```
+
+</code></pre></td>
+</tr>
+</table>
+
+---
+
+#### `LIST_OF_MAPS`
+
+Each data table becomes a `List<Map<String, String>>`. The generator includes a `createListOfMaps()` helper
+that parses a pipe-delimited text block — the first row is treated as column headers (map keys), subsequent rows
+become map entries. All values are strings; you parse/convert as needed.
+
+<table>
+  <tr>
+    <th align=”left”>Gherkin</th>
+    <th align=”left”>Generated code</th>
+  </tr>
+  <tr>
+    <td valign=”top”><pre><code class=”language-gherkin” data-lang=”gherkin”>
+
+```gherkin
+Given my cart contains the following items:
+  | name                | qty | price | category    |
+  | Wireless Headphones | 1   | 60.00 | electronics |
+  | Coffee Beans 1kg    | 2   | 15.50 | grocery     |
+```
+
+</code></pre></td>
+<td valign=”top”><pre><code class=”language-java” data-lang=”java”>
+
+```java
+// Step method signature
+public void myCartContainsTheFollowingItems(List<Map<String, String>> data) {
+    Assertions.fail(“Step is not yet implemented”);
+}
+
+// Call site
+myCartContainsTheFollowingItems(createListOfMaps(“””
+        |name               |qty|price|category   |
+        |Wireless Headphones|1  |60.00|electronics|
+        |Coffee Beans 1kg   |2  |15.50|grocery    |
+        “””));
+
+// Generated helper (skipped if already in your base class)
+protected List<Map<String, String>> createListOfMaps(
+        String tableLines) {
+    // parses pipe-delimited text block into
+    // List<Map<String, String>>
+    ...
+}
+```
+
+</code></pre></td>
+</tr>
+</table>
+
 </details>
 
 <details>
@@ -1328,8 +1579,8 @@ public class CartFeatureTest extends CartFeatureScenarios {
 @fast @cart
 Feature: Shopping cart totals and shipping
 
-@ui
-Rule: Free shipping applies when subtotal is at least €50
+  @ui
+  Rule: Free shipping applies when subtotal is at least €50
 
   @smoke @banner
   Scenario: Show free-shipping banner when threshold is met
@@ -1337,11 +1588,12 @@ Rule: Free shipping applies when subtotal is at least €50
     When I view the cart
     Then I see the "Free shipping" banner
 ```
-  </code></pre>
-    </td>
-    <td valign="top">
-     <pre>
-       <code class="language-java" data-lang="java">
+
+</code></pre>
+</td>
+<td valign="top">
+<pre>
+<code class="language-java" data-lang="java">
 
 ```java
 
@@ -1363,20 +1615,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
 import org.junit.jupiter.api.TestMethodOrder;
 
+/**
+ * Feature: Shopping cart totals and shipping
+ */
 @Tags({
         @Tag("fast"),
         @Tag("cart")
 })
 @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+@DisplayName("cart")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @FeatureFilePath("specs/cart.feature")
-public class CartFeatureScenarios extends CartFeature {
-    {
-        /**
-         * Feature: Shopping cart totals and shipping
-         */
-    }
+public class CartFeatureTest extends CartFeature {
 
     @Nested
     @Order(1)
@@ -1395,34 +1646,37 @@ public class CartFeatureScenarios extends CartFeature {
             /**
              * Given my cart subtotal is "55.00"
              */
-            givenMyCartSubtotalIs$p1("55.00");
+            myCartSubtotalIs$p1(55.00);
             /**
              * When I view the cart
              */
-            whenIViewTheCart();
+            iViewTheCart();
             /**
              * Then I see the "Free shipping" banner
              */
-            thenISeeThe$p1Banner("Free shipping");
+            iSeeThe$p1Banner("Free shipping");
         }
     }
 }
 
 ```
- 
+
 </code></pre></td>
 </tr>
 </table>
- 
+
 </details>
 
 <details>
 
 <summary>Comments (#)</summary>
 
-* **Ignored by the processor:** Lines that are comments in Gherkin (i.e., lines starting with `#`) are **not mapped** to JUnit in any way. They are skipped during generation.
-* **Where to put narrative instead:** If you need human‑readable context preserved in Java, use `Feature`/`Rule`/`Scenario`/`Background` **descriptions** (indented lines under the header)—those are emitted into JavaDoc/`@DisplayName` as documented in sections above.
- 
+* **Ignored by the processor:** Lines that are comments in Gherkin (i.e., lines starting with `#`) are **not mapped** to
+  JUnit in any way. They are skipped during generation.
+* **Where to put narrative instead:** If you need human‑readable context preserved in Java, use `Feature`/`Rule`/
+  `Scenario`/`Background` **descriptions** (indented lines under the header)—those are emitted into JavaDoc/
+  `@DisplayName` as documented in sections above.
+
 </details>
 
 ---
@@ -1431,10 +1685,29 @@ public class CartFeatureScenarios extends CartFeature {
 
 All configuration is provided via the `@Feature2JUnitOptions` annotation. You can place this annotation:
 
-* **On the marker class** (applies to that feature only).
+* **On the marker class** (applies to that feature class only).
 * **On a shared base test class** (options are **inherited** by subclasses/marker classes in your test hierarchy).
+  Inherited options can be **selectively overridden** by placing another `@Feature2JUnitOptions` on a child class — only
+  the explicitly specified options are overridden, the rest continue to inherit from the parent.
 
-The generated test class is always **abstract** with abstract step methods. Various options are available to customize the code generation behavior. For the complete list of options and defaults, refer to the `@Feature2JUnitOptions` JavaDoc or the annotation source code.
+#### Available options
+
+| Option                                  | Type    | Default                  | Description                                                                                                                                               |
+|-----------------------------------------|---------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `shouldBeAbstract`                      | boolean | `false`                  | Generate abstract class with abstract step methods instead of concrete class with failing stubs                                                           |
+| `classSuffixIfAbstract`                 | String  | `"Scenarios"`            | Class name suffix when generating in abstract mode                                                                                                        |
+| `classSuffixIfConcrete`                 | String  | `"Test"`                 | Class name suffix when generating in concrete mode                                                                                                        |
+| `emptyScenarioBehavior`                 | enum    | `FAIL`                   | Behavior for scenarios with no steps: `FAIL` (test fails), `SKIP` (test skipped), or `NONE` (test passes)                                                |
+| `emptyRuleBehavior`                     | enum    | `FAIL`                   | Behavior for rules with no scenarios: `FAIL` (test fails), `SKIP` (test skipped), or `NONE` (test passes)                                                |
+| `tagForEmptyScenarios`                  | String  | `"new"`                  | Tag added to empty scenarios (set to `""` to disable)                                                                                                     |
+| `tagForEmptyRules`                      | String  | `"new"`                  | Tag added to empty rules (set to `""` to disable)                                                                                                         |
+| `dataTableParameterType`                | enum    | `LIST_OF_OBJECT_PARAMS`  | How data tables map to Java types: `LIST_OF_OBJECT_PARAMS`, `LIST_OF_MAPS`, or `CUCUMBER_DATA_TABLE`                                                     |
+| `useStepKeywordInStepMethodName`        | boolean | `false`                  | Include Given/When/Then keyword as a prefix in step method names                                                                                          |
+| `addCucumberStepAnnotations`            | boolean | `false`                  | Add `@Given`/`@When`/`@Then` Cucumber annotations to step methods                                                                                        |
+| `useCucumberAnnotationsForStepMatching` | boolean | `true`                   | Use Cucumber annotations for step matching when present in base class                                                                                     |
+| `addSourceLineNumbers`                  | boolean | `false`                  | Embed source line numbers from the feature file into generated code: line numbers in `@DisplayName` annotations and `[N]` prefixes in step block comments |
+| `enableCompositeSteps`                  | boolean | `false`                  | Enable composite step pattern                                                                                                                             |
+| `useQualifiedEnumConstants`             | boolean | `false`                  | Use fully qualified enum constant names in generated code                                                                                                 |
 
 <details>
 
@@ -1444,9 +1717,10 @@ The generated test class is always **abstract** with abstract step methods. Vari
 import dev.specbinder.feature2junit.Feature2JUnit;
 import dev.specbinder.feature2junit.Feature2JUnitOptions;
 
-@Feature2JUnitOptions( /* customize generation options as needed */ )
+@Feature2JUnitOptions( /* customize generation options as needed */)
 @Feature2JUnit("specs/cart.feature")
-public abstract class CartFeature { }
+public abstract class CartFeature {
+}
 ```
 
 </details>
@@ -1459,11 +1733,13 @@ public abstract class CartFeature { }
 import dev.specbinder.feature2junit.Feature2JUnit;
 import dev.specbinder.feature2junit.Feature2JUnitOptions;
 
-@Feature2JUnitOptions( /* shared options for all features */ )
-public abstract class BaseFeatureOptions { }
+@Feature2JUnitOptions( /* shared options for all features */)
+public abstract class BaseFeatureOptions {
+}
 
 @Feature2JUnit("specs/cart.feature")
-public abstract class CartFeature extends BaseFeatureOptions { }
+public abstract class CartFeature extends BaseFeatureOptions {
+}
 ```
 
 </details>
@@ -1472,83 +1748,195 @@ public abstract class CartFeature extends BaseFeatureOptions { }
 
 ## Installation
 
-> **Requirements:** Java **17+**, JUnit 5, Maven/Gradle with **annotation processing** enabled, IDE with APT enabled (e.g., IntelliJ).
->
-> **Optional:** The `cucumber-java` library is **not required by default**. You only need to add it as a dependency if you want to map Gherkin data tables to instances of Cucumber's `io.cucumber.datatable.DataTable` type. For an example of this usage, see the [example-2 module README](examples/examples-feature-processor/example-2/README.md) and its `pom.xml`. 
+> **Requirements:** Java **21+**, JUnit 5, Maven/Gradle with **annotation processing** enabled, IDE with APT enabled (
+> e.g., IntelliJ).
+
+### Maven pom.xml configuration
+
+```xml
+
+<dependencies>
+    <!-- Spec Binder annotations -->
+    <dependency>
+        <groupId>dev.specbinder</groupId>
+        <artifactId>annotations</artifactId>
+        <version>0.1.20</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- Spec Binder annotation processor -->
+    <dependency>
+        <groupId>dev.specbinder</groupId>
+        <artifactId>feature-processor</artifactId>
+        <version>0.1.20</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+
+### Recommended: place feature files next to Java sources
+
+By default, Gherkin `.feature` files are placed under `src/test/resources/`. Consider placing them under
+`src/test/java/` instead — in the same package as your marker classes. This makes it easy to navigate between the
+annotated class and its feature file in the IDE, and keeps related files together.
 
 <details>
 
-<summary>Maven example</summary>
+<summary>Maven pom.xml configuration</summary>
+
+To allow Maven to pick up `.feature` files from `src/test/java/`, add a test resource configuration to your `pom.xml`:
 
 ```xml
-<dependencies>
-  <!-- Spec Binder annotations -->
-  <dependency>
-    <groupId>dev.specbinder</groupId>
-    <artifactId>annotations</artifactId>
-    <version>0.1.9</version>
-    <scope>test</scope>
-  </dependency>
-
-  <!-- Spec Binder annotation processor -->
-  <dependency>
-    <groupId>dev.specbinder</groupId>
-    <artifactId>feature-processor</artifactId>
-    <version>0.1.9</version>
-    <scope>test</scope>
-  </dependency>
-</dependencies>
+<build>
+    <testResources>
+        <testResource>
+            <directory>src/test/java</directory>
+            <includes>
+                <include>**/*.feature</include>
+            </includes>
+        </testResource>
+        <testResource>
+            <directory>src/test/resources</directory>
+        </testResource>
+    </testResources>
+</build>
 ```
+
+</details>
+
+<br/>
+
+### Recommended: auto-trigger recompilation on feature file changes
+
+IDEs do not treat `.feature` files as source files, so editing a feature file alone will not trigger recompilation
+of the marker class — and the test class will not be regenerated. To work around this, set up a **file watcher** in
+your IDE that automatically **touches** (updates the timestamp of) the marker class in the same directory/package
+whenever a `.feature` file changes. This causes the IDE to detect the marker class as modified and rerun the
+annotation processor.
+
+<details>
+
+<summary>IntelliJ IDEA — File Watchers plugin configuration</summary>
+
+You need to configure two things: a **file scope** that matches your `.feature` files, and the **file watcher** itself that uses that scope.
+
+#### Step 1 (IntelliJ IDEA): Create a file scope for `.feature` files
+
+1. Open Settings → Appearance & Behavior → Scopes
+2. Click **+** → **Local**
+3. Name the scope (e.g., `Feature files`)
+4. In the **Pattern** field, enter a pattern matching your `.feature` files, e.g.:
+    - `file[your-module]:src/test//*.feature` — matches all `.feature` files under `src/test/` in a specific module
+    - `file[*]:*.feature` — matches all `.feature` files across the entire project
+5. Optionally, use the module tree and **Include** / **Include Recursively** buttons to build the pattern visually
+6. Click **Apply**
+
+```
+┌──────────────────────────── Scopes ─────────────────────────────┐
+│                                                                 │
+│  Name:     Feature files                                        │
+│  Pattern:  file[your-module]:src/test//*.feature                │
+│                                                                 │
+│  Use file:*.txt to match all 'txt' files in the project,        │
+│  file:path_in_project//* to match all files in a directory      │
+│  recursively.                                                   │
+│                                                                 │
+│  ┌─ Project ──────────────────┐                                 │
+│  │  > module-a                │  [ Include             ]        │
+│  │  > module-b                │  [ Include Recursively ]        │
+│  │  > module-c                │  [ Exclude             ]        │
+│  │  > ...                     │  [ Exclude Recursively ]        │
+│  └────────────────────────────┘                                 │
+│                                                                 │
+│  ■ Recursively included                                         │
+│  ■ Partially included                                           │
+│                                                                 │
+│                              [Cancel]  [Apply]  [OK]            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### Step 2 (IntelliJ IDEA): Configure the file watcher
+
+1. Install the **[File Watchers](https://plugins.jetbrains.com/plugin/7177-file-watchers)** plugin (Settings → Plugins)
+2. Add a new watcher: Settings → Tools → File Watchers → **+**
+3. Configure as shown below:
+
+```
+┌─────────────────────── Edit File Watcher ───────────────────────┐
+│                                                                 │
+│  Name:  Touch related feature base class only                   │
+│                                                                 │
+│  ─ Files to Watch ────────────────────────────────────────────  │
+│  File type:   Any                                               │
+│  Scope:       Feature files                              [...]  │
+│                                                                 │
+│  ─ Tool to Run on Changes ────────────────────────────────────  │
+│  Program:              /bin/sh                                  │
+│  Arguments:            -c "touch $FileDir$/*Feature.java"       │
+│  Output paths:         (empty)                                  │
+│  Working directory:    $FileDir$                                │
+│                                                                 │
+│  ▼ Advanced Options                                             │
+│  [x] Auto-save edited files to trigger the watcher              │
+│  [x] Trigger the watcher on external changes                    │
+│  [x] Trigger the watcher regardless of syntax errors            │
+│  [ ] Create output file from stdout                             │
+│  Show console: On error                                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key points:**
+- The **Program** is `/bin/sh` with **Arguments** `-c "touch $FileDir$/*Feature.java"` — this touches all `*Feature.java` marker classes in the same directory as the changed `.feature` file
+- The **Scope** must point to the file scope created in Step 1, so the watcher only triggers for `.feature` files
+- Adjust the `*Feature.java` glob pattern if your marker class naming convention differs (e.g., `$FileNameWithoutExtension$.java` for exact name matching)
 
 </details>
 
 ---
 
-## What it is / What it isn’t
-
-**It is**
-
-* A **compile-time** bridge from Gherkin to **plain JUnit**.
-* A per-feature, spec-driven test skeleton generator.
-
-**It isn’t**
-
-* A Cucumber/JBehave runner (no runtime step discovery, no regex glue).
-* A shared step catalog. Steps are **scoped to a feature** by design.
-
----
-
-## Limitations
-
-**Language Support**
-
-* **English only:** Gherkin feature files must use English step keywords and text. Since Java method signatures are derived directly from step text (e.g., `Given I add item "X"` becomes `givenIAddItem$p1(String p1)`), non-English characters or keywords cannot be reliably converted into valid Java identifiers. Using other natural languages in step text will result in compilation errors or invalid method names.
-
----
-
 ## Contributing
 
-Issues and PRs welcome. Please include:
+Issues and PRs welcome. When filing an issue, please include the `.feature` example, the generated code (from
+`target/generated-sources`), and your build tool and JDK version.
 
-* The `.feature` example
-* The generated code (from `target/generated-sources`)
-* Your build tool and JDK version
+### How this project is developed
+
+The initial versions of Spec Binder were written in a traditional, manual way. Starting from January 2026, it
+is developed in a **spec-driven** fashion with the help
+of [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview). All implementation is driven by a Gherkin
+specification that is authored first, following this iterative workflow:
+
+```
+                                                                                                                          ┌─── Claude Code Implements ───────────────┐
+  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  │  ┌────────────────┐  ┌────────────────┐  │  ┌────────────────┐
+  │ Create new     │  │ Short prompt   │  │ Ask AI:        │  │ Ask AI:        │  │ Ask AI:        │  │ Ask AI:        │  │  │ Ask AI to TDD: │  │ implement      │  │  │ Review,        │
+  │ .feature       │─▶│ to AI to       │─▶│ to add         │─▶│ to derive      │─▶│ to add         │─▶│ add concrete   │─▶│  │ run test to    │─▶│ until GREEN    │  │─▶│ ask AI to      │
+  │ file           │  │ describe       │  │ plausible      │  │ User Story     │  │ plausible      │  │ Given/When/    │  │  │ see it fail    │  │ and no         │  │  │ refactor if    │
+  │                │  │ the idea       │  │ Rule titles    │  │ narrative      │  │ Scenario titles│  │ Then steps     │  │  │ (RED)          │  │ regressions    │  │  │ needed, commit │
+  └────────────────┘  └────────────────┘  └───────┬────────┘  └───────┬────────┘  └───────┬────────┘  └───────┬────────┘  │  └───────┬────────┘  └────────┬───────┘  │  └────────────────┘
+                                              review &            review &            review &            review &        │          └─────────◀──────────┘          │
+                                              refine              refine              refine              refine          └──────────────────────────────────────────┘
+```
+
+Each step of creating specification involves human review and judgement — Claude Code proposes, the developer decides.
+This keeps the specification grounded in real requirements while leveraging AI to accelerate the drafting of rules,
+scenarios, and step definitions. Once the specification is complete, Claude Code implements the required behavior
+largely autonomously — running tests, writing code, and iterating until all tests pass with minimal developer
+intervention.
+
+---
+
+## Acknowledgements
+
+Spec Binder stands on the shoulders of the [Cucumber](https://cucumber.io/) project. Under the hood, it relies on
+Cucumber's [Gherkin parser](https://github.com/cucumber/gherkin) to read `.feature` files and on
+the [cucumber-java](https://github.com/cucumber/cucumber-jvm) annotations library for optional `@Given`/`@When`/`@Then`
+step matching. Credit goes to the Cucumber community for building and maintaining these foundational tools that make
+Gherkin a widely adopted specification format.
 
 ---
 
 ## License
 
 GNU General Public License v3.0
-
----
-
-## Appendix: Cucumber/JBehave vs Spec Binder
-
-| Topic                     | Cucumber/JBehave                                              | Spec Binder                                         |
-| ------------------------- | ------------------------------------------------------------- |-----------------------------------------------------|
-| Wiring                    | Regex in annotations; runtime discovery                       | **Compile-time** generated JUnit                    |
-| Failure surface           | Often runtime “undefined step”                                | **Compiler errors** on mismatch                     |
-| Step scope                | Shared/global libraries                                       | **Per-feature scoped**                              |
-| Step refactoring strategy | Search & replace text (often via complex regular expressions) | Compiler errors, method rename & inline refactoring |
-| Test Runner               | Custom runner & plugins                                       | Plain JUnit                                         |
-|                           |                                                               |                                                     |

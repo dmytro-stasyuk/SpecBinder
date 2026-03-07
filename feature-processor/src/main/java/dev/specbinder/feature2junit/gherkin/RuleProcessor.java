@@ -12,7 +12,6 @@ import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
 import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.utils.JavaDocUtils;
-import dev.specbinder.feature2junit.utils.LocationUtils;
 import dev.specbinder.feature2junit.utils.TagUtils;
 import io.cucumber.messages.types.*;
 import io.cucumber.messages.types.Tag;
@@ -81,17 +80,13 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
                 .addMember("value", "" + ruleNumber)
                 .build();
         nestedRuleClassBuilder.addAnnotation(orderAnnotation);
-        /*
-          add {@link TestMethodOrder} annotation
-         */
-        nestedRuleClassBuilder.addAnnotation(AnnotationSpec
-                .builder(TestMethodOrder.class)
-                .addMember("value", "$T.class", ClassName.get(MethodOrderer.OrderAnnotation.class))
-                .build()
-        );
+
+        List<RuleChild> children = rule.getChildren();
+
+        boolean hasScenarios = children.stream().anyMatch(child -> child.getScenario().isPresent());
 
         /*
-          add {@link Tag} annotations
+          add {@link Tag} annotations from Gherkin tags
          */
         List<Tag> tags = rule.getTags();
         if (tags != null && !tags.isEmpty()) {
@@ -100,12 +95,24 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
         }
 
         /*
-          add {@link SourceLine} annotation
+          add empty rule tag to the Rule class when the rule has no scenarios
          */
-        if (options.isAddSourceLineAnnotations()) {
-            AnnotationSpec locationAnnotation = LocationUtils.toJUnitTagsAnnotation(rule.getLocation());
-            nestedRuleClassBuilder.addAnnotation(locationAnnotation);
+        if (!hasScenarios) {
+            String tagForEmptyRules = options.getTagForEmptyRules();
+            if (StringUtils.isNotBlank(tagForEmptyRules)) {
+                AnnotationSpec jUnitTagsAnnotation = TagUtils.toJUnitTagsAnnotation(tagForEmptyRules);
+                nestedRuleClassBuilder.addAnnotation(jUnitTagsAnnotation);
+            }
         }
+
+        /*
+          add {@link TestMethodOrder} annotation
+         */
+        nestedRuleClassBuilder.addAnnotation(AnnotationSpec
+                .builder(TestMethodOrder.class)
+                .addMember("value", "$T.class", ClassName.get(MethodOrderer.OrderAnnotation.class))
+                .build()
+        );
 
         /*
           add {@link DisplayName} annotation
@@ -117,17 +124,21 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
                 ruleName = " " + ruleName;
             }
         }
+        String displayNameValue;
+        if (options.isAddSourceLineNumbers()) {
+            long line = rule.getLocation().getLine();
+            displayNameValue = "Rule [" + line + "]:" + ruleName;
+        } else {
+            displayNameValue = "Rule:" + ruleName;
+        }
         nestedRuleClassBuilder.addAnnotation(
                 AnnotationSpec.builder(DisplayName.class)
-                        .addMember("value", "\"Rule:" + ruleName + "\"")
+                        .addMember("value", "\"" + displayNameValue + "\"")
                         .build()
         );
 
-        List<RuleChild> children = rule.getChildren();
-
         int ruleScenarioCount = 0;
 
-        boolean hasScenarios = false;
         for (RuleChild child : children) {
 
             if (child.getScenario().isPresent()) {
@@ -140,8 +151,6 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
                 nestedRuleClassBuilder.addMethod(scenarioMethod);
-
-                hasScenarios = true;
 
             } else if (child.getBackground().isPresent()) {
 
@@ -157,28 +166,25 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
             }
         }
 
-        if (!hasScenarios && options.isFailRulesWithNoScenarios()) {
+        if (!hasScenarios && !"NONE".equals(options.getEmptyRuleBehavior())) {
             /*
-              If there are no scenarios in the rule, we add an empty method that throws an exception.
+              If there are no scenarios in the rule, add a test method that either fails or is skipped,
+              depending on the emptyRuleBehavior option.
              */
             MethodSpec.Builder noScenariosInRuleMSB = MethodSpec
                     .methodBuilder("noScenariosInRule")
                     .addModifiers(Modifier.PUBLIC);
-            noScenariosInRuleMSB.addStatement("$T.assumeTrue(false, \"Rule has no scenarios\")", Assumptions.class);
+
+            if ("SKIP".equals(options.getEmptyRuleBehavior())) {
+                noScenariosInRuleMSB.addStatement("$T.assumeTrue(false, \"Rule has no scenarios\")", Assumptions.class);
+            } else {
+                noScenariosInRuleMSB.addStatement("$T.fail(\"Rule doesn't have any scenarios\")", Assertions.class);
+            }
 
             AnnotationSpec testAnnotation = AnnotationSpec
                     .builder(Test.class)
                     .build();
             noScenariosInRuleMSB.addAnnotation(testAnnotation);
-
-            String tagForEmptyRules = options.getTagForRulesWithNoScenarios();
-            if (StringUtils.isNotBlank(tagForEmptyRules)) {
-                /*
-                  add JUnit Tag annotation
-                 */
-                AnnotationSpec jUnitTagsAnnotation = TagUtils.toJUnitTagsAnnotation(tagForEmptyRules);
-                noScenariosInRuleMSB.addAnnotation(jUnitTagsAnnotation);
-            }
 
             MethodSpec noScenariosInRule = noScenariosInRuleMSB.build();
             nestedRuleClassBuilder.addMethod(noScenariosInRule);

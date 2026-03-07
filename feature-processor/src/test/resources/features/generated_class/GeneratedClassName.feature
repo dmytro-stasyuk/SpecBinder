@@ -29,7 +29,7 @@ Feature: GeneratedClassName
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assumptions;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -50,7 +50,7 @@ Feature: GeneratedClassName
           @Tag("new")
           @DisplayName("Scenario: Add item")
           public void scenario_1() {
-              Assumptions.assumeTrue(false, "Scenario has no steps");
+              Assertions.fail("Scenario has no steps");
           }
       }
       """
@@ -80,7 +80,7 @@ Feature: GeneratedClassName
       import com.example.payment.PaymentFeature;
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assumptions;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
@@ -101,7 +101,7 @@ Feature: GeneratedClassName
           @Tag("new")
           @DisplayName("Scenario: Process payment")
           public void scenario_1() {
-              Assumptions.assumeTrue(false, "Scenario has no steps");
+              Assertions.fail("Scenario has no steps");
           }
       }
       """

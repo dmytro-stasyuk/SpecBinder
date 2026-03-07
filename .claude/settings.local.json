@@ -36,7 +36,11 @@
       "Bash(xargs:*)",
       "WebFetch(domain:junit.org)",
       "WebFetch(domain:docs.junit.org)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(tail:*)",
+      "Skill(add-scenarios)",
+      "Bash(git:*)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": []

@@ -32,6 +32,11 @@
 set -euf
 [ "${MVNW_VERBOSE-}" != debug ] || set -x
 
+# Ensure Homebrew binaries (including gpg) are on PATH
+case "$(uname)" in
+Darwin) [ -d /opt/homebrew/bin ] && export PATH="/opt/homebrew/bin:$PATH" ;;
+esac
+
 # OS specific support.
 native_path() { printf %s\\n "$1"; }
 case "$(uname)" in

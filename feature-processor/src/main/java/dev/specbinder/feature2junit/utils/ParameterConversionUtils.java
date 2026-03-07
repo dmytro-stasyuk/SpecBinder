@@ -40,8 +40,14 @@ public class ParameterConversionUtils {
             return canParseInt(value);
         } else if (typeKind == TypeKind.LONG || "java.lang.Long".equals(typeName)) {
             return canParseLong(value);
+        } else if (typeKind == TypeKind.FLOAT || "java.lang.Float".equals(typeName)) {
+            return canParseFloat(value);
         } else if (typeKind == TypeKind.DOUBLE || "java.lang.Double".equals(typeName)) {
             return canParseDouble(value);
+        } else if (typeKind == TypeKind.BYTE || "java.lang.Byte".equals(typeName)) {
+            return canParseByte(value);
+        } else if (typeKind == TypeKind.SHORT || "java.lang.Short".equals(typeName)) {
+            return canParseShort(value);
         } else if (typeKind == TypeKind.BOOLEAN || "java.lang.Boolean".equals(typeName)) {
             return canParseBoolean(value);
         } else if (typeKind == TypeKind.CHAR || "java.lang.Character".equals(typeName)) {
@@ -49,8 +55,11 @@ public class ParameterConversionUtils {
         } else if (typeKind == TypeKind.DECLARED && isEnumType(targetType)) {
             return canParseEnum(value, targetType);
         } else if ("java.lang.String".equals(typeName)) {
-            // String values can always be converted to String type
             return true;
+        } else if ("java.math.BigDecimal".equals(typeName)) {
+            return canParseDouble(value);
+        } else if ("java.math.BigInteger".equals(typeName)) {
+            return canParseLong(value);
         }
 
         // Any other type (Object, custom types like Person, Account, etc.) cannot be auto-converted
@@ -77,6 +86,10 @@ public class ParameterConversionUtils {
             if (canParseLong(value)) {
                 return value + "L"; // Add L suffix for long
             }
+        } else if (typeKind == TypeKind.FLOAT || "java.lang.Float".equals(typeName)) {
+            if (canParseFloat(value)) {
+                return value + "F"; // Add F suffix for float
+            }
         } else if (typeKind == TypeKind.DOUBLE || "java.lang.Double".equals(typeName)) {
             if (canParseDouble(value)) {
                 // Check if the value already has a decimal point
@@ -85,6 +98,14 @@ public class ParameterConversionUtils {
                 } else {
                     return value + ".0"; // Add .0 for whole numbers
                 }
+            }
+        } else if (typeKind == TypeKind.BYTE || "java.lang.Byte".equals(typeName)) {
+            if (canParseByte(value)) {
+                return "(byte) " + value; // Cast for byte
+            }
+        } else if (typeKind == TypeKind.SHORT || "java.lang.Short".equals(typeName)) {
+            if (canParseShort(value)) {
+                return "(short) " + value; // Cast for short
             }
         } else if (typeKind == TypeKind.BOOLEAN || "java.lang.Boolean".equals(typeName)) {
             if (canParseBoolean(value)) {
@@ -97,6 +118,14 @@ public class ParameterConversionUtils {
         } else if (typeKind == TypeKind.DECLARED && isEnumType(targetType)) {
             if (canParseEnum(value, targetType)) {
                 return toEnumLiteral(value, targetType);
+            }
+        } else if ("java.math.BigDecimal".equals(typeName)) {
+            if (canParseDouble(value)) {
+                return "new BigDecimal(\"" + value + "\")";
+            }
+        } else if ("java.math.BigInteger".equals(typeName)) {
+            if (canParseLong(value)) {
+                return "new BigInteger(\"" + value + "\")";
             }
         }
 
@@ -125,6 +154,33 @@ public class ParameterConversionUtils {
     private static boolean canParseDouble(String value) {
         try {
             Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static boolean canParseFloat(String value) {
+        try {
+            Float.parseFloat(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static boolean canParseByte(String value) {
+        try {
+            Byte.parseByte(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static boolean canParseShort(String value) {
+        try {
+            Short.parseShort(value);
             return true;
         } catch (NumberFormatException e) {
             return false;

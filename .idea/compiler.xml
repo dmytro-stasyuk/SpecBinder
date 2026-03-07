@@ -7,22 +7,48 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="common-use-cases-example-1" />
+        <module name="example-2 (1) (dev.specbinder.examples.commonusecases)" />
+        <module name="example-10" />
+        <module name="feature-processor" />
+        <module name="getting-started-example-1" />
+        <module name="example-6 (1)" />
+        <module name="example-5 (1) (dev.specbinder.examples.commonusecases)" />
+        <module name="annotations" />
+        <module name="example-6 (2) (dev.specbinder.examples.gettingstarted)" />
+        <module name="example-4 (1) (dev.specbinder.examples.commonusecases)" />
+        <module name="example-2 (2) (dev.specbinder.examples.gettingstarted)" />
+        <module name="example-7 (1) (dev.specbinder.examples.commonusecases)" />
+        <module name="example-5 (1)" />
+        <module name="example-3 (1)" />
+        <module name="example-6 (1) (dev.specbinder.examples.commonusecases)" />
+        <module name="example-5 (2) (dev.specbinder.examples.gettingstarted)" />
+        <module name="example-2" />
+        <module name="example-1 (1) (dev.specbinder.examples.commonusecases)" />
+        <module name="example-3 (2) (dev.specbinder.examples.gettingstarted)" />
+        <module name="user-story-processor" />
+        <module name="example-2 (1)" />
+        <module name="example-4 (1)" />
+        <module name="example-9" />
+        <module name="example-7" />
+        <module name="example-8" />
         <module name="example-5" />
         <module name="example-6" />
-        <module name="feature-processor" />
         <module name="example-3" />
+        <module name="example-7 (2) (dev.specbinder.examples.gettingstarted)" />
         <module name="example-4" />
-        <module name="example-1" />
-        <module name="annotations" />
-        <module name="example-2" />
-        <module name="user-story-processor" />
+        <module name="example-3 (1) (dev.specbinder.examples.commonusecases)" />
+        <module name="example-4 (2) (dev.specbinder.examples.gettingstarted)" />
+        <module name="example-7 (1)" />
+        <module name="example-1 (2) (dev.specbinder.examples.gettingstarted)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="common" target="17" />
-      <module name="example-2 (1)" target="1.5" />
+      <module name="example-1" target="22" />
       <module name="example-6.main" target="17" />
       <module name="example-6.test" target="17" />
+      <module name="examples-feature-processor" target="22" />
       <module name="spec2test" target="17" />
     </bytecodeTargetLevel>
   </component>

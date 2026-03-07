@@ -1,7 +1,7 @@
 Feature: MappingDataTableDefaultBehavior
   As a developer
-  I want data tables to be mapped to List<Map<String, String>> by default
-  So that I can work with data tables without needing to explicitly configure the option
+  I want data tables to be mapped to List<Map<String, String>> when LIST_OF_MAPS option is set
+  So that I can work with data tables using simple map-based access
 
   Rule: DataTable works with all step keywords - Given, When, Then, And, But, and *
 
@@ -11,8 +11,11 @@ Feature: MappingDataTableDefaultBehavior
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -121,8 +124,11 @@ Feature: MappingDataTableDefaultBehavior
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -251,8 +257,11 @@ Feature: MappingDataTableDefaultBehavior
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -365,8 +374,11 @@ Feature: MappingDataTableDefaultBehavior
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -470,8 +482,11 @@ Feature: MappingDataTableDefaultBehavior
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -568,7 +583,7 @@ Feature: MappingDataTableDefaultBehavior
         """
 
   Rule: DataTables with only headers (i.e. empty) are still passed as parameters.
-  - these are converted to an empty list when using the default LIST_OF_MAPS parameter type
+  - these are converted to an empty list when using the LIST_OF_MAPS parameter type
 
     Scenario: DataTable with headers only
       Given the following base class:
@@ -576,8 +591,11 @@ Feature: MappingDataTableDefaultBehavior
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """

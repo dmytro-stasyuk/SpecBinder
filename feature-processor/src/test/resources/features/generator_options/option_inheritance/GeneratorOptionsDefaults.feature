@@ -9,15 +9,14 @@ Feature: GeneratorOptionsDefaults
       | shouldBeAbstract                        | false         |
       | classSuffixIfConcrete                   | "Test"        |
       | classSuffixIfAbstract                   | "Scenarios"   |
-      | addSourceLineAnnotations                | false         |
-      | addSourceLineBeforeStepCalls            | false         |
-      | failScenariosWithNoSteps                | true          |
-      | failRulesWithNoScenarios                | true          |
-      | tagForScenariosWithNoSteps              | "new"         |
-      | tagForRulesWithNoScenarios              | "new"         |
+      | addSourceLineNumbers                    | false         |
+      | emptyScenarioBehavior                   | FAIL          |
+      | emptyRuleBehavior                       | FAIL          |
+      | tagForEmptyScenarios                    | "new"         |
+      | tagForEmptyRules                        | "new"         |
       | addCucumberStepAnnotations              | false         |
       | placeGeneratedClassNextToAnnotatedClass | false         |
-      | dataTableParameterType                  | LIST_OF_MAPS  |
+      | dataTableParameterType                  | LIST_OF_OBJECT_PARAMS |
       | enableCompositeSteps                    | false         |
       | useQualifiedEnumConstants               | false         |
       | useStepKeywordInStepMethodName          | false         |

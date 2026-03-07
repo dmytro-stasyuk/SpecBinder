@@ -16,7 +16,7 @@
     </appender>
 
     <!-- Logger for the Steps class -->
-    <logger name="dev.specbinder.feature2junit.steps_new" level="DEBUG" additivity="false">
+    <logger name="dev.specbinder.feature2junit.steps" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>

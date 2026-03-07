@@ -67,8 +67,8 @@ Feature: RuleTags
 
           @Nested
           @Order(1)
-          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @Tag("validation")
+          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @DisplayName("Rule: Input validation rules")
           public class Rule_1 {
               @Test
@@ -157,12 +157,12 @@ Feature: RuleTags
 
           @Nested
           @Order(1)
-          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @Tags({
                   @Tag("validation"),
                   @Tag("important"),
                   @Tag("security")
           })
+          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @DisplayName("Rule: Security validation rules")
           public class Rule_1 {
               @Test
@@ -256,11 +256,11 @@ Feature: RuleTags
 
           @Nested
           @Order(1)
-          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @Tags({
                   @Tag("rule-level"),
                   @Tag("validation")
           })
+          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @DisplayName("Rule: Validation rules")
           public class Rule_1 {
               @Test

@@ -5,20 +5,58 @@
     <file url="file://$PROJECT_DIR$/annotations/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-1/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-1/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-2/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-2/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-3/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-3/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-4/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-4/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-5/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-5/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-6/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/example-6/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-1/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-1/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-10/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-10/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-2/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-3/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-3/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-4/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-4/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-5/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-5/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-6/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-6/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-7/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-7/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-8/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-8/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-9/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/example-9/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/common-use-cases/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-1/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-1/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-2/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-3/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-3/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-4/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-4/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-5/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-5/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-6/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/example-6/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-1/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-1/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-2/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-3/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-3/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-4/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-4/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-5/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-5/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-6/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-6/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-7/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/example-7/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/getting-started/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/feature-processor/src/main/java" charset="UTF-8" />

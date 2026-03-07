@@ -19,9 +19,11 @@ public class MethodNamingUtils {
     /**
      * Generates a method name from the first line of a Gherkin step definition.
      *
-     * @param stepFirstLine            the first line of the Gherkin step definition
-     * @param scenarioStepsMethodSpecs a list of MethodSpec objects representing the scenario steps
-     * @param stepLine                 the line number of the step in the feature file
+     * @param stepFirstLine                  the first line of the Gherkin step definition
+     * @param scenarioStepsMethodSpecs       a list of MethodSpec objects representing the scenario steps
+     * @param stepLine                       the line number of the step in the feature file
+     * @param useStepKeywordInStepMethodName if true, the step keyword (Given/When/Then) is included
+     *                                       as a prefix in the generated method name
      * @return a sanitized method name suitable for use in Java code
      */
     public static String getStepMethodName(String stepFirstLine, List<MethodSpec> scenarioStepsMethodSpecs, long stepLine,

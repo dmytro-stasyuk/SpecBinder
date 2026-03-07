@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.FAIL;
 
 /**
  * Utility class for resolving and merging Feature2JUnitOptions annotations from a class hierarchy.
@@ -40,6 +41,9 @@ public class Feature2JUnitOptionsResolver {
      * override the accumulated result. This applies uniformly to all property types (boolean,
      * String, enum), enabling true partial inheritance across the entire class hierarchy.
      *
+     * When AnnotationMirrors are not available (e.g. in test environments with mocked TypeElements),
+     * falls back to reading annotations directly via {@code getAnnotation()}.
+     *
      * @param annotatedClass the class to resolve options for
      * @param processingEnv the processing environment
      * @return the resolved GeneratorOptions, or a default instance if no annotations are found
@@ -49,26 +53,41 @@ public class Feature2JUnitOptionsResolver {
                 annotatedClass, Feature2JUnitOptions.class, processingEnv
         );
 
-        if (annotationMirrors.isEmpty()) {
-            return new GeneratorOptions();
+        if (!annotationMirrors.isEmpty()) {
+            return resolveFromAnnotationMirrors(annotationMirrors, processingEnv);
         }
+
+        // Fallback: read annotations directly (supports test environments with mocked TypeElements)
+        List<Feature2JUnitOptions> annotations = TypeMirrorUtils.collectAnnotationsFromHierarchy(
+                annotatedClass, Feature2JUnitOptions.class, processingEnv
+        );
+
+        if (!annotations.isEmpty()) {
+            return createFromAnnotation(annotations.get(annotations.size() - 1));
+        }
+
+        return new GeneratorOptions();
+    }
+
+    private static GeneratorOptions resolveFromAnnotationMirrors(
+            List<AnnotationMirror> annotationMirrors, ProcessingEnvironment processingEnv) {
 
         // Start with defaults
         boolean shouldBeAbstract = false;
         String classSuffixIfConcrete = "Test";
         String classSuffixIfAbstract = "Scenarios";
-        boolean addSourceLineAnnotations = false;
-        boolean addSourceLineBeforeStepCalls = false;
-        boolean failScenariosWithNoSteps = true;
-        boolean failRulesWithNoScenarios = true;
-        String tagForScenariosWithNoSteps = "new";
-        String tagForRulesWithNoScenarios = "new";
+        boolean addSourceLineNumbers = false;
+        String emptyScenarioBehavior = FAIL.name();
+        String emptyRuleBehavior = FAIL.name();
+        String tagForEmptyScenarios = "new";
+        String tagForEmptyRules = "new";
         boolean addCucumberStepAnnotations = false;
         boolean placeGeneratedClassNextToAnnotatedClass = false;
-        String dataTableParameterType = LIST_OF_MAPS.name();
+        String dataTableParameterType = LIST_OF_OBJECT_PARAMS.name();
         boolean enableCompositeSteps = false;
         boolean useQualifiedEnumConstants = false;
         boolean useStepKeywordInStepMethodName = false;
+        boolean useCucumberAnnotationsForStepMatching = true;
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -102,23 +121,24 @@ public class Feature2JUnitOptionsResolver {
                     case "classSuffixIfAbstract":
                         classSuffixIfAbstract = (String) value;
                         break;
-                    case "addSourceLineAnnotations":
-                        addSourceLineAnnotations = (Boolean) value;
+                    case "addSourceLineNumbers":
+                        addSourceLineNumbers = (Boolean) value;
                         break;
-                    case "addSourceLineBeforeStepCalls":
-                        addSourceLineBeforeStepCalls = (Boolean) value;
+                    case "emptyScenarioBehavior":
+                        if (value instanceof VariableElement) {
+                            emptyScenarioBehavior = ((VariableElement) value).getSimpleName().toString();
+                        }
                         break;
-                    case "failScenariosWithNoSteps":
-                        failScenariosWithNoSteps = (Boolean) value;
+                    case "emptyRuleBehavior":
+                        if (value instanceof VariableElement) {
+                            emptyRuleBehavior = ((VariableElement) value).getSimpleName().toString();
+                        }
                         break;
-                    case "failRulesWithNoScenarios":
-                        failRulesWithNoScenarios = (Boolean) value;
+                    case "tagForEmptyScenarios":
+                        tagForEmptyScenarios = (String) value;
                         break;
-                    case "tagForScenariosWithNoSteps":
-                        tagForScenariosWithNoSteps = (String) value;
-                        break;
-                    case "tagForRulesWithNoScenarios":
-                        tagForRulesWithNoScenarios = (String) value;
+                    case "tagForEmptyRules":
+                        tagForEmptyRules = (String) value;
                         break;
                     case "addCucumberStepAnnotations":
                         addCucumberStepAnnotations = (Boolean) value;
@@ -140,6 +160,9 @@ public class Feature2JUnitOptionsResolver {
                     case "useStepKeywordInStepMethodName":
                         useStepKeywordInStepMethodName = (Boolean) value;
                         break;
+                    case "useCucumberAnnotationsForStepMatching":
+                        useCucumberAnnotationsForStepMatching = (Boolean) value;
+                        break;
                     default:
                         break;
                 }
@@ -150,18 +173,42 @@ public class Feature2JUnitOptionsResolver {
                 shouldBeAbstract,
                 classSuffixIfConcrete,
                 classSuffixIfAbstract,
-                addSourceLineAnnotations,
-                addSourceLineBeforeStepCalls,
-                failScenariosWithNoSteps,
-                failRulesWithNoScenarios,
-                tagForScenariosWithNoSteps,
-                tagForRulesWithNoScenarios,
+                addSourceLineNumbers,
+                emptyScenarioBehavior,
+                emptyRuleBehavior,
+                tagForEmptyScenarios,
+                tagForEmptyRules,
                 addCucumberStepAnnotations,
                 placeGeneratedClassNextToAnnotatedClass,
                 dataTableParameterType,
                 enableCompositeSteps,
                 useQualifiedEnumConstants,
-                useStepKeywordInStepMethodName
+                useStepKeywordInStepMethodName,
+                useCucumberAnnotationsForStepMatching
+        );
+    }
+
+    /**
+     * Creates GeneratorOptions from a Feature2JUnitOptions annotation instance.
+     * Used as a fallback when AnnotationMirrors are not available.
+     */
+    private static GeneratorOptions createFromAnnotation(Feature2JUnitOptions options) {
+        return new GeneratorOptions(
+                options.shouldBeAbstract(),
+                options.classSuffixIfConcrete(),
+                options.classSuffixIfAbstract(),
+                options.addSourceLineNumbers(),
+                options.emptyScenarioBehavior().name(),
+                options.emptyRuleBehavior().name(),
+                options.tagForEmptyScenarios(),
+                options.tagForEmptyRules(),
+                options.addCucumberStepAnnotations(),
+                false, // placeGeneratedClassNextToAnnotatedClass - option removed
+                options.dataTableParameterType().name(),
+                options.enableCompositeSteps(),
+                options.useQualifiedEnumConstants(),
+                options.useStepKeywordInStepMethodName(),
+                options.useCucumberAnnotationsForStepMatching()
         );
     }
 }

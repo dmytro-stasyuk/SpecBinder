@@ -3,21 +3,19 @@ Feature: DataTableParameterType
   I want to choose between List<Map<String, String>>, Cucumber DataTable, or generated type-safe object parameters
   So that I can select the data table representation that best fits my testing style and provides the right level of type safety
 
-  Rule: the default data table parameter type is LIST_OF_MAPS when no dataTableParameterType option is specified
-  - data tables are mapped to List<Map<String, String>> parameters named "data"
-  - a createListOfMaps() helper method is generated to convert the text block table data
+  Rule: the default data table parameter type is LIST_OF_OBJECT_PARAMS when no dataTableParameterType option is specified
+  - a static inner class is generated with fields matching the data table column headers
+  - the step method parameter is of type List<XxxParam> where Xxx is derived from the last word of the step text
+  - data is passed inline using List.of() with constructor calls
 
-    Scenario: data tables default to List<Map<String, String>> when no option is specified
+    Scenario: data tables default to List<ObjectParam> when no option is specified
       Given the following base class:
         """
         package com.example;
 
         import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
         @Feature2JUnit
-        @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
         public abstract class UserManagement {
 
         }
@@ -37,12 +35,8 @@ Feature: DataTableParameterType
         package com.example;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Math;
         import java.lang.String;
-        import java.util.ArrayList;
-        import java.util.HashMap;
         import java.util.List;
-        import java.util.Map;
         import javax.annotation.processing.Generated;
         import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
@@ -59,7 +53,7 @@ Feature: DataTableParameterType
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/UserManagement.feature")
         public class UserManagementTest extends UserManagement {
-            public void theFollowingUsers(List<Map<String, String>> data) {
+            public void theFollowingUsers(List<UsersParam> users) {
                 Assertions.fail("Step is not yet implemented");
             }
 
@@ -69,47 +63,40 @@ Feature: DataTableParameterType
             public void scenario_1() {
                 /*
                  * Given the following users:
+                 *   | name  | role  |
+                 *   | Alice | Admin |
+                 *   | Bob   | User  |
                  */
-                theFollowingUsers(createListOfMaps(\"\"\"
-                        | name  | role  |
-                        | Alice | Admin |
-                        | Bob   | User  |
-                        \"\"\"));
+                theFollowingUsers(
+                        List.of(
+                                new UsersParam(
+                                        "Alice",
+                                        "Admin"
+                                ),
+                                new UsersParam(
+                                        "Bob",
+                                        "User"
+                                )
+                        ));
             }
 
-            protected List<Map<String, String>> createListOfMaps(String tableLines) {
+            public static class UsersParam {
+                private final String name;
 
-                String[] tableRows = tableLines.split("\\n");
-                List<Map<String, String>> listOfMaps = new ArrayList<>();
+                private final String role;
 
-                if (tableRows.length < 2) {
-                    return listOfMaps;
+                public UsersParam(String name, String role) {
+                    this.name = name;
+                    this.role = role;
                 }
 
-                String[] headers = null;
-                for (int i = 0; i < tableRows.length; i++) {
-                    String trimmedLine = tableRows[i].trim();
-                    if (!trimmedLine.isEmpty()) {
-                        String[] columns = trimmedLine.split("\\|");
-                        List<String> rowColumns = new ArrayList<>(columns.length);
-                        for (int j = 1; j < columns.length; j++) {
-                            String column = columns[j].trim();
-                            rowColumns.add(column);
-                        }
-
-                        if (headers == null) {
-                            headers = rowColumns.toArray(new String[0]);
-                        } else {
-                            Map<String, String> rowMap = new HashMap<>();
-                            for (int j = 0; j < Math.min(headers.length, rowColumns.size()); j++) {
-                                rowMap.put(headers[j], rowColumns.get(j));
-                            }
-                            listOfMaps.add(rowMap);
-                        }
-                    }
+                public String name() {
+                    return this.name;
                 }
 
-                return listOfMaps;
+                public String role() {
+                    return this.role;
+                }
             }
         }
         """

@@ -39,6 +39,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private final EnumImportCollector enumImportCollector;
     private final TypeElement baseType;
     private final Map<String, List<ElementMethodUtils.MethodSignature>> baseClassMethodSignatures;
+    private final List<ElementMethodUtils.CucumberAnnotationEntry> cucumberAnnotationEntries;
 
     private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]+?)(\"))");
 
@@ -53,6 +54,36 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         this.baseClassMethodSignatures = baseType != null
                 ? ElementMethodUtils.getAllInheritedMethodSignatures(processingEnv, baseType)
                 : Map.of();
+        this.cucumberAnnotationEntries = baseType != null && options.isUseCucumberAnnotationsForStepMatching()
+                ? ElementMethodUtils.getCucumberAnnotationStepEntries(processingEnv, baseType)
+                : List.of();
+    }
+
+    /**
+     * Result of matching a step text against Cucumber annotation entries.
+     *
+     * @param methodName the matched method name
+     * @param entry the matched annotation entry (contains Cucumber expression info)
+     */
+    private record AnnotationMatchResult(
+            String methodName,
+            ElementMethodUtils.CucumberAnnotationEntry entry
+    ) {}
+
+    /**
+     * Finds a matching annotation entry by matching the step text against compiled patterns
+     * from Cucumber annotation values (both regex and Cucumber expressions).
+     *
+     * @param stepText the step text from the feature file
+     * @return the match result if a pattern matches, null otherwise
+     */
+    private AnnotationMatchResult findAnnotationMatch(String stepText) {
+        for (ElementMethodUtils.CucumberAnnotationEntry entry : cucumberAnnotationEntries) {
+            if (entry.pattern().matcher(stepText).matches()) {
+                return new AnnotationMatchResult(entry.methodName(), entry);
+            }
+        }
+        return null;
     }
 
     public ProcessingEnvironment getProcessingEnv() {
@@ -106,6 +137,28 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                 stepFirstLine, scenarioParameterNames, scenarioParameterTypes, scenarioStepsMethodSpecs, stepLine
         );
         String stepMethodName = stepMethodSignatureAttributes.methodName;
+
+        // Check if a Cucumber annotation pattern matches the step text
+        AnnotationMatchResult annotationMatch = findAnnotationMatch(step.getText());
+        if (annotationMatch != null) {
+            stepMethodName = annotationMatch.methodName();
+
+            // For Cucumber expression matches, override parameter values and types
+            if (annotationMatch.entry().isCucumberExpression()) {
+                String cucumberExpr = annotationMatch.entry().cucumberExpression();
+                List<String> ceValues = CucumberExpressionUtils.extractParameterValues(cucumberExpr, step.getText());
+                List<String> ceTypeNames = CucumberExpressionUtils.extractParameterTypeNames(cucumberExpr);
+                if (!ceValues.isEmpty()) {
+                    stepMethodSignatureAttributes = new MethodSignatureAttributes(
+                            stepMethodSignatureAttributes.stepPattern(),
+                            stepMethodName,
+                            ceValues,
+                            ceTypeNames.stream().map(CucumberExpressionUtils::toJavaClass).collect(Collectors.toList())
+                    );
+                }
+            }
+        }
+
         MethodSpec.Builder stepMethodBuilder = MethodSpec
                 .methodBuilder(stepMethodName)
                 .addModifiers(Modifier.PUBLIC);
@@ -244,6 +297,21 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
         String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, step.getLocation().getLine(),
                 getOptions().isUseStepKeywordInStepMethodName());
+
+        // Check if a Cucumber annotation pattern matches the step text
+        AnnotationMatchResult annotationMatch = findAnnotationMatch(step.getText());
+        if (annotationMatch != null) {
+            stepMethodName = annotationMatch.methodName();
+
+            // For Cucumber expression matches, use extracted parameter values
+            if (annotationMatch.entry().isCucumberExpression()) {
+                String cucumberExpr = annotationMatch.entry().cucumberExpression();
+                List<String> ceValues = CucumberExpressionUtils.extractParameterValues(cucumberExpr, step.getText());
+                if (!ceValues.isEmpty()) {
+                    parameterValues = ceValues;
+                }
+            }
+        }
 
         // Determine if step has a DataTable or DocString parameter
         boolean hasDataTableOrDocString = step.getDataTable().isPresent() || step.getDocString().isPresent();
@@ -400,12 +468,11 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
          * add block comment for the step as it appears in the feature file
          */
         String stepFirstLine = step.getKeyword() + step.getText();
-        //        scenarioMethodBuilder.addCode("/*\n * $L\n */\n", stepFirstLine);
         scenarioMethodBuilder.addCode("/*");
-        scenarioMethodBuilder.addCode("\n * $L", stepFirstLine);
-        if (options.isAddSourceLineBeforeStepCalls()) {
-            Location stepLocation = step.getLocation();
-            scenarioMethodBuilder.addCode("\n * (source line - $L", stepLocation.getLine() + ")");
+        if (options.isAddSourceLineNumbers()) {
+            scenarioMethodBuilder.addCode("\n * [$L] $L", step.getLocation().getLine(), stepFirstLine);
+        } else {
+            scenarioMethodBuilder.addCode("\n * $L", stepFirstLine);
         }
         // Include DataTable in the comment for LIST_OF_OBJECT_PARAMS mode
         if (step.getDataTable().isPresent() && "LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
@@ -476,24 +543,34 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                  * Convert the string value to the appropriate type literal
                  */
                 TypeMirror targetType = matchingBaseMethod.getParameterType(j);
-                boolean isEnumType = ParameterConversionUtils.isEnumType(targetType);
+                String targetTypeName = targetType.toString();
 
-                if (isEnumType && options.isUseQualifiedEnumConstants()) {
-                    // Use qualified enum literal (e.g., Status.AVAILABLE)
-                    String literal = ParameterConversionUtils.toQualifiedEnumLiteral(parameterValue, targetType);
-                    parameterValuesSB.append(literal);
-                    // Register enum type for regular import (only if external)
-                    if (enumImportCollector != null && isEnumExternal(targetType)) {
-                        String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
-                        enumImportCollector.registerEnumType(enumQualifiedName);
-                    }
+                if ("java.math.BigDecimal".equals(targetTypeName)) {
+                    parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
+                    formatArgsList.add(java.math.BigDecimal.class);
+                } else if ("java.math.BigInteger".equals(targetTypeName)) {
+                    parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
+                    formatArgsList.add(java.math.BigInteger.class);
                 } else {
-                    String literal = ParameterConversionUtils.toLiteral(parameterValue, targetType);
-                    parameterValuesSB.append(literal);
-                    // Register enum constants for static import
-                    if (enumImportCollector != null && isEnumType) {
-                        String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
-                        enumImportCollector.registerEnumConstant(enumQualifiedName, parameterValue);
+                    boolean isEnumType = ParameterConversionUtils.isEnumType(targetType);
+
+                    if (isEnumType && options.isUseQualifiedEnumConstants()) {
+                        // Use qualified enum literal (e.g., Status.AVAILABLE)
+                        String literal = ParameterConversionUtils.toQualifiedEnumLiteral(parameterValue, targetType);
+                        parameterValuesSB.append(literal);
+                        // Register enum type for regular import (only if external)
+                        if (enumImportCollector != null && isEnumExternal(targetType)) {
+                            String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
+                            enumImportCollector.registerEnumType(enumQualifiedName);
+                        }
+                    } else {
+                        String literal = ParameterConversionUtils.toLiteral(parameterValue, targetType);
+                        parameterValuesSB.append(literal);
+                        // Register enum constants for static import
+                        if (enumImportCollector != null && isEnumType) {
+                            String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
+                            enumImportCollector.registerEnumConstant(enumQualifiedName, parameterValue);
+                        }
                     }
                 }
             } else {
@@ -501,8 +578,16 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                  * No matching base method, use inferred type from parameter value
                  */
                 Class<?> inferredType = parameterTypes.get(j);
-                String literal = toLiteralForInferredType(parameterValue, inferredType);
-                parameterValuesSB.append(literal);
+                if (inferredType == java.math.BigDecimal.class) {
+                    parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
+                    formatArgsList.add(java.math.BigDecimal.class);
+                } else if (inferredType == java.math.BigInteger.class) {
+                    parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
+                    formatArgsList.add(java.math.BigInteger.class);
+                } else {
+                    String literal = toLiteralForInferredType(parameterValue, inferredType);
+                    parameterValuesSB.append(literal);
+                }
             }
         }
 
@@ -856,17 +941,27 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private String toLiteralForInferredType(String value, Class<?> inferredType) {
         if (inferredType == Boolean.class) {
             return value.toLowerCase(); // "true" or "false"
-        } else if (inferredType == Integer.class) {
+        } else if (inferredType == Integer.class || inferredType == int.class) {
             return value; // No suffix needed for int
-        } else if (inferredType == Long.class) {
+        } else if (inferredType == Long.class || inferredType == long.class) {
             return value + "L"; // Add L suffix for long
-        } else if (inferredType == Double.class) {
+        } else if (inferredType == Float.class || inferredType == float.class) {
+            return value + "F"; // Add F suffix for float
+        } else if (inferredType == Double.class || inferredType == double.class) {
             // Check if the value already has a decimal point
             if (value.contains(".")) {
                 return value; // No suffix needed for double with decimal
             } else {
                 return value + ".0"; // Add .0 for whole numbers
             }
+        } else if (inferredType == Byte.class || inferredType == byte.class) {
+            return "(byte) " + value; // Cast for byte
+        } else if (inferredType == Short.class || inferredType == short.class) {
+            return "(short) " + value; // Cast for short
+        } else if (inferredType == java.math.BigDecimal.class) {
+            return "new BigDecimal(\"" + value + "\")";
+        } else if (inferredType == java.math.BigInteger.class) {
+            return "new BigInteger(\"" + value + "\")";
         } else if (inferredType == Character.class) {
             return "'" + value + "'"; // Single quotes for char
         } else {

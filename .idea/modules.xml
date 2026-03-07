@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/feature-processor/feature-processor.iml" filepath="$PROJECT_DIR$/feature-processor/feature-processor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/spec-binder.iml" filepath="$PROJECT_DIR$/spec-binder.iml" />
     </modules>
   </component>
 </project>

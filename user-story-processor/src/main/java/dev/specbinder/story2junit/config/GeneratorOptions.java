@@ -2,7 +2,7 @@ package dev.specbinder.story2junit.config;
 
 import lombok.Getter;
 
-import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
 /**
  * Options for the generator that can be used to customize the generated test classes.
@@ -16,39 +16,24 @@ public class GeneratorOptions {
     private final String classSuffixIfAbstract;
 
     /**
-     * If set to true, the generator will add {@link dev.specbinder.annotations.output.SourceLine} annotation to test methods and
-     * nested test classes containing line numbers where these elements appear in the Feature file.
+     * If set to true, the generator will embed source line numbers from the feature file
+     * into the generated test code in two ways:
+     * line numbers in @DisplayName annotations and [N] prefixes in step block comments.
      */
-    private final boolean addSourceLineAnnotations;
-
-    /**
-     * If set to true, the generator will add source location as a java comment just before a call to each step method
-     * inside the test methods.
-     */
-    private final boolean addSourceLineBeforeStepCalls;
-
-    /**
-     * If set to true, the generator will add a call to a failing JUnit assumption for scenarios that have no steps.
-     */
-    private final boolean failScenariosWithNoSteps;
-
-    /**
-     * If set to true, the generator will add a failing test method for rules that have no scenarios.
-     */
-    private final boolean failRulesWithNoScenarios;
+    private final boolean addSourceLineNumbers;
 
     /**
      * The value for JUnit's @{@link org.junit.jupiter.api.Tag} annotation that will be added to scenarios that do not
      * contain any steps. If an empty or blank value is specified, no tag will be added.
      */
-    private final String tagForScenariosWithNoSteps;
+    private final String tagForEmptyScenarios;
 
     /**
      * The value for JUnit's @{@link org.junit.jupiter.api.Tag} annotation that will be added to failing test method
      * that was added for rules that do not contain any scenarios.
      * If an empty or blank value is specified, no tag will be added.
      */
-    private final String tagForRulesWithNoScenarios;
+    private final String tagForEmptyRules;
 
     /**
      * If set to true, the generator will add Cucumber step annotations (e.g. @Given, @When, @Then) to the generated
@@ -74,50 +59,38 @@ public class GeneratorOptions {
      */
     public GeneratorOptions() {
         this.classSuffixIfAbstract = "Scenarios";
-        this.addSourceLineAnnotations = false;
-        this.addSourceLineBeforeStepCalls = false;
-        this.failScenariosWithNoSteps = true;
-        this.failRulesWithNoScenarios = true;
-        this.tagForScenariosWithNoSteps = "new";
-        this.tagForRulesWithNoScenarios = "new";
+        this.addSourceLineNumbers = false;
+        this.tagForEmptyScenarios = "new";
+        this.tagForEmptyRules = "new";
         this.addCucumberStepAnnotations = false;
         this.placeGeneratedClassNextToAnnotatedClass = false;
-        this.dataTableParameterType = LIST_OF_MAPS.name();
+        this.dataTableParameterType = LIST_OF_OBJECT_PARAMS.name();
     }
 
     /**
      * Custom options
      *
      * @param classSuffixIfAbstract        see {@link #classSuffixIfAbstract}
-     * @param addSourceLineAnnotations     see {@link #addSourceLineAnnotations}
-     * @param addSourceLineBeforeStepCalls see {@link #addSourceLineBeforeStepCalls}
-     * @param failScenariosWithNoSteps     see {@link #failScenariosWithNoSteps}
-     * @param failRulesWithNoScenarios     see {@link #failRulesWithNoScenarios}
-     * @param tagForScenariosWithNoSteps   see {@link #tagForScenariosWithNoSteps}
-     * @param tagForRulesWithNoScenarios   see {@link #tagForRulesWithNoScenarios}
+     * @param addSourceLineNumbers         see {@link #addSourceLineNumbers}
+     * @param tagForEmptyScenarios   see {@link #tagForEmptyScenarios}
+     * @param tagForEmptyRules   see {@link #tagForEmptyRules}
      * @param addCucumberStepAnnotations   see {@link #addCucumberStepAnnotations}
      * @param placeGeneratedClassNextToAnnotatedClass see {@link #placeGeneratedClassNextToAnnotatedClass}
      * @param dataTableParameterType       see {@link #dataTableParameterType}
      */
     public GeneratorOptions(
             String classSuffixIfAbstract,
-            boolean addSourceLineAnnotations,
-            boolean addSourceLineBeforeStepCalls,
-            boolean failScenariosWithNoSteps,
-            boolean failRulesWithNoScenarios,
-            String tagForScenariosWithNoSteps,
-            String tagForRulesWithNoScenarios,
+            boolean addSourceLineNumbers,
+            String tagForEmptyScenarios,
+            String tagForEmptyRules,
             boolean addCucumberStepAnnotations,
             boolean placeGeneratedClassNextToAnnotatedClass,
             String dataTableParameterType
     ) {
         this.classSuffixIfAbstract = classSuffixIfAbstract;
-        this.addSourceLineAnnotations = addSourceLineAnnotations;
-        this.addSourceLineBeforeStepCalls = addSourceLineBeforeStepCalls;
-        this.failScenariosWithNoSteps = failScenariosWithNoSteps;
-        this.failRulesWithNoScenarios = failRulesWithNoScenarios;
-        this.tagForScenariosWithNoSteps = tagForScenariosWithNoSteps;
-        this.tagForRulesWithNoScenarios = tagForRulesWithNoScenarios;
+        this.addSourceLineNumbers = addSourceLineNumbers;
+        this.tagForEmptyScenarios = tagForEmptyScenarios;
+        this.tagForEmptyRules = tagForEmptyRules;
         this.addCucumberStepAnnotations = addCucumberStepAnnotations;
         this.placeGeneratedClassNextToAnnotatedClass = placeGeneratedClassNextToAnnotatedClass;
         this.dataTableParameterType = dataTableParameterType;

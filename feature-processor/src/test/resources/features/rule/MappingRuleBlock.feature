@@ -29,7 +29,7 @@ Feature: MappingRuleBlock
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assumptions;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -50,13 +50,13 @@ Feature: MappingRuleBlock
       public class MyFeatureTest extends MyFeature {
           @Nested
           @Order(1)
+          @Tag("new")
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @DisplayName("Rule:")
           public class Rule_1 {
               @Test
-              @Tag("new")
               public void noScenariosInRule() {
-                  Assumptions.assumeTrue(false, "Rule has no scenarios");
+                  Assertions.fail("Rule doesn't have any scenarios");
               }
           }
       }
@@ -86,7 +86,7 @@ Feature: MappingRuleBlock
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assumptions;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -107,13 +107,13 @@ Feature: MappingRuleBlock
       public class MyFeatureTest extends MyFeature {
           @Nested
           @Order(1)
+          @Tag("new")
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @DisplayName("Rule: rule name")
           public class Rule_1 {
               @Test
-              @Tag("new")
               public void noScenariosInRule() {
-                  Assumptions.assumeTrue(false, "Rule has no scenarios");
+                  Assertions.fail("Rule doesn't have any scenarios");
               }
           }
       }
@@ -147,7 +147,7 @@ Feature: MappingRuleBlock
 
       import dev.specbinder.annotations.output.FeatureFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assumptions;
+      import org.junit.jupiter.api.Assertions;
       import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
@@ -172,13 +172,13 @@ Feature: MappingRuleBlock
            */
           @Nested
           @Order(1)
+          @Tag("new")
           @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
           @DisplayName("Rule: rule name")
           public class Rule_1 {
               @Test
-              @Tag("new")
               public void noScenariosInRule() {
-                  Assumptions.assumeTrue(false, "Rule has no scenarios");
+                  Assertions.fail("Rule doesn't have any scenarios");
               }
           }
       }

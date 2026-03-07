@@ -11,8 +11,11 @@ Feature: MappingRuleBackgroundBlock
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -105,8 +108,11 @@ Feature: MappingRuleBackgroundBlock
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -217,8 +223,11 @@ Feature: MappingRuleBackgroundBlock
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -326,8 +335,11 @@ Feature: MappingRuleBackgroundBlock
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -437,8 +449,11 @@ Feature: MappingRuleBackgroundBlock
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -581,8 +596,11 @@ Feature: MappingRuleBackgroundBlock
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -671,8 +689,11 @@ Feature: MappingRuleBackgroundBlock
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -783,8 +804,11 @@ Feature: MappingRuleBackgroundBlock
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """

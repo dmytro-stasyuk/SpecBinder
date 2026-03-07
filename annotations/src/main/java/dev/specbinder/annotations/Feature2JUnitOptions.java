@@ -1,7 +1,5 @@
 package dev.specbinder.annotations;
 
-import dev.specbinder.annotations.output.SourceLine;
-
 import java.lang.annotation.*;
 
 /**
@@ -74,110 +72,119 @@ public @interface Feature2JUnitOptions {
     }
 
     /**
-     * If set to true, the generator will add a failing test method for rules that have no scenarios.
-     * An example of what the generated inner class would look like for an empty rule is:
-     * <pre>
-     *     &#64;Nested
-     *     &#64;Order(1)
-     *     &#64;DisplayName("Rule: Processing rules")
-     *     public class Rule_1 {
-     *         &#64;Test
-     *         &#64;Tag("new")
-     *         public void noScenariosInRule() {
-     *             Assertions.fail("Rule doesn't have any scenarios");
-     *         }
-     *     }
-     * </pre>
+     * Defines the behavior of the generated test method for empty Gherkin elements
+     * (Rules with no Scenarios, or Scenarios with no steps).
      *
-     * @return true if rules with no scenarios should fail, false otherwise
+     * @see #emptyRuleBehavior()
+     * @see #emptyScenarioBehavior()
      */
-    boolean failRulesWithNoScenarios() default true;
+    enum EMPTY_ELEMENT_BEHAVIOUR {
+        /**
+         * Generates a test method that <strong>fails</strong> using {@code Assertions.fail(...)}.
+         * <p>
+         * The test is reported as a failure, making it immediately visible in test results.
+         * This is the recommended mode for TDD workflows where empty elements represent
+         * work that needs to be done.
+         */
+        FAIL,
+
+        /**
+         * Generates a test method that is <strong>skipped</strong> using {@code Assumptions.assumeTrue(false, ...)}.
+         * <p>
+         * The test is reported as skipped/aborted rather than failed, which can be useful
+         * when empty elements are intentional placeholders that should not block the build.
+         */
+        SKIP,
+
+        /**
+         * No failing or skipping statement is generated for the empty element.
+         * <p>
+         * An empty Rule still produces a {@code @Nested} inner class and an empty Scenario
+         * still produces a {@code @Test} method, but neither will contain any assertions
+         * or assumptions — the test will simply pass.
+         */
+        NONE
+    }
+
+    /**
+     * Controls how the generator handles Rules that contain no Scenarios.
+     * <ul>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — generates a test method with
+     *     {@code Assertions.fail("Rule doesn't have any scenarios")}, causing the test to fail</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#SKIP SKIP} — generates a test method with
+     *     {@code Assumptions.assumeTrue(false, "Rule has no scenarios")}, causing the test to be skipped</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#NONE NONE} — generates the {@code @Nested} inner class
+     *     without any failing or skipping statement</li>
+     * </ul>
+     *
+     * @return the behavior for Rules with no Scenarios
+     * @see #tagForEmptyRules()
+     */
+    EMPTY_ELEMENT_BEHAVIOUR emptyRuleBehavior() default EMPTY_ELEMENT_BEHAVIOUR.FAIL;
 
     /**
      * The value for JUnit's @{@link org.junit.jupiter.api.Tag} annotation that will be added to failing test method
      * that was added for rules that do not contain any scenarios. By default, this is set to "new".
      * If an empty or blank value is specified, no tag will be added.
      *
-     * @return the tag for rules with no scenarios
+     * @return the tag for empty rules
      */
-    String tagForRulesWithNoScenarios() default "new";
+    String tagForEmptyRules() default "new";
 
     /**
-     * If set to true, the generator will add a call to a failing JUnit failing assertion for scenarios that have no steps.
-     * An example of what the generated test method would look like for an empty scenario is:
-     * <pre>
-     *     &#64;Test
-     *     &#64;Order(1)
-     *     &#64;Tag("new")
-     *     &#64;DisplayName("Scenario: Empty scenario")
-     *     public void scenario_Empty_scenario() {
-     *         Assertions.fail("Scenario has no steps");
-     *     }
-     * </pre>
+     * Controls how the generator handles Scenarios that contain no steps.
+     * <ul>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — generates a test method with
+     *     {@code Assertions.fail("Scenario has no steps")}, causing the test to fail</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#SKIP SKIP} — generates a test method with
+     *     {@code Assumptions.assumeTrue(false, "Scenario has no steps")}, causing the test to be skipped</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#NONE NONE} — generates the {@code @Test} method
+     *     without any failing or skipping statement</li>
+     * </ul>
      *
-     * @return true if scenarios with no steps should fail, false otherwise
+     * @return the behavior for Scenarios with no steps
+     * @see #tagForEmptyScenarios()
      */
-    boolean failScenariosWithNoSteps() default true;
+    EMPTY_ELEMENT_BEHAVIOUR emptyScenarioBehavior() default EMPTY_ELEMENT_BEHAVIOUR.FAIL;
 
     /**
      * The value for JUnit's @{@link org.junit.jupiter.api.Tag} annotation that will be added to scenarios that do not
      * contain any steps. By default, this is set to "new".
      * If an empty or blank value is specified, no tag will be added.
      *
-     * @return the tag for scenarios with no steps
+     * @return the tag for empty scenarios
      */
-    String tagForScenariosWithNoSteps() default "new";
+    String tagForEmptyScenarios() default "new";
 
     /**
-     * If set to true, the generator will add {@link SourceLine} annotation to test methods and
-     * nested test classes containing line numbers where these elements appear in the Feature file.
+     * If set to true, the generator will embed source line numbers from the feature file
+     * into the generated test code in two ways:
+     * <ul>
+     *     <li>Line numbers are embedded in {@code @DisplayName} annotations on Scenario test methods,
+     *     Rule {@code @Nested} inner classes, and Background {@code @BeforeEach} methods</li>
+     *     <li>Line numbers are added as a prefix in the block comments above step method calls</li>
+     * </ul>
      * <p>
-     * An example of what the generated annotation would look like is:
+     * An example of what the generated code would look like is:
      * <pre>
      *     &#64;Test
      *     &#64;Order(1)
-     *     &#64;SourceLine(12)
-     *     &#64;DisplayName("Scenario: Successful login")
-     *     public void scenario_Successful_login() {
-     *     ...
-     *     }
-     *     </pre>
-     *
-     * @return true if source line annotations should be added, false otherwise
-     */
-    boolean addSourceLineAnnotations() default false;
-
-    /**
-     * If set to true, the generator will append the source location in the java block comment just before a call
-     * to each step method.
-     * An example of what the generated comment would look like is:
-     * <pre>
-     *     &#64;Test
-     *     &#64;Order(1)
-     *     &#64;SourceLine(2)
-     *     &#64;DisplayName("Scenario: Test")
+     *     &#64;DisplayName("Scenario [2]: Successful login")
      *     public void scenario_1() {
      *        &#47;*
-     *          * Given user exists
-     *          * (source line - 3)
+     *          * [3] Given user exists
      *          *&#47;
-     *         givenUserExists();
+     *         userExists();
      *         &#47;*
-     *           * When user clicks button
-     *           * (source line - 4)
+     *           * [4] When user clicks button
      *           *&#47;
-     *          whenUserClicksButton();
-     *          &#47;*
-     *           * Then result is displayed
-     *           * (source line - 5)
-     *           *&#47;
-     *          thenResultIsDisplayed();
+     *          userClicksButton();
      *      }
      *     </pre>
      *
-     * @return true if source line comments should be added before step calls, false otherwise
+     * @return true if source line numbers should be added, false otherwise
      */
-    boolean addSourceLineBeforeStepCalls() default false;
+    boolean addSourceLineNumbers() default false;
 
     /**
      * Controls whether the generated test class is abstract or concrete, determining how step methods are generated
@@ -224,16 +231,16 @@ public @interface Feature2JUnitOptions {
      * Specifies the type of parameters that will be used for step methods corresponding to steps with data tables.
      * The options are:
      * <ul>
-     *     <li>LIST_OF_MAPS - (default) Each data table will be represented as a List of Maps, where each Map corresponds to a row in the table
+     *     <li>LIST_OF_OBJECT_PARAMS - (default) Each data table will be represented as a List of custom object types generated based on the data table structure.</li>
+     *     <li>LIST_OF_MAPS - Each data table will be represented as a List of Maps, where each Map corresponds to a row in the table
      *     with column headers as keys.</li>
      *     <li>CUCUMBER_DATA_TABLE - Each data table will be represented using Cucumber's DataTable class, allowing for more advanced data table handling
-     *     <li>LIST_OF_OBJECT_PARAMS - Each data table will be represented as a List of custom object types generated based on the data table structure.
      *     features provided by Cucumber.</li>
      * </ul>
      *
      * @return the data table parameter type
      */
-    DATA_TABLE_PARAMETER_TYPE dataTableParameterType() default DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+    DATA_TABLE_PARAMETER_TYPE dataTableParameterType() default DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
     /* =============================================================================
      * The rest of the options below are experimental and subject to change/removal.
@@ -280,6 +287,78 @@ public @interface Feature2JUnitOptions {
      * @return true if Cucumber step annotations should be added, false otherwise
      */
     boolean addCucumberStepAnnotations() default false;
+
+    /**
+     * Controls whether Cucumber step annotations ({@code @Given}, {@code @When}, {@code @Then})
+     * on methods in the class hierarchy are used to match steps from the feature file to existing
+     * method implementations.
+     * <p>
+     * When {@code true} (default):
+     * <ul>
+     *     <li>The generator inspects Cucumber step annotations on inherited methods to determine
+     *     if a step is already implemented</li>
+     *     <li>A method annotated with e.g. {@code @Given("user exists")} will be recognised as
+     *     the implementation of the step "Given user exists", even if the method name does not
+     *     follow the standard naming convention</li>
+     *     <li>Methods without Cucumber step annotations are still matched by method name as usual,
+     *     so both annotation-based and name-based matching work together</li>
+     *     <li>If both an annotation-matched method and a name-matched method exist for the same step,
+     *     the annotation-matched method takes precedence</li>
+     *     <li>Matched methods are not re-declared in the generated test class but are called
+     *     from the generated scenario methods, just as name-matched methods are</li>
+     * </ul>
+     * <p>
+     * The annotation value can be either a <b>regular expression</b> or a <b>Cucumber expression</b>.
+     * Both formats are supported and the generator will attempt to match using each one.
+     * <p>
+     * <b>Cucumber expressions</b> use a human-readable syntax with built-in parameter types
+     * enclosed in curly braces. The following default parameter types are supported:
+     * <ul>
+     *     <li>{@code {int}} – matches integers (e.g. {@code 71}, {@code -19}), maps to {@code int}</li>
+     *     <li>{@code {float}} – matches floats (e.g. {@code 3.6}, {@code .8}, {@code -9.2}), maps to {@code float}</li>
+     *     <li>{@code {word}} – matches a single word without whitespace (e.g. {@code banana}), maps to {@code String}</li>
+     *     <li>{@code {string}} – matches a single- or double-quoted string (quotes are discarded), maps to {@code String}</li>
+     *     <li>{@code {double}} – matches floats, maps to {@code double}</li>
+     *     <li>{@code {long}} – matches integers, maps to {@code long}</li>
+     *     <li>{@code {short}} – matches integers, maps to {@code short}</li>
+     *     <li>{@code {byte}} – matches integers, maps to {@code byte}</li>
+     *     <li>{@code {bigdecimal}} – matches floats, maps to {@code BigDecimal}</li>
+     *     <li>{@code {biginteger}} – matches integers, maps to {@code BigInteger}</li>
+     *     <li>{@code {}} – anonymous parameter, matches anything</li>
+     * </ul>
+     * <p>
+     * <b>Note:</b> Custom parameter types are not supported – only the built-in types listed above.
+     * <p>
+     * Examples of Cucumber expressions in annotations:
+     * <pre>
+     * &#64;Given("a user named {string}")
+     * public void aUserNamed(String name) { ... }
+     *
+     * &#64;When("the user buys {int} items at {float} each")
+     * public void theUserBuysItems(int count, float price) { ... }
+     *
+     * &#64;Then("the total is {}")
+     * public void theTotalIs(String value) { ... }
+     * </pre>
+     * <p>
+     * When {@code false}:
+     * <ul>
+     *     <li>Only method name matching is used to look up existing step implementations</li>
+     *     <li>Cucumber step annotations on inherited methods are ignored during lookup</li>
+     * </ul>
+     * For example, if a base class contains:
+     * <pre>
+     * &#64;Given("user exists")
+     * public void setupUser() { ... }
+     * </pre>
+     * With this option set to {@code false}, the annotation value {@code "user exists"} is ignored
+     * and the method is matched only by its name {@code setupUser}. As a result, the step
+     * "Given user exists" would not be matched to this method and would still be generated
+     * in the output class.
+     *
+     * @return true if Cucumber step annotations should be used for step matching, false otherwise
+     */
+    boolean useCucumberAnnotationsForStepMatching() default true;
 
     /**
      * Controls how enum constants from parent/ancestor classes are referenced in generated test code

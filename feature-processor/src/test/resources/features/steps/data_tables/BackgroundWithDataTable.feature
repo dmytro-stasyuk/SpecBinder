@@ -3,7 +3,7 @@ Feature: BackgroundWithDataTable
   I want the generator to convert Background steps with DataTables into @BeforeEach methods
   So that I can declare complex tabular test data in feature files that runs before each scenario
 
-  Rule: Background steps with DataTables should generate methods accepting List<Map<String, String>> parameter
+  Rule: Background steps with DataTables should generate methods accepting List<Map<String, String>> parameter when LIST_OF_MAPS option is set
 
     Scenario: Background with a DataTable step
       Given the following base class:
@@ -11,8 +11,11 @@ Feature: BackgroundWithDataTable
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -110,8 +113,11 @@ Feature: BackgroundWithDataTable
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       @Feature2JUnit
+      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """

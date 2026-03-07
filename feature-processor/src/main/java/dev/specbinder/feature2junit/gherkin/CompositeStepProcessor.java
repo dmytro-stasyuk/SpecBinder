@@ -286,9 +286,10 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         // Add block comment for the composite step
         String stepText = parentStep.getKeyword() + parentStep.getText();
         scenarioMethodBuilder.addCode("/*");
-        scenarioMethodBuilder.addCode("\n * $L", stepText);
-        if (options.isAddSourceLineBeforeStepCalls()) {
-            scenarioMethodBuilder.addCode("\n * (source line - $L)", parentStep.getLocation().getLine());
+        if (options.isAddSourceLineNumbers()) {
+            scenarioMethodBuilder.addCode("\n * [$L] $L", parentStep.getLocation().getLine(), stepText);
+        } else {
+            scenarioMethodBuilder.addCode("\n * $L", stepText);
         }
         scenarioMethodBuilder.addCode("\n */\n");
 

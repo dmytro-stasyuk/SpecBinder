@@ -22,6 +22,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Use the `mcp__jetbrains__get_run_configurations` tool to list available run configurations
 - Use the `mcp__jetbrains__execute_run_configuration` tool to execute specific tests
 - To run ALL tests in the feature-processor module, run the test class: `dev.specbinder.feature2junit.tests.AllTests`
+- When the AllTests output is too large to parse, run individual test suites from `feature-processor/src/test/java/dev/specbinder/feature2junit/tests/` instead (e.g., `MappingStepsTest`, `MappingRuleTest`, `GeneratorOptionsTest`, etc.)
 - This hybrid approach provides compile-time guarantees + IntelliJ's better test integration and IDE support
 - **Never use `mvn test` commands** unless explicitly requested by the user
 
@@ -104,8 +105,8 @@ Feature2JUnitGenerator (APT entry point)
 ### 4. `user-story-processor/`
 Annotation processor for JBehave `.story` files. Less mature than feature-processor.
 
-### 5. `examples/` (currently disabled)
-Commented out in parent POM. Contains usage examples for feature2junit.
+### 5. `examples/`
+Contains usage examples for feature2junit with 6 sub-example modules covering various use cases.
 
 **Module build order:** common → annotations → feature-processor/user-story-processor (parallel) → examples
 
@@ -310,7 +311,7 @@ This ensures all changes are tracked and ready for commit.
 - **feature-processor is primary**: Most mature and actively developed module
 - **Annotations separated**: annotations module contains only public API; feature-processor contains the implementation
 - **user-story-processor is experimental**: Less mature, fewer features
-- **Examples are disabled**: Comment is in parent pom.xml line 38
+- **Examples are active**: 6 sub-example modules in `examples/` directory
 - **No .cursorrules**: This project doesn't have AI assistant rules configured
 - **Comprehensive README**: 1800+ lines of detailed documentation in README.md
 - **Self-documenting tests**: Test .feature files serve as living documentation of the Gherkin-to-JUnit mapping
