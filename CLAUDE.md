@@ -29,7 +29,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Example test execution workflow:**
 ```bash
 # Step 1: Trigger full project rebuild in IntelliJ IDEA
-/Users/dmytro/Projects/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh
+.idea_scripts/trigger_rebuild_project_shortcut.sh
 
 # Step 2: Run tests via IntelliJ MCP server
 mcp__jetbrains__execute_run_configuration(configurationName="AllTests")
@@ -39,7 +39,7 @@ mcp__jetbrains__execute_run_configuration(configurationName="AllTests")
 - **NEVER USE MAVEN FOR COMPILATION** - DO NOT RUN `mvn clean compile`, `mvn compile`, `mvn test-compile`, OR ANY MAVEN BUILD COMMANDS
 - **ALWAYS use the rebuild script** to trigger full project rebuilds in IntelliJ IDEA:
   ```bash
-  /Users/dmytro/Projects/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh
+  .idea_scripts/trigger_rebuild_project_shortcut.sh
   ```
 - **When to trigger a rebuild:**
   - After making code changes and before running tests

@@ -5,7 +5,7 @@
     <parent>
         <groupId>dev.specbinder.examples.commonusecases</groupId>
         <artifactId>common-use-cases</artifactId>
-        <version>0.1.20-SNAPSHOT</version>
+        <version>0.1.23-SNAPSHOT</version>
     </parent>
     <artifactId>example-10</artifactId>
     <name>${project.artifactId}</name>

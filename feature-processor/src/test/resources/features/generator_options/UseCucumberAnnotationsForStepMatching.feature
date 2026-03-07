@@ -1858,3 +1858,140 @@ Feature: UseCucumberAnnotationsForStepMatching
             }
         }
         """
+
+  Rule: Cucumber expressions with literal dollar sign before a parameter type are supported for annotation-based step matching
+  - When a Cucumber annotation value contains a literal $ immediately before a parameter type placeholder (e.g. ${double}, ${int}),
+  the $ is treated as literal text and the parameter type is matched normally
+  - This is common in step definitions dealing with currency values like $29.99 or $100
+
+    Scenario: Annotation with literal $ before {double} Cucumber expression matches step with dollar amount
+      Given the following base class:
+        """
+        package com.example;
+
+        import dev.specbinder.annotations.Feature2JUnit;
+        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import io.cucumber.java.en.Then;
+
+        @Feature2JUnit
+        @Feature2JUnitOptions(
+            useCucumberAnnotationsForStepMatching = true,
+            addCucumberStepAnnotations = true
+        )
+        public abstract class MockedAnnotatedTestClass {
+            @Then("the cart total should be ${double}")
+            protected void theCartTotalShouldBe(double total) {
+                // custom implementation
+            }
+        }
+        """
+      And a feature file under path "com/example/TestFeature.feature" with the following content:
+        """
+        Feature: Dollar Before Double Param
+          Scenario: Test
+            Given setup is done
+            Then the cart total should be $29.99
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package com.example;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import io.cucumber.java.en.Given;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Dollar Before Double Param
+         */
+        @DisplayName("TestFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("com/example/TestFeature.feature")
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
+            @Given("^setup is done$")
+            public void setupIsDone() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given setup is done
+                 */
+                setupIsDone();
+                /*
+                 * Then the cart total should be $29.99
+                 */
+                theCartTotalShouldBe(29.99);
+            }
+        }
+        """
+
+    Scenario: Annotation with literal $ before {int} Cucumber expression matches step with dollar amount
+      Given the following base class:
+        """
+        package com.example;
+
+        import dev.specbinder.annotations.Feature2JUnit;
+        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import io.cucumber.java.en.Given;
+
+        @Feature2JUnit
+        @Feature2JUnitOptions(
+            useCucumberAnnotationsForStepMatching = true,
+            addCucumberStepAnnotations = true
+        )
+        public abstract class MockedAnnotatedTestClass {
+            @Given("the product {string} exists with price ${int}")
+            protected void theProductExistsWithPrice(String product, int price) {
+                // custom implementation
+            }
+        }
+        """
+      And a feature file under path "com/example/TestFeature.feature" with the following content:
+        """
+        Feature: Dollar Before Int Param
+          Scenario: Test
+            Given the product "Laptop" exists with price $999
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package com.example;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Dollar Before Int Param
+         */
+        @DisplayName("TestFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("com/example/TestFeature.feature")
+        public class TestFeatureTest extends MockedAnnotatedTestClass {
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given the product "Laptop" exists with price $999
+                 */
+                theProductExistsWithPrice("Laptop", 999);
+            }
+        }
+        """

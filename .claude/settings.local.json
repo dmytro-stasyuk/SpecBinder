@@ -32,7 +32,7 @@
       "Bash(timeout 30 mvn test:*)",
       "Bash(mvn dependency:tree:*)",
       "Skill(run-last-test)",
-      "Bash(/Users/dmytro/Projects/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh)",
+      "Bash(.idea_scripts/trigger_rebuild_project_shortcut.sh)",
       "Bash(xargs:*)",
       "WebFetch(domain:junit.org)",
       "WebFetch(domain:docs.junit.org)",
@@ -40,7 +40,10 @@
       "Bash(tail:*)",
       "Skill(add-scenarios)",
       "Bash(git:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(.idea_scripts/trigger_rebuild_project_shortcut.sh:*)",
+      "Bash(./mvnw install:*)",
+      "Bash(./mvnw test:*)"
     ],
     "deny": [],
     "ask": []

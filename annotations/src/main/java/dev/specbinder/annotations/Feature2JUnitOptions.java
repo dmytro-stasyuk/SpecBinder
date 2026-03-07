@@ -24,17 +24,20 @@ public @interface Feature2JUnitOptions {
      */
     enum DATA_TABLE_PARAMETER_TYPE {
         /**
-         * Represents data tables as {@code List<Map<String, String>>}.
+         * Represents data tables as {@code List<ObjectParam>} where ObjectParam is a generated inner type based on
+         * table structure.
          * <p>
-         * Each row in the table becomes a Map where keys are column headers and values are cell values.
-         * This type is convenient for working with tabular data without additional type definitions.
+         * The generator creates an object type with fields corresponding to the table's column headers,
+         * providing type-safe access to table data. Each row becomes an instance of the generated type.
+         * This type offers the strongest type safety.
          * <p>
          * Example generated method signature:
          * <pre>
-         * public abstract void givenTheFollowingProducts(List&lt;Map&lt;String, String&gt;&gt; dataTable);
+         * public abstract void whenUserHasPermissionsParam(List&lt;PermissionsParam&gt; permissions);
          * </pre>
+         * where {@code PermissionsParam} is generated with fields matching the table columns.
          */
-        LIST_OF_MAPS,
+        LIST_OF_OBJECT_PARAMS,
 
         /**
          * Represents data tables using Cucumber's {@code DataTable} class.
@@ -55,20 +58,17 @@ public @interface Feature2JUnitOptions {
         CUCUMBER_DATA_TABLE,
 
         /**
-         * Represents data tables as {@code List<ObjectParam>} where ObjectParam is a generated inner type based on
-         * table structure.
+         * Represents data tables as {@code List<Map<String, String>>}.
          * <p>
-         * The generator creates an object type with fields corresponding to the table's column headers,
-         * providing type-safe access to table data. Each row becomes an instance of the generated type.
-         * This type offers the strongest type safety.
+         * Each row in the table becomes a Map where keys are column headers and values are cell values.
+         * This type is convenient for working with tabular data without additional type definitions.
          * <p>
          * Example generated method signature:
          * <pre>
-         * public abstract void whenUserHasPermissionsParam(List&lt;PermissionsParam&gt; permissions);
+         * public abstract void givenTheFollowingProducts(List&lt;Map&lt;String, String&gt;&gt; dataTable);
          * </pre>
-         * where {@code PermissionsParam} is generated with fields matching the table columns.
          */
-        LIST_OF_OBJECT_PARAMS
+        LIST_OF_MAPS
     }
 
     /**
@@ -105,6 +105,25 @@ public @interface Feature2JUnitOptions {
          */
         NONE
     }
+
+    /**
+     * Specifies the file extensions that the annotation processor recognizes as Gherkin specification files.
+     * <p>
+     * When using convention-based discovery ({@code @Feature2JUnit} with no value) or glob patterns,
+     * the processor will search for files matching any of the specified extensions.
+     * When using explicit file paths, the file is processed regardless of its extension.
+     * <p>
+     * Each extension should be specified without the leading dot (e.g., {@code "feature"}, {@code "specb"}).
+     * The array must not be empty and none of the values may be blank.
+     * <p>
+     * Example usage:
+     * <pre>
+     * &#64;Feature2JUnitOptions(supportedFileExtensions = {"feature", "specb"})
+     * </pre>
+     *
+     * @return the array of supported file extensions
+     */
+    String[] supportedFileExtensions() default {"feature", "specb"};
 
     /**
      * Controls how the generator handles Rules that contain no Scenarios.

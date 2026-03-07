@@ -19,6 +19,7 @@ buildNumber.properties
 .DS_Store
 
 **/*Scenarios.java
-/_resources/
+/docs/
+docs/
 **/.flattened-pom.xml
 .aider*

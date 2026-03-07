@@ -88,6 +88,7 @@ public class Feature2JUnitOptionsResolver {
         boolean useQualifiedEnumConstants = false;
         boolean useStepKeywordInStepMethodName = false;
         boolean useCucumberAnnotationsForStepMatching = true;
+        String[] supportedFileExtensions = new String[]{"feature", "specb"};
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -163,6 +164,18 @@ public class Feature2JUnitOptionsResolver {
                     case "useCucumberAnnotationsForStepMatching":
                         useCucumberAnnotationsForStepMatching = (Boolean) value;
                         break;
+                    case "supportedFileExtensions":
+                        if (value instanceof List<?> list) {
+                            supportedFileExtensions = list.stream()
+                                    .map(item -> {
+                                        if (item instanceof AnnotationValue av) {
+                                            return (String) av.getValue();
+                                        }
+                                        return item.toString();
+                                    })
+                                    .toArray(String[]::new);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -184,7 +197,8 @@ public class Feature2JUnitOptionsResolver {
                 enableCompositeSteps,
                 useQualifiedEnumConstants,
                 useStepKeywordInStepMethodName,
-                useCucumberAnnotationsForStepMatching
+                useCucumberAnnotationsForStepMatching,
+                supportedFileExtensions
         );
     }
 
@@ -208,7 +222,8 @@ public class Feature2JUnitOptionsResolver {
                 options.enableCompositeSteps(),
                 options.useQualifiedEnumConstants(),
                 options.useStepKeywordInStepMethodName(),
-                options.useCucumberAnnotationsForStepMatching()
+                options.useCucumberAnnotationsForStepMatching(),
+                options.supportedFileExtensions()
         );
     }
 }

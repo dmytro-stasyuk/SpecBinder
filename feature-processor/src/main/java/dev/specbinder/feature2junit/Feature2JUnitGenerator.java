@@ -6,6 +6,7 @@ import dev.specbinder.annotations.Feature2JUnit;
 import dev.specbinder.feature2junit.config.GeneratorOptions;
 import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.utils.Feature2JUnitOptionsResolver;
+import dev.specbinder.feature2junit.utils.FeatureFileExtensions;
 import dev.specbinder.feature2junit.utils.GlobPatternMatcher;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -33,7 +34,7 @@ import java.util.Set;
  * Annotation processor that generates JUnit test subclasses for classes annotated with {@link Feature2JUnit} annotation.
  */
 @SupportedAnnotationTypes("dev.specbinder.annotations.Feature2JUnit")
-@SupportedSourceVersion(SourceVersion.RELEASE_22)
+@SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
 public class Feature2JUnitGenerator extends AbstractProcessor implements LoggingSupport {
 
@@ -85,17 +86,27 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
 
                 logOther("Resolved options: " + generatorOptions);
 
+                // Validate supportedFileExtensions
+                try {
+                    FeatureFileExtensions.validate(generatorOptions.getSupportedFileExtensions());
+                } catch (IllegalArgumentException e) {
+                    logError(e.getMessage());
+                    throw new RuntimeException(e.getMessage());
+                }
+
                 TestSubclassCreator subclassGenerator = new TestSubclassCreator(getProcessingEnv(), generatorOptions);
 
                 String annotationValue = targetAnnotation.value();
 
                 // Check if the annotation value is empty - if so, derive a pattern from the package
                 if (annotationValue == null || annotationValue.isBlank()) {
+                    String[] extensions = generatorOptions.getSupportedFileExtensions();
+                    String globWildcard = FeatureFileExtensions.globWildcard(extensions);
                     String packageName = getPackageName(annotatedClass);
                     if (packageName.isEmpty()) {
-                        annotationValue = "*.feature";
+                        annotationValue = globWildcard;
                     } else {
-                        annotationValue = packageName.replace('.', '/') + "/*.feature";
+                        annotationValue = packageName.replace('.', '/') + "/" + globWildcard;
                     }
                     logInfo("Empty annotation value detected, using pattern: " + annotationValue);
                 }
@@ -290,7 +301,7 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_22;
+        return SourceVersion.RELEASE_21;
     }
 
     /**

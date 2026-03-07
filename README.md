@@ -39,7 +39,7 @@ regular methods on a regular class.
 
 ### 5. Type-safe data tables
 
-DataTable rows are automatically mapped to generated Java record-like classes with type-inferred fields — no manual
+Pipe delimited gherkin data table rows are automatically mapped to generated Java record-like classes with type-inferred fields — no manual
 `Map<String, String>` parsing, no custom converters. Column headers become strongly-typed accessors, so you work with
 `item.name()` and `item.quantity()` instead of `row.get("name")`. This eliminates the repetitive boilerplate of mapping
 string-based table data to domain objects, while the compiler catches mismatched columns or wrong types before tests

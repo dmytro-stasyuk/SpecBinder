@@ -238,7 +238,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         addClassAnnotations(
                 featureTags, hasRules, hasScenarios, classBuilder,
                 featureFilePathForParsing, featureFilePathForAnnotation,
-                packageName, annotatedClassName);
+                packageName, annotatedClassName, options);
 
         TypeSpec typeSpec = classBuilder.build();
 
@@ -370,15 +370,33 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             String packageName = extractPackageName(annotatedClass);
             String annotatedClassName = annotatedClass.getSimpleName().toString();
 
-            String path = "";
+            String basePath = "";
             if (StringUtils.isNotBlank(packageName)) {
-                path = packageName.replaceAll("\\.", "/") + "/";
+                basePath = packageName.replaceAll("\\.", "/") + "/";
             }
-            path += annotatedClassName + ".feature";
-            return path;
+
+            // Try each supported extension, return first that exists
+            for (String ext : FeatureFileExtensions.withDots(options.getSupportedFileExtensions())) {
+                String candidatePath = basePath + annotatedClassName + ext;
+                if (featureFileExists(candidatePath)) {
+                    return candidatePath;
+                }
+            }
+
+            // Default to first configured extension if none found (will produce a clear error later)
+            return basePath + annotatedClassName + "." + options.getSupportedFileExtensions()[0];
         }
 
         return featureFilePath;
+    }
+
+    private boolean featureFileExists(String path) {
+        try {
+            processingEnv.getFiler().getResource(javax.tools.StandardLocation.CLASS_PATH, "", path);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /**
@@ -393,10 +411,8 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
         }
 
-        // Remove .feature extension
-        if (fileName.endsWith(".feature")) {
-            fileName = fileName.substring(0, fileName.lastIndexOf("."));
-        }
+        // Remove supported extension
+        fileName = FeatureFileExtensions.stripExtension(fileName, options.getSupportedFileExtensions());
 
         // Capitalize first letter to follow Java class naming conventions
         if (fileName.length() > 0) {
@@ -518,7 +534,8 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             String featureFilePathForParsing,
             String featureFilePath,
             String packageName,
-            String annotatedClassName) {
+            String annotatedClassName,
+            GeneratorOptions options) {
 
         if (!featureTags.isEmpty()) {
             AnnotationSpec jUnitTagsAnnotation = TagUtils.toJUnitTagsAnnotation(featureTags);
@@ -572,10 +589,11 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
          */
         String featureFilePathForAnnotation;
         if (featureFilePath == null || featureFilePath.isBlank()) {
+            String defaultExt = "." + options.getSupportedFileExtensions()[0];
             if (StringUtils.isNotBlank(packageName)) {
-                featureFilePathForAnnotation = packageName.replaceAll("\\.", "/") + "/" + annotatedClassName + ".feature";
+                featureFilePathForAnnotation = packageName.replaceAll("\\.", "/") + "/" + annotatedClassName + defaultExt;
             } else {
-                featureFilePathForAnnotation = annotatedClassName + ".feature";
+                featureFilePathForAnnotation = annotatedClassName + defaultExt;
             }
         } else {
             featureFilePathForAnnotation = featureFilePath;

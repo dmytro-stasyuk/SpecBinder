@@ -169,7 +169,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             stepMethodBuilder.addStatement("$T.fail(\"Step is not yet implemented\")", Assertions.class);
         }
 
-        if (options.isAddCucumberStepAnnotations()) {
+        if (options.isAddCucumberStepAnnotations() && annotationMatch == null) {
             AnnotationSpec annotationSpec = buildGWTAnnotation(scenarioStepsMethodSpecs,
                     step.getKeyword().trim(), stepMethodName,
                     stepLine, stepMethodSignatureAttributes

@@ -45,7 +45,7 @@ public class GlobPatternMatcher implements LoggingSupport {
      * @return true if the path contains glob patterns (* or **), false otherwise
      */
     public static boolean isGlobPattern(String path) {
-        return path != null && (path.contains("*") || path.contains("?") || path.contains("["));
+        return path != null && (path.contains("*") || path.contains("?") || path.contains("[") || path.contains("{"));
     }
 
     /**
@@ -182,6 +182,7 @@ public class GlobPatternMatcher implements LoggingSupport {
     private String convertGlobToRegex(String glob) {
         StringBuilder regex = new StringBuilder();
         boolean inGroup = false;
+        boolean inBraces = false;
 
         for (int i = 0; i < glob.length(); i++) {
             char c = glob.charAt(i);
@@ -201,6 +202,21 @@ public class GlobPatternMatcher implements LoggingSupport {
                 case ')':
                 case '|':
                     regex.append('\\').append(c);
+                    break;
+                case '{':
+                    regex.append('(');
+                    inBraces = true;
+                    break;
+                case '}':
+                    regex.append(')');
+                    inBraces = false;
+                    break;
+                case ',':
+                    if (inBraces) {
+                        regex.append('|');
+                    } else {
+                        regex.append(',');
+                    }
                     break;
                 case '*':
                     if (i + 1 < glob.length() && glob.charAt(i + 1) == '*') {

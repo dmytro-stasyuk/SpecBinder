@@ -104,6 +104,12 @@ public class GeneratorOptions {
     private final boolean useCucumberAnnotationsForStepMatching;
 
     /**
+     * The file extensions that the processor recognizes as Gherkin specification files.
+     * Extensions are stored without the leading dot (e.g., "feature", "specb").
+     */
+    private final String[] supportedFileExtensions;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -122,6 +128,7 @@ public class GeneratorOptions {
         this.useQualifiedEnumConstants = false;
         this.useStepKeywordInStepMethodName = false;
         this.useCucumberAnnotationsForStepMatching = true;
+        this.supportedFileExtensions = new String[]{"feature", "specb"};
     }
 
     /**
@@ -142,6 +149,7 @@ public class GeneratorOptions {
      * @param useQualifiedEnumConstants    see {@link #useQualifiedEnumConstants}
      * @param useStepKeywordInStepMethodName see {@link #useStepKeywordInStepMethodName}
      * @param useCucumberAnnotationsForStepMatching see {@link #useCucumberAnnotationsForStepMatching}
+     * @param supportedFileExtensions see {@link #supportedFileExtensions}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -158,7 +166,8 @@ public class GeneratorOptions {
             boolean enableCompositeSteps,
             boolean useQualifiedEnumConstants,
             boolean useStepKeywordInStepMethodName,
-            boolean useCucumberAnnotationsForStepMatching
+            boolean useCucumberAnnotationsForStepMatching,
+            String[] supportedFileExtensions
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -175,6 +184,7 @@ public class GeneratorOptions {
         this.useQualifiedEnumConstants = useQualifiedEnumConstants;
         this.useStepKeywordInStepMethodName = useStepKeywordInStepMethodName;
         this.useCucumberAnnotationsForStepMatching = useCucumberAnnotationsForStepMatching;
+        this.supportedFileExtensions = supportedFileExtensions;
     }
 
 }

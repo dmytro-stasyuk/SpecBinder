@@ -21,11 +21,12 @@ public @interface Feature2JUnit {
      * Supports three usage patterns:
      * <ul>
      *   <li><b>Specific file path:</b> {@code @Feature2JUnit("path/to/MyFeature.feature")} -
-     *       Generates a single test class from the specified feature file</li>
+     *       Generates a single test class from the specified feature file.
+     *       Both {@code .feature} and {@code .specb} extensions are supported.</li>
      *   <li><b>Convention-based discovery:</b> {@code @Feature2JUnit} or {@code @Feature2JUnit()} -
-     *       Automatically finds all {@code .feature} files in the same package directory as the annotated class.
-     *       For example, a class in package {@code com.example.features} will use the pattern
-     *       {@code com/example/features/*.feature} to find matching files.
+     *       Automatically finds all {@code .feature} and {@code .specb} files in the same package directory
+     *       as the annotated class. For example, a class in package {@code com.example.features} will use
+     *       the pattern {@code com/example/features/*.{feature,specb}} to find matching files.
      *       Generates a separate test class for each feature file found.</li>
      *   <li><b>Glob pattern:</b> {@code @Feature2JUnit("features/**​/*.feature")} -
      *       Finds all feature files matching the glob pattern.
