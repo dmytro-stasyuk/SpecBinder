@@ -43,7 +43,8 @@
       "Bash(sed:*)",
       "Bash(.idea_scripts/trigger_rebuild_project_shortcut.sh:*)",
       "Bash(./mvnw install:*)",
-      "Bash(./mvnw test:*)"
+      "Bash(./mvnw test:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []

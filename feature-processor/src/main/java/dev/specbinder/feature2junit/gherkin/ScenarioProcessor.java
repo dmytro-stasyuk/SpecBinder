@@ -74,6 +74,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         List<Step> scenarioSteps = scenario.getSteps();
         List<MethodSpec> scenarioStepsMethodSpecs = new ArrayList<>(scenarioSteps.size());
+        List<String> resolvedStepKeywords = new ArrayList<>(scenarioSteps.size());
 
         String scenarioMethodName = "scenario_" + scenarioNumber;
         MethodSpec.Builder scenarioMethodBuilder = MethodSpec
@@ -226,6 +227,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                                 processingEnv, options, dataTableCollector, enumImportCollector, baseType);
                         compositeProcessor.processCompositeStep(
                                 compositeGroup, scenarioMethodBuilder, scenarioStepsMethodSpecs,
+                                resolvedStepKeywords,
                                 classBuilder, allMethodSpecs, baseClassMethodNames,
                                 scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                         );
@@ -234,6 +236,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                         StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
                         MethodSpec stepMethodSpec = stepProcessor.processStep(
                                 regularStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
+                                resolvedStepKeywords,
                                 scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                         );
                         scenarioStepsMethodSpecs.add(stepMethodSpec);
@@ -264,6 +267,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                     StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
                     MethodSpec stepMethodSpec = stepProcessor.processStep(
                             scenarioStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
+                            resolvedStepKeywords,
                             scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                     );
                     scenarioStepsMethodSpecs.add(stepMethodSpec);

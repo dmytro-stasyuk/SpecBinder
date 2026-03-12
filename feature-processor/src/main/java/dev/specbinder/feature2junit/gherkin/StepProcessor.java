@@ -105,15 +105,17 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
     MethodSpec processStep(
             Step step, MethodSpec.Builder scenarioMethodBuilder,
-            List<MethodSpec> scenarioStepsMethodSpecs) {
+            List<MethodSpec> scenarioStepsMethodSpecs,
+            List<String> resolvedStepKeywords) {
 
-        return processStep(step, scenarioMethodBuilder, scenarioStepsMethodSpecs, null, null, null, null);
+        return processStep(step, scenarioMethodBuilder, scenarioStepsMethodSpecs, resolvedStepKeywords, null, null, null, null);
     }
 
     public MethodSpec processStep(
             Step step,
             MethodSpec.Builder scenarioMethodBuilder,
             List<MethodSpec> scenarioStepsMethodSpecs,
+            List<String> resolvedStepKeywords,
             List<String> scenarioParameterNames,
             List<String> testMethodParameterNames,
             List<Class<?>> scenarioParameterTypes,
@@ -169,10 +171,12 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             stepMethodBuilder.addStatement("$T.fail(\"Step is not yet implemented\")", Assertions.class);
         }
 
+        String resolvedKeyword = resolveGWTKeyword(step.getKeyword().trim(), resolvedStepKeywords, stepLine);
+        resolvedStepKeywords.add(resolvedKeyword);
+
         if (options.isAddCucumberStepAnnotations() && annotationMatch == null) {
-            AnnotationSpec annotationSpec = buildGWTAnnotation(scenarioStepsMethodSpecs,
-                    step.getKeyword().trim(), stepMethodName,
-                    stepLine, stepMethodSignatureAttributes
+            AnnotationSpec annotationSpec = buildGWTAnnotation(resolvedKeyword,
+                    stepMethodName, stepMethodSignatureAttributes
             );
             stepMethodBuilder.addAnnotation(annotationSpec);
         }
@@ -1190,63 +1194,45 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         return result.toString();
     }
 
-    private AnnotationSpec buildGWTAnnotation(
-            List<MethodSpec> scenarioStepsMethodSpecs,
-            String stepKeyword, String stepMethodName,
-            long stepLine,
-            MethodSignatureAttributes signatureAttributes) {
-
-        List<String> parameterValues = signatureAttributes.parameterValues;
-
+    /**
+     * Resolves the GWT keyword for a step. For Given/When/Then steps, returns the keyword directly.
+     * For And/But/* steps, inherits the keyword from the previous step.
+     */
+    private String resolveGWTKeyword(String stepKeyword, List<String> resolvedStepKeywords, long stepLine) {
         String keywordLower = stepKeyword.toLowerCase();
 
-        AnnotationSpec.Builder annotationSpecBuilder;
-        if (keywordLower.equals("given")) {
-            annotationSpecBuilder = AnnotationSpec.builder(Given.class);
-        } else if (keywordLower.equals("when")) {
-            annotationSpecBuilder = AnnotationSpec.builder(When.class);
-        } else if (keywordLower.equals("then")) {
-            annotationSpecBuilder = AnnotationSpec.builder(Then.class);
-        } else if (
-                keywordLower.equals("and") || keywordLower.equals("but")
-                        || keywordLower.equals("*")
-        ) {
-            // 'And' is a special case, which is worked out using previous non And step keyword
-            if (scenarioStepsMethodSpecs.isEmpty()) {
+        if (keywordLower.equals("given") || keywordLower.equals("when") || keywordLower.equals("then")) {
+            return keywordLower;
+        } else if (keywordLower.equals("and") || keywordLower.equals("but") || keywordLower.equals("*")) {
+            if (resolvedStepKeywords.isEmpty()) {
                 throw new ProcessingException(
                         "Step on line - " + stepLine
                                 + " starts with 'And', but there are no previous scenario steps defined");
             }
-            MethodSpec lastScenarioMethodSpec = scenarioStepsMethodSpecs.get(scenarioStepsMethodSpecs.size() - 1);
-
-            List<AnnotationSpec> methodAnnotationSpecs = lastScenarioMethodSpec.annotations;
-            Class<?> gwtAnnotation = null;
-            for (AnnotationSpec methodAnnotationSpec : methodAnnotationSpecs) {
-                String annotationName = methodAnnotationSpec.type.toString();
-                if (annotationName.equals(Given.class.getName())) {
-                    gwtAnnotation = Given.class;
-                    break;
-                } else if (annotationName.equals(When.class.getName())) {
-                    gwtAnnotation = When.class;
-                    break;
-                } else if (annotationName.equals(Then.class.getName())) {
-                    gwtAnnotation = Then.class;
-                    break;
-                } else {
-                    continue; // skip
-                }
-            }
-            if (gwtAnnotation == null) {
-                throw new ProcessingException(
-                        "Step on line - " + stepLine
-                                + " starts with 'And', but there are no previous scenario steps defined that have a step annotation");
-            }
-
-            annotationSpecBuilder = AnnotationSpec.builder(gwtAnnotation);
-
+            return resolvedStepKeywords.get(resolvedStepKeywords.size() - 1);
         } else {
             throw new ProcessingException(
-                    "Step method name does not start with a valid keyword (Given, When, Then, And): "
+                    "Step keyword is not a valid Gherkin keyword (Given, When, Then, And, But, *): "
+                            + stepKeyword);
+        }
+    }
+
+    private AnnotationSpec buildGWTAnnotation(
+            String resolvedKeyword, String stepMethodName,
+            MethodSignatureAttributes signatureAttributes) {
+
+        List<String> parameterValues = signatureAttributes.parameterValues;
+
+        AnnotationSpec.Builder annotationSpecBuilder;
+        if (resolvedKeyword.equals("given")) {
+            annotationSpecBuilder = AnnotationSpec.builder(Given.class);
+        } else if (resolvedKeyword.equals("when")) {
+            annotationSpecBuilder = AnnotationSpec.builder(When.class);
+        } else if (resolvedKeyword.equals("then")) {
+            annotationSpecBuilder = AnnotationSpec.builder(Then.class);
+        } else {
+            throw new ProcessingException(
+                    "Step method name does not start with a valid keyword (Given, When, Then): "
                             + stepMethodName);
         }
 

@@ -77,6 +77,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
         List<Step> backgroundSteps = background.getSteps();
         List<MethodSpec> backgroundStepsMethodSpecs = new ArrayList<>(backgroundSteps.size());
+        List<String> resolvedStepKeywords = new ArrayList<>(backgroundSteps.size());
 
         MethodSpec.Builder backgroundMethodBuilder = MethodSpec
                 .methodBuilder(backgroundMethodName)
@@ -95,7 +96,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
         for (Step scenarioStep : backgroundSteps) {
 
             StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
-            MethodSpec stepMethodSpec = stepProcessor.processStep(scenarioStep, backgroundMethodBuilder, backgroundStepsMethodSpecs);
+            MethodSpec stepMethodSpec = stepProcessor.processStep(scenarioStep, backgroundMethodBuilder, backgroundStepsMethodSpecs, resolvedStepKeywords);
             backgroundStepsMethodSpecs.add(stepMethodSpec);
 
             String stepMethodName = stepMethodSpec.name;

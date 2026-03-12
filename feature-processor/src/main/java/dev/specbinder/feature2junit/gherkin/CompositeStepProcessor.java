@@ -63,6 +63,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
             CompositeStepGroup compositeGroup,
             MethodSpec.Builder scenarioMethodBuilder,
             List<MethodSpec> scenarioStepsMethodSpecs,
+            List<String> resolvedStepKeywords,
             TypeSpec.Builder classBuilder,
             List<MethodSpec> allMethodSpecs,
             Set<String> baseClassMethodNames,
@@ -95,6 +96,10 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         // Add composite method to scenario steps list so that sub-steps can inherit from it
         scenarioStepsMethodSpecs.add(compositeMethod);
 
+        // Resolve and track the parent step's GWT keyword for And/But/* inheritance
+        String resolvedParentKeyword = resolveParentKeyword(parentKeyword, resolvedStepKeywords, parentStep.getLocation().getLine());
+        resolvedStepKeywords.add(resolvedParentKeyword);
+
         // Generate sub-step methods
         List<MethodSpec> subStepMethods = new ArrayList<>();
         List<Step> wrappedSubSteps = new ArrayList<>();
@@ -109,6 +114,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
             StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
             subStepMethod = stepProcessor.processStep(
                     wrappedStep, null, scenarioStepsMethodSpecs,
+                    resolvedStepKeywords,
                     scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
             );
 
@@ -125,6 +131,24 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
 
         // Generate lambda call in scenario method - use wrapped steps
         generateLambdaCall(scenarioMethodBuilder, parentStep, compositeMethodName, parameterValues, wrappedSubSteps, subStepMethods);
+    }
+
+    /**
+     * Resolves the GWT keyword for a parent composite step.
+     * For Given/When/Then, returns the keyword directly. For And/But/*, inherits from the previous step.
+     */
+    private String resolveParentKeyword(String keyword, List<String> resolvedStepKeywords, long stepLine) {
+        if (keyword.equals("given") || keyword.equals("when") || keyword.equals("then")) {
+            return keyword;
+        } else if (keyword.equals("and") || keyword.equals("but") || keyword.equals("*")) {
+            if (resolvedStepKeywords.isEmpty()) {
+                throw new ProcessingException(
+                        "Step on line - " + stepLine
+                                + " starts with '" + keyword + "', but there are no previous scenario steps defined");
+            }
+            return resolvedStepKeywords.get(resolvedStepKeywords.size() - 1);
+        }
+        throw new ProcessingException("Invalid step keyword: " + keyword);
     }
 
     /**
