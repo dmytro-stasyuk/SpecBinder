@@ -131,20 +131,20 @@ Feature: EmptyRuleBehavior
         }
         """
 
-  Rule: When emptyRuleBehavior = NONE, the empty Rule generates a nested class without any failing or skipping test methods
+  Rule: When emptyRuleBehavior = COMPILATION_ERROR, the empty Rule generates a test method with an invalid statement that prevents compilation
 
-    Scenario: empty Rule with NONE behavior
+    Scenario: empty Rule with COMPILATION_ERROR behavior
       Given the following base class:
         """
         package com.example.payment;
 
         import dev.specbinder.annotations.Feature2JUnit;
         import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.NONE;
+        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.COMPILATION_ERROR;
 
         @Feature2JUnit
         @Feature2JUnitOptions(
-          emptyRuleBehavior = NONE
+          emptyRuleBehavior = COMPILATION_ERROR
         )
         public class TestFeature {
         }
@@ -156,7 +156,7 @@ Feature: EmptyRuleBehavior
           Rule: Processing rules
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package com.example.payment;
 
@@ -168,6 +168,7 @@ Feature: EmptyRuleBehavior
         import org.junit.jupiter.api.Nested;
         import org.junit.jupiter.api.Order;
         import org.junit.jupiter.api.Tag;
+        import org.junit.jupiter.api.Test;
         import org.junit.jupiter.api.TestClassOrder;
         import org.junit.jupiter.api.TestMethodOrder;
 
@@ -185,8 +186,16 @@ Feature: EmptyRuleBehavior
             @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
             @DisplayName("Rule: Processing rules")
             public class Rule_1 {
+                @Test
+                public void noScenariosInRule() {
+                    Rule doesn't have any scenarios
+                }
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        Rule doesn't have any scenarios
         """
 
   Rule: By default (no explicit option), emptyRuleBehavior defaults to FAIL

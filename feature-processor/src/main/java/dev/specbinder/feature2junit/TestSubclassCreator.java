@@ -4,8 +4,6 @@ import com.squareup.javapoet.*;
 import dev.specbinder.annotations.Feature2JUnit;
 import dev.specbinder.annotations.output.FeatureFilePath;
 import dev.specbinder.feature2junit.config.GeneratorOptions;
-import dev.specbinder.feature2junit.support.LoggingSupport;
-import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.exception.ProcessingException;
 import dev.specbinder.feature2junit.gherkin.FeatureFileParser;
 import dev.specbinder.feature2junit.gherkin.FeatureProcessor;
@@ -13,30 +11,19 @@ import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
 import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.gherkin.utils.RecordGenerator;
 import dev.specbinder.feature2junit.gherkin.utils.RecordMetadata;
+import dev.specbinder.feature2junit.support.LoggingSupport;
+import dev.specbinder.feature2junit.support.OptionsSupport;
 import dev.specbinder.feature2junit.utils.*;
-import io.cucumber.messages.types.Background;
-import io.cucumber.messages.types.Feature;
-import io.cucumber.messages.types.FeatureChild;
-import io.cucumber.messages.types.Rule;
-import io.cucumber.messages.types.RuleChild;
-import io.cucumber.messages.types.Scenario;
-import io.cucumber.messages.types.Step;
-import io.cucumber.messages.types.TableCell;
-import io.cucumber.messages.types.TableRow;
+import io.cucumber.messages.types.*;
 import io.cucumber.messages.types.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.*;
 
 import javax.annotation.processing.Generated;
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -230,10 +217,14 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
 
         // Add class annotations
         List<Tag> featureTags = feature != null ? feature.getTags() : Collections.emptyList();
-        boolean hasRules = feature != null && feature.getChildren().stream()
-                .anyMatch(child -> child.getRule().isPresent());
-        boolean hasScenarios = feature != null && feature.getChildren().stream()
-                .anyMatch(child -> child.getScenario().isPresent());
+        boolean featureSkipped = feature != null &&
+                TagUtils.shouldSkipElement(feature.getTags(), options.getSkipGenerationForTags());
+        boolean hasRules = feature != null && !featureSkipped && feature.getChildren().stream()
+                .anyMatch(child -> child.getRule().isPresent() &&
+                        !TagUtils.shouldSkipElement(child.getRule().get().getTags(), options.getSkipGenerationForTags()));
+        boolean hasScenarios = feature != null && !featureSkipped && feature.getChildren().stream()
+                .anyMatch(child -> child.getScenario().isPresent() &&
+                        !TagUtils.shouldSkipElement(child.getScenario().get().getTags(), options.getSkipGenerationForTags()));
 
         addClassAnnotations(
                 featureTags, hasRules, hasScenarios, classBuilder,
@@ -400,8 +391,10 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
     }
 
     /**
-     * Extracts the feature file name (without extension) from a feature file path.
-     * Example: "features/user/Login.feature" → "Login"
+     * Extracts the feature file name (without extension) from a feature file path and sanitizes it
+     * to be a valid Java class name. Invalid characters are removed, and word boundaries
+     * (hyphens, spaces, etc.) trigger capitalization of the next letter.
+     * Example: "features/user/my-shopping-cart.feature" → "MyShoppingCart"
      */
     String extractFeatureFileName(String featureFilePath) {
         String fileName = featureFilePath;
@@ -414,12 +407,35 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         // Remove supported extension
         fileName = FeatureFileExtensions.stripExtension(fileName, options.getSupportedFileExtensions());
 
-        // Capitalize first letter to follow Java class naming conventions
-        if (fileName.length() > 0) {
-            fileName = Character.toUpperCase(fileName.charAt(0)) + fileName.substring(1);
-        }
+        return sanitizeClassName(fileName);
+    }
 
-        return fileName;
+    /**
+     * Sanitizes a raw name to be a valid Java class name. Invalid characters are removed,
+     * hyphens and spaces act as word boundaries triggering capitalization of the next letter,
+     * and leading characters that cannot start a Java identifier are stripped.
+     */
+    static String sanitizeClassName(String name) {
+        StringBuilder sanitized = new StringBuilder();
+        boolean capitalizeNext = true;
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (c == '-' || c == ' ' || c == '.') {
+                // Hyphens, spaces, and dots are word separators
+                capitalizeNext = true;
+            } else if (sanitized.isEmpty()) {
+                if (Character.isJavaIdentifierStart(c)) {
+                    sanitized.append(Character.toUpperCase(c));
+                    capitalizeNext = false;
+                }
+                // Skip characters that can't start a Java identifier (digits, special chars)
+            } else if (Character.isJavaIdentifierPart(c)) {
+                sanitized.append(capitalizeNext ? Character.toUpperCase(c) : c);
+                capitalizeNext = false;
+            }
+            // Other invalid characters are silently removed without triggering capitalization
+        }
+        return sanitized.toString();
     }
 
     /**

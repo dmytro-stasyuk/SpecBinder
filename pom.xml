@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.specbinder</groupId>
     <artifactId>spec-binder</artifactId>
-    <version>0.1.23-SNAPSHOT</version>
+    <version>0.1.27-SNAPSHOT</version>
     <description>Used to generate JUnit test classes from a specification file</description>
     <url>https://github.com/dmytro-stasyuk/spec-binder/tree/main</url>
     <packaging>pom</packaging>
@@ -16,8 +16,8 @@
     <developers>
         <developer>
             <name>Dmytro Stasyuk</name>
-            <email>dmytro@sharedspec.com</email>
-            <organization>SharedSpec</organization>
+            <email>d.stasyuk@gmail.com</email>
+            <organization>SpecBright</organization>
             <organizationUrl>https://github.com/dmytro-stasyuk</organizationUrl>
         </developer>
     </developers>

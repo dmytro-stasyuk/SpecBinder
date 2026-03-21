@@ -1,8 +1,7 @@
 # Spec Binder
 
 **Spec Binder** turns natural-language Gherkin specs into **pure JUnit** test code at **compile time**.
-No runtime step discovery, no Cucumber runner. Your `.feature` files become first-class Java code that compiles, runs,
-and fails fast.
+No runtime step discovery, no Cucumber runner. Your `.feature` files become first-class Java code that compiles and runs like any other JUnit test.
 
 > Built around an annotation-processor approach that parses feature files during `javac`, generating JUnit test
 > skeletons where each **Given/When/Then** is converted into a strongly-named Java method call.

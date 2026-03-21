@@ -3417,10 +3417,7 @@ Feature: TypeInferenceWithScenarioOutlines
       }
       """
 
-
-#      enums
-
-    Example: Data table with Example reference for enum field uses valueOf conversion
+    Example: Data table with Example reference for enum field uses matching enum constant directly
       Given the following base class:
       """
       package features;
@@ -3521,9 +3518,6 @@ Feature: TypeInferenceWithScenarioOutlines
           }
       }
       """
-
-
-
 
     Example: Data table with all literal values in Scenario Outline behaves like regular Scenario
       Given the following base class:

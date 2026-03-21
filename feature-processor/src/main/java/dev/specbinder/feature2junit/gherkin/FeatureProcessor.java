@@ -4,11 +4,12 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.feature2junit.config.GeneratorOptions;
 import dev.specbinder.feature2junit.exception.ProcessingException;
+import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
+import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.support.BaseTypeSupport;
 import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.support.OptionsSupport;
-import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
-import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
+import dev.specbinder.feature2junit.utils.TagUtils;
 import io.cucumber.messages.types.*;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -64,6 +65,11 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
      */
     public void processFeature(Feature feature, TypeSpec.Builder classBuilder) {
 
+        // Skip all children if the Feature itself has a matching skip tag
+        if (TagUtils.shouldSkipElement(feature.getTags(), options.getSkipGenerationForTags())) {
+            return;
+        }
+
         List<FeatureChild> children = feature.getChildren();
 
         int featureRuleCount = 0;
@@ -83,14 +89,20 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
             }
             else if (child.getRule().isPresent()) {
 
-                featureRuleCount++;
                 Rule rule = child.getRule().get();
+                if (TagUtils.shouldSkipElement(rule.getTags(), options.getSkipGenerationForTags())) {
+                    continue;
+                }
+                featureRuleCount++;
                 RuleProcessor ruleProcessor = new RuleProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
                 ruleProcessor.processRule(featureRuleCount, rule, classBuilder);
             }
             else if (child.getScenario().isPresent()) {
 
                 Scenario scenario = child.getScenario().get();
+                if (TagUtils.shouldSkipElement(scenario.getTags(), options.getSkipGenerationForTags())) {
+                    continue;
+                }
                 featureScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
                 MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(featureScenarioCount, scenario, classBuilder);

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Tags;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for converting Gherkin tags to JUnit annotations.
@@ -51,6 +52,33 @@ public class TagUtils {
 
         AnnotationSpec annotationSpec = annotationSpecBuilder.build();
         return annotationSpec;
+    }
+
+    /**
+     * Checks whether an element should be skipped based on its tags and the configured skip patterns.
+     *
+     * @param tags the Gherkin tags on the element
+     * @param skipPatterns regex patterns to match against tag names (without leading @)
+     * @return true if any tag matches any pattern, meaning the element should be skipped
+     */
+    public static boolean shouldSkipElement(List<Tag> tags, String[] skipPatterns) {
+        if (tags == null || tags.isEmpty() || skipPatterns == null || skipPatterns.length == 0) {
+            return false;
+        }
+
+        for (Tag tag : tags) {
+            String tagName = tag.getName().trim();
+            if (tagName.startsWith("@")) {
+                tagName = tagName.substring(1);
+            }
+
+            for (String pattern : skipPatterns) {
+                if (Pattern.compile(pattern).matcher(tagName).matches()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static AnnotationSpec.Builder annotationSpecBuilderFromTagNames(List<String> tagNames) {

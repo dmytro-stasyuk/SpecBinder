@@ -37,15 +37,21 @@ public class GeneratorOptions {
 
     /**
      * Controls how the generator handles Scenarios that contain no steps.
-     * Valid values: "FAIL", "SKIP", "NONE"
+     * Valid values: "FAIL", "SKIP", "COMPILATION_ERROR"
      */
     private final String emptyScenarioBehavior;
 
     /**
      * Controls how the generator handles Rules that contain no Scenarios.
-     * Valid values: "FAIL", "SKIP", "NONE"
+     * Valid values: "FAIL", "SKIP", "COMPILATION_ERROR"
      */
     private final String emptyRuleBehavior;
+
+    /**
+     * Controls the body of generated step method stubs when shouldBeAbstract is false.
+     * Valid values: "FAIL", "SKIP", "COMPILATION_ERROR"
+     */
+    private final String unimplementedStepBehavior;
 
     /**
      * The value for JUnit's @{@link org.junit.jupiter.api.Tag} annotation that will be added to scenarios that do not
@@ -110,6 +116,12 @@ public class GeneratorOptions {
     private final String[] supportedFileExtensions;
 
     /**
+     * Regex patterns for Gherkin tags for which the generator should skip code generation entirely.
+     * Each value is treated as a Java regular expression matched against tag names (without the leading @).
+     */
+    private final String[] skipGenerationForTags;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -119,6 +131,7 @@ public class GeneratorOptions {
         this.addSourceLineNumbers = false;
         this.emptyScenarioBehavior = FAIL.name();
         this.emptyRuleBehavior = FAIL.name();
+        this.unimplementedStepBehavior = FAIL.name();
         this.tagForEmptyScenarios = "new";
         this.tagForEmptyRules = "new";
         this.addCucumberStepAnnotations = false;
@@ -129,6 +142,7 @@ public class GeneratorOptions {
         this.useStepKeywordInStepMethodName = false;
         this.useCucumberAnnotationsForStepMatching = true;
         this.supportedFileExtensions = new String[]{"feature", "specb"};
+        this.skipGenerationForTags = new String[]{};
     }
 
     /**
@@ -140,6 +154,7 @@ public class GeneratorOptions {
      * @param addSourceLineNumbers         see {@link #addSourceLineNumbers}
      * @param emptyScenarioBehavior        see {@link #emptyScenarioBehavior}
      * @param emptyRuleBehavior            see {@link #emptyRuleBehavior}
+     * @param unimplementedStepBehavior    see {@link #unimplementedStepBehavior}
      * @param tagForEmptyScenarios   see {@link #tagForEmptyScenarios}
      * @param tagForEmptyRules   see {@link #tagForEmptyRules}
      * @param addCucumberStepAnnotations   see {@link #addCucumberStepAnnotations}
@@ -150,6 +165,7 @@ public class GeneratorOptions {
      * @param useStepKeywordInStepMethodName see {@link #useStepKeywordInStepMethodName}
      * @param useCucumberAnnotationsForStepMatching see {@link #useCucumberAnnotationsForStepMatching}
      * @param supportedFileExtensions see {@link #supportedFileExtensions}
+     * @param skipGenerationForTags see {@link #skipGenerationForTags}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -158,6 +174,7 @@ public class GeneratorOptions {
             boolean addSourceLineNumbers,
             String emptyScenarioBehavior,
             String emptyRuleBehavior,
+            String unimplementedStepBehavior,
             String tagForEmptyScenarios,
             String tagForEmptyRules,
             boolean addCucumberStepAnnotations,
@@ -167,7 +184,8 @@ public class GeneratorOptions {
             boolean useQualifiedEnumConstants,
             boolean useStepKeywordInStepMethodName,
             boolean useCucumberAnnotationsForStepMatching,
-            String[] supportedFileExtensions
+            String[] supportedFileExtensions,
+            String[] skipGenerationForTags
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -175,6 +193,7 @@ public class GeneratorOptions {
         this.addSourceLineNumbers = addSourceLineNumbers;
         this.emptyScenarioBehavior = emptyScenarioBehavior;
         this.emptyRuleBehavior = emptyRuleBehavior;
+        this.unimplementedStepBehavior = unimplementedStepBehavior;
         this.tagForEmptyScenarios = tagForEmptyScenarios;
         this.tagForEmptyRules = tagForEmptyRules;
         this.addCucumberStepAnnotations = addCucumberStepAnnotations;
@@ -185,6 +204,7 @@ public class GeneratorOptions {
         this.useStepKeywordInStepMethodName = useStepKeywordInStepMethodName;
         this.useCucumberAnnotationsForStepMatching = useCucumberAnnotationsForStepMatching;
         this.supportedFileExtensions = supportedFileExtensions;
+        this.skipGenerationForTags = skipGenerationForTags;
     }
 
 }

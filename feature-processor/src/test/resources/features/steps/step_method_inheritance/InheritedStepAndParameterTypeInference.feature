@@ -195,14 +195,12 @@ Feature: InheritedStepAndParameterTypeInference
             Given quantity "true"
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Boolean;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -217,10 +215,6 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void quantity$p1(Boolean p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
@@ -228,68 +222,13 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given quantity "true"
                  */
-                quantity$p1(true);
+                quantity$p1("true");
             }
         }
         """
-
-    Example: [counter] base method with same name but Object parameter type
-      Given the following base class:
-      """
-      package features;
-
-      import dev.specbinder.annotations.Feature2JUnit;
-
-      @Feature2JUnit
-      public abstract class MyFeature {
-          protected void quantity$p1(Object quantity) {
-              // Implementation with Object parameter
-          }
-      }
-      """
-      Given the following feature file:
+      And the compilation error should contain the following text:
         """
-        Feature: Boolean To Numeric Mismatch
-          Scenario: Test
-            Given quantity "true"
-        """
-      When the generator is run
-      Then the following class should be generated:
-        """
-        package features;
-
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Boolean;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.Test;
-        import org.junit.jupiter.api.TestMethodOrder;
-
-        /**
-         * Feature: Boolean To Numeric Mismatch
-         */
-        @DisplayName("MyFeature")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("features/MyFeature.feature")
-        public class MyFeatureTest extends MyFeature {
-            public void quantity$p1(Boolean p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
-            @Test
-            @Order(1)
-            @DisplayName("Scenario: Test")
-            public void scenario_1() {
-                /*
-                 * Given quantity "true"
-                 */
-                quantity$p1(true);
-            }
-        }
+        incompatible types: java.lang.String cannot be converted to int
         """
 
   Rule: step methods on the class hierarchy with long parameters are considered a match if conversion is possible
@@ -421,14 +360,12 @@ Feature: InheritedStepAndParameterTypeInference
             Given amount "false"
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Boolean;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -443,10 +380,6 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void amount$p1(Boolean p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
@@ -454,9 +387,13 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given amount "false"
                  */
-                amount$p1(false);
+                amount$p1("false");
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to long
         """
 
   Rule: step methods on the class hierarchy with double parameters are considered a match if conversion is possible
@@ -588,14 +525,12 @@ Feature: InheritedStepAndParameterTypeInference
             Given rate "true"
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Boolean;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -610,10 +545,6 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void rate$p1(Boolean p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
@@ -621,9 +552,13 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given rate "true"
                  */
-                rate$p1(true);
+                rate$p1("true");
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to double
         """
 
   Rule: step methods on the class hierarchy with boolean parameters are considered a match if conversion is possible
@@ -755,14 +690,12 @@ Feature: InheritedStepAndParameterTypeInference
             Given value "42"
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Integer;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -777,10 +710,6 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void value$p1(Integer p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
@@ -788,9 +717,13 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given value "42"
                  */
-                value$p1(42);
+                value$p1("42");
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to boolean
         """
 
   Rule: step methods on the class hierarchy with char parameters are considered a match if conversion is possible
@@ -922,14 +855,12 @@ Feature: InheritedStepAndParameterTypeInference
             Given code "AB"
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -944,10 +875,6 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void code$p1(String p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
@@ -958,6 +885,10 @@ Feature: InheritedStepAndParameterTypeInference
                 code$p1("AB");
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to char
         """
 
   Rule: same step matching logic applies for step methods with multiple parameters, can be of different types
@@ -1089,15 +1020,12 @@ Feature: InheritedStepAndParameterTypeInference
             Given product with name "Widget" and price "true"
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
-        import java.lang.Boolean;
-        import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -1112,10 +1040,6 @@ Feature: InheritedStepAndParameterTypeInference
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void productWithName$p1AndPrice$p2(String p1, Boolean p2) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
@@ -1123,9 +1047,13 @@ Feature: InheritedStepAndParameterTypeInference
                 /*
                  * Given product with name "Widget" and price "true"
                  */
-                productWithName$p1AndPrice$p2("Widget", true);
+                productWithName$p1AndPrice$p2("Widget", "true");
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to double
         """
 
     Scenario: matching mixed boxed and primitive parameters

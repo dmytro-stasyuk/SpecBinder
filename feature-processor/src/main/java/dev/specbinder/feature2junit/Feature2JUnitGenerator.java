@@ -5,9 +5,7 @@ import com.squareup.javapoet.JavaFile;
 import dev.specbinder.annotations.Feature2JUnit;
 import dev.specbinder.feature2junit.config.GeneratorOptions;
 import dev.specbinder.feature2junit.support.LoggingSupport;
-import dev.specbinder.feature2junit.utils.Feature2JUnitOptionsResolver;
-import dev.specbinder.feature2junit.utils.FeatureFileExtensions;
-import dev.specbinder.feature2junit.utils.GlobPatternMatcher;
+import dev.specbinder.feature2junit.utils.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.processing.*;
@@ -25,10 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Annotation processor that generates JUnit test subclasses for classes annotated with {@link Feature2JUnit} annotation.
@@ -37,6 +32,13 @@ import java.util.Set;
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
 public class Feature2JUnitGenerator extends AbstractProcessor implements LoggingSupport {
+
+    /**
+     * Tracks fully qualified class names that have already been generated across processing rounds.
+     * The Filer API does not allow creating the same source file twice, so we skip files
+     * that were already generated in a previous round.
+     */
+    private final Set<String> alreadyGeneratedFiles = new HashSet<>();
 
     /**
      * Default constructor.
@@ -55,6 +57,10 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
         int totalClassesProcessed = 0;
 
         logInfo("Running " + this.getClass().getSimpleName());
+
+        // Initialize the factory method resolver for enum type conversion
+        ParameterConversionUtils.setFactoryMethodResolver(
+                new EnumFactoryMethodResolver(processingEnv));
 
         // Track all generated class names (fully qualified) across all annotated classes
         // Key: fully qualified class name (package.ClassName)
@@ -210,6 +216,14 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
     }
 
     private void writeGeneratedFile(TestSubclassCreator.GeneratedFileResult result, TypeElement annotatedClass, GeneratorOptions generatorOptions) {
+        String fullyQualifiedName = getFullyQualifiedClassName(result.javaFile);
+
+        // Skip if this file was already generated in a previous processing round
+        if (alreadyGeneratedFiles.contains(fullyQualifiedName)) {
+            logInfo("Skipping already generated class: " + fullyQualifiedName);
+            return;
+        }
+
         boolean placeInSameDir = generatorOptions.isPlaceGeneratedClassNextToAnnotatedClass();
 
         if (placeInSameDir) {
@@ -219,17 +233,20 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
                 logException(e, annotatedClass);
             }
         } else {
-            String subclassFullyQualifiedName = getFullyQualifiedClassName(result.javaFile);
-
             Filer filer = getProcessingEnv().getFiler();
 
             PrintWriter out = null;
             try {
-                JavaFileObject subclassFile = filer.createSourceFile(subclassFullyQualifiedName);
+                JavaFileObject subclassFile = filer.createSourceFile(fullyQualifiedName);
 
                 out = new PrintWriter(subclassFile.openWriter());
                 result.writeTo(out);
                 out.flush();
+            } catch (FilerException e) {
+                // File already exists in the compilation — this happens when a build system
+                // (e.g., Gradle) includes previously generated sources as a source root.
+                // Fall back to overwriting the file directly via the file system.
+                overwriteExistingGeneratedFile(result, fullyQualifiedName, annotatedClass);
             } catch (Throwable t) {
                 logException(t, annotatedClass);
             } finally {
@@ -239,7 +256,34 @@ public class Feature2JUnitGenerator extends AbstractProcessor implements Logging
             }
         }
 
-        logInfo("Generated test class: " + getFullyQualifiedClassName(result.javaFile));
+        alreadyGeneratedFiles.add(fullyQualifiedName);
+        logInfo("Generated test class: " + fullyQualifiedName);
+    }
+
+    /**
+     * Overwrites an existing generated source file directly via the file system.
+     * Used as a fallback when the Filer API refuses to create a file because the type
+     * already exists in the current compilation (e.g., from previously generated sources
+     * included as a source root by the build system).
+     */
+    private void overwriteExistingGeneratedFile(TestSubclassCreator.GeneratedFileResult result, String fullyQualifiedName, TypeElement annotatedClass) {
+        try {
+            Filer filer = getProcessingEnv().getFiler();
+            String packageName = result.javaFile.packageName;
+            String fileName = result.javaFile.typeSpec.name + ".java";
+
+            // Use the Filer to locate the SOURCE_OUTPUT directory for this package
+            FileObject existing = filer.getResource(StandardLocation.SOURCE_OUTPUT, packageName, fileName);
+            java.io.File targetFile = new java.io.File(existing.toUri());
+
+            try (PrintWriter writer = new PrintWriter(targetFile)) {
+                result.writeTo(writer);
+            }
+
+            logInfo("Overwrote existing generated class: " + fullyQualifiedName);
+        } catch (IOException overwriteException) {
+            logException(overwriteException, annotatedClass);
+        }
     }
 
     /**

@@ -1,11 +1,11 @@
-Feature: EmptyScenarioBehavior
+Feature: UnimplementedStepBehavior
   As a test developer using Gherkin
-  I want to configure how empty Scenarios (Scenarios without steps) behave in generated test classes
-  So that I can choose whether empty Scenarios fail, are skipped, or pass silently depending on my workflow
+  I want to configure how unimplemented step method stubs behave in generated concrete test classes
+  So that I can choose whether unimplemented steps fail, are skipped, or prevent compilation depending on my workflow
 
-  Rule: When emptyScenarioBehavior = FAIL, the empty Scenario generates a test method that fails with Assertions.fail()
+  Rule: When unimplementedStepBehavior = FAIL, the step method stub contains Assertions.fail()
 
-    Scenario: empty Scenario with FAIL behavior
+    Scenario: step method stub with FAIL behavior
       Given the following base class:
         """
         package com.example;
@@ -16,16 +16,17 @@ Feature: EmptyScenarioBehavior
 
         @Feature2JUnit
         @Feature2JUnitOptions(
-          emptyScenarioBehavior = FAIL
+          shouldBeAbstract = false,
+          unimplementedStepBehavior = FAIL
         )
         public class TestFeature {
         }
         """
       And a feature file under path "com/example/TestFeature.feature" with the following content:
         """
-        Feature: feature with empty scenario
-
-          Scenario: Future implementation
+        Feature: Concrete Steps
+          Scenario: Test
+            Given user exists
         """
       When the generator is run
       Then the following class should be generated:
@@ -38,31 +39,36 @@ Feature: EmptyScenarioBehavior
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.Tag;
         import org.junit.jupiter.api.Test;
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: feature with empty scenario
+         * Feature: Concrete Steps
          */
         @DisplayName("TestFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
+            public void userExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
-            @Tag("new")
-            @DisplayName("Scenario: Future implementation")
+            @DisplayName("Scenario: Test")
             public void scenario_1() {
-                Assertions.fail("Scenario has no steps");
+                /*
+                 * Given user exists
+                 */
+                userExists();
             }
         }
         """
 
-  Rule: When emptyScenarioBehavior = SKIP, the empty Scenario generates a test method that is skipped with Assumptions.assumeTrue()
+  Rule: When unimplementedStepBehavior = SKIP, the step method stub contains Assumptions.assumeTrue()
 
-    Scenario: empty Scenario with SKIP behavior
+    Scenario: step method stub with SKIP behavior
       Given the following base class:
         """
         package com.example;
@@ -73,16 +79,17 @@ Feature: EmptyScenarioBehavior
 
         @Feature2JUnit
         @Feature2JUnitOptions(
-          emptyScenarioBehavior = SKIP
+          shouldBeAbstract = false,
+          unimplementedStepBehavior = SKIP
         )
         public class TestFeature {
         }
         """
       And a feature file under path "com/example/TestFeature.feature" with the following content:
         """
-        Feature: feature with empty scenario
-
-          Scenario: Future implementation
+        Feature: Concrete Steps
+          Scenario: Test
+            Given user exists
         """
       When the generator is run
       Then the following class should be generated:
@@ -95,31 +102,36 @@ Feature: EmptyScenarioBehavior
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.Tag;
         import org.junit.jupiter.api.Test;
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: feature with empty scenario
+         * Feature: Concrete Steps
          */
         @DisplayName("TestFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
+            public void userExists() {
+                Assumptions.assumeTrue(false, "Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
-            @Tag("new")
-            @DisplayName("Scenario: Future implementation")
+            @DisplayName("Scenario: Test")
             public void scenario_1() {
-                Assumptions.assumeTrue(false, "Scenario has no steps");
+                /*
+                 * Given user exists
+                 */
+                userExists();
             }
         }
         """
 
-  Rule: When emptyScenarioBehavior = COMPILATION_ERROR, the empty Scenario generates a test method with an invalid statement that prevents compilation
+  Rule: When unimplementedStepBehavior = COMPILATION_ERROR, the step method stub contains an invalid statement that prevents compilation
 
-    Scenario: empty Scenario with COMPILATION_ERROR behavior
+    Scenario: step method stub with COMPILATION_ERROR behavior
       Given the following base class:
         """
         package com.example;
@@ -130,16 +142,17 @@ Feature: EmptyScenarioBehavior
 
         @Feature2JUnit
         @Feature2JUnitOptions(
-          emptyScenarioBehavior = COMPILATION_ERROR
+          shouldBeAbstract = false,
+          unimplementedStepBehavior = COMPILATION_ERROR
         )
         public class TestFeature {
         }
         """
       And a feature file under path "com/example/TestFeature.feature" with the following content:
         """
-        Feature: feature with empty scenario
-
-          Scenario: Future implementation
+        Feature: Concrete Steps
+          Scenario: Test
+            Given user exists
         """
       When the generator is run
       Then the following java source file should be be generated:
@@ -151,50 +164,57 @@ Feature: EmptyScenarioBehavior
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.Tag;
         import org.junit.jupiter.api.Test;
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: feature with empty scenario
+         * Feature: Concrete Steps
          */
         @DisplayName("TestFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
+            public void userExists() {
+                Step is not yet implemented
+            }
+
             @Test
             @Order(1)
-            @Tag("new")
-            @DisplayName("Scenario: Future implementation")
+            @DisplayName("Scenario: Test")
             public void scenario_1() {
-                Scenario has no steps
+                /*
+                 * Given user exists
+                 */
+                userExists();
             }
         }
         """
       And the compilation error should contain the following text:
         """
-        Scenario has no steps
+        Step is not yet implemented
         """
 
-  Rule: By default (no explicit option), emptyScenarioBehavior defaults to FAIL
+  Rule: By default (no explicit option), unimplementedStepBehavior defaults to FAIL
 
-    Scenario: empty Scenario with default options (no explicit emptyScenarioBehavior)
+    Scenario: step method stub with default options (no explicit unimplementedStepBehavior)
       Given the following base class:
         """
         package com.example;
 
         import dev.specbinder.annotations.Feature2JUnit;
+        import dev.specbinder.annotations.Feature2JUnitOptions;
 
         @Feature2JUnit
+        @Feature2JUnitOptions(shouldBeAbstract = false)
         public class TestFeature {
         }
         """
       And a feature file under path "com/example/TestFeature.feature" with the following content:
         """
-        Feature: feature with empty scenario
-
-          Scenario: Placeholder test
+        Feature: Concrete Steps
+          Scenario: Test
+            Given user exists
         """
       When the generator is run
       Then the following class should be generated:
@@ -207,24 +227,89 @@ Feature: EmptyScenarioBehavior
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.Tag;
         import org.junit.jupiter.api.Test;
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: feature with empty scenario
+         * Feature: Concrete Steps
          */
         @DisplayName("TestFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("com/example/TestFeature.feature")
         public class TestFeatureTest extends TestFeature {
+            public void userExists() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
-            @Tag("new")
-            @DisplayName("Scenario: Placeholder test")
+            @DisplayName("Scenario: Test")
             public void scenario_1() {
-                Assertions.fail("Scenario has no steps");
+                /*
+                 * Given user exists
+                 */
+                userExists();
+            }
+        }
+        """
+
+  Rule: unimplementedStepBehavior has no effect when shouldBeAbstract is true
+
+    Scenario: abstract mode ignores unimplementedStepBehavior
+      Given the following base class:
+        """
+        package com.example;
+
+        import dev.specbinder.annotations.Feature2JUnit;
+        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.SKIP;
+
+        @Feature2JUnit
+        @Feature2JUnitOptions(
+          shouldBeAbstract = true,
+          unimplementedStepBehavior = SKIP
+        )
+        public abstract class TestFeature {
+        }
+        """
+      And a feature file under path "com/example/TestFeature.feature" with the following content:
+        """
+        Feature: Abstract Steps
+          Scenario: Test
+            Given user exists
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package com.example;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Abstract Steps
+         */
+        @DisplayName("TestFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("com/example/TestFeature.feature")
+        public abstract class TestFeatureScenarios extends TestFeature {
+            public abstract void userExists();
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given user exists
+                 */
+                userExists();
             }
         }
         """

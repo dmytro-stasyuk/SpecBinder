@@ -13,9 +13,13 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.messages.types.*;
+import io.cucumber.messages.types.DocString;
+import io.cucumber.messages.types.Step;
+import io.cucumber.messages.types.TableCell;
+import io.cucumber.messages.types.TableRow;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -168,7 +172,13 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         if (options.isShouldBeAbstract()) {
             stepMethodBuilder.addModifiers(Modifier.ABSTRACT);
         } else {
-            stepMethodBuilder.addStatement("$T.fail(\"Step is not yet implemented\")", Assertions.class);
+            if ("SKIP".equals(options.getUnimplementedStepBehavior())) {
+                stepMethodBuilder.addStatement("$T.assumeTrue(false, \"Step is not yet implemented\")", Assumptions.class);
+            } else if ("COMPILATION_ERROR".equals(options.getUnimplementedStepBehavior())) {
+                stepMethodBuilder.addCode("Step is not yet implemented\n");
+            } else {
+                stepMethodBuilder.addStatement("$T.fail(\"Step is not yet implemented\")", Assertions.class);
+            }
         }
 
         String resolvedKeyword = resolveGWTKeyword(step.getKeyword().trim(), resolvedStepKeywords, stepLine);
@@ -411,12 +421,15 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     }
 
     /**
-     * Finds a matching base class method signature for the given method name and parameter count.
-     * Returns the first matching signature where all parameters can be converted.
+     * Finds a matching base class method signature for the given method name.
+     * Matching is based on method name only — neither parameter count nor parameter type
+     * compatibility is checked. If the step values cannot be converted to the method's
+     * parameter types, the generated code will produce a compilation error, which is the
+     * intended behavior.
      *
      * @param stepMethodName          the step method name
-     * @param parameterValues         the parameter values from the step text (quoted strings and scenario parameters)
-     * @param hasDataTableOrDocString true if the step has a DataTable or DocString parameter
+     * @param parameterValues         the parameter values from the step text (unused, kept for API compatibility)
+     * @param hasDataTableOrDocString true if the step has a DataTable or DocString parameter (unused, kept for API compatibility)
      * @return the matching method signature, or null if no match found
      */
     private ElementMethodUtils.MethodSignature findMatchingBaseMethod(
@@ -426,31 +439,9 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             return null;
         }
 
-        // Expected parameter count: text parameters + 1 if there's a DataTable/DocString
-        int expectedParamCount = parameterValues.size() + (hasDataTableOrDocString ? 1 : 0);
-
         List<ElementMethodUtils.MethodSignature> signatures = baseClassMethodSignatures.get(stepMethodName);
-        for (ElementMethodUtils.MethodSignature signature : signatures) {
-            // Check if parameter count matches (including DataTable or DocString parameters)
-            if (signature.getParameterCount() != expectedParamCount) {
-                continue;
-            }
-
-            // Check if all text parameters can be converted
-            boolean allMatch = true;
-            for (int i = 0; i < parameterValues.size(); i++) {
-                String paramValue = parameterValues.get(i);
-                TypeMirror paramType = signature.getParameterType(i);
-
-                if (!ParameterConversionUtils.canConvert(paramValue, paramType)) {
-                    allMatch = false;
-                    break;
-                }
-            }
-
-            if (allMatch) {
-                return signature;
-            }
+        if (!signatures.isEmpty()) {
+            return signatures.getFirst();
         }
 
         return null;
@@ -559,21 +550,30 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                     boolean isEnumType = ParameterConversionUtils.isEnumType(targetType);
 
                     if (isEnumType && options.isUseQualifiedEnumConstants()) {
-                        // Use qualified enum literal (e.g., Status.AVAILABLE)
-                        String literal = ParameterConversionUtils.toQualifiedEnumLiteral(parameterValue, targetType);
-                        parameterValuesSB.append(literal);
-                        // Register enum type for regular import (only if external)
-                        if (enumImportCollector != null && isEnumExternal(targetType)) {
-                            String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
-                            enumImportCollector.registerEnumType(enumQualifiedName);
+                        String resolvedConstant = ParameterConversionUtils.resolveEnumConstantName(parameterValue, targetType);
+                        if (resolvedConstant != null) {
+                            // Use qualified enum literal (e.g., Status.AVAILABLE)
+                            String literal = ParameterConversionUtils.toQualifiedEnumLiteral(parameterValue, targetType);
+                            parameterValuesSB.append(literal);
+                            // Register enum type for regular import (only if external)
+                            if (enumImportCollector != null && isEnumExternal(targetType)) {
+                                String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
+                                enumImportCollector.registerEnumType(enumQualifiedName);
+                            }
+                        } else {
+                            // Value couldn't be resolved - place as quoted string (will cause compilation error)
+                            parameterValuesSB.append("\"").append(parameterValue.replace("$", "$$")).append("\"");
                         }
                     } else {
                         String literal = ParameterConversionUtils.toLiteral(parameterValue, targetType);
                         parameterValuesSB.append(literal);
-                        // Register enum constants for static import
+                        // Register enum constants for static import only if value resolved to a constant
                         if (enumImportCollector != null && isEnumType) {
-                            String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
-                            enumImportCollector.registerEnumConstant(enumQualifiedName, parameterValue);
+                            String resolvedConstant = ParameterConversionUtils.resolveEnumConstantName(parameterValue, targetType);
+                            if (resolvedConstant != null) {
+                                String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
+                                enumImportCollector.registerEnumConstant(enumQualifiedName, resolvedConstant);
+                            }
                         }
                     }
                 }
@@ -970,7 +970,8 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             return "'" + value + "'"; // Single quotes for char
         } else {
             // String type: use quoted string
-            return "\"" + value + "\"";
+            // Escape $ as $$ for JavaPoet's CodeBlock.of() which uses $ as format specifier
+            return "\"" + value.replace("$", "$$") + "\"";
         }
     }
 
@@ -1008,7 +1009,8 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
         // Handle enum types with qualified constants option
         if (isEnumType && options.isUseQualifiedEnumConstants()) {
-            if (ParameterConversionUtils.canConvert(stringValue, targetType)) {
+            String resolvedConstant = ParameterConversionUtils.resolveEnumConstantName(stringValue, targetType);
+            if (resolvedConstant != null) {
                 // Use qualified enum literal (e.g., Status.AVAILABLE)
                 String literal = ParameterConversionUtils.toQualifiedEnumLiteral(stringValue, targetType);
                 // Register enum type for regular import (only if external)

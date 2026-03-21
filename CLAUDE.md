@@ -255,6 +255,10 @@ When tests fail because the actual behavior doesn't match the expected behavior 
 
 You have permission to read files from the `.claude/projects/` directory, particularly tool-results files. These contain output from previous tool executions (like test runs) and can be read freely without asking for permission. Use the `Bash` tool or `Read` tool to access these files when you need to analyze test results or other tool outputs.
 
+**IMPORTANT: No Absolute Paths in Settings Files**
+
+When updating `.claude/settings.local.json` or any other settings file, **never use absolute file paths**. Always use relative paths instead. Absolute paths (e.g., `/Users/dmytro/Projects/...`) are machine-specific and should not appear in settings files.
+
 ## Working with Cucumber .feature Files
 
 **IMPORTANT: Feature File Naming Convention**

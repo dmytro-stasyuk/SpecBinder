@@ -6,11 +6,11 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.feature2junit.config.GeneratorOptions;
 import dev.specbinder.feature2junit.exception.ProcessingException;
+import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
+import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.support.BaseTypeSupport;
 import dev.specbinder.feature2junit.support.LoggingSupport;
 import dev.specbinder.feature2junit.support.OptionsSupport;
-import dev.specbinder.feature2junit.gherkin.utils.DataTableCollector;
-import dev.specbinder.feature2junit.gherkin.utils.EnumImportCollector;
 import dev.specbinder.feature2junit.utils.JavaDocUtils;
 import dev.specbinder.feature2junit.utils.TagUtils;
 import io.cucumber.messages.types.*;
@@ -83,7 +83,9 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
         List<RuleChild> children = rule.getChildren();
 
-        boolean hasScenarios = children.stream().anyMatch(child -> child.getScenario().isPresent());
+        boolean hasScenarios = children.stream().anyMatch(child ->
+                child.getScenario().isPresent() &&
+                !TagUtils.shouldSkipElement(child.getScenario().get().getTags(), options.getSkipGenerationForTags()));
 
         /*
           add {@link Tag} annotations from Gherkin tags
@@ -145,6 +147,10 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
                 Scenario scenario = child.getScenario().get();
 
+                if (TagUtils.shouldSkipElement(scenario.getTags(), options.getSkipGenerationForTags())) {
+                    continue;
+                }
+
                 ruleScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
                 MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(ruleScenarioCount, scenario, classBuilder);
@@ -166,7 +172,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
             }
         }
 
-        if (!hasScenarios && !"NONE".equals(options.getEmptyRuleBehavior())) {
+        if (!hasScenarios) {
             /*
               If there are no scenarios in the rule, add a test method that either fails or is skipped,
               depending on the emptyRuleBehavior option.
@@ -177,6 +183,8 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
             if ("SKIP".equals(options.getEmptyRuleBehavior())) {
                 noScenariosInRuleMSB.addStatement("$T.assumeTrue(false, \"Rule has no scenarios\")", Assumptions.class);
+            } else if ("COMPILATION_ERROR".equals(options.getEmptyRuleBehavior())) {
+                noScenariosInRuleMSB.addCode("Rule doesn't have any scenarios\n");
             } else {
                 noScenariosInRuleMSB.addStatement("$T.fail(\"Rule doesn't have any scenarios\")", Assertions.class);
             }

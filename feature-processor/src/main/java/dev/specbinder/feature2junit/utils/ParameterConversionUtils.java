@@ -4,24 +4,40 @@ import com.squareup.javapoet.TypeName;
 import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.TableCell;
 import io.cucumber.messages.types.TableRow;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for converting string parameter values to typed literals.
  */
 public class ParameterConversionUtils {
 
+    private static EnumFactoryMethodResolver factoryMethodResolver;
+
     private ParameterConversionUtils() {
         // utility class
+    }
+
+    /**
+     * Sets the factory method resolver for enum type conversion.
+     * Should be called at the start of annotation processing.
+     */
+    public static void setFactoryMethodResolver(EnumFactoryMethodResolver resolver) {
+        factoryMethodResolver = resolver;
+    }
+
+    /**
+     * Gets the current factory method resolver, or null if not set.
+     */
+    public static EnumFactoryMethodResolver getFactoryMethodResolver() {
+        return factoryMethodResolver;
     }
 
     /**
@@ -53,7 +69,10 @@ public class ParameterConversionUtils {
         } else if (typeKind == TypeKind.CHAR || "java.lang.Character".equals(typeName)) {
             return value.length() == 1;
         } else if (typeKind == TypeKind.DECLARED && isEnumType(targetType)) {
-            return canParseEnum(value, targetType);
+            // Always consider enum types as convertible for method matching purposes.
+            // If the value can't be resolved to a constant (via direct match or factory method),
+            // the raw string literal will be placed at the call site, causing a compilation error.
+            return true;
         } else if ("java.lang.String".equals(typeName)) {
             return true;
         } else if ("java.math.BigDecimal".equals(typeName)) {
@@ -130,7 +149,8 @@ public class ParameterConversionUtils {
         }
 
         // Default: return as quoted string
-        return "\"" + value + "\"";
+        // Escape $ as $$ for JavaPoet's CodeBlock.of() which uses $ as format specifier
+        return "\"" + value.replace("$", "$$") + "\"";
     }
 
     private static boolean canParseInt(String value) {
@@ -219,48 +239,138 @@ public class ParameterConversionUtils {
 
     /**
      * Checks if the given string value can be parsed as an enum constant of the target type.
-     * Enum constant matching is case-sensitive (value must match exactly).
-     * @return true if the value matches an enum constant, false otherwise
+     * First tries direct constant matching (case-sensitive), then falls back to a suitable
+     * static factory method if one exists on the enum type.
+     * @return true if the value matches an enum constant or can be resolved via factory method
      */
     private static boolean canParseEnum(String value, TypeMirror targetType) {
+        return resolveEnumConstantName(value, targetType) != null;
+    }
+
+    /**
+     * Resolves a string value to an enum constant name.
+     * First tries direct constant matching (case-sensitive). If no match, falls back to
+     * invoking a suitable static factory method on the enum type (if exactly one exists).
+     * @param value the string value to resolve
+     * @param targetType the enum type mirror
+     * @return the enum constant name (e.g., "MONDAY"), or null if it cannot be resolved
+     */
+    public static String resolveEnumConstantName(String value, TypeMirror targetType) {
         DeclaredType declaredType = (DeclaredType) targetType;
         TypeElement enumElement = (TypeElement) declaredType.asElement();
 
-        // Get all enum constants and check if value matches one (case-sensitive)
+        // First, try direct constant match (case-sensitive)
         for (Element enclosed : enumElement.getEnclosedElements()) {
             if (enclosed.getKind() == ElementKind.ENUM_CONSTANT) {
                 if (enclosed.getSimpleName().toString().equals(value)) {
-                    return true;
+                    return value;
                 }
             }
         }
-        return false;
+
+        // Fallback: try factory method resolution
+        ExecutableElement factoryMethod = findSuitableFactoryMethod(enumElement);
+        if (factoryMethod != null) {
+            return invokeFactoryMethod(value, targetType, factoryMethod.getSimpleName().toString());
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds exactly one suitable static factory method on the enum type.
+     * A suitable factory method is: non-private, static, accepts a single String parameter,
+     * and returns the enum type. If zero or more than one suitable method exists, returns null.
+     */
+    private static ExecutableElement findSuitableFactoryMethod(TypeElement enumElement) {
+        ExecutableElement factoryMethod = null;
+        int count = 0;
+
+        for (Element enclosed : enumElement.getEnclosedElements()) {
+            if (enclosed.getKind() == ElementKind.METHOD) {
+                ExecutableElement method = (ExecutableElement) enclosed;
+                if (isSuitableFactoryMethod(method, enumElement)) {
+                    count++;
+                    factoryMethod = method;
+                }
+            }
+        }
+
+        return count == 1 ? factoryMethod : null;
+    }
+
+    /**
+     * Checks if a method is a suitable factory method for the given enum type.
+     * Must be: non-private, static, single String parameter, returns the enum type.
+     * Excludes the compiler-generated valueOf(String) method since direct constant
+     * matching is already performed before the factory method fallback.
+     */
+    private static boolean isSuitableFactoryMethod(ExecutableElement method, TypeElement enumElement) {
+        // Exclude compiler-generated valueOf(String) - already handled by direct constant matching
+        if ("valueOf".equals(method.getSimpleName().toString())) {
+            return false;
+        }
+        // Must be static
+        if (!method.getModifiers().contains(Modifier.STATIC)) {
+            return false;
+        }
+        // Must not be private
+        if (method.getModifiers().contains(Modifier.PRIVATE)) {
+            return false;
+        }
+        // Must have exactly one parameter
+        if (method.getParameters().size() != 1) {
+            return false;
+        }
+        // Parameter must be String
+        if (!"java.lang.String".equals(method.getParameters().get(0).asType().toString())) {
+            return false;
+        }
+        // Return type must be the enum type
+        TypeMirror returnType = method.getReturnType();
+        if (returnType.getKind() != TypeKind.DECLARED) {
+            return false;
+        }
+        DeclaredType returnDeclaredType = (DeclaredType) returnType;
+        return returnDeclaredType.asElement().equals(enumElement);
+    }
+
+    /**
+     * Invokes the factory method to resolve a string value to an enum constant name.
+     * Delegates to the EnumFactoryMethodResolver which handles both pre-compiled classes
+     * and classes being compiled in the same javac invocation.
+     * @return the enum constant name (e.g., "MONDAY"), or null if resolution fails
+     */
+    private static String invokeFactoryMethod(String value, TypeMirror targetType, String factoryMethodName) {
+        if (factoryMethodResolver != null) {
+            return factoryMethodResolver.resolve(value, targetType, factoryMethodName);
+        }
+        return null;
     }
 
     /**
      * Converts a string value to an enum literal.
-     * Returns the constant name as-is (e.g., "MONDAY") for use with static imports.
-     * The value must match the enum constant exactly (case-sensitive).
+     * Resolves the value to the actual enum constant name (e.g., "monday" → "MONDAY")
+     * using direct matching or factory method fallback.
      * @param value the string value to convert
      */
     private static String toEnumLiteral(String value, TypeMirror targetType) {
-        // Return constant name as-is - it should already match the enum constant exactly
-        return value;
+        String constantName = resolveEnumConstantName(value, targetType);
+        return constantName != null ? constantName : value;
     }
 
     /**
      * Converts a string value to a qualified enum literal.
-     * Returns the enum type simple name and constant (e.g., "Status.AVAILABLE").
-     * When useQualifiedEnumConstants is enabled, the enum type is imported separately,
-     * so no parent class prefix is needed regardless of whether the enum is nested or external.
-     * The value must match the enum constant exactly (case-sensitive).
+     * Returns the enum type simple name and resolved constant (e.g., "Status.AVAILABLE").
+     * Resolves the value to the actual enum constant name using direct matching or factory method fallback.
      * @param value the string value to convert
      * @param targetType the target enum type
      * @return the qualified enum literal (e.g., "Status.AVAILABLE")
      */
     public static String toQualifiedEnumLiteral(String value, TypeMirror targetType) {
         String enumSimpleName = getEnumSimpleName(targetType);
-        return enumSimpleName + "." + value;
+        String constantName = resolveEnumConstantName(value, targetType);
+        return enumSimpleName + "." + (constantName != null ? constantName : value);
     }
 
     /**
@@ -559,7 +669,7 @@ public class ParameterConversionUtils {
         }
 
         boolean hasNonEmptyValue = false;
-        // Check if all non-empty values match (case-sensitive)
+        // Check if all non-empty values match (case-sensitive) either directly or via factory method
         for (String value : values) {
             // Skip empty values - they will be converted to null in generated code
             String trimmedValue = value.trim();
@@ -568,7 +678,11 @@ public class ParameterConversionUtils {
             }
             hasNonEmptyValue = true;
             if (!enumConstants.contains(trimmedValue)) {
-                return false;
+                // Try resolving via factory method fallback
+                String resolved = resolveEnumConstantName(trimmedValue, enumType.asType());
+                if (resolved == null) {
+                    return false;
+                }
             }
         }
 

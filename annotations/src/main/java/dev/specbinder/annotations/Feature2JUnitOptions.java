@@ -72,11 +72,12 @@ public @interface Feature2JUnitOptions {
     }
 
     /**
-     * Defines the behavior of the generated test method for empty Gherkin elements
-     * (Rules with no Scenarios, or Scenarios with no steps).
+     * Defines the behavior of generated code for empty or unimplemented Gherkin elements
+     * (Rules with no Scenarios, Scenarios with no steps, or unimplemented step method stubs).
      *
      * @see #emptyRuleBehavior()
      * @see #emptyScenarioBehavior()
+     * @see #unimplementedStepBehavior()
      */
     enum EMPTY_ELEMENT_BEHAVIOUR {
         /**
@@ -97,13 +98,19 @@ public @interface Feature2JUnitOptions {
         SKIP,
 
         /**
-         * No failing or skipping statement is generated for the empty element.
+         * Generates a test method that <strong>does not compile</strong> by inserting a plain-text
+         * statement (e.g. {@code Scenario has no steps}) into the method body.
          * <p>
-         * An empty Rule still produces a {@code @Nested} inner class and an empty Scenario
-         * still produces a {@code @Test} method, but neither will contain any assertions
-         * or assumptions — the test will simply pass.
+         * Because the inserted text is not valid Java, compilation fails immediately,
+         * making it impossible to overlook empty elements. This is the strictest mode —
+         * unlike {@link #FAIL}, which only surfaces the problem at test-run time,
+         * {@code COMPILATION_ERROR} prevents the project from compiling at all until
+         * the element is filled in or the expected behavior is changed.
+         * <p>
+         * This mode is useful in CI pipelines or strict TDD workflows where empty
+         * elements should be treated as hard blockers rather than deferred failures.
          */
-        NONE
+        COMPILATION_ERROR
     }
 
     /**
@@ -126,14 +133,51 @@ public @interface Feature2JUnitOptions {
     String[] supportedFileExtensions() default {"feature", "specb"};
 
     /**
+     * Specifies regex patterns for Gherkin tags for which the generator should skip code generation entirely.
+     * <p>
+     * Each value is treated as a Java regular expression and matched against the tag names
+     * on Feature, Rule, Scenario, and Examples elements (without the leading {@code @} symbol).
+     * When any tag on an element matches any of the specified patterns, the generator will not
+     * produce the corresponding generated code element (test class, {@code @Nested} class,
+     * {@code @Test} method, or {@code @ParameterizedTest} parameter set, respectively).
+     * <p>
+     * This is useful for excluding elements that are not meant to be executed as automated tests,
+     * such as manual test cases or work-in-progress scenarios, without removing them from the
+     * specification.
+     * <p>
+     * Each pattern is matched against the full tag name (without the leading {@code @}).
+     * Use {@code .*} for wildcard matching. Patterns are case-sensitive by default;
+     * use {@code (?i)} for case-insensitive matching.
+     * <p>
+     * Example usage:
+     * <pre>
+     * &#64;Feature2JUnitOptions(skipGenerationForTags = {"manual", "wip-.*", "(?i)ignore"})
+     * </pre>
+     * This would skip generation for elements tagged with {@code @manual}, any tag starting
+     * with {@code @wip-} (e.g., {@code @wip-sprint-42}), or {@code @ignore}/{@code @IGNORE}/{@code @Ignore}.
+     * <p>
+     * Given the following feature file:
+     * <pre>
+     * &#64;manual
+     * Scenario: User verifies printed report visually
+     *   Given a printed report
+     *   Then the layout matches the approved template
+     * </pre>
+     * The above scenario would be excluded from the generated test class entirely.
+     *
+     * @return the array of regex patterns for tags for which code generation should be skipped
+     */
+    String[] skipGenerationForTags() default {};
+
+    /**
      * Controls how the generator handles Rules that contain no Scenarios.
      * <ul>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — generates a test method with
      *     {@code Assertions.fail("Rule doesn't have any scenarios")}, causing the test to fail</li>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#SKIP SKIP} — generates a test method with
      *     {@code Assumptions.assumeTrue(false, "Rule has no scenarios")}, causing the test to be skipped</li>
-     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#NONE NONE} — generates the {@code @Nested} inner class
-     *     without any failing or skipping statement</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#COMPILATION_ERROR COMPILATION_ERROR} — inserts an invalid
+     *     statement that prevents compilation, making empty Rules a hard blocker</li>
      * </ul>
      *
      * @return the behavior for Rules with no Scenarios
@@ -157,8 +201,8 @@ public @interface Feature2JUnitOptions {
      *     {@code Assertions.fail("Scenario has no steps")}, causing the test to fail</li>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#SKIP SKIP} — generates a test method with
      *     {@code Assumptions.assumeTrue(false, "Scenario has no steps")}, causing the test to be skipped</li>
-     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#NONE NONE} — generates the {@code @Test} method
-     *     without any failing or skipping statement</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#COMPILATION_ERROR COMPILATION_ERROR} — inserts an invalid
+     *     statement that prevents compilation, making empty Scenarios a hard blocker</li>
      * </ul>
      *
      * @return the behavior for Scenarios with no steps
@@ -245,6 +289,32 @@ public @interface Feature2JUnitOptions {
      * @return the suffix for the generated test class name
      */
     String classSuffixIfConcrete() default "Test";
+
+    /**
+     * Controls the body of generated step method stubs when {@link #shouldBeAbstract()} is {@code false}
+     * (concrete generation mode).
+     * <p>
+     * When the generated test class is concrete, each unimplemented step produces a non-abstract method
+     * whose body is determined by this option:
+     * <ul>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — the method body contains
+     *     {@code Assertions.fail("Step is not yet implemented")}, causing the test to fail at runtime
+     *     when the step is reached</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#SKIP SKIP} — the method body contains
+     *     {@code Assumptions.assumeTrue(false, "Step is not yet implemented")}, causing the test
+     *     to be reported as skipped/aborted when the step is reached</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#COMPILATION_ERROR COMPILATION_ERROR} — the method body
+     *     contains an invalid statement ({@code Step is not yet implemented}) that prevents compilation,
+     *     making unimplemented steps a hard blocker similar to abstract generation mode</li>
+     * </ul>
+     * <p>
+     * This option has no effect when {@link #shouldBeAbstract()} is {@code true}, because in abstract
+     * mode step methods are declared as {@code abstract} and have no method body at all.
+     *
+     * @return the behavior for unimplemented step method stubs
+     * @see #shouldBeAbstract()
+     */
+    EMPTY_ELEMENT_BEHAVIOUR unimplementedStepBehavior() default EMPTY_ELEMENT_BEHAVIOUR.FAIL;
 
     /**
      * Specifies the type of parameters that will be used for step methods corresponding to steps with data tables.

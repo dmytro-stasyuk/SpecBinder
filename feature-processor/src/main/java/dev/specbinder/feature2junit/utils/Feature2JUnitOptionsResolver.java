@@ -4,11 +4,7 @@ import dev.specbinder.annotations.Feature2JUnitOptions;
 import dev.specbinder.feature2junit.config.GeneratorOptions;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +75,7 @@ public class Feature2JUnitOptionsResolver {
         boolean addSourceLineNumbers = false;
         String emptyScenarioBehavior = FAIL.name();
         String emptyRuleBehavior = FAIL.name();
+        String unimplementedStepBehavior = FAIL.name();
         String tagForEmptyScenarios = "new";
         String tagForEmptyRules = "new";
         boolean addCucumberStepAnnotations = false;
@@ -89,6 +86,7 @@ public class Feature2JUnitOptionsResolver {
         boolean useStepKeywordInStepMethodName = false;
         boolean useCucumberAnnotationsForStepMatching = true;
         String[] supportedFileExtensions = new String[]{"feature", "specb"};
+        String[] skipGenerationForTags = new String[]{};
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -135,6 +133,11 @@ public class Feature2JUnitOptionsResolver {
                             emptyRuleBehavior = ((VariableElement) value).getSimpleName().toString();
                         }
                         break;
+                    case "unimplementedStepBehavior":
+                        if (value instanceof VariableElement) {
+                            unimplementedStepBehavior = ((VariableElement) value).getSimpleName().toString();
+                        }
+                        break;
                     case "tagForEmptyScenarios":
                         tagForEmptyScenarios = (String) value;
                         break;
@@ -176,6 +179,18 @@ public class Feature2JUnitOptionsResolver {
                                     .toArray(String[]::new);
                         }
                         break;
+                    case "skipGenerationForTags":
+                        if (value instanceof List<?> list) {
+                            skipGenerationForTags = list.stream()
+                                    .map(item -> {
+                                        if (item instanceof AnnotationValue av) {
+                                            return (String) av.getValue();
+                                        }
+                                        return item.toString();
+                                    })
+                                    .toArray(String[]::new);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -189,6 +204,7 @@ public class Feature2JUnitOptionsResolver {
                 addSourceLineNumbers,
                 emptyScenarioBehavior,
                 emptyRuleBehavior,
+                unimplementedStepBehavior,
                 tagForEmptyScenarios,
                 tagForEmptyRules,
                 addCucumberStepAnnotations,
@@ -198,7 +214,8 @@ public class Feature2JUnitOptionsResolver {
                 useQualifiedEnumConstants,
                 useStepKeywordInStepMethodName,
                 useCucumberAnnotationsForStepMatching,
-                supportedFileExtensions
+                supportedFileExtensions,
+                skipGenerationForTags
         );
     }
 
@@ -214,6 +231,7 @@ public class Feature2JUnitOptionsResolver {
                 options.addSourceLineNumbers(),
                 options.emptyScenarioBehavior().name(),
                 options.emptyRuleBehavior().name(),
+                options.unimplementedStepBehavior().name(),
                 options.tagForEmptyScenarios(),
                 options.tagForEmptyRules(),
                 options.addCucumberStepAnnotations(),
@@ -223,7 +241,8 @@ public class Feature2JUnitOptionsResolver {
                 options.useQualifiedEnumConstants(),
                 options.useStepKeywordInStepMethodName(),
                 options.useCucumberAnnotationsForStepMatching(),
-                options.supportedFileExtensions()
+                options.supportedFileExtensions(),
+                options.skipGenerationForTags()
         );
     }
 }

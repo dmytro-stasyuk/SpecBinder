@@ -4,22 +4,22 @@ Feature: GeneratorOptionsDefaults
   So that the generator produces sensible output even without explicit configuration
 
   Rule: Default options are used when no inheritance chain provides them
-    The following default values are applied:
-      | Option                                  | Default Value |
-      | shouldBeAbstract                        | false         |
-      | classSuffixIfConcrete                   | "Test"        |
-      | classSuffixIfAbstract                   | "Scenarios"   |
-      | addSourceLineNumbers                    | false         |
-      | emptyScenarioBehavior                   | FAIL          |
-      | emptyRuleBehavior                       | FAIL          |
-      | tagForEmptyScenarios                    | "new"         |
-      | tagForEmptyRules                        | "new"         |
-      | addCucumberStepAnnotations              | false         |
-      | placeGeneratedClassNextToAnnotatedClass | false         |
-      | dataTableParameterType                  | LIST_OF_OBJECT_PARAMS |
-      | enableCompositeSteps                    | false         |
-      | useQualifiedEnumConstants               | false         |
-      | useStepKeywordInStepMethodName          | false         |
+    then following default values are applied:
+    | Option                                  | Default Value         |
+    | shouldBeAbstract                        | false                 |
+    | classSuffixIfConcrete                   | "Test"                |
+    | classSuffixIfAbstract                   | "Scenarios"           |
+    | addSourceLineNumbers                    | false                 |
+    | emptyScenarioBehavior                   | FAIL                  |
+    | emptyRuleBehavior                       | FAIL                  |
+    | tagForEmptyScenarios                    | "new"                 |
+    | tagForEmptyRules                        | "new"                 |
+    | addCucumberStepAnnotations              | false                 |
+    | placeGeneratedClassNextToAnnotatedClass | false                 |
+    | dataTableParameterType                  | LIST_OF_OBJECT_PARAMS |
+    | enableCompositeSteps                    | false                 |
+    | useQualifiedEnumConstants               | false                 |
+    | useStepKeywordInStepMethodName          | false                 |
 
     Scenario: No options defined in hierarchy
       Given the following base class:

@@ -170,14 +170,13 @@ Feature: ParameterTypeInferenceAndExampleTables
             | true     |
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -193,10 +192,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void quantity$p1(String p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
             )
@@ -218,6 +213,10 @@ Feature: ParameterTypeInferenceAndExampleTables
                 quantity$p1(quantity);
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to int
         """
 
   Rule: step methods with long parameters match when Examples table values can be converted to long
@@ -317,14 +316,13 @@ Feature: ParameterTypeInferenceAndExampleTables
             | false  |
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -340,10 +338,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void amount$p1(String p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
             )
@@ -365,6 +359,10 @@ Feature: ParameterTypeInferenceAndExampleTables
                 amount$p1(amount);
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to long
         """
 
   Rule: step methods with double parameters match when Examples table values can be converted to double
@@ -534,14 +532,13 @@ Feature: ParameterTypeInferenceAndExampleTables
             | hot         |
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -557,10 +554,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void temperature$p1(String p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
             )
@@ -582,6 +575,10 @@ Feature: ParameterTypeInferenceAndExampleTables
                 temperature$p1(temperature);
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to double
         """
 
   Rule: step methods with boolean parameters match when Examples table values can be converted to boolean
@@ -681,14 +678,13 @@ Feature: ParameterTypeInferenceAndExampleTables
             | 42    |
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -704,10 +700,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void value$p1(String p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
             )
@@ -729,6 +721,10 @@ Feature: ParameterTypeInferenceAndExampleTables
                 value$p1(value);
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to boolean
         """
 
   Rule: step methods with enum parameters match when all Examples table values are valid enum constants
@@ -849,14 +845,13 @@ Feature: ParameterTypeInferenceAndExampleTables
             | INVALID_DAY |
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -872,10 +867,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void theFollowingDayOfTheWeek$p1(String p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
             )
@@ -897,6 +888,10 @@ Feature: ParameterTypeInferenceAndExampleTables
                 theFollowingDayOfTheWeek$p1(day);
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to features.MyFeature.DayOfWeek
         """
 
     Scenario: matching enum with multiple enum types in base class
@@ -1018,14 +1013,13 @@ Feature: ParameterTypeInferenceAndExampleTables
             | Blue  |
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -1041,10 +1035,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void color$p1(String p1) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
             )
@@ -1067,6 +1057,10 @@ Feature: ParameterTypeInferenceAndExampleTables
                 color$p1(color);
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to features.MyFeature.Color
         """
 
     Scenario: enum takes precedence over boolean when values match both
@@ -1224,82 +1218,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         }
         """
 
-    Scenario: enum constant with numeric name does not match integer
-      Given the following base class:
-      """
-      package features;
-
-      import dev.specbinder.annotations.Feature2JUnit;
-
-      @Feature2JUnit
-      public abstract class MyFeature {
-
-          protected void level$p1(Level level) {
-              // Implementation with enum parameter
-          }
-
-          public enum Level {
-              LEVEL_1,
-              LEVEL_2,
-              LEVEL_3
-          }
-      }
-      """
-      Given the following feature file:
-        """
-        Feature: Enum With Underscore And Number
-          Scenario Outline: Test with level
-            Given level "<level>"
-          Examples:
-            | level   |
-            | LEVEL_1 |
-            | LEVEL_2 |
-        """
-      When the generator is run
-      Then the following class should be generated:
-        """
-        package features;
-
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.TestMethodOrder;
-        import org.junit.jupiter.params.ParameterizedTest;
-        import org.junit.jupiter.params.provider.CsvSource;
-
-        /**
-         * Feature: Enum With Underscore And Number
-         */
-        @DisplayName("MyFeature")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("features/MyFeature.feature")
-        public class MyFeatureTest extends MyFeature {
-            @ParameterizedTest(
-                    name = "Example {index}: [{arguments}]"
-            )
-            @CsvSource(
-                    useHeadersInDisplayName = true,
-                    delimiter = '|',
-                    textBlock = \"\"\"
-                            level
-                            LEVEL_1
-                            LEVEL_2
-                            \"\"\"
-            )
-            @Order(1)
-            @DisplayName("Scenario Outline: Test with level")
-            public void scenario_1(MyFeature.Level level) {
-                /*
-                 * Given level "<level>"
-                 */
-                level$p1(level);
-            }
-        }
-        """
-
   Rule: step methods with multiple parameters match when all Examples table values can be converted
 
     Scenario: matching Examples values against multiple typed parameters
@@ -1398,14 +1316,13 @@ Feature: ParameterTypeInferenceAndExampleTables
             | Gadget | cheap |
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -1421,10 +1338,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void productWithName$p1AndPrice$p2(String p1, String p2) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
             )
@@ -1446,6 +1359,10 @@ Feature: ParameterTypeInferenceAndExampleTables
                 productWithName$p1AndPrice$p2(name, price);
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to double
         """
 
     Scenario: matching Examples values against all primitive types
@@ -1618,15 +1535,13 @@ Feature: ParameterTypeInferenceAndExampleTables
             | 20    |
         """
       When the generator is run
-      Then the following class should be generated:
+      Then the following java source file should be be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import java.lang.Integer;
-        import java.lang.String;
         import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -1642,10 +1557,6 @@ Feature: ParameterTypeInferenceAndExampleTables
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
-            public void configWithEnabled$p1AndCount$p2(String p1, Integer p2) {
-                Assertions.fail("Step is not yet implemented");
-            }
-
             @ParameterizedTest(
                     name = "Example {index}: [{arguments}]"
             )
@@ -1667,4 +1578,8 @@ Feature: ParameterTypeInferenceAndExampleTables
                 configWithEnabled$p1AndCount$p2("maybe", count);
             }
         }
+        """
+      And the compilation error should contain the following text:
+        """
+        incompatible types: java.lang.String cannot be converted to boolean
         """

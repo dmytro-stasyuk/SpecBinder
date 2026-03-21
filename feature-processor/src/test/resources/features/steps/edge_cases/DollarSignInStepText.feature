@@ -1,11 +1,13 @@
-Feature: InheritedStepAndParameterTypeInferenceForEnums
-  As a developer writing behavior specifications with enum-typed step parameters
-  I want the code generator to automatically infer enum types from inherited step methods and substitute matching constant names in place of raw strings
-  So that the generated test code is type-safe and compiles without manual enum conversion, regardless of where the enum is declared
+Feature: DollarSignInStepText
+  As a developer
+  I want to use dollar signs and other special characters in step text
+  So that the generator correctly handles them without confusing them with parameter placeholders
 
-  Rule: parameters of Enum type are passed as enum equivalent constants
+  Rule: A literal dollar sign in step text should not be treated as a parameter placeholder
+  - Step text may contain literal $, $p, $p1, etc. that are NOT SpecBinder parameter placeholders
+  - These appear in real-world scenarios describing prices, shell variables, regex anchors, etc.
 
-    Example: enum parameter type is declared inside base class
+    Scenario: Step text with a dollar sign followed by a number (price)
       Given the following base class:
       """
       package features;
@@ -14,37 +16,22 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
 
       @Feature2JUnit
       public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
-
-          public enum DayOfWeek {
-              MONDAY,
-              TUESDAY,
-              WEDNESDAY,
-              THURSDAY,
-              FRIDAY,
-              SATURDAY,
-              SUNDAY
-          }
       }
       """
       Given the following feature file:
         """
-        Feature: Boolean Parameter Matching
+        Feature: Price
           Scenario: Test
-            Given the following day of the week "MONDAY"
+            Given the price is $10
         """
       When the generator is run
       Then the following class should be generated:
         """
         package features;
 
-        import static features.MyFeature.DayOfWeek.MONDAY;
-
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -52,241 +39,30 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: Boolean Parameter Matching
+         * Feature: Price
          */
         @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
+            public void thePriceIs$10() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
             public void scenario_1() {
                 /*
-                 * Given the following day of the week "MONDAY"
+                 * Given the price is $10
                  */
-                theFollowingDayOfTheWeek$p1(MONDAY);
+                thePriceIs$10();
             }
         }
         """
 
-    Example: enum parameter type is declared in same package as base class but in its own file
-      Given the following enum class:
-      """
-      package features;
-
-      public enum DayOfWeek {
-          MONDAY,
-          TUESDAY,
-          WEDNESDAY,
-          THURSDAY,
-          FRIDAY,
-          SATURDAY,
-          SUNDAY
-      }
-      """
-      And the following base class:
-      """
-      package features;
-
-      import dev.specbinder.annotations.Feature2JUnit;
-
-      @Feature2JUnit
-      public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
-      }
-      """
-      And the following feature file:
-        """
-        Feature: Enum Parameter Matching
-          Scenario: Test
-            Given the following day of the week "MONDAY"
-        """
-      When the generator is run
-      Then the following class should be generated:
-        """
-        package features;
-
-        import static features.DayOfWeek.MONDAY;
-
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.Test;
-        import org.junit.jupiter.api.TestMethodOrder;
-
-        /**
-         * Feature: Enum Parameter Matching
-         */
-        @DisplayName("MyFeature")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("features/MyFeature.feature")
-        public class MyFeatureTest extends MyFeature {
-            @Test
-            @Order(1)
-            @DisplayName("Scenario: Test")
-            public void scenario_1() {
-                /*
-                 * Given the following day of the week "MONDAY"
-                 */
-                theFollowingDayOfTheWeek$p1(MONDAY);
-            }
-        }
-        """
-
-    Example: enum parameter type is declared in a different package and in its own file
-      Given the following enum class:
-      """
-      package features.enums;
-
-      public enum DayOfWeek {
-          MONDAY,
-          TUESDAY,
-          WEDNESDAY,
-          THURSDAY,
-          FRIDAY,
-          SATURDAY,
-          SUNDAY
-      }
-      """
-      And the following base class:
-      """
-      package features;
-
-      import dev.specbinder.annotations.Feature2JUnit;
-      import features.enums.DayOfWeek;
-
-      @Feature2JUnit
-      public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
-      }
-      """
-      And the following feature file:
-        """
-        Feature: Enum Parameter Matching
-          Scenario: Test
-            Given the following day of the week "MONDAY"
-        """
-      When the generator is run
-      Then the following class should be generated:
-        """
-        package features;
-
-        import static features.enums.DayOfWeek.MONDAY;
-
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.Test;
-        import org.junit.jupiter.api.TestMethodOrder;
-
-        /**
-         * Feature: Enum Parameter Matching
-         */
-        @DisplayName("MyFeature")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("features/MyFeature.feature")
-        public class MyFeatureTest extends MyFeature {
-            @Test
-            @Order(1)
-            @DisplayName("Scenario: Test")
-            public void scenario_1() {
-                /*
-                 * Given the following day of the week "MONDAY"
-                 */
-                theFollowingDayOfTheWeek$p1(MONDAY);
-            }
-        }
-        """
-
-    Example: enum parameter type is declared in a different package and inside another class
-      Given the following enum class:
-      """
-      package features.enums;
-
-      public class TimeConstants {
-
-          public enum DayOfWeek {
-              MONDAY,
-              TUESDAY,
-              WEDNESDAY,
-              THURSDAY,
-              FRIDAY,
-              SATURDAY,
-              SUNDAY
-          }
-      }
-      """
-      And the following base class:
-      """
-      package features;
-
-      import dev.specbinder.annotations.Feature2JUnit;
-      import features.enums.TimeConstants.DayOfWeek;
-
-      @Feature2JUnit
-      public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
-      }
-      """
-      And the following feature file:
-        """
-        Feature: Enum Parameter Matching
-          Scenario: Test
-            Given the following day of the week "MONDAY"
-        """
-      When the generator is run
-      Then the following class should be generated:
-        """
-        package features;
-
-        import static features.enums.TimeConstants.DayOfWeek.MONDAY;
-
-        import dev.specbinder.annotations.output.FeatureFilePath;
-        import javax.annotation.processing.Generated;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.MethodOrderer;
-        import org.junit.jupiter.api.Order;
-        import org.junit.jupiter.api.Test;
-        import org.junit.jupiter.api.TestMethodOrder;
-
-        /**
-         * Feature: Enum Parameter Matching
-         */
-        @DisplayName("MyFeature")
-        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
-        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-        @FeatureFilePath("features/MyFeature.feature")
-        public class MyFeatureTest extends MyFeature {
-            @Test
-            @Order(1)
-            @DisplayName("Scenario: Test")
-            public void scenario_1() {
-                /*
-                 * Given the following day of the week "MONDAY"
-                 */
-                theFollowingDayOfTheWeek$p1(MONDAY);
-            }
-        }
-        """
-
-    Example: [counter] inherited method with required name has enum parameter type but not matching constant for our parameter value
+    Scenario: Step text with a dollar sign at end of word (regex anchor)
       Given the following base class:
       """
       package features;
@@ -295,35 +71,22 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
 
       @Feature2JUnit
       public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
-
-          public enum DayOfWeek {
-              MONDAY,
-              TUESDAY,
-              WEDNESDAY,
-              THURSDAY,
-              FRIDAY,
-              SATURDAY,
-              SUNDAY
-          }
       }
       """
       Given the following feature file:
         """
-        Feature: Enum Parameter Matching
+        Feature: Regex
           Scenario: Test
-            Given the following day of the week "INVALID_DAY"
+            When the pattern ends with $
         """
       When the generator is run
-      Then the following java source file should be be generated:
+      Then the following class should be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -331,34 +94,30 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: Enum Parameter Matching
+         * Feature: Regex
          */
         @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
+            public void thePatternEndsWith$() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
             public void scenario_1() {
                 /*
-                 * Given the following day of the week "INVALID_DAY"
+                 * When the pattern ends with $
                  */
-                theFollowingDayOfTheWeek$p1("INVALID_DAY");
+                thePatternEndsWith$();
             }
         }
         """
-  And the compilation error should contain the following text:
-    """
-    incompatible types: java.lang.String cannot be converted to features.MyFeature.DayOfWeek
-    """
 
-  Rule: matching step parameter values against enum type constants is case sensitive
-  - if text value specified cannot be matched exactly (case sensitive) against any of the enum constants then
-  - the parameter is treated as a regular String and no enum constant substitution is performed which results in a compilation error
-
-    Example: [counter] lowercase value does not match uppercase enum constant declared inside base class
+    Scenario: Step text containing dollar-p which looks like a parameter placeholder
       Given the following base class:
       """
       package features;
@@ -367,35 +126,22 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
 
       @Feature2JUnit
       public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
-
-          public enum DayOfWeek {
-              MONDAY,
-              TUESDAY,
-              WEDNESDAY,
-              THURSDAY,
-              FRIDAY,
-              SATURDAY,
-              SUNDAY
-          }
       }
       """
       Given the following feature file:
         """
-        Feature: Case Sensitive Enum Matching
+        Feature: DollarP
           Scenario: Test
-            Given the following day of the week "monday"
+            Then the variable $path should be set
         """
       When the generator is run
-      Then the following java source file should be be generated:
+      Then the following class should be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -403,45 +149,35 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: Case Sensitive Enum Matching
+         * Feature: DollarP
          */
         @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
+            public void theVariable$pathShouldBeSet() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
             public void scenario_1() {
                 /*
-                 * Given the following day of the week "monday"
+                 * Then the variable $path should be set
                  */
-                theFollowingDayOfTheWeek$p1("monday");
+                theVariable$pathShouldBeSet();
             }
         }
         """
-      And the compilation error should contain the following text:
-        """
-        incompatible types: java.lang.String cannot be converted to features.MyFeature.DayOfWeek
-        """
 
-    Example: [counter] lowercase value does not match uppercase enum constant declared in same package
-      Given the following enum class:
-      """
-      package features;
+  Rule: A literal dollar sign in step text should work alongside real quoted parameters
+  - When step text contains both a literal $ and a quoted "parameter", the generator
+    should only extract the quoted parameter and leave the literal $ intact
 
-      public enum DayOfWeek {
-          MONDAY,
-          TUESDAY,
-          WEDNESDAY,
-          THURSDAY,
-          FRIDAY,
-          SATURDAY,
-          SUNDAY
-      }
-      """
-      And the following base class:
+    Scenario: Step text with literal dollar sign and a quoted parameter
+      Given the following base class:
       """
       package features;
 
@@ -449,25 +185,23 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
 
       @Feature2JUnit
       public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
       }
       """
-      And the following feature file:
+      Given the following feature file:
         """
-        Feature: Case Sensitive Enum Matching
+        Feature: Mixed
           Scenario: Test
-            Given the following day of the week "Monday"
+            Given the price is $10 for item "Widget"
         """
       When the generator is run
-      Then the following java source file should be be generated:
+      Then the following class should be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -475,72 +209,60 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: Case Sensitive Enum Matching
+         * Feature: Mixed
          */
         @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
+            public void thePriceIs$10ForItem$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
             public void scenario_1() {
                 /*
-                 * Given the following day of the week "Monday"
+                 * Given the price is $10 for item "Widget"
                  */
-                theFollowingDayOfTheWeek$p1("Monday");
+                thePriceIs$10ForItem$p1("Widget");
             }
         }
         """
-      And the compilation error should contain the following text:
-        """
-        incompatible types: java.lang.String cannot be converted to features.DayOfWeek
-        """
 
-    Example: [counter] lowercase value does not match uppercase enum constant declared in different package
-      Given the following enum class:
-      """
-      package features.enums;
+  Rule: A quoted parameter value containing $p should not be treated as a nested placeholder
+  - When a quoted "..." parameter value itself contains $p, $p1, $p2 etc., the generator
+    should treat the entire quoted string as a single literal parameter value
+  - This is the pattern that causes IllegalArgumentException during annotation processing
 
-      public enum DayOfWeek {
-          MONDAY,
-          TUESDAY,
-          WEDNESDAY,
-          THURSDAY,
-          FRIDAY,
-          SATURDAY,
-          SUNDAY
-      }
-      """
-      And the following base class:
+    Scenario: Quoted parameter value contains $p1
+      Given the following base class:
       """
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
-      import features.enums.DayOfWeek;
 
       @Feature2JUnit
       public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
       }
       """
-      And the following feature file:
+      Given the following feature file:
         """
-        Feature: Case Sensitive Enum Matching
+        Feature: QuotedDollarP
           Scenario: Test
-            Given the following day of the week "MONDAY "
+            Given a method "iAdd$p1ToTheCart(String p1)" exists
         """
       When the generator is run
-      Then the following java source file should be be generated:
+      Then the following class should be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -548,75 +270,55 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: Case Sensitive Enum Matching
+         * Feature: QuotedDollarP
          */
         @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
+            public void aMethod$p1Exists(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
             public void scenario_1() {
                 /*
-                 * Given the following day of the week "MONDAY "
+                 * Given a method "iAdd$p1ToTheCart(String p1)" exists
                  */
-                theFollowingDayOfTheWeek$p1("MONDAY ");
+                aMethod$p1Exists("iAdd$p1ToTheCart(String p1)");
             }
         }
         """
-      And the compilation error should contain the following text:
-        """
-        incompatible types: java.lang.String cannot be converted to features.enums.DayOfWeek
-        """
 
-    Example: [counter] lowercase value does not match uppercase enum constant declared inside class in different package
-      Given the following enum class:
-      """
-      package features.enums;
-
-      public class TimeConstants {
-
-          public enum DayOfWeek {
-              MONDAY,
-              TUESDAY,
-              WEDNESDAY,
-              THURSDAY,
-              FRIDAY,
-              SATURDAY,
-              SUNDAY
-          }
-      }
-      """
-      And the following base class:
+    Scenario: Quoted parameter value contains multiple $p placeholders
+      Given the following base class:
       """
       package features;
 
       import dev.specbinder.annotations.Feature2JUnit;
-      import features.enums.TimeConstants.DayOfWeek;
 
       @Feature2JUnit
       public abstract class MyFeature {
-
-          protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
-              // Implementation with enum parameter
-          }
       }
       """
-      And the following feature file:
+      Given the following feature file:
         """
-        Feature: Case Sensitive Enum Matching
+        Feature: MultipleDollarP
           Scenario: Test
-            Given the following day of the week "MoNdAy"
+            Given a method "theUserEnters$p1And$p2(String p1, String p2)" exists
         """
       When the generator is run
-      Then the following java source file should be be generated:
+      Then the following class should be generated:
         """
         package features;
 
         import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
         import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
         import org.junit.jupiter.api.DisplayName;
         import org.junit.jupiter.api.MethodOrderer;
         import org.junit.jupiter.api.Order;
@@ -624,27 +326,308 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
         import org.junit.jupiter.api.TestMethodOrder;
 
         /**
-         * Feature: Case Sensitive Enum Matching
+         * Feature: MultipleDollarP
          */
         @DisplayName("MyFeature")
         @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
         @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @FeatureFilePath("features/MyFeature.feature")
         public class MyFeatureTest extends MyFeature {
+            public void aMethod$p1Exists(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
             @Test
             @Order(1)
             @DisplayName("Scenario: Test")
             public void scenario_1() {
                 /*
-                 * Given the following day of the week "MoNdAy"
+                 * Given a method "theUserEnters$p1And$p2(String p1, String p2)" exists
                  */
-                theFollowingDayOfTheWeek$p1("MoNdAy");
+                aMethod$p1Exists("theUserEnters$p1And$p2(String p1, String p2)");
             }
         }
         """
-      And the compilation error should contain the following text:
+
+    Scenario: Quoted parameter value ends with a dollar sign
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      Given the following feature file:
         """
-        incompatible types: java.lang.String cannot be converted to features.enums.TimeConstants.DayOfWeek
+        Feature: TrailingDollar
+          Scenario: Test
+            When the regex pattern is "^the user searches for (.*)$"
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: TrailingDollar
+         */
+        @DisplayName("MyFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void theRegexPatternIs$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * When the regex pattern is "^the user searches for (.*)$"
+                 */
+                theRegexPatternIs$p1("^the user searches for (.*)$");
+            }
+        }
         """
 
+    Scenario: Two quoted parameters where both values contain dollar signs
+      Given the following base class:
+      """
+      package features;
 
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      Given the following feature file:
+        """
+        Feature: TwoDollarParams
+          Scenario: Test
+            Given method "$p1" is renamed to "$p2"
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: TwoDollarParams
+         */
+        @DisplayName("MyFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void method$p1IsRenamedTo$p2(String p1, String p2) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given method "$p1" is renamed to "$p2"
+                 */
+                method$p1IsRenamedTo$p2("$p1", "$p2");
+            }
+        }
+        """
+
+    Scenario: Quoted parameter value contains curly braces like Cucumber expressions
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      Given the following feature file:
+        """
+        Feature: CurlyInQuotes
+          Scenario: Test
+            Given a method annotated with "the user enters {string}"
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: CurlyInQuotes
+         */
+        @DisplayName("MyFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void aMethodAnnotatedWith$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given a method annotated with "the user enters {string}"
+                 */
+                aMethodAnnotatedWith$p1("the user enters {string}");
+            }
+        }
+        """
+
+    Scenario: Literal dollar sign in step text combined with a quoted value containing $p
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      Given the following feature file:
+        """
+        Feature: MixedDollars
+          Scenario: Test
+            Given the $HOME variable expands to "/users/$admin"
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import java.lang.String;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: MixedDollars
+         */
+        @DisplayName("MyFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void the$homeVariableExpandsTo$p1(String p1) {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given the $HOME variable expands to "/users/$admin"
+                 */
+                the$homeVariableExpandsTo$p1("/users/$admin");
+            }
+        }
+        """
+
+  Rule: Curly braces in step text should not be treated as Cucumber expression parameters
+  - Step text may contain literal curly braces like {string}, {int} that are NOT SpecBinder placeholders
+  - These appear when describing Cucumber expressions in plain English steps
+
+    Scenario: Step text containing curly braces
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Feature2JUnit;
+
+      @Feature2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      Given the following feature file:
+        """
+        Feature: Braces
+          Scenario: Test
+            Given the pattern contains {string} and {int} types
+        """
+      When the generator is run
+      Then the following class should be generated:
+        """
+        package features;
+
+        import dev.specbinder.annotations.output.FeatureFilePath;
+        import javax.annotation.processing.Generated;
+        import org.junit.jupiter.api.Assertions;
+        import org.junit.jupiter.api.DisplayName;
+        import org.junit.jupiter.api.MethodOrderer;
+        import org.junit.jupiter.api.Order;
+        import org.junit.jupiter.api.Test;
+        import org.junit.jupiter.api.TestMethodOrder;
+
+        /**
+         * Feature: Braces
+         */
+        @DisplayName("MyFeature")
+        @Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+        @FeatureFilePath("features/MyFeature.feature")
+        public class MyFeatureTest extends MyFeature {
+            public void thePatternContainsStringAndIntTypes() {
+                Assertions.fail("Step is not yet implemented");
+            }
+
+            @Test
+            @Order(1)
+            @DisplayName("Scenario: Test")
+            public void scenario_1() {
+                /*
+                 * Given the pattern contains {string} and {int} types
+                 */
+                thePatternContainsStringAndIntTypes();
+            }
+        }
+        """
