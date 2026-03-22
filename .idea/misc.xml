@@ -5,7 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/examples/examples-feature-processor/example-6/pom.xml" />
+        <option value="$PROJECT_DIR$/examples/examples-annotation-processor/example-6/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
@@ -16,7 +16,7 @@
         <option value="$PROJECT_DIR$/examples/example-4/pom.xml" />
         <option value="$PROJECT_DIR$/examples/example-5/pom.xml" />
         <option value="$PROJECT_DIR$/examples/example-6/pom.xml" />
-        <option value="$PROJECT_DIR$/examples/examples-feature-processor/pom.xml" />
+        <option value="$PROJECT_DIR$/examples/examples-annotation-processor/pom.xml" />
       </set>
     </option>
   </component>

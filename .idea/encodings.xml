@@ -39,8 +39,8 @@
     <file url="file://$PROJECT_DIR$/examples/example-5/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/example-6/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/example-6/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/examples/examples-feature-processor/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/examples-annotation-processor/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/examples/examples-annotation-processor/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/getting-started/example-1/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/getting-started/example-1/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/getting-started/example-2/src/main/java" charset="UTF-8" />
@@ -59,8 +59,8 @@
     <file url="file://$PROJECT_DIR$/examples/getting-started/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/feature-processor/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/feature-processor/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/annotation-processor/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/annotation-processor/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/user-story-processor/src/main/java" charset="UTF-8" />

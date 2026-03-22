@@ -114,7 +114,7 @@ Feature: Online shopping cart
 ```java
 package org.mycompany.app;
 
-import dev.specbinder.feature2junit.Feature2JUnit;
+import dev.specbinder.processor.Feature2JUnit;
 
 @Feature2JUnit("specs/cart.feature")
 public abstract class CartFeature {
@@ -129,7 +129,7 @@ public abstract class CartFeature {
 ```java
 package org.mycompany.app;
 
-import dev.specbinder.annotations.output.FeatureFilePath;
+import dev.specbinder.annotations.output.SourceFilePath;
 
 import java.lang.String;
 import javax.annotation.processing.Generated;
@@ -147,11 +147,11 @@ import org.junit.jupiter.api.TestMethodOrder;
 /**
  * Feature: online shopping cart
  */
-@Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+@Generated("dev.specbinder.processor.AnnotationProcessor")
 @DisplayName("cart")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-@FeatureFilePath("specs/cart.feature")
+@SourceFilePath("specs/cart.feature")
 public class CartFeatureTest extends CartFeature {
 
     public void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, Integer p2, Double p3) {
@@ -225,7 +225,7 @@ public class CartFeatureTest extends CartFeature {
 ```java
 package org.mycompany.app;
 
-import dev.specbinder.feature2junit.Feature2JUnit;
+import dev.specbinder.processor.Feature2JUnit;
 
 @Feature2JUnit("specs/cart.feature")
 public abstract class CartFeature {
@@ -917,11 +917,11 @@ Feature: Shopping cart totals and shipping
 /**
  * Feature: Shopping cart totals and shipping
  */
-@Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+@Generated("dev.specbinder.processor.AnnotationProcessor")
 @DisplayName("cart")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-@FeatureFilePath("specs/cart.feature")
+@SourceFilePath("specs/cart.feature")
 public class CartFeatureTest extends CartFeature {
 
     public void iAmASignedinShopper$p1(String p1) {
@@ -1598,7 +1598,7 @@ Feature: Shopping cart totals and shipping
 
 package org.mycompany.app;
 
-import dev.specbinder.annotations.output.FeatureFilePath;
+import dev.specbinder.annotations.output.SourceFilePath;
 
 import java.lang.String;
 import javax.annotation.processing.Generated;
@@ -1621,11 +1621,11 @@ import org.junit.jupiter.api.TestMethodOrder;
         @Tag("fast"),
         @Tag("cart")
 })
-@Generated("dev.specbinder.feature2junit.Feature2JUnitGenerator")
+@Generated("dev.specbinder.processor.AnnotationProcessor")
 @DisplayName("cart")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-@FeatureFilePath("specs/cart.feature")
+@SourceFilePath("specs/cart.feature")
 public class CartFeatureTest extends CartFeature {
 
     @Nested
@@ -1713,8 +1713,8 @@ All configuration is provided via the `@Feature2JUnitOptions` annotation. You ca
 <summary>Example — per‑feature options on the marker class</summary>
 
 ```java
-import dev.specbinder.feature2junit.Feature2JUnit;
-import dev.specbinder.feature2junit.Feature2JUnitOptions;
+import dev.specbinder.processor.Feature2JUnit;
+import dev.specbinder.processor.Feature2JUnitOptions;
 
 @Feature2JUnitOptions( /* customize generation options as needed */)
 @Feature2JUnit("specs/cart.feature")
@@ -1729,8 +1729,8 @@ public abstract class CartFeature {
  <summary>Example — inherited options via a base class</summary>
 
 ```java
-import dev.specbinder.feature2junit.Feature2JUnit;
-import dev.specbinder.feature2junit.Feature2JUnitOptions;
+import dev.specbinder.processor.Feature2JUnit;
+import dev.specbinder.processor.Feature2JUnitOptions;
 
 @Feature2JUnitOptions( /* shared options for all features */)
 public abstract class BaseFeatureOptions {
@@ -1766,7 +1766,7 @@ public abstract class CartFeature extends BaseFeatureOptions {
     <!-- Spec Binder annotation processor -->
     <dependency>
         <groupId>dev.specbinder</groupId>
-        <artifactId>feature-processor</artifactId>
+        <artifactId>annotation-processor</artifactId>
         <version>0.1.20</version>
         <scope>provided</scope>
     </dependency>

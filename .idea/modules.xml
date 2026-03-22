@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/feature-processor/feature-processor.iml" filepath="$PROJECT_DIR$/feature-processor/feature-processor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/annotation-processor/annotation-processor.iml" filepath="$PROJECT_DIR$/annotation-processor/annotation-processor.iml" />
     </modules>
   </component>
 </project>

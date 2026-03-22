@@ -10,7 +10,7 @@
         <module name="common-use-cases-example-1" />
         <module name="example-2 (1) (dev.specbinder.examples.commonusecases)" />
         <module name="example-10" />
-        <module name="feature-processor" />
+        <module name="annotation-processor" />
         <module name="getting-started-example-1" />
         <module name="example-6 (1)" />
         <module name="example-5 (1) (dev.specbinder.examples.commonusecases)" />
@@ -48,7 +48,7 @@
       <module name="example-1" target="22" />
       <module name="example-6.main" target="17" />
       <module name="example-6.test" target="17" />
-      <module name="examples-feature-processor" target="22" />
+      <module name="examples-annotation-processor" target="22" />
       <module name="spec2test" target="17" />
     </bytecodeTargetLevel>
   </component>

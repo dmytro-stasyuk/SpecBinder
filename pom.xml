@@ -39,7 +39,7 @@
     </properties>
     <modules>
         <module>annotations</module>
-        <module>feature-processor</module>
+        <module>annotation-processor</module>
         <module>user-story-processor</module>
         <module>examples</module>
     </modules>

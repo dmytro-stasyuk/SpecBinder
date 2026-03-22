@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>dev.specbinder</groupId>
-            <artifactId>feature-processor</artifactId>
+            <artifactId>annotation-processor</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

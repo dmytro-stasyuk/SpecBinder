@@ -44,7 +44,11 @@
       "Bash(.idea_scripts/trigger_rebuild_project_shortcut.sh:*)",
       "Bash(./mvnw install:*)",
       "Bash(./mvnw test:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(/Users/dmytro/Projects/SpecBinder/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh)",
+      "Bash(/Users/dmytro/Projects/SpecBinder/spec-binder/.idea_scripts/trigger_run_test_shortcut.sh)",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//usr/local/bin/**)"
     ],
     "deny": [],
     "ask": []
