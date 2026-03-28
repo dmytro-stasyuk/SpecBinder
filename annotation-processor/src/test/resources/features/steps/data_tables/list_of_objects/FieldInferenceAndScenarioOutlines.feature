@@ -10,12 +10,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class PlaceholderOnlyFeature {
       }
       """
@@ -116,12 +116,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MixedExamplesFeature {
       }
       """
@@ -223,12 +223,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MixedExamplesLiteralNumbersFeature {
       }
       """
@@ -342,12 +342,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class LiteralTextFeature {
       }
       """
@@ -464,12 +464,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MultipleStepsFeature {
       }
       """
@@ -616,12 +616,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MixedLiteralPlaceholderCellFeature {
       }
       """
@@ -730,12 +730,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class LongPlaceholderOnlyFeature {
       }
       """
@@ -836,12 +836,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class LongMixedExamplesFeature {
       }
       """
@@ -943,12 +943,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class LongMixedExamplesLiteralLongsFeature {
       }
       """
@@ -1062,12 +1062,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class LongLiteralTextFeature {
       }
       """
@@ -1184,12 +1184,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class LongMultipleStepsFeature {
       }
       """
@@ -1336,12 +1336,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MixedLiteralLongPlaceholderFeature {
       }
       """
@@ -1450,12 +1450,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class DoublePlaceholderOnlyFeature {
       }
       """
@@ -1556,12 +1556,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class DoubleMixedExamplesFeature {
       }
       """
@@ -1663,12 +1663,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class DoubleMixedExamplesLiteralDoublesFeature {
       }
       """
@@ -1782,12 +1782,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class DoubleLiteralTextFeature {
       }
       """
@@ -1904,12 +1904,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class DoubleMultipleStepsFeature {
       }
       """
@@ -2056,12 +2056,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MixedLiteralDoublePlaceholderFeature {
       }
       """
@@ -2170,12 +2170,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class BooleanPlaceholderOnlyFeature {
       }
       """
@@ -2276,12 +2276,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class BooleanMixedExamplesFeature {
       }
       """
@@ -2383,12 +2383,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class BooleanMixedExamplesLiteralBooleansFeature {
       }
       """
@@ -2502,12 +2502,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class BooleanLiteralTextFeature {
       }
       """
@@ -2624,12 +2624,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class BooleanMultipleStepsFeature {
       }
       """
@@ -2776,12 +2776,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MixedLiteralBooleanPlaceholderFeature {
       }
       """
@@ -2890,12 +2890,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class CharacterPlaceholderOnlyFeature {
       }
       """
@@ -2996,12 +2996,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class CharacterMixedExamplesFeature {
       }
       """
@@ -3103,12 +3103,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class CharacterMixedExamplesLiteralCharsFeature {
       }
       """
@@ -3222,12 +3222,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class CharacterLiteralTextFeature {
       }
       """
@@ -3344,12 +3344,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class CharacterMultipleStepsFeature {
       }
       """
@@ -3496,12 +3496,12 @@ Feature: FieldInferenceAndScenarioOutlines
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MixedLiteralCharacterPlaceholderFeature {
       }
       """

@@ -13,9 +13,9 @@ Feature: StepMethodJavaDocComments
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
       }
       """
@@ -87,9 +87,9 @@ Feature: StepMethodJavaDocComments
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
       }
       """
@@ -160,9 +160,9 @@ Feature: StepMethodJavaDocComments
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
       }
       """
@@ -224,9 +224,9 @@ Feature: StepMethodJavaDocComments
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
       }
       """

@@ -25,7 +25,7 @@ Scenarios at the top level (outside any rule) only run the feature-level backgro
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Feature with a feature-level background, a top-level scenario, and two rules each with their own background |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Feature2JUnit` |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
 
 ## Generated structure
 

@@ -10,9 +10,9 @@ Feature: FeatureTags
       """
       package com.example.tests;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class SmokeTests {
       }
       """
@@ -51,9 +51,9 @@ Feature: FeatureTags
       """
       package com.example.api;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class UserApiTests {
       }
       """

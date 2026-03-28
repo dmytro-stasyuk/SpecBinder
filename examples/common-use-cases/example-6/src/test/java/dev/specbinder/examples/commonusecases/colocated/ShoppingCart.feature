@@ -1,7 +1,7 @@
 Feature: ShoppingCart
 
   The Feature file is co-located with its marker class in src/test/java.
-  No path needed in @Feature2JUnit — convention-based discovery
+  No path needed in @Gherkin2JUnit — convention-based discovery
   finds this file automatically in the same package.
 
   Scenario: Add item to cart

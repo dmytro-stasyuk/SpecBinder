@@ -1,6 +1,6 @@
 Feature: UsingGlobPatterns
   As a developer organizing feature files in a hierarchical directory structure
-  I want to use glob patterns in the @Feature2JUnit annotation to match multiple feature files
+  I want to use glob patterns in the @Gherkin2JUnit annotation to match multiple feature files
   So that I can generate test classes for all matching feature files without annotating a separate class for each one
 
   Rule: When annotation value contains glob pattern characters (*, **), all matching feature files generate separate test classes
@@ -11,10 +11,10 @@ Feature: UsingGlobPatterns
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("**/*.feature")
+      @Gherkin2JUnit("**/*.feature")
       public abstract class UserFeatures {
       }
       """
@@ -68,10 +68,10 @@ Feature: UsingGlobPatterns
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/**/*.feature")
+      @Gherkin2JUnit("features/**/*.feature")
       public abstract class UserFeatures {
       }
       """
@@ -168,10 +168,10 @@ Feature: UsingGlobPatterns
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/**/*.feature")
+      @Gherkin2JUnit("features/**/*.feature")
       public abstract class AllFeatures {
       }
       """
@@ -311,10 +311,10 @@ Feature: UsingGlobPatterns
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/user/**/*.feature")
+      @Gherkin2JUnit("features/user/**/*.feature")
       public abstract class UserFeatures {
       }
       """
@@ -419,10 +419,10 @@ Feature: UsingGlobPatterns
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/**/*.feature")
+      @Gherkin2JUnit("features/**/*.feature")
       public abstract class Features {
       }
       """
@@ -521,10 +521,10 @@ Feature: UsingGlobPatterns
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("nonexistent/**/*.feature")
+      @Gherkin2JUnit("nonexistent/**/*.feature")
       public abstract class Features {
       }
       """
@@ -549,10 +549,10 @@ Feature: UsingGlobPatterns
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/**/*.feature")
+      @Gherkin2JUnit("features/**/*.feature")
       public abstract class Features {
       }
       """

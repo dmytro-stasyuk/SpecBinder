@@ -61,8 +61,8 @@ JUnit method for each empty Rule/Scenario, so you immediately have red tests to 
 
 ## How it works (at a glance)
 
-1. Create a **marker class** annotated with `@Feature2JUnit("relative/path/to.feature")` — this points the annotation
-   processor at the feature. The path is optional: a bare `@Feature2JUnit` (no value) uses **convention-based discovery**, processing all `.feature` files found in the same package as the annotated class.
+1. Create a **marker class** annotated with `@Gherkin2JUnit("relative/path/to.feature")` — this points the annotation
+   processor at the feature. The path is optional: a bare `@Gherkin2JUnit` (no value) uses **convention-based discovery**, processing all `.feature` files found in the same package as the annotated class.
 2. During compilation, the annotation processor parses the feature and generates:
 
     * A **JUnit test class** (one per feature).
@@ -80,7 +80,7 @@ JUnit method for each empty Rule/Scenario, so you immediately have red tests to 
     * Each step method contains an `Assertions.fail("Step is not yet implemented")` stub, so you immediately know what needs implementing.
     * You implement the step methods **in the marker class**. On the next build, the generator detects these methods in the parent class and **stops generating stubs** for them — the generated test class simply inherits and calls your implementations.
 
-   **Abstract mode** (`@Feature2JUnitOptions(shouldBeAbstract = true)`):
+   **Abstract mode** (`@Gherkin2JUnitOptions(shouldBeAbstract = true)`):
     * The generated class is **abstract** with abstract step methods.
     * You create a **concrete subclass** extending the generated test class and override the step methods with real
       implementations.
@@ -109,14 +109,14 @@ Feature: Online shopping cart
       Then I see the "Free shipping" banner
 ```
 
-2. **Add a marker class** annotated with `@Feature2JUnit("specs/cart.feature")`.
+2. **Add a marker class** annotated with `@Gherkin2JUnit("specs/cart.feature")`.
 
 ```java
 package org.mycompany.app;
 
-import dev.specbinder.processor.Feature2JUnit;
+import dev.specbinder.processor.Gherkin2JUnit;
 
-@Feature2JUnit("specs/cart.feature")
+@Gherkin2JUnit("specs/cart.feature")
 public abstract class CartFeature {
     // Marker class: no members required
 }
@@ -225,9 +225,9 @@ public class CartFeatureTest extends CartFeature {
 ```java
 package org.mycompany.app;
 
-import dev.specbinder.processor.Feature2JUnit;
+import dev.specbinder.processor.Gherkin2JUnit;
 
-@Feature2JUnit("specs/cart.feature")
+@Gherkin2JUnit("specs/cart.feature")
 public abstract class CartFeature {
 
     public void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String itemName, Integer quantity, Double unitPrice) {
@@ -278,10 +278,10 @@ The [`examples/`](examples/) directory contains ready-to-run Maven modules organ
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-3/README.md">TDD Workflow</a></td><td>Iterative red-green development with @new tags</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-4/README.md">Abstract Mode</a></td><td>Compile-time step enforcement</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-5/README.md">DocStrings</a></td><td>Multi-line input (JSON, plain text)</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-6/README.md">Convention Discovery</a></td><td>Co-located .feature files, bare @Feature2JUnit</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-6/README.md">Convention Discovery</a></td><td>Co-located .feature files, bare @Gherkin2JUnit</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-7/README.md">Glob Patterns</a></td><td>Multiple features from a single marker class</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-8/README.md">Type Refinement</a></td><td>Enum refinement of generated Param classes</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-9/README.md">Config Inheritance</a></td><td>@Feature2JUnitOptions inheritance and override</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-9/README.md">Config Inheritance</a></td><td>@Gherkin2JUnitOptions inheritance and override</td></tr>
 <tr><td>&ensp; &ensp; └── <a href="examples/common-use-cases/example-10/README.md">Cucumber Annotations</a></td><td>@Given/@When/@Then and annotation-based matching</td></tr>
 </table>
 
@@ -510,7 +510,7 @@ public class CartFeatureTest extends CartFeature {
   method name.
 
 + To include keywords as method prefixes (e.g., `givenMyCart…`, `whenI…`, `thenMyCart…`), set
-  `@Feature2JUnitOptions(useStepKeywordInStepMethodName = true)`.
+  `@Gherkin2JUnitOptions(useStepKeywordInStepMethodName = true)`.
 
 #### Method name derivation (from step text)
 
@@ -1289,7 +1289,7 @@ iAddItem$p1WithOptions("Wireless Headphones","""
 <summary>Data Tables (|)</summary>
 
 The `dataTableParameterType` option controls how Gherkin data tables are represented in the generated Java code.
-There are three modes — set via `@Feature2JUnitOptions(dataTableParameterType = ...)`.
+There are three modes — set via `@Gherkin2JUnitOptions(dataTableParameterType = ...)`.
 
 All three examples below use the same Gherkin input:
 
@@ -1682,11 +1682,11 @@ public class CartFeatureTest extends CartFeature {
 
 ## Configuration
 
-All configuration is provided via the `@Feature2JUnitOptions` annotation. You can place this annotation:
+All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You can place this annotation:
 
 * **On the marker class** (applies to that feature class only).
 * **On a shared base test class** (options are **inherited** by subclasses/marker classes in your test hierarchy).
-  Inherited options can be **selectively overridden** by placing another `@Feature2JUnitOptions` on a child class — only
+  Inherited options can be **selectively overridden** by placing another `@Gherkin2JUnitOptions` on a child class — only
   the explicitly specified options are overridden, the rest continue to inherit from the parent.
 
 #### Available options
@@ -1713,11 +1713,11 @@ All configuration is provided via the `@Feature2JUnitOptions` annotation. You ca
 <summary>Example — per‑feature options on the marker class</summary>
 
 ```java
-import dev.specbinder.processor.Feature2JUnit;
-import dev.specbinder.processor.Feature2JUnitOptions;
+import dev.specbinder.processor.Gherkin2JUnit;
+import dev.specbinder.processor.Gherkin2JUnitOptions;
 
-@Feature2JUnitOptions( /* customize generation options as needed */)
-@Feature2JUnit("specs/cart.feature")
+@Gherkin2JUnitOptions( /* customize generation options as needed */)
+@Gherkin2JUnit("specs/cart.feature")
 public abstract class CartFeature {
 }
 ```
@@ -1729,14 +1729,14 @@ public abstract class CartFeature {
  <summary>Example — inherited options via a base class</summary>
 
 ```java
-import dev.specbinder.processor.Feature2JUnit;
-import dev.specbinder.processor.Feature2JUnitOptions;
+import dev.specbinder.processor.Gherkin2JUnit;
+import dev.specbinder.processor.Gherkin2JUnitOptions;
 
-@Feature2JUnitOptions( /* shared options for all features */)
+@Gherkin2JUnitOptions( /* shared options for all features */)
 public abstract class BaseFeatureOptions {
 }
 
-@Feature2JUnit("specs/cart.feature")
+@Gherkin2JUnit("specs/cart.feature")
 public abstract class CartFeature extends BaseFeatureOptions {
 }
 ```

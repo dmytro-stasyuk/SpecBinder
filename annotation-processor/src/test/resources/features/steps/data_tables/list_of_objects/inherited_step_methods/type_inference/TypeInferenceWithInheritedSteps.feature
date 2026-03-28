@@ -10,15 +10,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ScoresFeature {
 
           public static class ScoresParam {
@@ -99,15 +99,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class InventoryFeature {
 
           public static class InventoryParam {
@@ -188,15 +188,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class InventoryFeature {
 
           public static class InventoryParam {
@@ -285,14 +285,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ScoresFeature {
 
           public void theFollowingScores(List<ScoresParam> scores) {
@@ -370,14 +370,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class InventoryFeature {
 
           public void theFollowingInventory(List<InventoryParam> inventory) {
@@ -456,15 +456,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class TransactionsFeature {
 
           public static class TransactionsParam {
@@ -545,15 +545,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class AccountsFeature {
 
           public static class AccountsParam {
@@ -634,15 +634,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class AccountsFeature {
 
           public static class AccountsParam {
@@ -731,14 +731,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class TransactionsFeature {
 
           public void theFollowingTransactions(List<TransactionsParam> transactions) {
@@ -815,14 +815,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class AccountsFeature {
 
           public void theFollowingAccounts(List<AccountsParam> accounts) {
@@ -901,15 +901,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MeasurementsFeature {
 
           public static class MeasurementsParam {
@@ -990,15 +990,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class RatingsFeature {
 
           public static class RatingsParam {
@@ -1079,15 +1079,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class RatingsFeature {
 
           public static class RatingsParam {
@@ -1176,14 +1176,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MeasurementsFeature {
 
           public void theFollowingMeasurements(List<MeasurementsParam> measurements) {
@@ -1260,14 +1260,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class RatingsFeature {
 
           public void theFollowingRatings(List<RatingsParam> ratings) {
@@ -1346,15 +1346,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class FlagsFeature {
 
           public static class FlagsParam {
@@ -1435,15 +1435,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class SettingsFeature {
 
           public static class SettingsParam {
@@ -1524,15 +1524,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class SettingsFeature {
 
           public static class SettingsParam {
@@ -1621,14 +1621,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class FlagsFeature {
 
           public void theFollowingFlags(List<FlagsParam> flags) {
@@ -1705,14 +1705,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class SettingsFeature {
 
           public void theFollowingSettings(List<SettingsParam> settings) {
@@ -1791,15 +1791,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class CodesFeature {
 
           public static class CodesParam {
@@ -1880,15 +1880,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class LabelsFeature {
 
           public static class LabelsParam {
@@ -1969,15 +1969,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class LabelsFeature {
 
           public static class LabelsParam {
@@ -2066,14 +2066,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class GradesFeature {
 
           public void theFollowingGrades(List<GradesParam> grades) {
@@ -2151,14 +2151,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class RatingsFeature {
 
           public void theFollowingRatings(List<RatingsParam> ratings) {
@@ -2237,15 +2237,15 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import java.util.Map;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
           public static class UsersParam {
@@ -2338,14 +2338,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public static class ProductsParam {
@@ -2438,14 +2438,14 @@ Feature: TypeInferenceWithInheritedSteps
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class EmployeesFeature {
 
           public static class EmployeesParam {

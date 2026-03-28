@@ -8,9 +8,9 @@ Feature: SourceFilePath
       """
       package com.example.shop;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit("features/shopping/cart.feature")
+      @Gherkin2JUnit("features/shopping/cart.feature")
       public abstract class CartFeatureBase {
       }
       """
@@ -42,16 +42,16 @@ Feature: SourceFilePath
       }
       """
 
-  Rule: when the @Feature2JUnit annotation value is blank, the path is constructed from package and class name of the annotated class
+  Rule: when the @Gherkin2JUnit annotation value is blank, the path is constructed from package and class name of the annotated class
 
     Scenario: value is blank
       Given the following base class:
       """
       package com.example.payment;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class PaymentProcessing {
       }
       """
@@ -82,16 +82,16 @@ Feature: SourceFilePath
       }
       """
 
-  Rule: when value specified in @Feature2JUnit doesn't match any feature files and error should be reported
+  Rule: when value specified in @Gherkin2JUnit doesn't match any feature files and error should be reported
 
     Scenario: feature file path specified but file does not exist
       Given the following base class:
       """
       package com.example.nonexistent;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit("features/nonexistent/missing.feature")
+      @Gherkin2JUnit("features/nonexistent/missing.feature")
       public abstract class MissingFeature {
       }
       """

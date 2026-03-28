@@ -3,7 +3,7 @@ package dev.specbinder.annotations;
 import java.lang.annotation.*;
 
 /**
- * Specifies configuration options for generating JUnit test classes from classes annotated with {@link Feature2JUnit}.
+ * Specifies configuration options for generating JUnit test classes from classes annotated with {@link Gherkin2JUnit}.
  * Use this annotation to customize the structure and behavior of the generated test classes.
  * <p>
  * This annotation is inherited, so it can be specified on a parent class in your test hierarchy to apply its options to all subclasses.
@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Feature2JUnitOptions {
+public @interface Gherkin2JUnitOptions {
 
     /**
      * Defines how data tables in Gherkin steps are represented as parameters in generated step methods.
@@ -116,7 +116,7 @@ public @interface Feature2JUnitOptions {
     /**
      * Specifies the file extensions that the annotation processor recognizes as Gherkin specification files.
      * <p>
-     * When using convention-based discovery ({@code @Feature2JUnit} with no value) or glob patterns,
+     * When using convention-based discovery ({@code @Gherkin2JUnit} with no value) or glob patterns,
      * the processor will search for files matching any of the specified extensions.
      * When using explicit file paths, the file is processed regardless of its extension.
      * <p>
@@ -125,7 +125,7 @@ public @interface Feature2JUnitOptions {
      * <p>
      * Example usage:
      * <pre>
-     * &#64;Feature2JUnitOptions(supportedFileExtensions = {"feature", "specb"})
+     * &#64;Gherkin2JUnitOptions(supportedFileExtensions = {"feature", "specb"})
      * </pre>
      *
      * @return the array of supported file extensions
@@ -151,7 +151,7 @@ public @interface Feature2JUnitOptions {
      * <p>
      * Example usage:
      * <pre>
-     * &#64;Feature2JUnitOptions(skipGenerationForTags = {"manual", "wip-.*", "(?i)ignore"})
+     * &#64;Gherkin2JUnitOptions(skipGenerationForTags = {"manual", "wip-.*", "(?i)ignore"})
      * </pre>
      * This would skip generation for elements tagged with {@code @manual}, any tag starting
      * with {@code @wip-} (e.g., {@code @wip-sprint-42}), or {@code @ignore}/{@code @IGNORE}/{@code @Ignore}.

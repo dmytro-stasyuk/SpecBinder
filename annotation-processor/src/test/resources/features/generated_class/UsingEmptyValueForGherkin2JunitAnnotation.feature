@@ -1,10 +1,10 @@
-Feature: UsingEmptyValueForFeature2JunitAnnotation
+Feature: UsingEmptyValueForGherkin2JunitAnnotation
   As a developer organizing feature files to mirror my package structure
-  I want to use @Feature2JUnit with an empty value to trigger convention-based feature discovery
+  I want to use @Gherkin2JUnit with an empty value to trigger convention-based feature discovery
   So that the processor automatically finds features using the class's package path as the path location,
   eliminating hardcoded file paths and making the codebase easier to refactor and maintain
 
-  Rule: When @Feature2JUnit annotation value is empty, the assumed feature file path for finding matching feature files
+  Rule: When @Gherkin2JUnit annotation value is empty, the assumed feature file path for finding matching feature files
   is derived from the package of the annotated class
 
     Scenario: Pattern matching single feature file in same directory
@@ -12,10 +12,10 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class UserFeatures {
       }
       """
@@ -69,10 +69,10 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class UserFeatures {
       }
       """
@@ -168,10 +168,10 @@ Feature: UsingEmptyValueForFeature2JunitAnnotation
       """
       package com.example.user;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class UserFeatures {
       }
       """

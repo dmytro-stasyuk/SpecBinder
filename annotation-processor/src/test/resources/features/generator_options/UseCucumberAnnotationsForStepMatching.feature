@@ -12,12 +12,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("^user exists$")
             protected void setupUser() {
@@ -79,12 +79,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.When;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @When("^user clicks button$")
             protected void handleButtonClick() {
@@ -146,12 +146,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Then;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Then("^result is displayed$")
             protected void verifyResult() {
@@ -217,12 +217,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("^user exists$")
             protected void setupUser() {
@@ -295,12 +295,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("^user exists$")
             protected void setupUser() {
@@ -358,12 +358,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = false)
         public abstract class MockedAnnotatedTestClass {
             @Given("^user exists$")
             protected void setupUser() {
@@ -420,12 +420,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = false)
         public abstract class MockedAnnotatedTestClass {
             @Given("^user exists$")
             protected void setupUser() {
@@ -486,12 +486,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("^user \"([^\"]+)\" exists$")
             protected void setupUserByName(String name) {
@@ -553,12 +553,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.When;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @When("^user \"([^\"]+)\" sends message to \"([^\"]+)\"$")
             protected void sendMessage(String from, String to) {
@@ -620,12 +620,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.When;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @When("^user (clicks|taps|presses) button$")
             protected void handleButtonAction() {
@@ -687,12 +687,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("^admin exists$")
             protected void setupAdmin() {
@@ -753,12 +753,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("a user named {string}")
             protected void aUserNamed(String name) {
@@ -820,12 +820,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("a user named {string}")
             protected void aUserNamed(String name) {
@@ -891,12 +891,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.When;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @When("the user buys {int} items")
             protected void theUserBuysItems(int count) {
@@ -958,12 +958,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Then;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Then("the balance changes by {int}")
             protected void theBalanceChangesBy(int amount) {
@@ -1029,12 +1029,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Then;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Then("the weight is {float}")
             protected void theWeightIs(float weight) {
@@ -1100,12 +1100,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("the color is {word}")
             protected void theColorIs(String color) {
@@ -1171,12 +1171,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Then;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Then("the total is {double}")
             protected void theTotalIs(double total) {
@@ -1242,12 +1242,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("a timestamp of {long}")
             protected void aTimestampOf(long timestamp) {
@@ -1313,12 +1313,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("a priority of {byte}")
             protected void aPriorityOf(byte priority) {
@@ -1380,12 +1380,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("a port number of {short}")
             protected void aPortNumberOf(short port) {
@@ -1451,13 +1451,13 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Then;
         import java.math.BigDecimal;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Then("the balance is {bigdecimal}")
             protected void theBalanceIs(BigDecimal balance) {
@@ -1520,13 +1520,13 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
         import java.math.BigInteger;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("a population of {biginteger}")
             protected void aPopulationOf(BigInteger population) {
@@ -1593,12 +1593,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Then;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Then("the result is {}")
             protected void theResultIs(String result) {
@@ -1664,12 +1664,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.When;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @When("user {string} buys {int} items at {float} each")
             protected void userBuysItemsAtPrice(String user, int count, float price) {
@@ -1731,12 +1731,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Then;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Then("the {word} costs {double}")
             protected void theItemCosts(String item, double price) {
@@ -1802,12 +1802,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)
         public abstract class MockedAnnotatedTestClass {
             @Given("a user named {string}")
             protected void aUserNamed(String name) {
@@ -1869,12 +1869,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Then;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
             useCucumberAnnotationsForStepMatching = true,
             addCucumberStepAnnotations = true
         )
@@ -1941,12 +1941,12 @@ Feature: UseCucumberAnnotationsForStepMatching
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
         import io.cucumber.java.en.Given;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
             useCucumberAnnotationsForStepMatching = true,
             addCucumberStepAnnotations = true
         )

@@ -26,7 +26,7 @@ Demonstrates how `Scenario Outline` with `Examples` tables maps to JUnit `@Param
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Two scenario outlines — one with a single Examples block, one with two Examples blocks |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Feature2JUnit` |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
 
 ## Generated output
 

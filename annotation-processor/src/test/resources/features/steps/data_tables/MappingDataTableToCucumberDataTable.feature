@@ -7,20 +7,20 @@ Feature: MappingDataTableToCucumberDataTable
   - if a step has a DataTable, a parameter of type io.cucumber.datatable.DataTable named "dataTable" is added
   - the DataTable is formatted with pipe delimiters and passed via createDataTable() helper method
   - columns properly aligned with spaces for readability
-  - this requires explicit configuration via @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+  - this requires explicit configuration via @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
 
     Scenario: Step with DataTable and no quoted parameters
       Given the following base class:
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("features/users.feature")
-      @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+      @Gherkin2JUnit("features/users.feature")
+      @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
       public abstract class TestFeature {
 
           protected DataTable.TableConverter getTableConverter() {
@@ -111,13 +111,13 @@ Feature: MappingDataTableToCucumberDataTable
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("features/Permissions.feature")
-      @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+      @Gherkin2JUnit("features/Permissions.feature")
+      @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
       public abstract class TestFeature {
 
           protected DataTable.TableConverter getTableConverter() {
@@ -208,13 +208,13 @@ Feature: MappingDataTableToCucumberDataTable
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("features/Products.feature")
-      @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+      @Gherkin2JUnit("features/Products.feature")
+      @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
       public abstract class TestFeature {
 
           protected DataTable.TableConverter getTableConverter() {
@@ -308,12 +308,12 @@ Feature: MappingDataTableToCucumberDataTable
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -428,12 +428,12 @@ Feature: MappingDataTableToCucumberDataTable
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class MyFeature {
       }
       """
@@ -536,13 +536,13 @@ Feature: MappingDataTableToCucumberDataTable
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("features/Permissions.feature")
-      @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+      @Gherkin2JUnit("features/Permissions.feature")
+      @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
       public abstract class TestFeature {
           public DataTable.TableConverter getTableConverter() {
               return null;
@@ -612,13 +612,13 @@ Feature: MappingDataTableToCucumberDataTable
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
         import io.cucumber.datatable.DataTable;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
         public abstract class TestFeature {
             protected DataTable.TableConverter getTableConverter() {
                 return null;
@@ -726,12 +726,12 @@ Feature: MappingDataTableToCucumberDataTable
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
 
-        @Feature2JUnit("features/Inventory.feature")
-        @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+        @Gherkin2JUnit("features/Inventory.feature")
+        @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
         public abstract class TestFeature extends BaseTestSupport {
         }
         """
@@ -805,13 +805,13 @@ Feature: MappingDataTableToCucumberDataTable
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
         import io.cucumber.datatable.DataTable;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
         public abstract class TestFeature extends DataTableSupport {
             protected DataTable.TableConverter getTableConverter() {
                 return null;
@@ -885,13 +885,13 @@ Feature: MappingDataTableToCucumberDataTable
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
         import io.cucumber.datatable.DataTable;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
         public abstract class TestFeature extends TableConverterSupport {
             protected DataTable createDataTable(String tableLines) {
                 return null;

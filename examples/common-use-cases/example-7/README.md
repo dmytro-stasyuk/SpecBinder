@@ -1,10 +1,10 @@
 # Example 7: Glob Pattern Discovery (Multiple Features)
 
-Demonstrates using a glob pattern in `@Feature2JUnit` to discover and process multiple feature files from a single marker class, with step methods organized into interfaces by domain.
+Demonstrates using a glob pattern in `@Gherkin2JUnit` to discover and process multiple feature files from a single marker class, with step methods organized into interfaces by domain.
 
 ## What this demonstrates
 
-- `@Feature2JUnit("specs/**/*.feature")` matches all `.feature` files recursively
+- `@Gherkin2JUnit("specs/**/*.feature")` matches all `.feature` files recursively
 - One marker class generates **separate test classes** for each discovered feature file
 - All generated classes extend the same marker class
 - Step methods organized into interfaces (`CartSteps`, `LoginSteps`, etc.)
@@ -58,7 +58,7 @@ public interface CartSteps {
 The marker class implements all interfaces:
 
 ```java
-@Feature2JUnit("specs/**/*.feature")
+@Gherkin2JUnit("specs/**/*.feature")
 public abstract class AllFeatures implements CartSteps, CheckoutSteps, LoginSteps, RegistrationSteps {
 }
 ```

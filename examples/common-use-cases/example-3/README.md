@@ -93,4 +93,4 @@ public class ShoppingCartFeatureTest extends ShoppingCartFeature {
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Feature with a mix of empty rules, empty scenarios, and one fully specified scenario |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Feature2JUnit` |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |

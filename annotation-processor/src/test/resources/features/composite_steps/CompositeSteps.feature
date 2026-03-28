@@ -1,5 +1,5 @@
 Feature: CompositeSteps
-  As a developer using the Feature2JUnit generator
+  As a developer using the Gherkin2JUnit generator
   I want to use composite step pattern to group related sub-steps under a higher-level abstraction
   So that I can create reusable step compositions without implementing additional glue code, similar to JBehave's textual composite steps
 
@@ -46,11 +46,11 @@ Feature: CompositeSteps
     """
     package com.example2;
 
-    import dev.specbinder.annotations.Feature2JUnit;
-    import dev.specbinder.annotations.Feature2JUnitOptions;
+    import dev.specbinder.annotations.Gherkin2JUnit;
+    import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-    @Feature2JUnit
-    @Feature2JUnitOptions(enableCompositeSteps = true)
+    @Gherkin2JUnit
+    @Gherkin2JUnitOptions(enableCompositeSteps = true)
     public abstract class MyTestFeature {
 
     }
@@ -73,11 +73,11 @@ Feature: CompositeSteps
     """
     package com.example;
 
-    import dev.specbinder.annotations.Feature2JUnit;
-    import dev.specbinder.annotations.Feature2JUnitOptions;
+    import dev.specbinder.annotations.Gherkin2JUnit;
+    import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-    @Feature2JUnit("features/*.feature")
-    @Feature2JUnitOptions(enableCompositeSteps = true)
+    @Gherkin2JUnit("features/*.feature")
+    @Gherkin2JUnitOptions(enableCompositeSteps = true)
     public abstract class TestFeature {
 
     }

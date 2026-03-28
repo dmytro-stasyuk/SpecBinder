@@ -1,7 +1,7 @@
 package dev.specbinder.examples.gettingstarted.parameters;
 
-import dev.specbinder.annotations.Feature2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnit;
 
-@Feature2JUnit("specs/ShoppingCart.feature")
+@Gherkin2JUnit("specs/ShoppingCart.feature")
 public abstract class ShoppingCartFeature {
 }

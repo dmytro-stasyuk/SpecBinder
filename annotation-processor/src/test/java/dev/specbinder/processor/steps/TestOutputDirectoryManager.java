@@ -136,7 +136,7 @@ public class TestOutputDirectoryManager {
 
     /**
      * Derives the feature file path from the provided base class information.
-     * Returns the path if @Feature2JUnit annotation exists with no value or empty value.
+     * Returns the path if @Gherkin2JUnit annotation exists with no value or empty value.
      * 
      * @param baseClassContent the Java class content
      * @param baseClassName the class name
@@ -148,8 +148,8 @@ public class TestOutputDirectoryManager {
             return null;
         }
         
-        // Check if @Feature2JUnit annotation exists and has no value or empty value
-        if (!hasEmptyFeature2JUnitAnnotation(baseClassContent)) {
+        // Check if @Gherkin2JUnit annotation exists and has no value or empty value
+        if (!hasEmptyGherkin2JUnitAnnotation(baseClassContent)) {
             return null;
         }
         
@@ -168,15 +168,15 @@ public class TestOutputDirectoryManager {
     }
     
     /**
-     * Checks if the class content contains a @Feature2JUnit annotation with no value or empty value.
+     * Checks if the class content contains a @Gherkin2JUnit annotation with no value or empty value.
      * 
      * @param classContent the Java class content
-     * @return true if @Feature2JUnit exists with no value or empty value
+     * @return true if @Gherkin2JUnit exists with no value or empty value
      */
-    private boolean hasEmptyFeature2JUnitAnnotation(String classContent) {
-        // Pattern to match @Feature2JUnit with no parameters, empty parameters, or empty value
+    private boolean hasEmptyGherkin2JUnitAnnotation(String classContent) {
+        // Pattern to match @Gherkin2JUnit with no parameters, empty parameters, or empty value
         Pattern pattern = Pattern.compile(
-            "@Feature2JUnit\\s*(?:\\(\\s*\\)|\\(\\s*value\\s*=\\s*\"\"\\s*\\))?",
+            "@Gherkin2JUnit\\s*(?:\\(\\s*\\)|\\(\\s*value\\s*=\\s*\"\"\\s*\\))?",
             Pattern.CASE_INSENSITIVE
         );
         

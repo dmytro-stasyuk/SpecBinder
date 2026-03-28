@@ -10,12 +10,12 @@ Feature: UnimplementedStepBehavior
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.FAIL;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.FAIL;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
           shouldBeAbstract = false,
           unimplementedStepBehavior = FAIL
         )
@@ -73,12 +73,12 @@ Feature: UnimplementedStepBehavior
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.SKIP;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.SKIP;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
           shouldBeAbstract = false,
           unimplementedStepBehavior = SKIP
         )
@@ -136,12 +136,12 @@ Feature: UnimplementedStepBehavior
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.COMPILATION_ERROR;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.COMPILATION_ERROR;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
           shouldBeAbstract = false,
           unimplementedStepBehavior = COMPILATION_ERROR
         )
@@ -202,11 +202,11 @@ Feature: UnimplementedStepBehavior
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(shouldBeAbstract = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(shouldBeAbstract = false)
         public class TestFeature {
         }
         """
@@ -261,12 +261,12 @@ Feature: UnimplementedStepBehavior
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.SKIP;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.SKIP;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
           shouldBeAbstract = true,
           unimplementedStepBehavior = SKIP
         )

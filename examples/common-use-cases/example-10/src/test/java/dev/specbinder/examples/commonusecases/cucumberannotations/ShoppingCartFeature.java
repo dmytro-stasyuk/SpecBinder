@@ -1,7 +1,7 @@
 package dev.specbinder.examples.commonusecases.cucumberannotations;
 
-import dev.specbinder.annotations.Feature2JUnit;
-import dev.specbinder.annotations.Feature2JUnitOptions;
+import dev.specbinder.annotations.Gherkin2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnitOptions;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -26,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Both Cucumber expressions (e.g. {string}) and regular expressions (e.g. ^...$)
  * are supported for annotation-based matching. This example mixes both styles.
  */
-@Feature2JUnitOptions(addCucumberStepAnnotations = true)
-@Feature2JUnit("specs/ShoppingCart.feature")
+@Gherkin2JUnitOptions(addCucumberStepAnnotations = true)
+@Gherkin2JUnit("specs/ShoppingCart.feature")
 public abstract class ShoppingCartFeature {
 
     private final List<String> cart = new ArrayList<>();

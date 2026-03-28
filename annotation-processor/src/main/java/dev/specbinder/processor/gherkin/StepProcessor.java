@@ -33,7 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
 class StepProcessor implements LoggingSupport, OptionsSupport {
 
@@ -532,65 +532,76 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                  * no quote marks in this case as we are passing a reference to a Scenario test method parameter
                  */
                 parameterValuesSB.append(scenarioParameter);
-            } else if (matchingBaseMethod != null) {
+            } else {
                 /**
-                 * Base class has a method with compatible parameter types
-                 * Convert the string value to the appropriate type literal
+                 * Check if the quoted parameter value contains embedded scenario outline placeholders
+                 * (e.g., "prefix <value> suffix"). If so, generate a replaceAll chain expression.
                  */
-                TypeMirror targetType = matchingBaseMethod.getParameterType(j);
-                String targetTypeName = targetType.toString();
+                String embeddedPlaceholderExpr = resolveEmbeddedOutlinePlaceholders(
+                        parameterValue, scenarioParameterNames, testMethodParameterNames,
+                        scenarioParameterTypes, enumParameterTypes);
+                if (embeddedPlaceholderExpr != null) {
+                    parameterValuesSB.append(embeddedPlaceholderExpr);
+                } else if (matchingBaseMethod != null) {
+                    /**
+                     * Base class has a method with compatible parameter types
+                     * Convert the string value to the appropriate type literal
+                     */
+                    TypeMirror targetType = matchingBaseMethod.getParameterType(j);
+                    String targetTypeName = targetType.toString();
 
-                if ("java.math.BigDecimal".equals(targetTypeName)) {
-                    parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
-                    formatArgsList.add(java.math.BigDecimal.class);
-                } else if ("java.math.BigInteger".equals(targetTypeName)) {
-                    parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
-                    formatArgsList.add(java.math.BigInteger.class);
-                } else {
-                    boolean isEnumType = ParameterConversionUtils.isEnumType(targetType);
-
-                    if (isEnumType && options.isUseQualifiedEnumConstants()) {
-                        String resolvedConstant = ParameterConversionUtils.resolveEnumConstantName(parameterValue, targetType);
-                        if (resolvedConstant != null) {
-                            // Use qualified enum literal (e.g., Status.AVAILABLE)
-                            String literal = ParameterConversionUtils.toQualifiedEnumLiteral(parameterValue, targetType);
-                            parameterValuesSB.append(literal);
-                            // Register enum type for regular import (only if external)
-                            if (enumImportCollector != null && isEnumExternal(targetType)) {
-                                String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
-                                enumImportCollector.registerEnumType(enumQualifiedName);
-                            }
-                        } else {
-                            // Value couldn't be resolved - place as quoted string (will cause compilation error)
-                            parameterValuesSB.append("\"").append(parameterValue.replace("$", "$$")).append("\"");
-                        }
+                    if ("java.math.BigDecimal".equals(targetTypeName)) {
+                        parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
+                        formatArgsList.add(java.math.BigDecimal.class);
+                    } else if ("java.math.BigInteger".equals(targetTypeName)) {
+                        parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
+                        formatArgsList.add(java.math.BigInteger.class);
                     } else {
-                        String literal = ParameterConversionUtils.toLiteral(parameterValue, targetType);
-                        parameterValuesSB.append(literal);
-                        // Register enum constants for static import only if value resolved to a constant
-                        if (enumImportCollector != null && isEnumType) {
+                        boolean isEnumType = ParameterConversionUtils.isEnumType(targetType);
+
+                        if (isEnumType && options.isUseQualifiedEnumConstants()) {
                             String resolvedConstant = ParameterConversionUtils.resolveEnumConstantName(parameterValue, targetType);
                             if (resolvedConstant != null) {
-                                String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
-                                enumImportCollector.registerEnumConstant(enumQualifiedName, resolvedConstant);
+                                // Use qualified enum literal (e.g., Status.AVAILABLE)
+                                String literal = ParameterConversionUtils.toQualifiedEnumLiteral(parameterValue, targetType);
+                                parameterValuesSB.append(literal);
+                                // Register enum type for regular import (only if external)
+                                if (enumImportCollector != null && isEnumExternal(targetType)) {
+                                    String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
+                                    enumImportCollector.registerEnumType(enumQualifiedName);
+                                }
+                            } else {
+                                // Value couldn't be resolved - place as quoted string (will cause compilation error)
+                                parameterValuesSB.append("\"").append(parameterValue.replace("$", "$$")).append("\"");
+                            }
+                        } else {
+                            String literal = ParameterConversionUtils.toLiteral(parameterValue, targetType);
+                            parameterValuesSB.append(literal);
+                            // Register enum constants for static import only if value resolved to a constant
+                            if (enumImportCollector != null && isEnumType) {
+                                String resolvedConstant = ParameterConversionUtils.resolveEnumConstantName(parameterValue, targetType);
+                                if (resolvedConstant != null) {
+                                    String enumQualifiedName = ParameterConversionUtils.getEnumQualifiedName(targetType);
+                                    enumImportCollector.registerEnumConstant(enumQualifiedName, resolvedConstant);
+                                }
                             }
                         }
                     }
-                }
-            } else {
-                /**
-                 * No matching base method, use inferred type from parameter value
-                 */
-                Class<?> inferredType = parameterTypes.get(j);
-                if (inferredType == java.math.BigDecimal.class) {
-                    parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
-                    formatArgsList.add(java.math.BigDecimal.class);
-                } else if (inferredType == java.math.BigInteger.class) {
-                    parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
-                    formatArgsList.add(java.math.BigInteger.class);
                 } else {
-                    String literal = toLiteralForInferredType(parameterValue, inferredType);
-                    parameterValuesSB.append(literal);
+                    /**
+                     * No matching base method, use inferred type from parameter value
+                     */
+                    Class<?> inferredType = parameterTypes.get(j);
+                    if (inferredType == java.math.BigDecimal.class) {
+                        parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
+                        formatArgsList.add(java.math.BigDecimal.class);
+                    } else if (inferredType == java.math.BigInteger.class) {
+                        parameterValuesSB.append("new $T(\"").append(parameterValue).append("\")");
+                        formatArgsList.add(java.math.BigInteger.class);
+                    } else {
+                        String literal = toLiteralForInferredType(parameterValue, inferredType);
+                        parameterValuesSB.append(literal);
+                    }
                 }
             }
         }
@@ -933,6 +944,66 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         }
 
         return null; // not a scenario parameter
+    }
+
+    /**
+     * Checks if a quoted parameter value contains embedded scenario outline placeholders
+     * (e.g., "prefix &lt;value&gt; suffix") and builds a replaceAll chain expression.
+     * <p>
+     * This follows the same pattern used by {@link #transformCellValueWithPlaceholders}
+     * for DataTable cells with mixed content.
+     *
+     * @return a replaceAll chain expression, or null if no embedded placeholders are found
+     */
+    private String resolveEmbeddedOutlinePlaceholders(
+            String parameterValue, List<String> scenarioParameterNames,
+            List<String> testMethodParameterNames,
+            List<Class<?>> scenarioParameterTypes,
+            Map<Integer, TypeMirror> enumParameterTypes
+    ) {
+        if (scenarioParameterNames == null || scenarioParameterNames.isEmpty()) {
+            return null;
+        }
+
+        // Find all outline placeholders present in the parameter value
+        List<Integer> presentPlaceholderIndices = new ArrayList<>();
+        for (int i = 0; i < scenarioParameterNames.size(); i++) {
+            String placeholder = "<" + scenarioParameterNames.get(i) + ">";
+            if (parameterValue.contains(placeholder)) {
+                presentPlaceholderIndices.add(i);
+            }
+        }
+
+        if (presentPlaceholderIndices.isEmpty()) {
+            return null;
+        }
+
+        // Build a replaceAll chain: "prefix <value> suffix".replaceAll("<value>", value)
+        StringBuilder result = new StringBuilder();
+        result.append("\"").append(parameterValue.replace("$", "$$")).append("\"");
+
+        for (int paramIndex : presentPlaceholderIndices) {
+            String placeholder = "<" + scenarioParameterNames.get(paramIndex) + ">";
+            String paramName = testMethodParameterNames.get(paramIndex);
+            result.append("\n.replaceAll(\"").append(placeholder).append("\", ");
+
+            // For non-String types, call .toString() or .name() for enums
+            boolean isEnum = enumParameterTypes != null && enumParameterTypes.containsKey(paramIndex);
+            Class<?> paramType = (scenarioParameterTypes != null && paramIndex < scenarioParameterTypes.size())
+                    ? scenarioParameterTypes.get(paramIndex) : String.class;
+
+            if (isEnum) {
+                result.append(paramName).append(".name()");
+            } else if (paramType != String.class) {
+                result.append(paramName).append(".toString()");
+            } else {
+                result.append(paramName);
+            }
+
+            result.append(")");
+        }
+
+        return result.toString();
     }
 
     /**

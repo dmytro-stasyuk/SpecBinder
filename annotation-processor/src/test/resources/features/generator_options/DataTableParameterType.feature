@@ -13,9 +13,9 @@ Feature: DataTableParameterType
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnit;
 
-        @Feature2JUnit
+        @Gherkin2JUnit
         public abstract class UserManagement {
 
         }
@@ -110,13 +110,13 @@ Feature: DataTableParameterType
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.CUCUMBER_DATA_TABLE;
         import io.cucumber.datatable.DataTable;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)
         public abstract class UserManagement {
 
             protected DataTable.TableConverter getTableConverter() {
@@ -213,12 +213,12 @@ Feature: DataTableParameterType
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
         public abstract class UserManagement {
 
         }

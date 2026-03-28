@@ -1,6 +1,6 @@
 package dev.specbinder.examples.commonusecases.cucumberdatatable;
 
-import dev.specbinder.annotations.Feature2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnit;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.DataTableTypeRegistry;
@@ -18,7 +18,7 @@ import java.util.Map;
  * You must provide a getTableConverter() method that the generated
  * createDataTable() helper uses to parse the table text.
  */
-@Feature2JUnit("specs/ShoppingCart.feature")
+@Gherkin2JUnit("specs/ShoppingCart.feature")
 public abstract class ShoppingCartFeature extends BaseFeature {
 
     protected DataTableTypeRegistry registry;

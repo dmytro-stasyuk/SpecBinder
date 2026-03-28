@@ -10,9 +10,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void age$p1(Integer age) {
               // Implementation with int parameter
@@ -80,9 +80,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void count$p1(Integer count) {
               // Implementation with Integer parameter
@@ -150,9 +150,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void quantity$p1(int quantity) {
               // Implementation with int parameter
@@ -226,9 +226,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void timestamp$p1(long timestamp) {
               // Implementation with long parameter
@@ -296,9 +296,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void amount$p1(long amount) {
               // Implementation with long parameter
@@ -372,9 +372,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void price$p1(double price) {
               // Implementation with double parameter
@@ -442,9 +442,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void rate$p1(double rate) {
               // Implementation with double parameter
@@ -512,9 +512,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void temperature$p1(double temperature) {
               // Implementation with double parameter
@@ -588,9 +588,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void featureEnabled$p1(boolean enabled) {
               // Implementation with boolean parameter
@@ -658,9 +658,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void value$p1(boolean value) {
               // Implementation with boolean parameter
@@ -734,9 +734,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -814,9 +814,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -899,9 +899,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void status$p1(Status status) {
@@ -985,9 +985,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void color$p1(Color color) {
@@ -1068,9 +1068,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void answer$p1(Answer answer) {
@@ -1144,9 +1144,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void taskWithStatus$p1AndPriority$p2(Status status, int priority) {
@@ -1225,9 +1225,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void userWithName$p1AndAge$p2(String name, int age) {
               // Implementation with String and int parameters
@@ -1296,9 +1296,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void productWithName$p1AndPrice$p2(String name, double price) {
               // Implementation with String and double parameters
@@ -1370,9 +1370,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void dataWithValues$p1$p2$p3$p4(int count, long timestamp, double price, boolean enabled) {
               // Implementation with int, long, double, and boolean parameters
@@ -1445,9 +1445,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void userWithRole$p1AndAge$p2(String role, int age) {
               // Implementation with String and int parameters
@@ -1515,9 +1515,9 @@ Feature: ParameterTypeInferenceAndExampleTables
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void configWithEnabled$p1AndCount$p2(boolean enabled, int count) {
               // Implementation with boolean and int parameters

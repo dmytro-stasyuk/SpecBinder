@@ -14,12 +14,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
           public void theFollowingUsers(List<BaseUserParam> users) {
@@ -128,12 +128,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
           public void theFollowingUsers(List<BaseUserParam> users) {
@@ -242,12 +242,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
           public void theFollowingUsers(List<BaseUserParam> users) {
@@ -358,12 +358,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class MessagesFeature {
 
           public void theFollowingMessages(List<MessageParam> messages) {
@@ -467,12 +467,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ContactsFeature {
 
           public void theFollowingContacts(List<ContactParam> contacts) {
@@ -577,12 +577,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
           public void theFollowingUsers(List<UserParam> users) {
@@ -698,12 +698,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
           public void theFollowingUsers(List<UserParam> users) {
@@ -808,12 +808,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
           public record UsersParam(String name, String age, String email) {}
@@ -899,12 +899,12 @@ Ability: ExistingObjectTypeAndScenarioOutlines
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class UsersFeature {
 
           public record UsersParam(String email, String name, String phone, String age) {}

@@ -1,7 +1,7 @@
 package dev.specbinder.examples.commonusecases.abstractmode;
 
-import dev.specbinder.annotations.Feature2JUnit;
-import dev.specbinder.annotations.Feature2JUnitOptions;
+import dev.specbinder.annotations.Gherkin2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
 /**
  * Marker class with abstract mode enabled.
@@ -9,8 +9,8 @@ import dev.specbinder.annotations.Feature2JUnitOptions;
  * with abstract step methods — but any step methods already implemented
  * here in the marker class are inherited directly (no abstract declaration generated).
  */
-@Feature2JUnitOptions(shouldBeAbstract = true)
-@Feature2JUnit("specs/ShoppingCart.feature")
+@Gherkin2JUnitOptions(shouldBeAbstract = true)
+@Gherkin2JUnit("specs/ShoppingCart.feature")
 public abstract class ShoppingCartFeature {
 
     protected double subtotal;

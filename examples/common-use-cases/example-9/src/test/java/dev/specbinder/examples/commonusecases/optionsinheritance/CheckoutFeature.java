@@ -1,7 +1,7 @@
 package dev.specbinder.examples.commonusecases.optionsinheritance;
 
-import dev.specbinder.annotations.Feature2JUnit;
-import dev.specbinder.annotations.Feature2JUnitOptions;
+import dev.specbinder.annotations.Gherkin2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
 /**
  * Inherits options from BaseFeature but overrides shouldBeAbstract.
@@ -9,7 +9,7 @@ import dev.specbinder.annotations.Feature2JUnitOptions;
  * - tagForEmptyScenarios = "todo"           ← inherited from BaseFeature
  * - shouldBeAbstract = true                 ← overridden here
  */
-@Feature2JUnitOptions(shouldBeAbstract = true)
-@Feature2JUnit("specs/Checkout.feature")
+@Gherkin2JUnitOptions(shouldBeAbstract = true)
+@Gherkin2JUnit("specs/Checkout.feature")
 public abstract class CheckoutFeature extends BaseFeature {
 }

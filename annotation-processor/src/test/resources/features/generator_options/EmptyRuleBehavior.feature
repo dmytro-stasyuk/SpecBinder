@@ -10,12 +10,12 @@ Feature: EmptyRuleBehavior
         """
         package com.example.payment;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.FAIL;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.FAIL;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
           emptyRuleBehavior = FAIL
         )
         public class TestFeature {
@@ -74,12 +74,12 @@ Feature: EmptyRuleBehavior
         """
         package com.example.payment;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.SKIP;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.SKIP;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
           emptyRuleBehavior = SKIP
         )
         public class TestFeature {
@@ -138,12 +138,12 @@ Feature: EmptyRuleBehavior
         """
         package com.example.payment;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.COMPILATION_ERROR;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.COMPILATION_ERROR;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(
           emptyRuleBehavior = COMPILATION_ERROR
         )
         public class TestFeature {
@@ -205,9 +205,9 @@ Feature: EmptyRuleBehavior
         """
         package com.example.payment;
 
-        import dev.specbinder.annotations.Feature2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnit;
 
-        @Feature2JUnit
+        @Gherkin2JUnit
         public class TestFeature {
         }
         """

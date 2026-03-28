@@ -13,9 +13,9 @@ Feature: StepMethodInheritance
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void userExists() {
               // Implementation provided in base class
@@ -76,9 +76,9 @@ Feature: StepMethodInheritance
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void userExists() {
               // Implementation provided in base class
@@ -158,9 +158,9 @@ Feature: StepMethodInheritance
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature extends BaseSteps {
       }
       """
@@ -220,9 +220,9 @@ Feature: StepMethodInheritance
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void userWithName$p1(String name) {
               // Implementation with parameter
@@ -283,9 +283,9 @@ Feature: StepMethodInheritance
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void userWithName(String name) {
               // Implementation with one parameter

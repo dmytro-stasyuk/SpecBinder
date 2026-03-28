@@ -5,9 +5,9 @@
     <parent>
         <groupId>dev.specbinder.examples.commonusecases</groupId>
         <artifactId>common-use-cases</artifactId>
-        <version>0.1.27-SNAPSHOT</version>
+        <version>0.1.28-SNAPSHOT</version>
     </parent>
     <artifactId>example-9</artifactId>
     <name>${project.artifactId}</name>
-    <description>Configuration inheritance via @Feature2JUnitOptions</description>
+    <description>Configuration inheritance via @Gherkin2JUnitOptions</description>
 </project>

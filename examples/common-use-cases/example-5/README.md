@@ -60,4 +60,4 @@ iAddItem$p1WithOptions("Wireless Headphones", """
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Three scenarios: JSON doc string, quoted arg + doc string, plain text doc string |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Feature2JUnit` |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |

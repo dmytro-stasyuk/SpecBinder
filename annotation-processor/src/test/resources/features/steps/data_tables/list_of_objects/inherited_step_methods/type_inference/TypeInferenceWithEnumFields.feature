@@ -12,15 +12,15 @@ Feature: TypeInferenceWithEnumFields
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public enum Status {
@@ -114,15 +114,15 @@ Feature: TypeInferenceWithEnumFields
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class OrdersFeature {
 
           public enum Status {
@@ -228,15 +228,15 @@ Feature: TypeInferenceWithEnumFields
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class EmployeesFeature {
 
           public enum Department {
@@ -360,14 +360,14 @@ Feature: TypeInferenceWithEnumFields
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public enum Status {
@@ -450,14 +450,14 @@ Feature: TypeInferenceWithEnumFields
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public enum Status {
@@ -546,16 +546,16 @@ Feature: TypeInferenceWithEnumFields
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
       import external.enums.ProductStatus;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public void theFollowingProducts(List<ProductsParam> products) {
@@ -660,17 +660,17 @@ Feature: TypeInferenceWithEnumFields
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
       import external.models.OrderModel.OrderStatus;
       import external.models.OrderModel.Priority;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class OrdersFeature {
 
           public void theFollowingOrders(List<OrdersParam> orders) {

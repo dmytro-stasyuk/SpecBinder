@@ -10,10 +10,10 @@ Feature: DisplayName
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/ShoppingCart.feature")
+      @Gherkin2JUnit("features/ShoppingCart.feature")
       public abstract class FeatureTestBase {
 
       }
@@ -55,10 +55,10 @@ Feature: DisplayName
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/ShoppingCart.feature")
+      @Gherkin2JUnit("features/ShoppingCart.feature")
       public abstract class FeatureTestBase {
 
       }
@@ -102,10 +102,10 @@ Feature: DisplayName
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("specs/payment.feature")
+      @Gherkin2JUnit("specs/payment.feature")
       public abstract class FeatureTestBase {
 
       }

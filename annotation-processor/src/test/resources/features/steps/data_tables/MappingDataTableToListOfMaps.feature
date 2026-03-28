@@ -1,5 +1,5 @@
 Feature: MappingDataTableToListOfMaps
-  As a developer using the Feature2JUnit generator
+  As a developer using the Gherkin2JUnit generator
   I want the generator to optionally map data tables to List<Map<String, String>> parameters
   So that I can handle tabular data in my step definitions as a list of maps with header-based field access
 
@@ -14,13 +14,13 @@ Feature: MappingDataTableToListOfMaps
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature {
 
       }
@@ -122,13 +122,13 @@ Feature: MappingDataTableToListOfMaps
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("features/Users.feature")
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
+      @Gherkin2JUnit("features/Users.feature")
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature {
 
       }
@@ -233,13 +233,13 @@ Feature: MappingDataTableToListOfMaps
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
-        import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
+        import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
         import io.cucumber.datatable.DataTable;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
         public abstract class TestFeature {
 
         }
@@ -359,13 +359,13 @@ Feature: MappingDataTableToListOfMaps
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
       import io.cucumber.datatable.DataTable;
 
-      @Feature2JUnit("features/Permissions.feature")
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
+      @Gherkin2JUnit("features/Permissions.feature")
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature {
 
       }
@@ -468,17 +468,17 @@ Feature: MappingDataTableToListOfMaps
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       import java.util.ArrayList;
       import java.util.HashMap;
       import java.util.List;
       import java.util.Map;
 
-      @Feature2JUnit("features/Permissions.feature")
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
+      @Gherkin2JUnit("features/Permissions.feature")
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature {
           protected List<Map<String, String>> createListOfMaps(String tableLines) {
               // Custom implementation provided by user
@@ -562,17 +562,17 @@ Feature: MappingDataTableToListOfMaps
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
       import java.util.ArrayList;
       import java.util.HashMap;
       import java.util.List;
       import java.util.Map;
 
-      @Feature2JUnit("features/Permissions.feature")
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
+      @Gherkin2JUnit("features/Permissions.feature")
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_MAPS)
       public abstract class TestFeature extends BaseFeature {
       }
       """

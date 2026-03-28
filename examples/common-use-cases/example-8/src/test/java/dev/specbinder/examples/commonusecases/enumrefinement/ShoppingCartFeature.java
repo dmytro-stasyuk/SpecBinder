@@ -1,6 +1,6 @@
 package dev.specbinder.examples.commonusecases.enumrefinement;
 
-import dev.specbinder.annotations.Feature2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnit;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * If someone adds a row with an invalid category (e.g. "furniture"),
  * the generated code will try Category.furniture — causing a COMPILER ERROR.
  */
-@Feature2JUnit("specs/ShoppingCart.feature")
+@Gherkin2JUnit("specs/ShoppingCart.feature")
 public abstract class ShoppingCartFeature {
 
     /**

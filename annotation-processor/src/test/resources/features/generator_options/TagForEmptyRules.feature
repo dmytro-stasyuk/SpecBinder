@@ -10,11 +10,11 @@ Feature: TagForEmptyRules
       """
       package com.example.payment;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(
         tagForEmptyRules = "incomplete"
       )
       public class TestFeature {
@@ -73,9 +73,9 @@ Feature: TagForEmptyRules
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public class TestFeature {
       }
       """
@@ -130,11 +130,11 @@ Feature: TagForEmptyRules
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(
         tagForEmptyRules = ""
       )
       public class TestFeature {
@@ -189,9 +189,9 @@ Feature: TagForEmptyRules
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public class TestFeature {
       }
       """

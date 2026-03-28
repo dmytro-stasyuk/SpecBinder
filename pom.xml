@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.specbinder</groupId>
     <artifactId>spec-binder</artifactId>
-    <version>0.1.27-SNAPSHOT</version>
+    <version>0.1.28-SNAPSHOT</version>
     <description>Used to generate JUnit test classes from a specification file</description>
     <url>https://github.com/dmytro-stasyuk/spec-binder/tree/main</url>
     <packaging>pom</packaging>
@@ -40,7 +40,6 @@
     <modules>
         <module>annotations</module>
         <module>annotation-processor</module>
-        <module>user-story-processor</module>
         <module>examples</module>
     </modules>
     <dependencies>

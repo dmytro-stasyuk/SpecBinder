@@ -13,11 +13,11 @@ Feature: EnableCompositeSteps
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(enableCompositeSteps = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(enableCompositeSteps = true)
         public abstract class CheckoutProcess {
 
         }
@@ -120,11 +120,11 @@ Feature: EnableCompositeSteps
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(enableCompositeSteps = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(enableCompositeSteps = false)
         public abstract class CheckoutProcess {
 
         }

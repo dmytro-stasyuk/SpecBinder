@@ -4,7 +4,7 @@ Demonstrates abstract mode where the generated class declares abstract step meth
 
 ## What this demonstrates
 
-- `@Feature2JUnitOptions(shouldBeAbstract = true)` generates an abstract class
+- `@Gherkin2JUnitOptions(shouldBeAbstract = true)` generates an abstract class
 - Generated class suffix changes from `Test` to `Scenarios` (configurable)
 - All step methods are declared `abstract` — no failing stubs
 - You create a concrete test class extending the generated abstract class
@@ -14,7 +14,7 @@ Demonstrates abstract mode where the generated class declares abstract step meth
 ## Class hierarchy
 
 ```
-ShoppingCartFeature.java          (marker class, @Feature2JUnit)
+ShoppingCartFeature.java          (marker class, @Gherkin2JUnit)
   └→ ShoppingCartScenarios.java   (generated, abstract, contains @Test methods)
       └→ ShoppingCartTest.java    (your concrete class, implements step methods)
 ```
@@ -50,5 +50,5 @@ In `ShoppingCartScenarios.java` (generated abstract class):
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Feature with scenarios and a rule |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class with `@Feature2JUnitOptions(shouldBeAbstract = true)` and two inherited step methods |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class with `@Gherkin2JUnitOptions(shouldBeAbstract = true)` and two inherited step methods |
 | `src/test/java/.../ShoppingCartTest.java` | Concrete test class implementing only the abstract step methods |

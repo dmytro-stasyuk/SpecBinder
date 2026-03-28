@@ -58,7 +58,7 @@ myCartContainsTheFollowingProducts(
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Feature with multiple data tables of varying shapes |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Feature2JUnit` |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
 
 ## Key points
 

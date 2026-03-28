@@ -1,12 +1,12 @@
 package dev.specbinder.examples.commonusecases.colocated;
 
-import dev.specbinder.annotations.Feature2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnit;
 
 /**
- * No path in @Feature2JUnit — the processor discovers ShoppingCart.feature
+ * No path in @Gherkin2JUnit — the processor discovers ShoppingCart.feature
  * automatically by looking for a .feature file with the same name
  * in the same package as this class.
  */
-@Feature2JUnit
+@Gherkin2JUnit
 public abstract class ShoppingCart {
 }

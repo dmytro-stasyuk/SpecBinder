@@ -10,9 +10,9 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class UserFeatures {
       }
       """
@@ -65,9 +65,9 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class UserFeatures {
       }
       """
@@ -120,9 +120,9 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class UserFeatures {
       }
       """
@@ -219,11 +219,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {"specb"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {"specb"})
       public abstract class UserFeatures {
       }
       """
@@ -276,11 +276,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {"specb"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {"specb"})
       public abstract class UserFeatures {
       }
       """
@@ -301,11 +301,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {"feature"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {"feature"})
       public abstract class UserFeatures {
       }
       """
@@ -358,11 +358,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {"feature"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {"feature"})
       public abstract class UserFeatures {
       }
       """
@@ -385,11 +385,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {"feature", "specb", "gherkin"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {"feature", "specb", "gherkin"})
       public abstract class UserFeatures {
       }
       """
@@ -526,11 +526,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {"specb"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {"specb"})
       public abstract class UserFeatures {
       }
       """
@@ -599,9 +599,9 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit("com/example/features/Login.txt")
+      @Gherkin2JUnit("com/example/features/Login.txt")
       public abstract class UserFeatures {
       }
       """
@@ -654,9 +654,9 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit("com/example/features/Login.bdd")
+      @Gherkin2JUnit("com/example/features/Login.bdd")
       public abstract class UserFeatures {
       }
       """
@@ -711,11 +711,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {})
       public abstract class UserFeatures {
       }
       """
@@ -738,11 +738,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {"feature", " "})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {"feature", " "})
       public abstract class UserFeatures {
       }
       """
@@ -763,11 +763,11 @@ Feature: SupportedFileExtensions
       """
       package com.example.features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(supportedFileExtensions = {"feature", ""})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(supportedFileExtensions = {"feature", ""})
       public abstract class UserFeatures {
       }
       """

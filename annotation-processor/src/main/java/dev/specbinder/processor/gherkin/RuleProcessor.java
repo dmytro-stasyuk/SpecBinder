@@ -62,7 +62,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
         String description = rule.getDescription();
         if (StringUtils.isNotBlank(description)) {
             description = JavaDocUtils.trimLeadingAndTrailingWhitespace(description);
-            nestedRuleClassBuilder.addJavadoc(description);
+            nestedRuleClassBuilder.addJavadoc(JavaDocUtils.escapeForJavaPoet(description));
         }
 
         /*
@@ -135,7 +135,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
         }
         nestedRuleClassBuilder.addAnnotation(
                 AnnotationSpec.builder(DisplayName.class)
-                        .addMember("value", "\"" + displayNameValue + "\"")
+                        .addMember("value", "\"" + JavaDocUtils.escapeForJavaPoet(displayNameValue) + "\"")
                         .build()
         );
 

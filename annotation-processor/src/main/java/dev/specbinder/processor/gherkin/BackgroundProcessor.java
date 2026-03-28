@@ -86,7 +86,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
         String description = background.getDescription();
         if (StringUtils.isNotBlank(description)) {
             description = JavaDocUtils.trimLeadingAndTrailingWhitespace(description);
-            backgroundMethodBuilder.addJavadoc(description);
+            backgroundMethodBuilder.addJavadoc(JavaDocUtils.escapeForJavaPoet(description));
         }
 
         addJUnitAnnotations(backgroundMethodBuilder, background);
@@ -139,7 +139,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
         }
         AnnotationSpec displayNameAnnotation = AnnotationSpec
                 .builder(DisplayName.class)
-                .addMember("value", "\"" + displayNameValue + "\"")
+                .addMember("value", "\"" + JavaDocUtils.escapeForJavaPoet(displayNameValue) + "\"")
                 .build();
 
         AnnotationSpec testAnnotation = AnnotationSpec

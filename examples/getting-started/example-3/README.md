@@ -12,7 +12,7 @@ A fully working example where step methods are implemented in the marker class w
 
 ## Concrete mode workflow
 
-1. Create marker class with `@Feature2JUnit`
+1. Create marker class with `@Gherkin2JUnit`
 2. Compile — generator produces a test class with failing stubs
 3. Implement step methods in the marker class
 4. Recompile — generator sees parent methods, stops emitting stubs

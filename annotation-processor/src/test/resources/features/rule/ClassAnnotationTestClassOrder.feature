@@ -10,10 +10,10 @@ Feature: ClassAnnotationTestClassOrder
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class SimpleFeature {
       }
       """
@@ -60,10 +60,10 @@ Feature: ClassAnnotationTestClassOrder
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class BusinessRules {
       }
       """
@@ -122,10 +122,10 @@ Feature: ClassAnnotationTestClassOrder
       """
       package com.example.workflow;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class WorkflowTests {
       }
       """

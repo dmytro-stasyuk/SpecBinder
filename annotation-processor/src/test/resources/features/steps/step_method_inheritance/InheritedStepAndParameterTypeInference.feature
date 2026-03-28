@@ -18,9 +18,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void userWithName$p1(String name) {
               // Implementation with String parameter
@@ -73,9 +73,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void age$p1(int age) {
               // Implementation with int parameter
@@ -126,9 +126,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void count$p1(Integer count) {
               // Implementation with Integer parameter
@@ -179,9 +179,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void quantity$p1(int quantity) {
               // Implementation with int parameter
@@ -238,9 +238,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void timestamp$p1(long timestamp) {
               // Implementation with long parameter
@@ -291,9 +291,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void duration$p1(Long duration) {
               // Implementation with Long parameter
@@ -344,9 +344,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void amount$p1(long amount) {
               // Implementation with long parameter
@@ -403,9 +403,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void price$p1(double price) {
               // Implementation with double parameter
@@ -456,9 +456,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void temperature$p1(Double temperature) {
               // Implementation with Double parameter
@@ -509,9 +509,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void rate$p1(double rate) {
               // Implementation with double parameter
@@ -568,9 +568,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void featureEnabled$p1(boolean enabled) {
               // Implementation with boolean parameter
@@ -621,9 +621,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void flagSet$p1(Boolean flag) {
               // Implementation with Boolean parameter
@@ -674,9 +674,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void value$p1(boolean value) {
               // Implementation with boolean parameter
@@ -733,9 +733,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void grade$p1(char grade) {
               // Implementation with char parameter
@@ -786,9 +786,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void symbol$p1(Character symbol) {
               // Implementation with Character parameter
@@ -839,9 +839,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void code$p1(char code) {
               // Implementation with char parameter
@@ -898,9 +898,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void userWithName$p1AndAge$p2(String name, int age) {
               // Implementation with String and int parameters
@@ -951,9 +951,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void dataWithValues$p1$p2$p3$p4(int count, long timestamp, double price, boolean enabled) {
               // Implementation with int, long, double, and boolean parameters
@@ -1004,9 +1004,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void productWithName$p1AndPrice$p2(String name, double price) {
               // Implementation with String and double parameters
@@ -1061,9 +1061,9 @@ Feature: InheritedStepAndParameterTypeInference
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
           protected void configWithValues$p1$p2$p3(Integer count, double rate, Boolean enabled) {
               // Implementation with Integer, double, and Boolean parameters

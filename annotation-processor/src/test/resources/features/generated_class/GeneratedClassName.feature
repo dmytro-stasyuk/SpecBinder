@@ -10,10 +10,10 @@ Feature: GeneratedClassName
       """
       package com.example.cart;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("com/example/cart/CartFeature.feature")
+      @Gherkin2JUnit("com/example/cart/CartFeature.feature")
       public abstract class CartFeature {
       }
       """
@@ -60,11 +60,11 @@ Feature: GeneratedClassName
       """
       package com.example.payment;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/payment.feature")
-      @Feature2JUnitOptions(shouldBeAbstract = false, classSuffixIfConcrete = "Spec")
+      @Gherkin2JUnit("features/payment.feature")
+      @Gherkin2JUnitOptions(shouldBeAbstract = false, classSuffixIfConcrete = "Spec")
       public class PaymentFeature {
       }
       """
@@ -116,10 +116,10 @@ Feature: GeneratedClassName
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("com/example/my-shopping-cart.feature")
+      @Gherkin2JUnit("com/example/my-shopping-cart.feature")
       public abstract class MyFeature {
       }
       """
@@ -166,10 +166,10 @@ Feature: GeneratedClassName
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("com/example/user.login.feature")
+      @Gherkin2JUnit("com/example/user.login.feature")
       public abstract class MyFeature {
       }
       """
@@ -216,10 +216,10 @@ Feature: GeneratedClassName
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("com/example/cart@v2!.feature")
+      @Gherkin2JUnit("com/example/cart@v2!.feature")
       public abstract class MyFeature {
       }
       """
@@ -266,10 +266,10 @@ Feature: GeneratedClassName
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("com/example/123checkout.feature")
+      @Gherkin2JUnit("com/example/123checkout.feature")
       public abstract class MyFeature {
       }
       """

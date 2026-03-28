@@ -17,9 +17,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -92,10 +92,10 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
       import features.enums.DayOfWeek;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -148,9 +148,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -211,9 +211,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -280,9 +280,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -343,9 +343,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -404,9 +404,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -474,9 +474,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -551,9 +551,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -628,9 +628,9 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -712,15 +712,15 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public enum Status {
@@ -811,15 +811,15 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public enum Status {
@@ -922,16 +922,16 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
       import external.enums.ProductStatus;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public void theFollowingProducts(List<ProductsParam> products) {
@@ -1007,14 +1007,14 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS)
       public abstract class ProductsFeature {
 
           public enum Status {
@@ -1099,11 +1099,11 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(useQualifiedEnumConstants = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(useQualifiedEnumConstants = true)
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -1162,15 +1162,15 @@ Feature: EnumFactoryMethodFallback
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
-      import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
+      import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
 
       import java.util.List;
       import org.junit.jupiter.api.Assertions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS, useQualifiedEnumConstants = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(dataTableParameterType = LIST_OF_OBJECT_PARAMS, useQualifiedEnumConstants = true)
       public abstract class ProductsFeature {
 
           public enum Status {

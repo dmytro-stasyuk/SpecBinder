@@ -13,11 +13,11 @@ Feature: UseStepKeywordInStepMethodName
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useStepKeywordInStepMethodName = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useStepKeywordInStepMethodName = true)
         public abstract class TestFeature {
         }
         """
@@ -92,11 +92,11 @@ Feature: UseStepKeywordInStepMethodName
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useStepKeywordInStepMethodName = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useStepKeywordInStepMethodName = false)
         public abstract class TestFeature {
         }
         """
@@ -167,11 +167,11 @@ Feature: UseStepKeywordInStepMethodName
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useStepKeywordInStepMethodName = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useStepKeywordInStepMethodName = false)
         public abstract class TestFeature {
         }
         """
@@ -264,11 +264,11 @@ Feature: UseStepKeywordInStepMethodName
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(useStepKeywordInStepMethodName = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(useStepKeywordInStepMethodName = false)
         public abstract class TestFeature {
         }
         """

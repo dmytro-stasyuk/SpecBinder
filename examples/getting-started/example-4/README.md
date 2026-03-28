@@ -27,7 +27,7 @@ Demonstrates how Gherkin `Rule` blocks map to JUnit `@Nested` test classes, grou
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Feature with a top-level scenario and two rules, each containing two scenarios |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Feature2JUnit` |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
 
 ## Generated structure
 

@@ -6,7 +6,7 @@ Demonstrates two related features: generating `@Given`/`@When`/`@Then` Cucumber 
 
 ### 1. Generating Cucumber annotations (`addCucumberStepAnnotations`)
 
-- `@Feature2JUnitOptions(addCucumberStepAnnotations = true)` adds Cucumber annotations
+- `@Gherkin2JUnitOptions(addCucumberStepAnnotations = true)` adds Cucumber annotations
 - Each step method gets a `@Given`, `@When`, or `@Then` annotation with a pattern matching the original Gherkin step text
 - `And`/`But` steps inherit the keyword from the preceding `Given`/`When`/`Then` step
 - Requires `cucumber-java` dependency

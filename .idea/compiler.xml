@@ -26,7 +26,6 @@
         <module name="example-2" />
         <module name="example-1 (1) (dev.specbinder.examples.commonusecases)" />
         <module name="example-3 (2) (dev.specbinder.examples.gettingstarted)" />
-        <module name="user-story-processor" />
         <module name="example-2 (1)" />
         <module name="example-4 (1)" />
         <module name="example-9" />

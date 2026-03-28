@@ -2,7 +2,7 @@ package dev.specbinder.processor;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
-import dev.specbinder.annotations.Feature2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnit;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.utils.*;
@@ -19,6 +19,7 @@ import javax.lang.model.util.Types;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,9 +27,9 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 /**
- * Annotation processor that generates JUnit test subclasses for classes annotated with {@link Feature2JUnit} annotation.
+ * Annotation processor that generates JUnit test subclasses for classes annotated with {@link Gherkin2JUnit} annotation.
  */
-@SupportedAnnotationTypes("dev.specbinder.annotations.Feature2JUnit")
+@SupportedAnnotationTypes("dev.specbinder.annotations.Gherkin2JUnit")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor implements LoggingSupport {
@@ -70,7 +71,7 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
         for (TypeElement annotation : annotations) {
 
             String annotationName = annotation.getQualifiedName().toString();
-            if (!annotationName.equals(Feature2JUnit.class.getName())) {
+            if (!annotationName.equals(Gherkin2JUnit.class.getName())) {
                 continue;
             }
 
@@ -83,10 +84,10 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
 
                 logInfo("Processing '" + annotatedClass.getQualifiedName() + "'");
 
-                Feature2JUnit targetAnnotation = annotatedClass.getAnnotation(Feature2JUnit.class);
+                Gherkin2JUnit targetAnnotation = annotatedClass.getAnnotation(Gherkin2JUnit.class);
 
                 // Resolve options from the class hierarchy, supporting partial inheritance
-                GeneratorOptions generatorOptions = Feature2JUnitOptionsResolver.resolveOptions(
+                GeneratorOptions generatorOptions = Gherkin2JUnitOptionsResolver.resolveOptions(
                         annotatedClass, getProcessingEnv()
                 );
 
@@ -158,7 +159,7 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                         }
 
                         allGeneratedClassNames.put(fullyQualifiedClassName,
-                            "from @Feature2JUnit on " + annotatedClass.getQualifiedName() + " for " + featureFilePath);
+                            "from @Gherkin2JUnit on " + annotatedClass.getQualifiedName() + " for " + featureFilePath);
                     }
 
                     // Generate a test class for each matching file
@@ -202,7 +203,7 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                     }
 
                     allGeneratedClassNames.put(fullyQualifiedClassName,
-                        "from @Feature2JUnit on " + annotatedClass.getQualifiedName() + " for " + annotationValue);
+                        "from @Gherkin2JUnit on " + annotatedClass.getQualifiedName() + " for " + annotationValue);
 
                     // Write the generated file
                     writeGeneratedFile(result, annotatedClass, generatorOptions);
@@ -274,7 +275,8 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
 
             // Use the Filer to locate the SOURCE_OUTPUT directory for this package
             FileObject existing = filer.getResource(StandardLocation.SOURCE_OUTPUT, packageName, fileName);
-            java.io.File targetFile = new java.io.File(existing.toUri());
+            File targetFile = new File(existing.toUri());
+            targetFile.getParentFile().mkdirs();
 
             try (PrintWriter writer = new PrintWriter(targetFile)) {
                 result.writeTo(writer);
@@ -304,14 +306,14 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
         );
 
         String sourceFilePath = resource.toUri().getPath();
-        java.io.File sourceFile = new java.io.File(sourceFilePath);
-        java.io.File sourceDir = sourceFile.getParentFile();
+        File sourceFile = new File(sourceFilePath);
+        File sourceDir = sourceFile.getParentFile();
 
         // Determine the suffix
         String suffix = generatorOptions.getClassSuffixIfAbstract();
 
         String generatedClassName = annotatedClass.getSimpleName().toString() + suffix + ".java";
-        java.io.File targetFile = new java.io.File(sourceDir, generatedClassName);
+        File targetFile = new File(sourceDir, generatedClassName);
 
         if (targetFile.exists()) {
             boolean deleted = targetFile.delete();

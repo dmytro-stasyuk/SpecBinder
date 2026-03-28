@@ -77,7 +77,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         String description = scenario.getDescription();
         if (StringUtils.isNotBlank(description)) {
             description = JavaDocUtils.trimLeadingAndTrailingWhitespace(description);
-            scenarioMethodBuilder.addJavadoc(description);
+            scenarioMethodBuilder.addJavadoc(JavaDocUtils.escapeForJavaPoet(description));
         }
 
         List<Examples> examples = scenario.getExamples();
@@ -308,7 +308,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         }
         AnnotationSpec displayNameAnnotation = AnnotationSpec
                 .builder(DisplayName.class)
-                .addMember("value", "\"" + displayNameValue + "\"")
+                .addMember("value", "\"" + JavaDocUtils.escapeForJavaPoet(displayNameValue) + "\"")
                 .build();
         scenarioMethodBuilder.addAnnotation(displayNameAnnotation);
     }
@@ -425,7 +425,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
             textBlockSB.append("\"\"\"");
 
-            String textBlock = textBlockSB.toString();
+            String textBlock = JavaDocUtils.escapeForJavaPoet(textBlockSB.toString());
 
             AnnotationSpec csvSourceAnnotation = AnnotationSpec
                     .builder(CsvSource.class)

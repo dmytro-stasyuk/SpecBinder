@@ -10,11 +10,11 @@ Feature: ShouldBeAbstract
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(shouldBeAbstract = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(shouldBeAbstract = false)
         public class MockedAnnotatedTestClass {
         }
         """
@@ -67,11 +67,11 @@ Feature: ShouldBeAbstract
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(shouldBeAbstract = false)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(shouldBeAbstract = false)
         public class MockedAnnotatedTestClass {
         }
         """
@@ -127,11 +127,11 @@ Feature: ShouldBeAbstract
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(shouldBeAbstract = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(shouldBeAbstract = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """
@@ -181,11 +181,11 @@ Feature: ShouldBeAbstract
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(shouldBeAbstract = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(shouldBeAbstract = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """
@@ -236,11 +236,11 @@ Feature: ShouldBeAbstract
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(shouldBeAbstract = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(shouldBeAbstract = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """

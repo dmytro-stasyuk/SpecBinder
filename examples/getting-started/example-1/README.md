@@ -5,7 +5,7 @@ The most basic Spec Binder example. A single scenario with plain steps — no pa
 ## What this demonstrates
 
 - Minimal setup: one marker class + one `.feature` file
-- How `@Feature2JUnit("path")` triggers code generation
+- How `@Gherkin2JUnit("path")` triggers code generation
 - Given/When/Then steps become method calls in the generated test class
 - Generated step methods contain `Assertions.fail("Step is not yet implemented")` stubs
 - The marker class is empty — no step implementations yet
@@ -15,7 +15,7 @@ The most basic Spec Binder example. A single scenario with plain steps — no pa
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Gherkin feature file with one scenario |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Feature2JUnit` |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
 
 ## Generated output
 

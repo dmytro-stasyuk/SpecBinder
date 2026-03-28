@@ -48,7 +48,8 @@
       "Bash(/Users/dmytro/Projects/SpecBinder/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh)",
       "Bash(/Users/dmytro/Projects/SpecBinder/spec-binder/.idea_scripts/trigger_run_test_shortcut.sh)",
       "Read(//opt/homebrew/bin/**)",
-      "Read(//usr/local/bin/**)"
+      "Read(//usr/local/bin/**)",
+      "Bash(find /Users/dmytro/Projects/SpecBinder/spec-binder/common /Users/dmytro/Projects/SpecBinder/spec-binder/annotations -type f \\\\\\(-name *.java -o -name *.xml \\\\\\))"
     ],
     "deny": [],
     "ask": []

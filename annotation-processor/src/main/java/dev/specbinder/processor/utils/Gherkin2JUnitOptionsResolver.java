@@ -1,6 +1,6 @@
 package dev.specbinder.processor.utils;
 
-import dev.specbinder.annotations.Feature2JUnitOptions;
+import dev.specbinder.annotations.Gherkin2JUnitOptions;
 import dev.specbinder.processor.config.GeneratorOptions;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -11,25 +11,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
-import static dev.specbinder.annotations.Feature2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.FAIL;
+import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
+import static dev.specbinder.annotations.Gherkin2JUnitOptions.EMPTY_ELEMENT_BEHAVIOUR.FAIL;
 
 /**
- * Utility class for resolving and merging Feature2JUnitOptions annotations from a class hierarchy.
+ * Utility class for resolving and merging Gherkin2JUnitOptions annotations from a class hierarchy.
  *
  * This class supports partial inheritance of options, where a child class can override specific
  * options while inheriting others from its parent classes.
  */
-public class Feature2JUnitOptionsResolver {
+public class Gherkin2JUnitOptionsResolver {
 
-    private Feature2JUnitOptionsResolver() {
+    private Gherkin2JUnitOptionsResolver() {
         // utility class
     }
 
     /**
-     * Resolves GeneratorOptions from the Feature2JUnitOptions annotation hierarchy.
+     * Resolves GeneratorOptions from the Gherkin2JUnitOptions annotation hierarchy.
      *
-     * This method collects all Feature2JUnitOptions annotations from the class hierarchy
+     * This method collects all Gherkin2JUnitOptions annotations from the class hierarchy
      * and merges them, with child values taking precedence over parent values.
      *
      * The merging strategy uses AnnotationMirror to detect which values were explicitly set
@@ -46,7 +46,7 @@ public class Feature2JUnitOptionsResolver {
      */
     public static GeneratorOptions resolveOptions(TypeElement annotatedClass, ProcessingEnvironment processingEnv) {
         List<AnnotationMirror> annotationMirrors = TypeMirrorUtils.collectAnnotationMirrorsFromHierarchy(
-                annotatedClass, Feature2JUnitOptions.class, processingEnv
+                annotatedClass, Gherkin2JUnitOptions.class, processingEnv
         );
 
         if (!annotationMirrors.isEmpty()) {
@@ -54,8 +54,8 @@ public class Feature2JUnitOptionsResolver {
         }
 
         // Fallback: read annotations directly (supports test environments with mocked TypeElements)
-        List<Feature2JUnitOptions> annotations = TypeMirrorUtils.collectAnnotationsFromHierarchy(
-                annotatedClass, Feature2JUnitOptions.class, processingEnv
+        List<Gherkin2JUnitOptions> annotations = TypeMirrorUtils.collectAnnotationsFromHierarchy(
+                annotatedClass, Gherkin2JUnitOptions.class, processingEnv
         );
 
         if (!annotations.isEmpty()) {
@@ -220,10 +220,10 @@ public class Feature2JUnitOptionsResolver {
     }
 
     /**
-     * Creates GeneratorOptions from a Feature2JUnitOptions annotation instance.
+     * Creates GeneratorOptions from a Gherkin2JUnitOptions annotation instance.
      * Used as a fallback when AnnotationMirrors are not available.
      */
-    private static GeneratorOptions createFromAnnotation(Feature2JUnitOptions options) {
+    private static GeneratorOptions createFromAnnotation(Gherkin2JUnitOptions options) {
         return new GeneratorOptions(
                 options.shouldBeAbstract(),
                 options.classSuffixIfConcrete(),

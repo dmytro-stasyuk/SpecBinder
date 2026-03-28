@@ -1,6 +1,6 @@
 Feature: GeneratorOptionsInheritance
   As a developer configuring the code generator for my project
-  I want to be able to specify generator options via annotations on an ancestor of the class which is directly annotated with @Feature2JUnit
+  I want to be able to specify generator options via annotations on an ancestor of the class which is directly annotated with @Gherkin2JUnit
   So that I can maintain consistent generator configurations across multiple feature test classes by centralizing the options in a common base class
 
   Rule: Options defined on a superclass are inherited by subclasses
@@ -10,9 +10,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(addCucumberStepAnnotations = true)
+      @Gherkin2JUnitOptions(addCucumberStepAnnotations = true)
       public abstract class BaseFeature {
       }
       """
@@ -20,9 +20,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class TestFeature extends BaseFeature {
       }
       """
@@ -77,9 +77,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(
+      @Gherkin2JUnitOptions(
         addCucumberStepAnnotations = true,
         classSuffixIfAbstract = "TestCases"
       )
@@ -90,9 +90,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class TestFeature extends BaseFeature {
       }
       """
@@ -147,9 +147,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(addCucumberStepAnnotations = true)
+      @Gherkin2JUnitOptions(addCucumberStepAnnotations = true)
       public abstract class GrandparentFeature {
       }
       """
@@ -164,9 +164,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class TestFeature extends ParentFeature {
       }
       """
@@ -223,9 +223,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(addCucumberStepAnnotations = true)
+      @Gherkin2JUnitOptions(addCucumberStepAnnotations = true)
       public abstract class BaseFeature {
       }
       """
@@ -233,11 +233,11 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(addCucumberStepAnnotations = false)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(addCucumberStepAnnotations = false)
       public abstract class TestFeature extends BaseFeature {
       }
       """
@@ -290,9 +290,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(addCucumberStepAnnotations = true)
+      @Gherkin2JUnitOptions(addCucumberStepAnnotations = true)
       public abstract class GrandparentFeature {
       }
       """
@@ -300,9 +300,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(addCucumberStepAnnotations = false)
+      @Gherkin2JUnitOptions(addCucumberStepAnnotations = false)
       public abstract class ParentFeature extends GrandparentFeature {
       }
       """
@@ -310,9 +310,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class TestFeature extends ParentFeature {
       }
       """
@@ -371,9 +371,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(
+      @Gherkin2JUnitOptions(
         addCucumberStepAnnotations = true,
         classSuffixIfConcrete = "Spec"
       )
@@ -384,11 +384,11 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(addCucumberStepAnnotations = false)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(addCucumberStepAnnotations = false)
       public abstract class TestFeature extends BaseFeature {
       }
       """
@@ -441,9 +441,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(classSuffixIfConcrete = "Spec")
+      @Gherkin2JUnitOptions(classSuffixIfConcrete = "Spec")
       public abstract class GrandparentFeature {
       }
       """
@@ -451,9 +451,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(addCucumberStepAnnotations = true)
+      @Gherkin2JUnitOptions(addCucumberStepAnnotations = true)
       public abstract class ParentFeature extends GrandparentFeature {
       }
       """
@@ -461,9 +461,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class TestFeature extends ParentFeature {
       }
       """
@@ -518,9 +518,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(
+      @Gherkin2JUnitOptions(
         classSuffixIfConcrete = "Spec",
         tagForEmptyScenarios = "pending"
       )
@@ -538,11 +538,11 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(classSuffixIfConcrete = "Cases")
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(classSuffixIfConcrete = "Cases")
       public abstract class TestFeature extends ParentFeature {
       }
       """
@@ -605,9 +605,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(
+      @Gherkin2JUnitOptions(
         classSuffixIfConcrete = "Spec",
         addCucumberStepAnnotations = true
       )
@@ -618,9 +618,9 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnitOptions(
+      @Gherkin2JUnitOptions(
         tagForEmptyScenarios = "draft",
         addSourceLineNumbers = true
       )
@@ -631,11 +631,11 @@ Feature: GeneratorOptionsInheritance
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(
         classSuffixIfConcrete = "Cases",
         tagForEmptyScenarios = "addSteps"
       )

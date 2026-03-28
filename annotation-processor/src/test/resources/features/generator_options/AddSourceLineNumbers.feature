@@ -10,11 +10,11 @@ Feature: AddSourceLineNumbers
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(addSourceLineNumbers = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(addSourceLineNumbers = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """
@@ -85,11 +85,11 @@ Feature: AddSourceLineNumbers
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(addSourceLineNumbers = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(addSourceLineNumbers = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """
@@ -171,11 +171,11 @@ Feature: AddSourceLineNumbers
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(addSourceLineNumbers = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(addSourceLineNumbers = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """
@@ -247,11 +247,11 @@ Feature: AddSourceLineNumbers
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(addSourceLineNumbers = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(addSourceLineNumbers = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """
@@ -339,11 +339,11 @@ Feature: AddSourceLineNumbers
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(addSourceLineNumbers = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(addSourceLineNumbers = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """
@@ -413,11 +413,11 @@ Feature: AddSourceLineNumbers
         """
         package com.example;
 
-        import dev.specbinder.annotations.Feature2JUnit;
-        import dev.specbinder.annotations.Feature2JUnitOptions;
+        import dev.specbinder.annotations.Gherkin2JUnit;
+        import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-        @Feature2JUnit
-        @Feature2JUnitOptions(addSourceLineNumbers = true)
+        @Gherkin2JUnit
+        @Gherkin2JUnitOptions(addSourceLineNumbers = true)
         public abstract class MockedAnnotatedTestClass {
         }
         """
@@ -501,9 +501,9 @@ Feature: AddSourceLineNumbers
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
       }
       """
@@ -578,11 +578,11 @@ Feature: AddSourceLineNumbers
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true, addSourceLineNumbers = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true, addSourceLineNumbers = true)
       public abstract class CheckoutProcess {
 
       }
@@ -680,11 +680,11 @@ Feature: AddSourceLineNumbers
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true, addSourceLineNumbers = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true, addSourceLineNumbers = true)
       public abstract class AccountManagement {
 
       }
@@ -789,11 +789,11 @@ Feature: AddSourceLineNumbers
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true, addSourceLineNumbers = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true, addSourceLineNumbers = true)
       public abstract class InventoryManagement {
 
       }
@@ -899,11 +899,11 @@ Feature: AddSourceLineNumbers
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true, addSourceLineNumbers = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true, addSourceLineNumbers = true)
       public abstract class MultiStepProcess {
 
       }

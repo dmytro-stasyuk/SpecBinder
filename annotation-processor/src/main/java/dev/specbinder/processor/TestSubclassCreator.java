@@ -1,7 +1,7 @@
 package dev.specbinder.processor;
 
 import com.squareup.javapoet.*;
-import dev.specbinder.annotations.Feature2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnit;
 import dev.specbinder.annotations.output.SourceFilePath;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
@@ -28,10 +28,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static dev.specbinder.annotations.Feature2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
+import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
 /**
- * Creates a JUnit test subclass for a given type element annotated with {@link Feature2JUnit}.
+ * Creates a JUnit test subclass for a given type element annotated with {@link Gherkin2JUnit}.
  */
 class TestSubclassCreator implements LoggingSupport, OptionsSupport {
 
@@ -58,7 +58,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
     }
 
     /**
-     * Creates a JUnit test subclass for the given type element annotated with {@link Feature2JUnit}.
+     * Creates a JUnit test subclass for the given type element annotated with {@link Gherkin2JUnit}.
      *
      * @param annotatedClass  the type element to create a test subclass for
      * @param featureFilePath the feature file path
@@ -70,7 +70,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
     }
 
     /**
-     * Creates a JUnit test subclass for the given type element annotated with {@link Feature2JUnit}.
+     * Creates a JUnit test subclass for the given type element annotated with {@link Gherkin2JUnit}.
      *
      * @param annotatedClass           the type element to create a test subclass for
      * @param featureFilePath          the feature file path
@@ -322,7 +322,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         if (enclosingElement != null) {
             if (!(enclosingElement instanceof PackageElement)) {
                 throw new ProcessingException(
-                        "The class annotated with @" + Feature2JUnit.class.getSimpleName() +
+                        "The class annotated with @" + Gherkin2JUnit.class.getSimpleName() +
                                 " must have package as its enclosing element, but was - " + enclosingElement);
             }
 

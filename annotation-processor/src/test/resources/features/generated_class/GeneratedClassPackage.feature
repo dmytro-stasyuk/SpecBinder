@@ -10,10 +10,10 @@ Feature: GeneratedClassPackage
       """
       package com.example.cart;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit("features/checkout/cart/cart.feature")
+      @Gherkin2JUnit("features/checkout/cart/cart.feature")
       public abstract class CartFeature {
       }
       """

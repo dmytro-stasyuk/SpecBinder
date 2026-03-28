@@ -1,5 +1,5 @@
 Feature: CompositeStepsWithSimpleParameters
-  As a developer using the Feature2JUnit generator
+  As a developer using the Gherkin2JUnit generator
   I want to use composite step pattern to group related sub-steps under a higher-level abstraction
   So that I can create reusable step compositions without implementing additional glue code, similar to JBehave's textual composite steps
 
@@ -20,11 +20,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class ProductCatalog {
 
       }
@@ -129,11 +129,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class UserManagement {
 
       }
@@ -227,11 +227,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class BookingSystem {
 
       }
@@ -343,11 +343,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class ExcessiveParameters {
 
       }
@@ -375,11 +375,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class CustomerService {
 
       }
@@ -484,11 +484,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class OrderProcessing {
 
       }
@@ -594,11 +594,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class TravelBooking {
 
       }
@@ -712,11 +712,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class NotificationService {
 
       }
@@ -815,11 +815,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class PaymentProcessing {
 
       }
@@ -932,11 +932,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class DataProcessing {
 
       }
@@ -1037,11 +1037,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class FeatureToggle {
 
       }
@@ -1148,11 +1148,11 @@ Feature: CompositeStepsWithSimpleParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class PricingEngine {
 
       }

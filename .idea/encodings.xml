@@ -63,7 +63,5 @@
     <file url="file://$PROJECT_DIR$/annotation-processor/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/user-story-processor/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/user-story-processor/src/main/resources" charset="UTF-8" />
   </component>
 </project>

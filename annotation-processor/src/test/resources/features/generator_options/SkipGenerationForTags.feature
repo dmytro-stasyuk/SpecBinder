@@ -10,11 +10,11 @@ Feature: SkipGenerationForTags
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(skipGenerationForTags = {"manual"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(skipGenerationForTags = {"manual"})
       public abstract class MyFeature {
       }
       """
@@ -51,11 +51,11 @@ Feature: SkipGenerationForTags
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(skipGenerationForTags = {"manual"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(skipGenerationForTags = {"manual"})
       public abstract class MyFeature {
       }
       """
@@ -133,11 +133,11 @@ Feature: SkipGenerationForTags
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(skipGenerationForTags = {"manual"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(skipGenerationForTags = {"manual"})
       public abstract class MyFeature {
       }
       """
@@ -208,11 +208,11 @@ Feature: SkipGenerationForTags
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(skipGenerationForTags = {"manual"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(skipGenerationForTags = {"manual"})
       public abstract class MyFeature {
       }
       """
@@ -252,11 +252,11 @@ Feature: SkipGenerationForTags
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(skipGenerationForTags = {"wip-.*"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(skipGenerationForTags = {"wip-.*"})
       public abstract class MyFeature {
       }
       """
@@ -314,11 +314,11 @@ Feature: SkipGenerationForTags
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(skipGenerationForTags = {"(?i)ignore"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(skipGenerationForTags = {"(?i)ignore"})
       public abstract class MyFeature {
       }
       """
@@ -382,11 +382,11 @@ Feature: SkipGenerationForTags
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(skipGenerationForTags = {"manual", "wip-.*", "(?i)obsolete"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(skipGenerationForTags = {"manual", "wip-.*", "(?i)obsolete"})
       public abstract class MyFeature {
       }
       """
@@ -454,11 +454,11 @@ Feature: SkipGenerationForTags
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(skipGenerationForTags = {"manual"})
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(skipGenerationForTags = {"manual"})
       public abstract class MyFeature {
       }
       """

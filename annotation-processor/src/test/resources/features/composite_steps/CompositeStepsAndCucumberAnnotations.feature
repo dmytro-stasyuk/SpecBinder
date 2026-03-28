@@ -12,11 +12,11 @@ Feature: CompositeStepsAndCucumberAnnotations
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(
           enableCompositeSteps = true,
           addCucumberStepAnnotations = true
       )
@@ -126,11 +126,11 @@ Feature: CompositeStepsAndCucumberAnnotations
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(
           enableCompositeSteps = true,
           addCucumberStepAnnotations = true
       )
@@ -248,11 +248,11 @@ Feature: CompositeStepsAndCucumberAnnotations
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(
           enableCompositeSteps = true,
           addCucumberStepAnnotations = true
       )
@@ -371,11 +371,11 @@ Feature: CompositeStepsAndCucumberAnnotations
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(
           enableCompositeSteps = true,
           addCucumberStepAnnotations = true
       )

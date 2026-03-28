@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**spec2junit** is a compile-time code generator that converts natural-language behavior specifications (Gherkin/JBehave) into pure JUnit 5 test code. It eliminates runtime step discovery and regex glue patterns by generating strongly-typed Java test classes during compilation via annotation processing.
+**spec2junit** is a compile-time code generator that converts Gherkin behavior specifications into pure JUnit 5 test code. It eliminates runtime step discovery and regex glue patterns by generating strongly-typed Java test classes during compilation via annotation processing.
 
 **Key principles:**
 - Compile-time safety: Undefined steps become compiler errors, not runtime failures
@@ -68,8 +68,8 @@ Foundation module containing shared infrastructure:
 
 ### 2. `annotations/`
 Lightweight module containing public annotations for Cucumber `.feature` file processing:
-- `@Feature2JUnit("path/to/file.feature")` - Marks a class for test generation
-- `@Feature2JUnitOptions` - Configures generation behavior (inheritable)
+- `@Gherkin2JUnit("path/to/file.feature")` - Marks a class for test generation
+- `@Gherkin2JUnitOptions` - Configures generation behavior (inheritable)
 
 **Dependencies:** Only depends on `common` module.
 
@@ -102,18 +102,15 @@ AnnotationProcessor (APT entry point)
 
 **Client usage:** Client projects add this as an annotation processor dependency (used only during compilation).
 
-### 4. `user-story-processor/`
-Annotation processor for JBehave `.story` files. Less mature than annotation-processor.
+### 4. `examples/`
+Contains usage examples for spec binder with 6 sub-example modules covering various use cases.
 
-### 5. `examples/`
-Contains usage examples for feature2junit with 6 sub-example modules covering various use cases.
-
-**Module build order:** common → annotations → annotation-processor/user-story-processor (parallel) → examples
+**Module build order:** common → annotations → annotation-processor → examples
 
 ## Code Architecture
 
 ### Annotation Processing Flow
-1. User annotates a class with `@Feature2JUnit("specs/cart.feature")`
+1. User annotates a class with `@Gherkin2JUnit("specs/cart.feature")`
 2. During `javac`, AnnotationProcessor runs
 3. Parser reads .feature file using Cucumber's Gherkin parser
 4. Processors convert Gherkin AST to JavaPoet code model
@@ -123,7 +120,7 @@ Contains usage examples for feature2junit with 6 sub-example modules covering va
 
 The generator always produces abstract test classes:
 ```
-UserFeature.java (@Feature2JUnit, abstract marker)
+UserFeature.java (@Gherkin2JUnit, abstract marker)
   ↓ generates
 UserFeatureScenarios.java (abstract test class with abstract step methods)
   ↓ user creates
@@ -187,7 +184,7 @@ When creating or updating Java code, **avoid using Java reflection** (e.g., `Cla
 
 ### Modifying Generation Behavior
 1. Add option to `common/src/main/java/dev/specbinder/common/GeneratorOptions.java`
-2. Add annotation parameter to `annotations/src/main/java/dev/specbinder/annotations/Feature2JUnitOptions.java`
+2. Add annotation parameter to `annotations/src/main/java/dev/specbinder/annotations/Gherkin2JUnitOptions.java`
 3. Update GeneratorOptions construction in `annotation-processor/src/main/java/dev/specbinder/processor/AnnotationProcessor.process()`
 4. Use option in relevant processor
 5. Update tests
@@ -311,10 +308,9 @@ This ensures all changes are tracked and ready for commit.
 
 ## Important Notes
 
-- **Module dependency chain**: common → annotations → annotation-processor/user-story-processor
+- **Module dependency chain**: common → annotations → annotation-processor
 - **annotation-processor is primary**: Most mature and actively developed module
 - **Annotations separated**: annotations module contains only public API; annotation-processor contains the implementation
-- **user-story-processor is experimental**: Less mature, fewer features
 - **Examples are active**: 6 sub-example modules in `examples/` directory
 - **No .cursorrules**: This project doesn't have AI assistant rules configured
 - **Comprehensive README**: 1800+ lines of detailed documentation in README.md

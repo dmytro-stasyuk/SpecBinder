@@ -135,7 +135,7 @@ public class Steps {
                 lastBaseClassContent, lastBaseClassName, lastBaseClassPackage);
 
         if (featureFilePath == null) {
-            throw new IllegalStateException("Cannot derive feature file path. No base class information available or @Feature2JUnit annotation not found/has value.");
+            throw new IllegalStateException("Cannot derive feature file path. No base class information available or @Gherkin2JUnit annotation not found/has value.");
         }
 
         // Use the current output directory as the base

@@ -56,21 +56,36 @@ public class JavaDocUtils {
     public static String toJavaDocContent(String keyword, String name, String description) {
 
         StringBuilder javaDocSB = new StringBuilder()
-                .append(keyword).append(":");
+                .append(escapeForJavaPoet(keyword)).append(":");
 
         if (StringUtils.isNotBlank(name)) {
-            javaDocSB.append(" " + name);
+            javaDocSB.append(" ").append(escapeForJavaPoet(name));
         }
 
         if (StringUtils.isNotBlank(description)) {
             String[] lines = description.split("\n");
             for (String line : lines) {
                 line = line.trim();
-                javaDocSB.append("\n  ").append(line);
+                javaDocSB.append("\n  ").append(escapeForJavaPoet(line));
             }
         }
 
         return javaDocSB.toString();
+    }
+
+    /**
+     * Escapes dollar signs in a string for use in JavaPoet format strings.
+     * JavaPoet treats {@code $} as a format specifier (e.g., {@code $T}, {@code $S}, {@code $L}).
+     * Literal dollar signs must be escaped as {@code $$}.
+     *
+     * @param text the text to escape
+     * @return the text with all {@code $} replaced by {@code $$}
+     */
+    public static String escapeForJavaPoet(String text) {
+        if (text == null) {
+            return null;
+        }
+        return text.replace("$", "$$");
     }
 
     /**

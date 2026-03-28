@@ -1,21 +1,21 @@
-# Example 9: Configuration Inheritance via `@Feature2JUnitOptions`
+# Example 9: Configuration Inheritance via `@Gherkin2JUnitOptions`
 
 Demonstrates how to define shared generation options in a base class and selectively override them in individual marker classes.
 
 ## What this demonstrates
 
-- `@Feature2JUnitOptions` on a base class applies to all extending marker classes
+- `@Gherkin2JUnitOptions` on a base class applies to all extending marker classes
 - Child marker classes **inherit** all options from the parent
-- A child can place its own `@Feature2JUnitOptions` to **override specific options** — unspecified options continue to inherit
+- A child can place its own `@Gherkin2JUnitOptions` to **override specific options** — unspecified options continue to inherit
 - Standardize generation behavior across a project via a single base class
 
 ## Class hierarchy
 
 ```
-BaseFeature.java                          (@Feature2JUnitOptions — shared options)
+BaseFeature.java                          (@Gherkin2JUnitOptions — shared options)
   ├── ShoppingCartFeature.java            (inherits all options)
   │     └→ ShoppingCartFeatureTest.java   (generated — concrete, keyword prefixes)
-  └── CheckoutFeature.java               (@Feature2JUnitOptions — overrides shouldBeAbstract)
+  └── CheckoutFeature.java               (@Gherkin2JUnitOptions — overrides shouldBeAbstract)
         └→ CheckoutFeatureScenarios.java  (generated — abstract, keyword prefixes)
 ```
 
@@ -53,6 +53,6 @@ public abstract void thenTheOrderShouldBeConfirmed();
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Simple cart feature |
 | `src/test/resources/specs/Checkout.feature` | Checkout feature |
-| `src/test/java/.../BaseFeature.java` | Base class with shared `@Feature2JUnitOptions` |
+| `src/test/java/.../BaseFeature.java` | Base class with shared `@Gherkin2JUnitOptions` |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class inheriting all options |
 | `src/test/java/.../CheckoutFeature.java` | Marker class overriding `shouldBeAbstract` |

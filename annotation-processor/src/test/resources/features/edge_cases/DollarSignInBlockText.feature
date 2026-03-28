@@ -1,15 +1,11 @@
-Feature: StepMethodName
+Feature: DollarSignInBlockText
   As a developer
-  I want step keywords and text automatically converted to camelCase method names
-  So that I get consistent and predictable method signatures
+  I want to use dollar signs in the title and description text of Gherkin blocks
+  So that the generator correctly handles them in JavaDoc comments and @DisplayName annotations
 
-  Rule: Step text is converted to method name using camelCase convention
-  - The step keyword (Given, When, Then) becomes the first word in lowercase.
-  - Each subsequent word in the step text is split by whitespace and converted to camelCase:
-  -- First character of each word is capitalized
-  -- Remaining characters are lowercase
+  Rule: A dollar sign in the Feature name and description should be preserved in the generated JavaDoc comment
 
-    Scenario: Simple step with one word
+    Scenario: Feature name contains a dollar sign
       Given the following base class:
       """
       package features;
@@ -22,9 +18,82 @@ Feature: StepMethodName
       """
       Given the following feature file:
       """
-      Feature: Simple
-        Scenario: Test
-          Given user
+      Feature: costs $5 per item
+      """
+      When the generator is run
+      Then the following class should be generated:
+      """
+      package features;
+
+      import dev.specbinder.annotations.output.SourceFilePath;
+      import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.DisplayName;
+
+      /**
+       * Feature: costs $5 per item
+       */
+      @DisplayName("MyFeature")
+      @Generated("dev.specbinder.processor.AnnotationProcessor")
+      @SourceFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+      }
+      """
+
+    Scenario: Feature description contains dollar signs
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Gherkin2JUnit;
+
+      @Gherkin2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      Given the following feature file:
+      """
+      Feature: pricing
+        Items cost $5 each
+        Premium items cost $10 each
+      """
+      When the generator is run
+      Then the following class should be generated:
+      """
+      package features;
+
+      import dev.specbinder.annotations.output.SourceFilePath;
+      import javax.annotation.processing.Generated;
+      import org.junit.jupiter.api.DisplayName;
+
+      /**
+       * Feature: pricing
+       *   Items cost $5 each
+       *   Premium items cost $10 each
+       */
+      @DisplayName("MyFeature")
+      @Generated("dev.specbinder.processor.AnnotationProcessor")
+      @SourceFilePath("features/MyFeature.feature")
+      public class MyFeatureTest extends MyFeature {
+      }
+      """
+
+  Rule: A dollar sign in the Scenario name and description should be preserved in @DisplayName and JavaDoc
+
+    Scenario: Scenario name contains a dollar sign
+      Given the following base class:
+      """
+      package features;
+
+      import dev.specbinder.annotations.Gherkin2JUnit;
+
+      @Gherkin2JUnit
+      public abstract class MyFeature {
+      }
+      """
+      Given the following feature file:
+      """
+      Feature: pricing feature
+        Scenario: item costs $5
       """
       When the generator is run
       Then the following class should be generated:
@@ -37,34 +106,29 @@ Feature: StepMethodName
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
+      import org.junit.jupiter.api.Tag;
       import org.junit.jupiter.api.Test;
       import org.junit.jupiter.api.TestMethodOrder;
 
       /**
-       * Feature: Simple
+       * Feature: pricing feature
        */
       @DisplayName("MyFeature")
       @Generated("dev.specbinder.processor.AnnotationProcessor")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @SourceFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void user() {
-              Assertions.fail("Step is not yet implemented");
-          }
-
           @Test
           @Order(1)
-          @DisplayName("Scenario: Test")
+          @Tag("new")
+          @DisplayName("Scenario: item costs $5")
           public void scenario_1() {
-              /*
-               * Given user
-               */
-              user();
+              Assertions.fail("Scenario has no steps");
           }
       }
       """
 
-    Scenario: Step with multiple words
+    Scenario: Scenario description contains dollar signs
       Given the following base class:
       """
       package features;
@@ -77,9 +141,10 @@ Feature: StepMethodName
       """
       Given the following feature file:
       """
-      Feature: Multiple Words
-        Scenario: Test
-          When the user clicks the button
+      Feature: pricing feature
+        Scenario: pricing check
+          Verify that $HOME expands to /users/$admin
+          and costs are $5 per unit
       """
       When the generator is run
       Then the following class should be generated:
@@ -92,34 +157,35 @@ Feature: StepMethodName
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
+      import org.junit.jupiter.api.Tag;
       import org.junit.jupiter.api.Test;
       import org.junit.jupiter.api.TestMethodOrder;
 
       /**
-       * Feature: Multiple Words
+       * Feature: pricing feature
        */
       @DisplayName("MyFeature")
       @Generated("dev.specbinder.processor.AnnotationProcessor")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @SourceFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void theUserClicksTheButton() {
-              Assertions.fail("Step is not yet implemented");
-          }
-
+          /**
+           * Verify that $HOME expands to /users/$admin
+           * and costs are $5 per unit
+           */
           @Test
           @Order(1)
-          @DisplayName("Scenario: Test")
+          @Tag("new")
+          @DisplayName("Scenario: pricing check")
           public void scenario_1() {
-              /*
-               * When the user clicks the button
-               */
-              theUserClicksTheButton();
+              Assertions.fail("Scenario has no steps");
           }
       }
       """
 
-    Scenario: Step with some words in all caps
+  Rule: A dollar sign in the Rule name and description should be preserved in @DisplayName and JavaDoc
+
+    Scenario: Rule name contains a dollar sign
       Given the following base class:
       """
       package features;
@@ -132,9 +198,8 @@ Feature: StepMethodName
       """
       Given the following feature file:
       """
-      Feature: All Caps Words
-        Scenario: Test
-          Then the API response is successful
+      Feature: pricing feature
+        Rule: items under $10 get free shipping
       """
       When the generator is run
       Then the following class should be generated:
@@ -144,39 +209,39 @@ Feature: StepMethodName
       import dev.specbinder.annotations.output.SourceFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
+      import org.junit.jupiter.api.Nested;
       import org.junit.jupiter.api.Order;
+      import org.junit.jupiter.api.Tag;
       import org.junit.jupiter.api.Test;
+      import org.junit.jupiter.api.TestClassOrder;
       import org.junit.jupiter.api.TestMethodOrder;
 
       /**
-       * Feature: All Caps Words
+       * Feature: pricing feature
        */
       @DisplayName("MyFeature")
       @Generated("dev.specbinder.processor.AnnotationProcessor")
-      @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+      @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @SourceFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void theApiResponseIsSuccessful() {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          @Test
+          @Nested
           @Order(1)
-          @DisplayName("Scenario: Test")
-          public void scenario_1() {
-              /*
-               * Then the API response is successful
-               */
-              theApiResponseIsSuccessful();
+          @Tag("new")
+          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+          @DisplayName("Rule: items under $10 get free shipping")
+          public class Rule_1 {
+              @Test
+              public void noScenariosInRule() {
+                  Assertions.fail("Rule doesn't have any scenarios");
+              }
           }
       }
       """
 
-  Rule: Non-identifier characters (e.g., punctuation, symbols) are skipped entirely when generating method names
-
-    Scenario: Step with non-identifier characters
+    Scenario: Rule description contains dollar signs
       Given the following base class:
       """
       package features;
@@ -189,9 +254,10 @@ Feature: StepMethodName
       """
       Given the following feature file:
       """
-      Feature: Non-identifier Characters
-        Scenario: Test
-          Then the user's email@domain.com is verified!
+      Feature: pricing feature
+        Rule: shipping policy
+          Orders under $10 are charged $3 shipping
+          Orders over $50 get free shipping
       """
       When the generator is run
       Then the following class should be generated:
@@ -201,39 +267,45 @@ Feature: StepMethodName
       import dev.specbinder.annotations.output.SourceFilePath;
       import javax.annotation.processing.Generated;
       import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.ClassOrderer;
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
+      import org.junit.jupiter.api.Nested;
       import org.junit.jupiter.api.Order;
+      import org.junit.jupiter.api.Tag;
       import org.junit.jupiter.api.Test;
+      import org.junit.jupiter.api.TestClassOrder;
       import org.junit.jupiter.api.TestMethodOrder;
 
       /**
-       * Feature: Non-identifier Characters
+       * Feature: pricing feature
        */
       @DisplayName("MyFeature")
       @Generated("dev.specbinder.processor.AnnotationProcessor")
-      @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+      @TestClassOrder(ClassOrderer.OrderAnnotation.class)
       @SourceFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void theUsersEmailDomainComIsVerified() {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          @Test
+          /**
+           * Orders under $10 are charged $3 shipping
+           * Orders over $50 get free shipping
+           */
+          @Nested
           @Order(1)
-          @DisplayName("Scenario: Test")
-          public void scenario_1() {
-              /*
-               * Then the user's email@domain.com is verified!
-               */
-              theUsersEmailDomainComIsVerified();
+          @Tag("new")
+          @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+          @DisplayName("Rule: shipping policy")
+          public class Rule_1 {
+              @Test
+              public void noScenariosInRule() {
+                  Assertions.fail("Rule doesn't have any scenarios");
+              }
           }
       }
       """
 
-  Rule: Numbers in step text are preserved in method names
+  Rule: A dollar sign in the Background name should be preserved in @DisplayName
 
-    Scenario: Step with numbers in a step word
+    Scenario: Background name contains a dollar sign
       Given the following base class:
       """
       package features;
@@ -246,9 +318,9 @@ Feature: StepMethodName
       """
       Given the following feature file:
       """
-      Feature: Numbers
-        Scenario: Test
-          Given user123 exists
+      Feature: pricing feature
+
+        Background: setup $5 account balance
       """
       When the generator is run
       Then the following class should be generated:
@@ -257,38 +329,27 @@ Feature: StepMethodName
 
       import dev.specbinder.annotations.output.SourceFilePath;
       import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
+      import org.junit.jupiter.api.BeforeEach;
       import org.junit.jupiter.api.DisplayName;
-      import org.junit.jupiter.api.MethodOrderer;
-      import org.junit.jupiter.api.Order;
-      import org.junit.jupiter.api.Test;
-      import org.junit.jupiter.api.TestMethodOrder;
+      import org.junit.jupiter.api.TestInfo;
 
       /**
-       * Feature: Numbers
+       * Feature: pricing feature
        */
       @DisplayName("MyFeature")
       @Generated("dev.specbinder.processor.AnnotationProcessor")
-      @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @SourceFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void user123Exists() {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          @Test
-          @Order(1)
-          @DisplayName("Scenario: Test")
-          public void scenario_1() {
-              /*
-               * Given user123 exists
-               */
-              user123Exists();
+          @BeforeEach
+          @DisplayName("Background: setup $5 account balance")
+          public void featureBackground(TestInfo testInfo) {
           }
       }
       """
 
-    Scenario: Step with numbers at the start of a step
+  Rule: A dollar sign in the Scenario Outline Examples name should be preserved in generated code
+
+    Scenario: Examples block name contains a dollar sign
       Given the following base class:
       """
       package features;
@@ -301,180 +362,13 @@ Feature: StepMethodName
       """
       Given the following feature file:
       """
-      Feature: Numbers at Start
-        Scenario: Test
-          Given 3 users exist in the system
-      """
-      When the generator is run
-      Then the following class should be generated:
-      """
-      package features;
-
-      import dev.specbinder.annotations.output.SourceFilePath;
-      import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
-      import org.junit.jupiter.api.DisplayName;
-      import org.junit.jupiter.api.MethodOrderer;
-      import org.junit.jupiter.api.Order;
-      import org.junit.jupiter.api.Test;
-      import org.junit.jupiter.api.TestMethodOrder;
-
-      /**
-       * Feature: Numbers at Start
-       */
-      @DisplayName("MyFeature")
-      @Generated("dev.specbinder.processor.AnnotationProcessor")
-      @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @SourceFilePath("features/MyFeature.feature")
-      public class MyFeatureTest extends MyFeature {
-          public void usersExistInTheSystem() {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          @Test
-          @Order(1)
-          @DisplayName("Scenario: Test")
-          public void scenario_1() {
-              /*
-               * Given 3 users exist in the system
-               */
-              usersExistInTheSystem();
-          }
-      }
-      """
-
-  Rule: Dollar signs ($) in step text are preserved in method names
-
-    Scenario: Step with dollar sign in text
-      Given the following base class:
-      """
-      package features;
-
-      import dev.specbinder.annotations.Gherkin2JUnit;
-
-      @Gherkin2JUnit
-      public abstract class MyFeature {
-      }
-      """
-      Given the following feature file:
-      """
-      Feature: Dollar Sign
-        Scenario: Test
-          Given price is $100
-      """
-      When the generator is run
-      Then the following class should be generated:
-      """
-      package features;
-
-      import dev.specbinder.annotations.output.SourceFilePath;
-      import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
-      import org.junit.jupiter.api.DisplayName;
-      import org.junit.jupiter.api.MethodOrderer;
-      import org.junit.jupiter.api.Order;
-      import org.junit.jupiter.api.Test;
-      import org.junit.jupiter.api.TestMethodOrder;
-
-      /**
-       * Feature: Dollar Sign
-       */
-      @DisplayName("MyFeature")
-      @Generated("dev.specbinder.processor.AnnotationProcessor")
-      @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @SourceFilePath("features/MyFeature.feature")
-      public class MyFeatureTest extends MyFeature {
-          public void priceIs$100() {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          @Test
-          @Order(1)
-          @DisplayName("Scenario: Test")
-          public void scenario_1() {
-              /*
-               * Given price is $100
-               */
-              priceIs$100();
-          }
-      }
-      """
-
-  Rule: Underscore characters (_) in step text are preserved in method names
-
-    Scenario: Step with underscore characters
-      Given the following base class:
-      """
-      package features;
-
-      import dev.specbinder.annotations.Gherkin2JUnit;
-
-      @Gherkin2JUnit
-      public abstract class MyFeature {
-      }
-      """
-      Given the following feature file:
-      """
-      Feature: Underscore Characters
-        Scenario: Test
-          When the user_name is valid
-      """
-      When the generator is run
-      Then the following class should be generated:
-      """
-      package features;
-
-      import dev.specbinder.annotations.output.SourceFilePath;
-      import javax.annotation.processing.Generated;
-      import org.junit.jupiter.api.Assertions;
-      import org.junit.jupiter.api.DisplayName;
-      import org.junit.jupiter.api.MethodOrderer;
-      import org.junit.jupiter.api.Order;
-      import org.junit.jupiter.api.Test;
-      import org.junit.jupiter.api.TestMethodOrder;
-
-      /**
-       * Feature: Underscore Characters
-       */
-      @DisplayName("MyFeature")
-      @Generated("dev.specbinder.processor.AnnotationProcessor")
-      @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-      @SourceFilePath("features/MyFeature.feature")
-      public class MyFeatureTest extends MyFeature {
-          public void theUser_nameIsValid() {
-              Assertions.fail("Step is not yet implemented");
-          }
-
-          @Test
-          @Order(1)
-          @DisplayName("Scenario: Test")
-          public void scenario_1() {
-              /*
-               * When the user_name is valid
-               */
-              theUser_nameIsValid();
-          }
-      }
-      """
-
-  Rule: Quoted parameters in step text are replaced with placeholder names in method names
-
-    Scenario: Step with quoted parameters
-      Given the following base class:
-      """
-      package features;
-
-      import dev.specbinder.annotations.Gherkin2JUnit;
-
-      @Gherkin2JUnit
-      public abstract class MyFeature {
-      }
-      """
-      Given the following feature file:
-      """
-      Feature: Quoted Parameters
-        Scenario: Test
-          When I enter "username" and "password"
+      Feature: pricing feature
+        Scenario Outline: purchase for <price>
+          Given the price is <price>
+          Examples: prices in $USD
+            | price |
+            | $5    |
+            | $10   |
       """
       When the generator is run
       Then the following class should be generated:
@@ -488,29 +382,41 @@ Feature: StepMethodName
       import org.junit.jupiter.api.DisplayName;
       import org.junit.jupiter.api.MethodOrderer;
       import org.junit.jupiter.api.Order;
-      import org.junit.jupiter.api.Test;
       import org.junit.jupiter.api.TestMethodOrder;
+      import org.junit.jupiter.params.ParameterizedTest;
+      import org.junit.jupiter.params.provider.CsvSource;
 
       /**
-       * Feature: Quoted Parameters
+       * Feature: pricing feature
        */
       @DisplayName("MyFeature")
       @Generated("dev.specbinder.processor.AnnotationProcessor")
       @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
       @SourceFilePath("features/MyFeature.feature")
       public class MyFeatureTest extends MyFeature {
-          public void iEnter$p1And$p2(String p1, String p2) {
+          public void thePriceIs$p1(String p1) {
               Assertions.fail("Step is not yet implemented");
           }
 
-          @Test
+          @ParameterizedTest(
+                  name = "Example {index}: [{arguments}]"
+          )
+          @CsvSource(
+                  useHeadersInDisplayName = true,
+                  delimiter = '|',
+                  textBlock = \"\"\"
+                          price
+                          $5
+                          $10
+                          \"\"\"
+          )
           @Order(1)
-          @DisplayName("Scenario: Test")
-          public void scenario_1() {
+          @DisplayName("Scenario Outline: purchase for <price>")
+          public void scenario_1(String price) {
               /*
-               * When I enter "username" and "password"
+               * Given the price is <price>
                */
-              iEnter$p1And$p2("username", "password");
+              thePriceIs$p1(price);
           }
       }
       """

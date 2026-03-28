@@ -10,9 +10,9 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -90,9 +90,9 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -160,10 +160,10 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
       import features.enums.DayOfWeek;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -234,10 +234,10 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
       import features.enums.TimeConstants.DayOfWeek;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -291,9 +291,9 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -363,9 +363,9 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -445,9 +445,9 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -517,10 +517,10 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
       import features.enums.DayOfWeek;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {
@@ -593,10 +593,10 @@ Feature: InheritedStepAndParameterTypeInferenceForEnums
       """
       package features;
 
-      import dev.specbinder.annotations.Feature2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnit;
       import features.enums.TimeConstants.DayOfWeek;
 
-      @Feature2JUnit
+      @Gherkin2JUnit
       public abstract class MyFeature {
 
           protected void theFollowingDayOfTheWeek$p1(DayOfWeek dayOfWeek) {

@@ -4,7 +4,7 @@ Demonstrates the `CUCUMBER_DATA_TABLE` mode where Gherkin data tables are passed
 
 ## What this demonstrates
 
-- `@Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)` changes data table handling
+- `@Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)` changes data table handling
 - Step methods receive `DataTable` instead of `List<Param>`
 - The generator creates a `createDataTable()` helper that parses text blocks into `DataTable` objects
 - You must provide a `getTableConverter()` method in your class hierarchy
@@ -59,6 +59,6 @@ List<Product> products = dataTable.asList(Product.class);
 | File | Purpose |
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Feature with data tables |
-| `src/test/java/.../BaseFeature.java` | Base class with `@Feature2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)` |
+| `src/test/java/.../BaseFeature.java` | Base class with `@Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)` |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class with `getTableConverter()`, POJO type registration, and step implementations |
 | `pom.xml` | Includes `cucumber-java` dependency |

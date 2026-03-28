@@ -1,5 +1,5 @@
 Feature: CompositeStepsWithNoParameters
-  As a developer using the Feature2JUnit generator
+  As a developer using the Gherkin2JUnit generator
   I want to use composite step pattern to group related sub-steps under a higher-level abstraction
   So that I can create reusable step compositions without implementing additional glue code, similar to JBehave's textual composite steps
 
@@ -23,11 +23,11 @@ Feature: CompositeStepsWithNoParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class UserLogin {
 
       }
@@ -173,11 +173,11 @@ Feature: CompositeStepsWithNoParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class UserRegistration {
 
       }
@@ -321,11 +321,11 @@ Feature: CompositeStepsWithNoParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class UserPayment {
 
       }
@@ -460,11 +460,11 @@ Feature: CompositeStepsWithNoParameters
       """
       package com.example;
 
-      import dev.specbinder.annotations.Feature2JUnit;
-      import dev.specbinder.annotations.Feature2JUnitOptions;
+      import dev.specbinder.annotations.Gherkin2JUnit;
+      import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
-      @Feature2JUnit
-      @Feature2JUnitOptions(enableCompositeSteps = true)
+      @Gherkin2JUnit
+      @Gherkin2JUnitOptions(enableCompositeSteps = true)
       public abstract class UserProfile {
 
       }
