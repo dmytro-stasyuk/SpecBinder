@@ -37,7 +37,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
     private final EnumImportCollector enumImportCollector;
     private final TypeElement baseType;
 
-    private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]+?)(\"))");
+    private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)+?)(\"))");
 
     public CompositeStepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options,
                                    DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,
@@ -195,7 +195,9 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         List<String> parameterValues = new ArrayList<>();
         Matcher matcher = parameterPattern.matcher(stepText);
         while (matcher.find()) {
-            parameterValues.add(matcher.group("parameterValue"));
+            String value = matcher.group("parameterValue");
+            value = value.replaceAll("\\\\([\"\\\\])", "$1");
+            parameterValues.add(value);
         }
         return parameterValues;
     }
@@ -324,7 +326,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         callBuilder.append(compositeMethodName).append("(");
         for (int i = 0; i < parameterValues.size(); i++) {
             if (i > 0) callBuilder.append(", ");
-            callBuilder.append("\"").append(parameterValues.get(i)).append("\"");
+            callBuilder.append("\"").append(escapeForJavaStringLiteral(parameterValues.get(i))).append("\"");
         }
 
         // Lambda expression
@@ -441,7 +443,12 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         }
 
         // Default: return as quoted string
-        return "\"" + value + "\"";
+        return "\"" + escapeForJavaStringLiteral(value) + "\"";
+    }
+
+    private static String escapeForJavaStringLiteral(String value) {
+        return value.replace("\\", "\\\\")
+                    .replace("\"", "\\\"");
     }
 
     /**

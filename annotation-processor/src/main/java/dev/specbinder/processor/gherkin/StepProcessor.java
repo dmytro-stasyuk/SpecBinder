@@ -46,7 +46,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private final List<ElementMethodUtils.CucumberAnnotationEntry> cucumberAnnotationEntries;
     private final Map<String, List<Class<?>>> preComputedStepTypes;
 
-    private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]+?)(\"))");
+    private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)+?)(\"))");
 
     public StepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options,
                          DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,
@@ -580,7 +580,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                                 }
                             } else {
                                 // Value couldn't be resolved - place as quoted string (will cause compilation error)
-                                parameterValuesSB.append("\"").append(parameterValue.replace("$", "$$")).append("\"");
+                                parameterValuesSB.append("\"").append(escapeForJavaStringLiteral(parameterValue)).append("\"");
                             }
                         } else {
                             String literal = ParameterConversionUtils.toLiteral(parameterValue, targetType);
@@ -879,7 +879,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             docString = docString.replaceAll("\"\"\"", "\\\\\"\"\"");
 
             // Escape $ for JavaPoet ($ is a special character in JavaPoet's format strings)
-            // Must be done AFTER triple quote escaping to avoid double-escaping
+            // Must be done AFTER triple quote and backslash escaping to avoid double-escaping
             docString = docString.replace("$", "$$");
 
             /**
@@ -1049,9 +1049,16 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             return "'" + value + "'"; // Single quotes for char
         } else {
             // String type: use quoted string
-            // Escape $ as $$ for JavaPoet's CodeBlock.of() which uses $ as format specifier
-            return "\"" + value.replace("$", "$$") + "\"";
+            // Escape backslashes and quotes for valid Java string literal,
+            // and $ as $$ for JavaPoet's CodeBlock.of() which uses $ as format specifier
+            return "\"" + escapeForJavaStringLiteral(value) + "\"";
         }
+    }
+
+    private static String escapeForJavaStringLiteral(String value) {
+        return value.replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .replace("$", "$$");
     }
 
     /**
@@ -1490,6 +1497,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             stepAnnotationPatternSB.append("$p" + (parameterValues.size() + 1));
 
             String parameterValue = matcher.group("parameterValue");
+            parameterValue = parameterValue.replaceAll("\\\\([\"\\\\])", "$1");
             parameterValues.add(parameterValue);
 
             lastParameterEnd = parameterEnd;

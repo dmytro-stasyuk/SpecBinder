@@ -153,8 +153,9 @@ public class ParameterConversionUtils {
         }
 
         // Default: return as quoted string
-        // Escape $ as $$ for JavaPoet's CodeBlock.of() which uses $ as format specifier
-        return "\"" + value.replace("$", "$$") + "\"";
+        // Escape backslashes and quotes for valid Java string literal,
+        // and $ as $$ for JavaPoet's CodeBlock.of() which uses $ as format specifier
+        return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"").replace("$", "$$") + "\"";
     }
 
     private static boolean canParseInt(String value) {

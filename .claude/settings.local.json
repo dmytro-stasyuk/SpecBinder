@@ -45,16 +45,15 @@
       "Bash(./mvnw install:*)",
       "Bash(./mvnw test:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(/Users/dmytro/Projects/SpecBinder/spec-binder/.idea_scripts/trigger_rebuild_project_shortcut.sh)",
-      "Bash(/Users/dmytro/Projects/SpecBinder/spec-binder/.idea_scripts/trigger_run_test_shortcut.sh)",
       "Read(//opt/homebrew/bin/**)",
       "Read(//usr/local/bin/**)",
-      "Bash(find /Users/dmytro/Projects/SpecBinder/spec-binder/common /Users/dmytro/Projects/SpecBinder/spec-binder/annotations -type f \\\\\\(-name *.java -o -name *.xml \\\\\\))",
-      "Bash(mvn help:describe -Dartifact=io.cucumber:cucumber-gherkin-messages:7.33.0 -Ddetail)",
       "Bash(while read:*)",
       "Bash(do grep:*)",
       "Bash(jar tf:*)",
-      "Bash(unzip -p /Users/dmytro/.m2/repository/io/cucumber/messages/27.2.0/messages-27.2.0-sources.jar io/cucumber/messages/types/Examples.java)"
+      "mcp__idea__get_run_configurations",
+      "mcp__idea__execute_run_configuration",
+      "Bash(mvn -v)",
+      "mcp__idea__open_file_in_editor"
     ],
     "deny": [],
     "ask": []
