@@ -713,6 +713,41 @@ public class ParameterConversionUtils {
     }
 
     /**
+     * Infers the most specific type that can accommodate all given string values.
+     * Follows type precedence: Boolean → Integer → Long → Double → Character → String.
+     * All values must be convertible to the type for it to be selected.
+     *
+     * @param values the list of string values to analyze
+     * @return the inferred type that accommodates all values
+     */
+    public static Class<?> inferTypeForAllValues(List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return String.class;
+        }
+        if (values.size() == 1) {
+            return inferType(values.get(0));
+        }
+
+        // Check if ALL values can parse as each type in precedence order
+        if (values.stream().allMatch(ParameterConversionUtils::canParseBoolean)) {
+            return Boolean.class;
+        }
+        if (values.stream().allMatch(ParameterConversionUtils::canParseInt)) {
+            return Integer.class;
+        }
+        if (values.stream().allMatch(ParameterConversionUtils::canParseLong)) {
+            return Long.class;
+        }
+        if (values.stream().allMatch(ParameterConversionUtils::canParseDouble)) {
+            return Double.class;
+        }
+        if (values.stream().allMatch(v -> v.length() == 1)) {
+            return Character.class;
+        }
+        return String.class;
+    }
+
+    /**
      * Infers the most specific type that a string value can convert to.
      * Follows type precedence: Boolean → Integer → Long → Double → Character → String
      *

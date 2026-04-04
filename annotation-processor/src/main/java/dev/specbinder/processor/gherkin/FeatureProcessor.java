@@ -9,12 +9,15 @@ import dev.specbinder.processor.gherkin.utils.EnumImportCollector;
 import dev.specbinder.processor.support.BaseTypeSupport;
 import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
+import dev.specbinder.processor.utils.ParameterConversionUtils;
 import dev.specbinder.processor.utils.TagUtils;
 import io.cucumber.messages.types.*;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Processes a Gherkin feature and generates corresponding JUnit test methods.
@@ -70,6 +73,9 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
             return;
         }
 
+        // Pre-scan all steps to compute widened parameter types across all occurrences
+        Map<String, List<Class<?>>> preComputedStepTypes = preComputeStepParameterTypes(feature);
+
         List<FeatureChild> children = feature.getChildren();
 
         int featureRuleCount = 0;
@@ -95,7 +101,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                 }
                 featureRuleCount++;
                 RuleProcessor ruleProcessor = new RuleProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
-                ruleProcessor.processRule(featureRuleCount, rule, classBuilder);
+                ruleProcessor.processRule(featureRuleCount, rule, classBuilder, preComputedStepTypes);
             }
             else if (child.getScenario().isPresent()) {
 
@@ -105,7 +111,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                 }
                 featureScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
-                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(featureScenarioCount, scenario, classBuilder);
+                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(featureScenarioCount, scenario, classBuilder, preComputedStepTypes);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
                 classBuilder.addMethod(scenarioMethod);
@@ -115,6 +121,98 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
             }
 
         }
+    }
+
+    private static final Pattern PARAM_PATTERN = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]+?)(\"))");
+
+    /**
+     * Pre-scans all steps across all scenarios in the feature to determine widened parameter types.
+     * When the same step pattern appears multiple times with different parameter values,
+     * the widest common type is computed (e.g., Character + String → String).
+     */
+    private Map<String, List<Class<?>>> preComputeStepParameterTypes(Feature feature) {
+        // Collect parameter values grouped by step pattern
+        Map<String, List<List<String>>> stepPatternValues = new LinkedHashMap<>();
+
+        for (FeatureChild child : feature.getChildren()) {
+            if (child.getScenario().isPresent()) {
+                collectStepPatternValues(child.getScenario().get().getSteps(), stepPatternValues);
+            }
+            if (child.getRule().isPresent()) {
+                for (RuleChild ruleChild : child.getRule().get().getChildren()) {
+                    if (ruleChild.getScenario().isPresent()) {
+                        collectStepPatternValues(ruleChild.getScenario().get().getSteps(), stepPatternValues);
+                    }
+                    if (ruleChild.getBackground().isPresent()) {
+                        collectStepPatternValues(ruleChild.getBackground().get().getSteps(), stepPatternValues);
+                    }
+                }
+            }
+            if (child.getBackground().isPresent()) {
+                collectStepPatternValues(child.getBackground().get().getSteps(), stepPatternValues);
+            }
+        }
+
+        // For patterns with multiple occurrences, compute widened types
+        Map<String, List<Class<?>>> result = new HashMap<>();
+        for (Map.Entry<String, List<List<String>>> entry : stepPatternValues.entrySet()) {
+            List<List<String>> allOccurrences = entry.getValue();
+            if (allOccurrences.size() <= 1) {
+                continue; // Single occurrence - no widening needed
+            }
+
+            int paramCount = allOccurrences.get(0).size();
+            List<Class<?>> widenedTypes = new ArrayList<>(paramCount);
+            for (int i = 0; i < paramCount; i++) {
+                List<String> valuesAtPosition = new ArrayList<>();
+                for (List<String> occurrence : allOccurrences) {
+                    if (i < occurrence.size()) {
+                        String val = occurrence.get(i);
+                        // Skip scenario outline placeholders
+                        if (!(val.startsWith("<") && val.endsWith(">"))) {
+                            valuesAtPosition.add(val);
+                        }
+                    }
+                }
+                widenedTypes.add(ParameterConversionUtils.inferTypeForAllValues(valuesAtPosition));
+            }
+            result.put(entry.getKey(), widenedTypes);
+        }
+
+        return result;
+    }
+
+    private void collectStepPatternValues(List<Step> steps, Map<String, List<List<String>>> stepPatternValues) {
+        for (Step step : steps) {
+            String stepText = step.getKeyword() + " " + step.getText();
+            String stepFirstLine = stepText.trim().split("\\n")[0].trim();
+
+            List<String> parameterValues = new ArrayList<>();
+            String pattern = extractPattern(stepFirstLine, parameterValues);
+
+            if (!parameterValues.isEmpty()) {
+                stepPatternValues.computeIfAbsent(pattern, k -> new ArrayList<>()).add(parameterValues);
+            }
+        }
+    }
+
+    private String extractPattern(String stepFirstLine, List<String> parameterValues) {
+        StringBuilder patternBuilder = new StringBuilder();
+        Matcher matcher = PARAM_PATTERN.matcher(stepFirstLine);
+        int lastEnd = 0;
+
+        while (matcher.find()) {
+            patternBuilder.append(stepFirstLine, lastEnd, matcher.start("parameter"));
+            patternBuilder.append("$p").append(parameterValues.size() + 1);
+            parameterValues.add(matcher.group("parameterValue"));
+            lastEnd = matcher.end("parameter");
+        }
+
+        if (lastEnd < stepFirstLine.length()) {
+            patternBuilder.append(stepFirstLine.substring(lastEnd));
+        }
+
+        return patternBuilder.toString();
     }
 
 }

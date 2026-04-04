@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_MAPS;
 
@@ -286,6 +288,9 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                 source = addEnumTypeImportsToSource(source, javaFile.packageName, enumTypesToImport);
             }
 
+            // Replace Examples comment marker annotations with block comments
+            source = replaceExamplesCommentMarkers(source);
+
             writer.append(source);
         }
 
@@ -310,6 +315,41 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
 
             // Insert the imports
             return source.substring(0, insertPosition) + imports + source.substring(insertPosition);
+        }
+
+        private static final Pattern EXAMPLES_COMMENT_MARKER_PATTERN = Pattern.compile(
+                "([ \\t]*)@SuppressWarnings\\(\"__EXAMPLES_COMMENT__:([^\"]+)\"\\)\\n");
+
+        /**
+         * Replaces @SuppressWarnings("__EXAMPLES_COMMENT__:...") marker annotations
+         * with block comments preserving the Examples name and description.
+         */
+        private String replaceExamplesCommentMarkers(String source) {
+            Matcher matcher = EXAMPLES_COMMENT_MARKER_PATTERN.matcher(source);
+            if (!matcher.find()) {
+                return source;
+            }
+            matcher.reset();
+            StringBuilder result = new StringBuilder();
+            while (matcher.find()) {
+                String indent = matcher.group(1);
+                String content = matcher.group(2);
+                // Content uses __NL__ as line separator to avoid JavaPoet string splitting
+                String[] lines = content.split("__NL__");
+                StringBuilder comment = new StringBuilder();
+                comment.append(indent).append("/*\n");
+                for (String line : lines) {
+                    comment.append(indent).append(" * ").append(line).append("\n");
+                }
+                comment.append(indent).append(" */\n");
+                matcher.appendReplacement(result, Matcher.quoteReplacement(comment.toString()));
+            }
+            matcher.appendTail(result);
+
+            // Remove the unnecessary import for java.lang.SuppressWarnings added by JavaPoet
+            String processedSource = result.toString();
+            processedSource = processedSource.replace("import java.lang.SuppressWarnings;\n", "");
+            return processedSource;
         }
     }
 

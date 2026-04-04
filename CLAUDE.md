@@ -280,6 +280,23 @@ Feature: MappingStepDataTables
 - This convention ensures the feature file name is clearly visible when running tests
 - It provides consistency between the file name and the feature name displayed in test results
 
+**CRITICAL: Escape Triple Quotes Inside DocStrings**
+
+When writing Gherkin DocStrings (delimited by `"""`), any triple quotes that appear *inside* the DocString content must be escaped as `\"\"\"` — all three quote characters must be escaped, not just the first. This commonly occurs when the expected generated Java code contains text blocks.
+
+Example — a Java text block inside a DocString:
+```gherkin
+  Then the following class should be generated:
+  """
+      @CsvSource(
+              textBlock = \"\"\"
+                      col1 | col2
+                      val1 | val2
+                      \"\"\"
+      )
+  """
+```
+
 **Additional .feature File Guidelines:**
 - Place test feature files in `annotation-processor/src/test/resources/features/`
 - Feature files serve as living documentation of the Gherkin-to-JUnit mapping

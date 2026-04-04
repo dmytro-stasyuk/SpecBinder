@@ -49,7 +49,12 @@
       "Bash(/Users/dmytro/Projects/SpecBinder/spec-binder/.idea_scripts/trigger_run_test_shortcut.sh)",
       "Read(//opt/homebrew/bin/**)",
       "Read(//usr/local/bin/**)",
-      "Bash(find /Users/dmytro/Projects/SpecBinder/spec-binder/common /Users/dmytro/Projects/SpecBinder/spec-binder/annotations -type f \\\\\\(-name *.java -o -name *.xml \\\\\\))"
+      "Bash(find /Users/dmytro/Projects/SpecBinder/spec-binder/common /Users/dmytro/Projects/SpecBinder/spec-binder/annotations -type f \\\\\\(-name *.java -o -name *.xml \\\\\\))",
+      "Bash(mvn help:describe -Dartifact=io.cucumber:cucumber-gherkin-messages:7.33.0 -Ddetail)",
+      "Bash(while read:*)",
+      "Bash(do grep:*)",
+      "Bash(jar tf:*)",
+      "Bash(unzip -p /Users/dmytro/.m2/repository/io/cucumber/messages/27.2.0/messages-27.2.0-sources.jar io/cucumber/messages/types/Examples.java)"
     ],
     "deny": [],
     "ask": []

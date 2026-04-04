@@ -22,6 +22,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings({"LombokGetterMayBeUsed", "ClassCanBeRecord"})
 class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
@@ -53,7 +54,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
         return baseType;
     }
 
-    void processRule(int ruleNumber, Rule rule, TypeSpec.Builder classBuilder) {
+    void processRule(int ruleNumber, Rule rule, TypeSpec.Builder classBuilder, Map<String, List<Class<?>>> preComputedStepTypes) {
 
         TypeSpec.Builder nestedRuleClassBuilder = TypeSpec
                 .classBuilder("Rule_" + ruleNumber)
@@ -153,7 +154,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
                 ruleScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
-                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(ruleScenarioCount, scenario, classBuilder);
+                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(ruleScenarioCount, scenario, classBuilder, preComputedStepTypes);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
                 nestedRuleClassBuilder.addMethod(scenarioMethod);

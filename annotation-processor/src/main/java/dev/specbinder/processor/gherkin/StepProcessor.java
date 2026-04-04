@@ -44,17 +44,25 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private final TypeElement baseType;
     private final Map<String, List<ElementMethodUtils.MethodSignature>> baseClassMethodSignatures;
     private final List<ElementMethodUtils.CucumberAnnotationEntry> cucumberAnnotationEntries;
+    private final Map<String, List<Class<?>>> preComputedStepTypes;
 
     private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]+?)(\"))");
 
     public StepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options,
                          DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,
                          TypeElement baseType) {
+        this(processingEnv, options, dataTableCollector, enumImportCollector, baseType, Map.of());
+    }
+
+    public StepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options,
+                         DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,
+                         TypeElement baseType, Map<String, List<Class<?>>> preComputedStepTypes) {
         this.processingEnv = processingEnv;
         this.options = options;
         this.dataTableCollector = dataTableCollector;
         this.enumImportCollector = enumImportCollector;
         this.baseType = baseType;
+        this.preComputedStepTypes = preComputedStepTypes;
         this.baseClassMethodSignatures = baseType != null
                 ? ElementMethodUtils.getAllInheritedMethodSignatures(processingEnv, baseType)
                 : Map.of();
@@ -1405,6 +1413,9 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         String stepPattern = processWithParameterPattern(
                 stepFirstLine, parameterPattern, parameterValues);
 
+        // Look up pre-computed widened types using the pattern before scenario parameter replacement
+        List<Class<?>> preComputed = preComputedStepTypes.get(stepPattern);
+
         if (scenarioParameterNames != null && !scenarioParameterNames.isEmpty()) {
             // process scenario parameters
             String paramsPatternPart = StringUtils.join(scenarioParameterNames, "|");
@@ -1418,10 +1429,9 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
         String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, stepLine,
                 getOptions().isUseStepKeywordInStepMethodName());
-
-        // Infer parameter types from values
         List<Class<?>> parameterTypes = new ArrayList<>();
-        for (String paramValue : parameterValues) {
+        for (int i = 0; i < parameterValues.size(); i++) {
+            String paramValue = parameterValues.get(i);
             // Check if this is a scenario outline placeholder (e.g., "<age>")
             if (paramValue.startsWith("<") && paramValue.endsWith(">")) {
                 // Extract placeholder name without angle brackets
@@ -1436,6 +1446,9 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                     }
                 }
                 parameterTypes.add(paramType);
+            } else if (preComputed != null && i < preComputed.size()) {
+                // Use pre-computed widened type (considers all occurrences of this step)
+                parameterTypes.add(preComputed.get(i));
             } else {
                 // For simple quoted parameters, infer the type from the value
                 Class<?> inferredType = ParameterConversionUtils.inferType(paramValue);

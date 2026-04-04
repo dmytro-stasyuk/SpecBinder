@@ -61,6 +61,11 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
     }
 
     MethodSpec.Builder processScenario(int scenarioNumber, Scenario scenario, TypeSpec.Builder classBuilder) {
+        return processScenario(scenarioNumber, scenario, classBuilder, Map.of());
+    }
+
+    MethodSpec.Builder processScenario(int scenarioNumber, Scenario scenario, TypeSpec.Builder classBuilder,
+                                       Map<String, List<Class<?>>> preComputedStepTypes) {
 
         List<MethodSpec> allMethodSpecs = classBuilder.methodSpecs;
 
@@ -168,6 +173,35 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         addOrderAnnotation(scenarioMethodBuilder, scenarioNumber);
 
         List<Tag> tags = scenario.getTags();
+
+        // Collect tags from Examples sections and combine with Scenario Outline tags
+        List<Examples> examplesForTags = scenario.getExamples();
+        if (examplesForTags != null && !examplesForTags.isEmpty()) {
+            List<Tag> allTags = new ArrayList<>();
+            if (tags != null) {
+                allTags.addAll(tags);
+            }
+            // Collect tags from all Examples sections, deduplicating by tag name
+            Set<String> seenTagNames = new LinkedHashSet<>();
+            for (Tag t : allTags) {
+                String name = t.getName().trim();
+                seenTagNames.add(name.startsWith("@") ? name.substring(1) : name);
+            }
+            for (Examples ex : examplesForTags) {
+                List<Tag> exTags = ex.getTags();
+                if (exTags != null) {
+                    for (Tag t : exTags) {
+                        String name = t.getName().trim();
+                        String normalizedName = name.startsWith("@") ? name.substring(1) : name;
+                        if (seenTagNames.add(normalizedName)) {
+                            allTags.add(t);
+                        }
+                    }
+                }
+            }
+            tags = allTags;
+        }
+
         if (tags != null && !tags.isEmpty()) {
             AnnotationSpec jUnitTagsAnnotation = TagUtils.toJUnitTagsAnnotation(tags);
             scenarioMethodBuilder.addAnnotation(jUnitTagsAnnotation);
@@ -225,7 +259,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                         );
                     } else if (item instanceof Step regularStep) {
                         // Process regular step
-                        StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
+                        StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType, preComputedStepTypes);
                         MethodSpec stepMethodSpec = stepProcessor.processStep(
                                 regularStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
                                 resolvedStepKeywords,
@@ -256,7 +290,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                 // Original logic without composite steps
                 for (Step scenarioStep : scenarioSteps) {
 
-                    StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
+                    StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType, preComputedStepTypes);
                     MethodSpec stepMethodSpec = stepProcessor.processStep(
                             scenarioStep, scenarioMethodBuilder, scenarioStepsMethodSpecs,
                             resolvedStepKeywords,
@@ -377,6 +411,29 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         // Add a @CsvSource annotation for each Examples section
         for (Examples examplesTable : examples) {
+
+            // Add a marker annotation for Examples name/description that will be
+            // post-processed into a block comment by GeneratedFileResult.writeTo()
+            String examplesName = examplesTable.getName();
+            String examplesDescription = examplesTable.getDescription();
+            if (StringUtils.isNotBlank(examplesName)) {
+                StringBuilder commentContent = new StringBuilder();
+                commentContent.append("Examples: ").append(examplesName);
+                if (StringUtils.isNotBlank(examplesDescription)) {
+                    for (String line : examplesDescription.split("\n")) {
+                        String trimmedLine = line.trim();
+                        if (!trimmedLine.isEmpty()) {
+                            commentContent.append("__NL__  ").append(trimmedLine);
+                        }
+                    }
+                }
+                AnnotationSpec commentMarker = AnnotationSpec
+                        .builder(SuppressWarnings.class)
+                        .addMember("value", "$S", "__EXAMPLES_COMMENT__:" + commentContent)
+                        .build();
+                scenarioMethodBuilder.addAnnotation(commentMarker);
+            }
+
             /**
              * convert Examples into data table so that we can format it easily with pipe characters
              */
