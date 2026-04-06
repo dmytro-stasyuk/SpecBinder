@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- automated tests setup
 - Simplified GitHub Release creation step in the release workflow
 
 ### Fixed
