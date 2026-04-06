@@ -21,6 +21,8 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: recursive
+          ssh-key: ${{ secrets.TESTS_REPO_SSH_KEY }}
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -65,6 +67,15 @@ jobs:
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: ./mvnw validate -Prelease
+
+      # Tag the tests submodule with the same release version
+      - name: Tag tests repo
+        run: |
+          cd annotation-processor/src/test
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "release_${{ steps.version.outputs.release }}"
+          git push origin "release_${{ steps.version.outputs.release }}"
 
       # Rename rc → rc_X.Y.Z (pointing at original rc commit)
       - name: Rename rc tag
