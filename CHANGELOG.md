@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.30.0]
+
+### Added
+
 - Support for escaping spaces and backslashes inside DocString step argument types
 
 ### Changed
