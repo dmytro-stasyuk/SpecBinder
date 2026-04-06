@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [0.28.0]
+
+### Added
+
 - Support for escaping spaces and backslashes in Gherkin elements
 
 ### Changed
