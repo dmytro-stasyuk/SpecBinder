@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- Fixed release profile running on child modules by adding `inherited=false`
+
 ### Removed
 
 ## [0.28.0]
