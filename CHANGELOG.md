@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- Fixed source code archives still appearing in GitHub Releases by using two-step API approach
+
 ### Removed
 
 ## [2026.33.0]

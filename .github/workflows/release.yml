@@ -79,8 +79,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           NOTES=$(awk '/^## \[/{if(found) exit; found=1; next} found' CHANGELOG.md)
-          gh api repos/${{ github.repository }}/releases \
+          RELEASE_ID=$(gh api repos/${{ github.repository }}/releases \
             -f tag_name="release_${{ steps.version.outputs.release }}" \
             -f name="${{ steps.version.outputs.release }}" \
             -f body="$NOTES" \
+            --jq '.id')
+          gh api -X PATCH repos/${{ github.repository }}/releases/$RELEASE_ID \
             -F exclude_source_code_from_release=true
