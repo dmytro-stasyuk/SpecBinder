@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- Excluded source code archives from GitHub Releases
+
 ### Fixed
 
 ### Removed
