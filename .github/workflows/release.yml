@@ -73,16 +73,12 @@ jobs:
           git tag "rc_${{ steps.version.outputs.release }}" "${{ steps.rc.outputs.sha }}"
           git push origin "rc_${{ steps.version.outputs.release }}"
 
-      # Create GitHub Release with changelog entries (no source archives)
+      # Create GitHub Release with changelog entries
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          NOTES=$(awk '/^## \[/{if(found) exit; found=1; next} found' CHANGELOG.md)
-          RELEASE_ID=$(gh api repos/${{ github.repository }}/releases \
-            -f tag_name="release_${{ steps.version.outputs.release }}" \
-            -f name="${{ steps.version.outputs.release }}" \
-            -f body="$NOTES" \
-            --jq '.id')
-          gh api -X PATCH repos/${{ github.repository }}/releases/$RELEASE_ID \
-            -F exclude_source_code_from_release=true
+          awk '/^## \[/{if(found) exit; found=1; next} found' CHANGELOG.md | \
+            gh release create "release_${{ steps.version.outputs.release }}" \
+              --title "${{ steps.version.outputs.release }}" \
+              --notes-file -
