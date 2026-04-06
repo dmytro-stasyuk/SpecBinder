@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 - Support for escaping spaces and backslashes in Gherkin elements
+- Automated release workflow via GitHub Actions triggered by `rc` tag push
+- Changelog stamping as part of the release process
 
 ### Changed
 
