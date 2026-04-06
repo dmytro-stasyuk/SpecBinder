@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+### Fixed
+
+### Removed
+
+## [2026.37.0]
+
+### Added
+
+### Changed
+
 - automated tests setup
 - Simplified GitHub Release creation step in the release workflow
 - Moved annotation-processor test suite to a private Git submodule for cross-project reuse
