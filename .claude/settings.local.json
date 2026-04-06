@@ -53,7 +53,8 @@
       "mcp__idea__get_run_configurations",
       "mcp__idea__execute_run_configuration",
       "Bash(mvn -v)",
-      "mcp__idea__open_file_in_editor"
+      "mcp__idea__open_file_in_editor",
+      "Bash(perl:*)"
     ],
     "deny": [],
     "ask": []

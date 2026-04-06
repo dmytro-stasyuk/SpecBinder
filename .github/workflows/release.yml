@@ -1,0 +1,90 @@
+# Triggered when the "rc" (release candidate) tag is pushed.
+# Automates the full release cycle:
+#   1. Strips -SNAPSHOT, stamps changelog, builds, deploys to Maven Central
+#   2. Commits the release, tags with release_X.Y.Z
+#   3. Bumps to next minor SNAPSHOT version for continued development
+#   4. Pushes everything back and renames the "rc" tag to "rc_X.Y.Z"
+#   5. Creates a GitHub Release with changelog notes
+name: Release
+
+on:
+  push:
+    tags: ['rc']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      # Tag checkout leaves us in detached HEAD — switch to main
+      - name: Checkout main branch
+        run: git checkout main
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Extract release version from pom.xml before the profile modifies it
+      - name: Extract release version
+        id: version
+        run: |
+          raw=$(grep '<version>' pom.xml | head -1 | sed 's/.*<version>\(.*\)<\/version>.*/\1/')
+          release="${raw%-SNAPSHOT}"
+          echo "release=$release" >> "$GITHUB_OUTPUT"
+          echo "Release version: $release"
+
+      # Save the rc tag commit and delete the local tag so it doesn't get pushed back
+      - name: Save rc commit and delete local rc tag
+        id: rc
+        run: |
+          echo "sha=$(git rev-parse rc)" >> "$GITHUB_OUTPUT"
+          git tag -d rc
+
+      # Run the full release: version set → changelog stamp → commit → deploy → tag → bump → commit → push
+      - name: Release
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: ./mvnw validate -Prelease
+
+      # Rename rc → rc_X.Y.Z (pointing at original rc commit)
+      - name: Rename rc tag
+        run: |
+          git push origin :refs/tags/rc
+          git tag "rc_${{ steps.version.outputs.release }}" "${{ steps.rc.outputs.sha }}"
+          git push origin "rc_${{ steps.version.outputs.release }}"
+
+      # Create GitHub Release with changelog entries
+      - name: Extract release notes from CHANGELOG.md
+        id: changelog
+        run: |
+          notes=$(awk '/^## \[/{if(found) exit; found=1; next} found' CHANGELOG.md)
+          echo "notes<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$notes" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "release_${{ steps.version.outputs.release }}"
+          name: ${{ steps.version.outputs.release }}
+          body: ${{ steps.changelog.outputs.notes }}

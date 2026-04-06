@@ -204,7 +204,24 @@
                                     </arguments>
                                 </configuration>
                             </execution>
-                            <!-- Step 2: Commit release version -->
+                            <!-- Step 2: Stamp CHANGELOG.md — move Unreleased entries under new version heading -->
+                            <execution>
+                                <id>stamp-changelog</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>perl</executable>
+                                    <arguments>
+                                        <argument>-i</argument>
+                                        <argument>-pe</argument>
+                                        <argument>s/^## Unreleased$/## Unreleased\n\n### Added\n\n### Changed\n\n### Fixed\n\n### Removed\n\n## [${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}]/</argument>
+                                        <argument>CHANGELOG.md</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- Step 3: Commit release version -->
                             <execution>
                                 <id>git-commit-release</id>
                                 <phase>validate</phase>
@@ -220,7 +237,7 @@
                                     </arguments>
                                 </configuration>
                             </execution>
-                            <!-- Step 3: Build, test, sign, and deploy to Maven Central -->
+                            <!-- Step 4: Build, test, sign, and deploy to Maven Central -->
                             <execution>
                                 <id>deploy-release</id>
                                 <phase>validate</phase>
@@ -235,7 +252,7 @@
                                     </arguments>
                                 </configuration>
                             </execution>
-                            <!-- Step 4: Tag the release -->
+                            <!-- Step 5: Tag the release -->
                             <execution>
                                 <id>git-tag</id>
                                 <phase>validate</phase>
@@ -246,11 +263,11 @@
                                     <executable>git</executable>
                                     <arguments>
                                         <argument>tag</argument>
-                                        <argument>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</argument>
+                                        <argument>release_${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
-                            <!-- Step 5: Bump to next minor SNAPSHOT version -->
+                            <!-- Step 6: Bump to next minor SNAPSHOT version -->
                             <execution>
                                 <id>set-next-snapshot</id>
                                 <phase>validate</phase>
@@ -267,7 +284,7 @@
                                     </arguments>
                                 </configuration>
                             </execution>
-                            <!-- Step 6: Commit next development version -->
+                            <!-- Step 7: Commit next development version -->
                             <execution>
                                 <id>git-commit-snapshot</id>
                                 <phase>validate</phase>
@@ -283,7 +300,7 @@
                                     </arguments>
                                 </configuration>
                             </execution>
-                            <!-- Step 7: Push commits and tags -->
+                            <!-- Step 8: Push commits and tags -->
                             <execution>
                                 <id>git-push</id>
                                 <phase>validate</phase>
@@ -300,6 +317,7 @@
                                     </arguments>
                                 </configuration>
                             </execution>
+
                         </executions>
                     </plugin>
                 </plugins>
