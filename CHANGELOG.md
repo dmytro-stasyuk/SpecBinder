@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+### Removed
+
+## [2026.31.0]
+
+### Added
+
+### Changed
+
+### Fixed
+
 - Fixed GitHub Release creation failing due to shell interpretation of backticks in changelog notes
 
 ### Removed
