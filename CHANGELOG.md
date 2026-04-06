@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - automated tests setup
 - Simplified GitHub Release creation step in the release workflow
+- Moved annotation-processor test suite to a private Git submodule for cross-project reuse
+- Release workflow now checks out the test submodule and tags the tests repository on release
 
 ### Fixed
 

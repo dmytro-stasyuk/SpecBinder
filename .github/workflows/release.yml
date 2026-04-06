@@ -35,6 +35,10 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
+      # Restore HTTPS remote for the main repo (ssh-key overrides it to SSH for submodule access)
+      - name: Configure main repo remote
+        run: git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+
       # Tag checkout leaves us in detached HEAD — switch to main
       - name: Checkout main branch
         run: git checkout main
