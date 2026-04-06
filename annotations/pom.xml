@@ -24,7 +24,7 @@
                     <publishingServerId>central</publishingServerId>
                     <autoPublish>true</autoPublish>
                     <!--<waitUntil>validated</waitUntil>-->
-                    <waitForPublishCompletion>true</waitForPublishCompletion>
+                    <waitForPublishCompletion>${central.waitForPublishCompletion}</waitForPublishCompletion>
                     <!--<skipPublishing>${maven.deploy.skip}</skipPublishing>-->
                 </configuration>
             </plugin>

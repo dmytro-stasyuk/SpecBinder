@@ -36,6 +36,7 @@
         <junit.jupiter.version>5.14.1</junit.jupiter.version>
         <junit.jupiter.platform.suite>1.14.1</junit.jupiter.platform.suite>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <central.waitForPublishCompletion>false</central.waitForPublishCompletion>
     </properties>
     <modules>
         <module>annotations</module>
@@ -146,4 +147,163 @@
     <!--        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
     <!--    </repository>-->
     <!--</distributionManagement>-->
+    <profiles>
+        <!--
+            Release profile: automates the full release workflow.
+            Usage: ./mvnw validate -Prelease
+
+            Steps performed:
+            1. Parse current version (build-helper-maven-plugin)
+            2. Remove -SNAPSHOT suffix (versions-maven-plugin via exec)
+            3. Commit release version
+            4. Build, test, sign, and deploy to Maven Central
+            5. Tag the release (no 'v' prefix)
+            6. Bump minor version to next -SNAPSHOT
+            7. Commit next development version
+            8. Push commits and tags to origin
+        -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Parse current version into components -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>parse-version</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>parse-version</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Orchestrate release steps -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <!-- Step 1: Set release version (remove -SNAPSHOT) -->
+                            <execution>
+                                <id>set-release-version</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>./mvnw</executable>
+                                    <arguments>
+                                        <argument>versions:set</argument>
+                                        <argument>-DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</argument>
+                                        <argument>-DgenerateBackupPoms=false</argument>
+                                        <argument>-q</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- Step 2: Commit release version -->
+                            <execution>
+                                <id>git-commit-release</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>git</executable>
+                                    <arguments>
+                                        <argument>commit</argument>
+                                        <argument>-am</argument>
+                                        <argument>Release ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- Step 3: Build, test, sign, and deploy to Maven Central -->
+                            <execution>
+                                <id>deploy-release</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>./mvnw</executable>
+                                    <arguments>
+                                        <argument>clean</argument>
+                                        <argument>deploy</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- Step 4: Tag the release -->
+                            <execution>
+                                <id>git-tag</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>git</executable>
+                                    <arguments>
+                                        <argument>tag</argument>
+                                        <argument>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- Step 5: Bump to next minor SNAPSHOT version -->
+                            <execution>
+                                <id>set-next-snapshot</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>./mvnw</executable>
+                                    <arguments>
+                                        <argument>versions:set</argument>
+                                        <argument>-DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0-SNAPSHOT</argument>
+                                        <argument>-DgenerateBackupPoms=false</argument>
+                                        <argument>-q</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- Step 6: Commit next development version -->
+                            <execution>
+                                <id>git-commit-snapshot</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>git</executable>
+                                    <arguments>
+                                        <argument>commit</argument>
+                                        <argument>-am</argument>
+                                        <argument>Next ${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0-SNAPSHOT</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- Step 7: Push commits and tags -->
+                            <execution>
+                                <id>git-push</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>git</executable>
+                                    <arguments>
+                                        <argument>push</argument>
+                                        <argument>origin</argument>
+                                        <argument>main</argument>
+                                        <argument>--tags</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
