@@ -1,0 +1,3 @@
+[submodule "annotation-processor/src/test"]
+	path = annotation-processor/src/test
+	url = git@github.com:dmytro-stasyuk/spec-binder-tests.git
