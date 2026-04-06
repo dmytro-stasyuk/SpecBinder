@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- Excluded auto-generated source code archives from GitHub Releases
+
 ### Removed
 
 ## [2026.31.0]

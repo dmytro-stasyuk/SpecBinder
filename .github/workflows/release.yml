@@ -73,19 +73,14 @@ jobs:
           git tag "rc_${{ steps.version.outputs.release }}" "${{ steps.rc.outputs.sha }}"
           git push origin "rc_${{ steps.version.outputs.release }}"
 
-      # Create GitHub Release with changelog entries
+      # Create GitHub Release with changelog entries (no source archives)
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          awk '/^## \[/{if(found) exit; found=1; next} found' CHANGELOG.md | \
-            gh release create "release_${{ steps.version.outputs.release }}" \
-              --title "${{ steps.version.outputs.release }}" \
-              --notes-file -
-
-      - name: Delete source archives from release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release delete-asset "release_${{ steps.version.outputs.release }}" "source code (zip)" --yes 2>/dev/null || true
-          gh release delete-asset "release_${{ steps.version.outputs.release }}" "source code (tar.gz)" --yes 2>/dev/null || true
+          NOTES=$(awk '/^## \[/{if(found) exit; found=1; next} found' CHANGELOG.md)
+          gh api repos/${{ github.repository }}/releases \
+            -f tag_name="release_${{ steps.version.outputs.release }}" \
+            -f name="${{ steps.version.outputs.release }}" \
+            -f body="$NOTES" \
+            -F exclude_source_code_from_release=true
