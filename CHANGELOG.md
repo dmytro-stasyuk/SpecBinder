@@ -8,8 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- Support for escaping spaces and backslashes inside DocString step argument types
+
 ### Changed
 
+- Adopted calendar year as the major version in the versioning scheme (e.g., `2026.30.0`)
 - Excluded source code archives from GitHub Releases
 
 ### Fixed
