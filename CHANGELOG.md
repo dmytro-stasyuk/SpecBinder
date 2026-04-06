@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- Simplified GitHub Release creation step in the release workflow
+
 ### Fixed
 
 ### Removed
@@ -21,8 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 ### Fixed
-
-- Fixed source code archives still appearing in GitHub Releases by using two-step API approach
 
 ### Removed
 

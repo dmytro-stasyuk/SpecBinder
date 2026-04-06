@@ -54,7 +54,9 @@
       "mcp__idea__execute_run_configuration",
       "Bash(mvn -v)",
       "mcp__idea__open_file_in_editor",
-      "Bash(perl:*)"
+      "Bash(perl:*)",
+      "Bash(mkdir -p /Users/dmytro/Projects/SpecBinder/spec-binder-tests/annotation-processor/src/)",
+      "Bash(cp -R annotation-processor/src/test /Users/dmytro/Projects/SpecBinder/spec-binder-tests/annotation-processor/src/)"
     ],
     "deny": [],
     "ask": []
