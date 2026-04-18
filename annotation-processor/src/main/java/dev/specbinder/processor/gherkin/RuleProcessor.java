@@ -154,7 +154,8 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
                 ruleScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
-                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(ruleScenarioCount, scenario, classBuilder, preComputedStepTypes);
+                String rulePrefix = "rule_" + ruleNumber + "_";
+                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(rulePrefix, ruleScenarioCount, scenario, classBuilder, preComputedStepTypes);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
                 nestedRuleClassBuilder.addMethod(scenarioMethod);

@@ -111,7 +111,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                 }
                 featureScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
-                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(featureScenarioCount, scenario, classBuilder, preComputedStepTypes);
+                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario("", featureScenarioCount, scenario, classBuilder, preComputedStepTypes);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
                 classBuilder.addMethod(scenarioMethod);

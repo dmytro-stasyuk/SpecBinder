@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- Scenario test methods inside rule nested classes are now named `rule_N_scenario_M` instead of `scenario_M` to include the rule index prefix
+
 ### Fixed
 
 ### Removed

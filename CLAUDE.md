@@ -323,6 +323,8 @@ git add file1.java file2.feature file3.md
 
 This ensures all changes are tracked and ready for commit.
 
+**Submodule awareness:** `annotation-processor/src/test/` is a Git submodule (separate repo). Changes to test files must be staged and committed inside that directory before staging the submodule pointer in the parent repo. When modifying both test and main code, commit in the submodule first, then in the parent.
+
 ## Important Notes
 
 - **Module dependency chain**: common → annotations → annotation-processor
@@ -334,6 +336,8 @@ This ensures all changes are tracked and ready for commit.
 - **Self-documenting tests**: Test .feature files serve as living documentation of the Gherkin-to-JUnit mapping
 
 ## Testing Strategy
+
+**Test code location:** The annotation-processor test suite lives in a separate private repository (`spec-binder-tests`) included as a Git submodule at `annotation-processor/src/test/`. This is transparent to Maven and IntelliJ — test sources resolve normally. See `docs/test-setup.md` for full details.
 
 The project uses a self-hosting approach - Cucumber tests validate the Cucumber-to-JUnit generator:
 - Test features in `annotation-processor/src/test/resources/features/`

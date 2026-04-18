@@ -61,10 +61,10 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
     }
 
     MethodSpec.Builder processScenario(int scenarioNumber, Scenario scenario, TypeSpec.Builder classBuilder) {
-        return processScenario(scenarioNumber, scenario, classBuilder, Map.of());
+        return processScenario("", scenarioNumber, scenario, classBuilder, Map.of());
     }
 
-    MethodSpec.Builder processScenario(int scenarioNumber, Scenario scenario, TypeSpec.Builder classBuilder,
+    MethodSpec.Builder processScenario(String methodNamePrefix, int scenarioNumber, Scenario scenario, TypeSpec.Builder classBuilder,
                                        Map<String, List<Class<?>>> preComputedStepTypes) {
 
         List<MethodSpec> allMethodSpecs = classBuilder.methodSpecs;
@@ -73,7 +73,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         List<MethodSpec> scenarioStepsMethodSpecs = new ArrayList<>(scenarioSteps.size());
         List<String> resolvedStepKeywords = new ArrayList<>(scenarioSteps.size());
 
-        String scenarioMethodName = "scenario_" + scenarioNumber;
+        String scenarioMethodName = methodNamePrefix + "scenario_" + scenarioNumber;
         MethodSpec.Builder scenarioMethodBuilder = MethodSpec
                 .methodBuilder(scenarioMethodName)
                 //                .addParameter(TestInfo.class, "testInfo")
