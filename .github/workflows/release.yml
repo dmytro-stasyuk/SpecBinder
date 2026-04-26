@@ -21,8 +21,33 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-          submodules: recursive
-          ssh-key: ${{ secrets.TESTS_REPO_SSH_KEY }}
+
+      - name: Configure SSH for submodules
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.TESTS_REPO_SSH_KEY }}" > ~/.ssh/tests_key
+          echo "${{ secrets.EXEC_REPORTER_SSH_KEY }}" > ~/.ssh/exec_reporter_key
+          chmod 600 ~/.ssh/tests_key ~/.ssh/exec_reporter_key
+          cat >> ~/.ssh/config <<EOF
+          Host github-tests
+            HostName github.com
+            User git
+            IdentityFile ~/.ssh/tests_key
+            IdentitiesOnly yes
+          Host github-exec-reporter
+            HostName github.com
+            User git
+            IdentityFile ~/.ssh/exec_reporter_key
+            IdentitiesOnly yes
+          EOF
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          git config --global url."git@github-tests:dmytro-stasyuk/spec-binder-tests.git".insteadOf "git@github.com:dmytro-stasyuk/spec-binder-tests.git"
+          git config --global url."git@github-exec-reporter:dmytro-stasyuk/spec-binder-tests-execution-reporter.git".insteadOf "git@github.com:dmytro-stasyuk/spec-binder-tests-execution-reporter.git"
+
+      - name: Checkout submodules
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --force --recursive
 
       - name: Set up Java
         uses: actions/setup-java@v5
