@@ -12,6 +12,7 @@ import java.net.URI;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -98,6 +99,8 @@ public class GlobPatternMatcher implements LoggingSupport {
                 return FileVisitResult.CONTINUE;
             }
         });
+
+        Collections.sort(matchingFiles);
 
         logVerbose("Found " + matchingFiles.size() + " files matching pattern: " + globPattern);
 
