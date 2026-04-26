@@ -15,44 +15,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 **IMPORTANT: Running Tests**
-- **Use a hybrid approach** to ensure reliable test execution:
-  1. **First**, trigger a full project rebuild using the rebuild script
-  2. **Then**, execute tests using IntelliJ IDEA's MCP server tools
-- This two-step approach is necessary because IntelliJ's automatic build is asynchronous - running tests immediately after code changes may execute against stale compiled classes
+- **Run tests directly** via IntelliJ IDEA's MCP server tools — the IDE auto-builds the project, so no manual rebuild is needed before running tests
 - Use the `mcp__jetbrains__get_run_configurations` tool to list available run configurations
 - Use the `mcp__jetbrains__execute_run_configuration` tool to execute specific tests
 - **NEVER run the `AllTests` suite unless the user explicitly asks you to.** Do not run it automatically after completing implementation or fix work, even when you believe the task is done. When verification of broader test coverage is genuinely needed, run individual test suites from `annotation-processor/src/test/java/dev/specbinder/processor/tests/` (e.g., `MappingStepsTest`, `MappingRuleTest`, `GeneratorOptionsTest`, `LifecycleVisibilityTest`) — and only the ones relevant to the change you just made.
 - When the user explicitly asks to run all tests, the suite is `dev.specbinder.processor.tests.AllTests`. Prefer running narrower individual suites if the AllTests output would be too large to parse.
-- This hybrid approach provides compile-time guarantees + IntelliJ's better test integration and IDE support
 - **Never use `mvn test` commands** unless explicitly requested by the user
 
 **Example test execution workflow:**
 ```bash
-# Step 1: Trigger full project rebuild in IntelliJ IDEA
-.idea_scripts/trigger_rebuild_project_shortcut.sh
-
-# Step 2: Run tests via IntelliJ MCP server
-mcp__jetbrains__execute_run_configuration(configurationName="AllTests")
+# Run tests via IntelliJ MCP server (IDE auto-builds before execution)
+mcp__jetbrains__execute_run_configuration(configurationName="Feature: MappingDataTableToListOfObjects")
 ```
 
 **IMPORTANT: Compilation and Project Rebuild**
 - **NEVER USE MAVEN FOR COMPILATION** - DO NOT RUN `mvn clean compile`, `mvn compile`, `mvn test-compile`, OR ANY MAVEN BUILD COMMANDS
-- **ALWAYS use the rebuild script** to trigger full project rebuilds in IntelliJ IDEA:
-  ```bash
-  .idea_scripts/trigger_rebuild_project_shortcut.sh
-  ```
-- **When to trigger a rebuild:**
-  - After making code changes and before running tests
-  - When verifying that tests are passing
-  - When checking for regressions across the project
-  - Any time you need to ensure all code is compiled with the latest changes
-- The rebuild script triggers IntelliJ IDEA's "Rebuild Project" action, which:
-  - Cleans all compiled output
-  - Runs the annotation processor on all modules
-  - Compiles all source and test code from scratch
-  - Ensures no stale compiled classes exist
-- IntelliJ IDEA also builds automatically when files are saved, but this automatic build is asynchronous and may not complete before tests run
-- **The rebuild script guarantees synchronous, complete compilation** before proceeding to test execution
+- **Do NOT run the rebuild script by default.** The IDE is configured to auto-build the project. Only run `.idea_scripts/trigger_rebuild_project_shortcut.sh` when the user explicitly asks you to rebuild.
+- The rebuild script triggers IntelliJ IDEA's "Rebuild Project" action, which cleans all compiled output and recompiles from scratch — use it only when explicitly requested
 - ONLY USE MAVEN BUILD COMMANDS WHEN EXPLICITLY REQUESTED BY THE USER
 
 ## Multi-Module Architecture

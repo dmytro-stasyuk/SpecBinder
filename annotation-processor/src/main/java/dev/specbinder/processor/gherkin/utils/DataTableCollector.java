@@ -92,27 +92,24 @@ public class DataTableCollector {
                             ". Step must have at least two words.");
         }
 
-        // Get last word
-        String lastWord = words[words.length - 1];
-
-        // Handle hyphenated words (e.g., "user-settings" -> "userSettings")
-        if (lastWord.contains("-")) {
-            lastWord = convertHyphenatedToCamelCase(lastWord);
+        // Walk backwards to find the last word containing alphanumeric characters
+        String lastWord = null;
+        for (int i = words.length - 1; i >= 0; i--) {
+            String candidate = words[i];
+            if (candidate.contains("-")) {
+                candidate = convertHyphenatedToCamelCase(candidate);
+            }
+            candidate = candidate.replaceAll("[^a-zA-Z0-9]", "");
+            if (!candidate.isEmpty() && Character.isJavaIdentifierStart(candidate.charAt(0))) {
+                lastWord = candidate;
+                break;
+            }
         }
 
-        // Remove remaining punctuation
-        lastWord = lastWord.replaceAll("[^a-zA-Z0-9]", "");
-
-        if (lastWord.isEmpty()) {
+        if (lastWord == null) {
             throw new ProcessingException(
                     "Cannot derive valid record name from step: " + stepText +
-                            ". Last word contains no alphanumeric characters.");
-        }
-
-        if (!Character.isJavaIdentifierStart(lastWord.charAt(0))) {
-            throw new ProcessingException(
-                    "Cannot derive valid Java record name from step: " + stepText +
-                            ". Last word '" + lastWord + "' is not a valid Java identifier.");
+                            ". No word contains valid Java identifier characters.");
         }
 
         // Handle all-caps words (e.g., "API" -> "Api")

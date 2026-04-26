@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- DataTable object type naming when step text ends with non-alphanumeric characters (e.g., `"Given the following reports :"` with a trailing space before the colon)
+
 ### Removed
 
 ## [2026.37.0]

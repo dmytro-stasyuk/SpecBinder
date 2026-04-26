@@ -1,9 +1,9 @@
 # Spec Binder
 
 **Spec Binder** turns natural-language Gherkin specs into **pure JUnit** test code at **compile time**.
-No runtime step discovery, no Cucumber runner. Your `.feature` files become first-class Java code that compiles and runs like any other JUnit test.
+No runtime step discovery, no Cucumber runner. Your `.feature` / `.specb` files become first-class Java code that compiles and runs like any other JUnit test.
 
-> Built around an annotation-processor approach that parses feature files during `javac`, generating JUnit test
+> Built around an annotation-processor approach that parses gherkin spec files during `javac`, generating JUnit test
 > skeletons where each **Given/When/Then** is converted into a strongly-named Java method call.
 
 ---
@@ -62,8 +62,8 @@ JUnit method for each empty Rule/Scenario, so you immediately have red tests to 
 ## How it works (at a glance)
 
 1. Create a **marker class** annotated with `@Gherkin2JUnit("relative/path/to.feature")` — this points the annotation
-   processor at the feature. The path is optional: a bare `@Gherkin2JUnit` (no value) uses **convention-based discovery**, processing all `.feature` files found in the same package as the annotated class.
-2. During compilation, the annotation processor parses the feature and generates:
+   processor at the feature. The path is optional: a bare `@Gherkin2JUnit` (no value) uses **convention-based discovery**, processing all `.feature` and `.specb` files found in the same package as the annotated class.
+2. During compilation, the annotation processor parses the gherkin spec file and generates:
 
     * A **JUnit test class** (one per feature).
     * For each Scenario, a `@Test` method that calls **per-step methods** derived from step text.
@@ -89,7 +89,7 @@ JUnit method for each empty Rule/Scenario, so you immediately have red tests to 
 
 ## Usage example
 
-1. **Create or place** a `.feature` file under your chosen directory (e.g., `src/test/resources/specs/...`).
+1. **Create or place** a `.feature` or `.specb` file under your chosen directory (e.g., `src/test/resources/specs/...`).
 
 **Example** (`specs/cart.feature`):
 
@@ -278,7 +278,7 @@ The [`examples/`](examples/) directory contains ready-to-run Maven modules organ
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-3/README.md">TDD Workflow</a></td><td>Iterative red-green development with @new tags</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-4/README.md">Abstract Mode</a></td><td>Compile-time step enforcement</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-5/README.md">DocStrings</a></td><td>Multi-line input (JSON, plain text)</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-6/README.md">Convention Discovery</a></td><td>Co-located .feature files, bare @Gherkin2JUnit</td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-6/README.md">Convention Discovery</a></td><td>Co-located .feature / .specb files, bare @Gherkin2JUnit</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-7/README.md">Glob Patterns</a></td><td>Multiple features from a single marker class</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-8/README.md">Type Refinement</a></td><td>Enum refinement of generated Param classes</td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-9/README.md">Config Inheritance</a></td><td>@Gherkin2JUnitOptions inheritance and override</td></tr>
@@ -299,7 +299,7 @@ details
 <summary>Feature</summary>
 
 + The feature’s keyword, title, and description lines appear as a **class-level JavaDoc** comment on the generated
-  class. A `@DisplayName` annotation is also added, using the **feature file name** (without `.feature` extension) — not
+  class. A `@DisplayName` annotation is also added, using the **spec file name** (without `.feature` / `.specb` extension) — not
   the Feature title.
 
 <table>
@@ -1381,7 +1381,7 @@ public static class ItemsParam {
 **Improving type safety further:** Once the code is generated, you can move the step method stub and
 the `ItemsParam` class into your marker/base class and refine the field types — for example, changing a
 `String` field to an `enum`. On the next generation run, the generator detects your class in the hierarchy
-and uses it instead of generating a new one. If a value in the feature file doesn't match a valid enum constant,
+and uses it instead of generating a new one. If a value in the spec file doesn't match a valid enum constant,
 you get a **compilation error** — catching data mismatches at compile time rather than at runtime.
 
 ```java
@@ -1402,7 +1402,7 @@ public void myCartContainsTheFollowingItems(List<ItemsParam> items) {
 }
 ```
 
-Now suppose someone adds a row to the feature file with an invalid category:
+Now suppose someone adds a row to the spec file with an invalid category:
 
 ```gherkin
 Given my cart contains the following items:
@@ -1440,7 +1440,7 @@ myCartContainsTheFollowingItems(
 ```
 
 The mismatch is caught **at compile time** — you must either add `sports` to the `Category` enum or fix the
-feature file before the project compiles.
+spec file before the project compiles.
 
 ---
 
@@ -1704,7 +1704,7 @@ All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You ca
 | `useStepKeywordInStepMethodName`        | boolean | `false`                  | Include Given/When/Then keyword as a prefix in step method names                                                                                          |
 | `addCucumberStepAnnotations`            | boolean | `false`                  | Add `@Given`/`@When`/`@Then` Cucumber annotations to step methods                                                                                        |
 | `useCucumberAnnotationsForStepMatching` | boolean | `true`                   | Use Cucumber annotations for step matching when present in base class                                                                                     |
-| `addSourceLineNumbers`                  | boolean | `false`                  | Embed source line numbers from the feature file into generated code: line numbers in `@DisplayName` annotations and `[N]` prefixes in step block comments |
+| `addSourceLineNumbers`                  | boolean | `false`                  | Embed source line numbers from the spec file into generated code: line numbers in `@DisplayName` annotations and `[N]` prefixes in step block comments |
 | `enableCompositeSteps`                  | boolean | `false`                  | Enable composite step pattern                                                                                                                             |
 | `useQualifiedEnumConstants`             | boolean | `false`                  | Use fully qualified enum constant names in generated code                                                                                                 |
 
@@ -1773,17 +1773,17 @@ public abstract class CartFeature extends BaseFeatureOptions {
 </dependencies>
 ```
 
-### Recommended: place feature files next to Java sources
+### Recommended: place spec files next to Java sources
 
-By default, Gherkin `.feature` files are placed under `src/test/resources/`. Consider placing them under
+By default, Gherkin `.feature` / `.specb` files are placed under `src/test/resources/`. Consider placing them under
 `src/test/java/` instead — in the same package as your marker classes. This makes it easy to navigate between the
-annotated class and its feature file in the IDE, and keeps related files together.
+annotated class and its spec file in the IDE, and keeps related files together.
 
 <details>
 
 <summary>Maven pom.xml configuration</summary>
 
-To allow Maven to pick up `.feature` files from `src/test/java/`, add a test resource configuration to your `pom.xml`:
+To allow Maven to pick up `.feature` / `.specb` files from `src/test/java/`, add a test resource configuration to your `pom.xml`:
 
 ```xml
 <build>
@@ -1792,6 +1792,7 @@ To allow Maven to pick up `.feature` files from `src/test/java/`, add a test res
             <directory>src/test/java</directory>
             <includes>
                 <include>**/*.feature</include>
+                <include>**/*.specb</include>
             </includes>
         </testResource>
         <testResource>
@@ -1805,98 +1806,23 @@ To allow Maven to pick up `.feature` files from `src/test/java/`, add a test res
 
 <br/>
 
-### Recommended: auto-trigger recompilation on feature file changes
+### Recommended: install the SpecBinder IntelliJ plugin
 
-IDEs do not treat `.feature` files as source files, so editing a feature file alone will not trigger recompilation
-of the marker class — and the test class will not be regenerated. To work around this, set up a **file watcher** in
-your IDE that automatically **touches** (updates the timestamp of) the marker class in the same directory/package
-whenever a `.feature` file changes. This causes the IDE to detect the marker class as modified and rerun the
-annotation processor.
+Install the **[SpecBinder plugin](https://plugins.jetbrains.com/plugin/30540-specbinder-beta-)** from the
+JetBrains Marketplace. Among its features, the plugin:
 
-<details>
-
-<summary>IntelliJ IDEA — File Watchers plugin configuration</summary>
-
-You need to configure two things: a **file scope** that matches your `.feature` files, and the **file watcher** itself that uses that scope.
-
-#### Step 1 (IntelliJ IDEA): Create a file scope for `.feature` files
-
-1. Open Settings → Appearance & Behavior → Scopes
-2. Click **+** → **Local**
-3. Name the scope (e.g., `Feature files`)
-4. In the **Pattern** field, enter a pattern matching your `.feature` files, e.g.:
-    - `file[your-module]:src/test//*.feature` — matches all `.feature` files under `src/test/` in a specific module
-    - `file[*]:*.feature` — matches all `.feature` files across the entire project
-5. Optionally, use the module tree and **Include** / **Include Recursively** buttons to build the pattern visually
-6. Click **Apply**
-
-```
-┌──────────────────────────── Scopes ─────────────────────────────┐
-│                                                                 │
-│  Name:     Feature files                                        │
-│  Pattern:  file[your-module]:src/test//*.feature                │
-│                                                                 │
-│  Use file:*.txt to match all 'txt' files in the project,        │
-│  file:path_in_project//* to match all files in a directory      │
-│  recursively.                                                   │
-│                                                                 │
-│  ┌─ Project ──────────────────┐                                 │
-│  │  > module-a                │  [ Include             ]        │
-│  │  > module-b                │  [ Include Recursively ]        │
-│  │  > module-c                │  [ Exclude             ]        │
-│  │  > ...                     │  [ Exclude Recursively ]        │
-│  └────────────────────────────┘                                 │
-│                                                                 │
-│  ■ Recursively included                                         │
-│  ■ Partially included                                           │
-│                                                                 │
-│                              [Cancel]  [Apply]  [OK]            │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-#### Step 2 (IntelliJ IDEA): Configure the file watcher
-
-1. Install the **[File Watchers](https://plugins.jetbrains.com/plugin/7177-file-watchers)** plugin (Settings → Plugins)
-2. Add a new watcher: Settings → Tools → File Watchers → **+**
-3. Configure as shown below:
-
-```
-┌─────────────────────── Edit File Watcher ───────────────────────┐
-│                                                                 │
-│  Name:  Touch related feature base class only                   │
-│                                                                 │
-│  ─ Files to Watch ────────────────────────────────────────────  │
-│  File type:   Any                                               │
-│  Scope:       Feature files                              [...]  │
-│                                                                 │
-│  ─ Tool to Run on Changes ────────────────────────────────────  │
-│  Program:              /bin/sh                                  │
-│  Arguments:            -c "touch $FileDir$/*Feature.java"       │
-│  Output paths:         (empty)                                  │
-│  Working directory:    $FileDir$                                │
-│                                                                 │
-│  ▼ Advanced Options                                             │
-│  [x] Auto-save edited files to trigger the watcher              │
-│  [x] Trigger the watcher on external changes                    │
-│  [x] Trigger the watcher regardless of syntax errors            │
-│  [ ] Create output file from stdout                             │
-│  Show console: On error                                         │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-**Key points:**
-- The **Program** is `/bin/sh` with **Arguments** `-c "touch $FileDir$/*Feature.java"` — this touches all `*Feature.java` marker classes in the same directory as the changed `.feature` file
-- The **Scope** must point to the file scope created in Step 1, so the watcher only triggers for `.feature` files
-- Adjust the `*Feature.java` glob pattern if your marker class naming convention differs (e.g., `$FileNameWithoutExtension$.java` for exact name matching)
-
-</details>
+* Registers `.specb` and `.feature` as dedicated file types with Gherkin syntax highlighting, so the IDE recognises them natively.
+* **Automatically recompiles** the associated SpecBinder marker classes whenever you edit a gherkin spec file —
+  no manual rebuild or file-watcher setup required.
+* Displays **inline execution results** from the SpecBinder execution report directly in the gherkin spec file —
+  including error panels with failure messages and exception details — so you can diagnose failures without
+  switching between the spec and the test report.
 
 ---
 
 ## Contributing
 
-Issues and PRs welcome. When filing an issue, please include the `.feature` example, the generated code (from
+Issues and feature requests welcome. When filing an issue, please include the `.feature` / `.specb` example, the generated code (from
 `target/generated-sources`), and your build tool and JDK version.
 
 ### How this project is developed
@@ -1910,8 +1836,8 @@ specification that is authored first, following this iterative workflow:
                                                                                                                           ┌─── Claude Code Implements ───────────────┐
   ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  │  ┌────────────────┐  ┌────────────────┐  │  ┌────────────────┐
   │ Create new     │  │ Short prompt   │  │ Ask AI:        │  │ Ask AI:        │  │ Ask AI:        │  │ Ask AI:        │  │  │ Ask AI to TDD: │  │ implement      │  │  │ Review,        │
-  │ .feature       │─▶│ to AI to       │─▶│ to add         │─▶│ to derive      │─▶│ to add         │─▶│ add concrete   │─▶│  │ run test to    │─▶│ until GREEN    │  │─▶│ ask AI to      │
-  │ file           │  │ describe       │  │ plausible      │  │ User Story     │  │ plausible      │  │ Given/When/    │  │  │ see it fail    │  │ and no         │  │  │ refactor if    │
+  │ .feature /     │─▶│ to AI to       │─▶│ to add         │─▶│ to derive      │─▶│ to add         │─▶│ add concrete   │─▶│  │ run test to    │─▶│ until GREEN    │  │─▶│ ask AI to      │
+  │ .specb file    │  │ describe       │  │ plausible      │  │ User Story     │  │ plausible      │  │ Given/When/    │  │  │ see it fail    │  │ and no         │  │  │ refactor if    │
   │                │  │ the idea       │  │ Rule titles    │  │ narrative      │  │ Scenario titles│  │ Then steps     │  │  │ (RED)          │  │ regressions    │  │  │ needed, commit │
   └────────────────┘  └────────────────┘  └───────┬────────┘  └───────┬────────┘  └───────┬────────┘  └───────┬────────┘  │  └───────┬────────┘  └────────┬───────┘  │  └────────────────┘
                                               review &            review &            review &            review &        │          └─────────◀──────────┘          │
@@ -1924,15 +1850,18 @@ scenarios, and step definitions. Once the specification is complete, Claude Code
 largely autonomously — running tests, writing code, and iterating until all tests pass with minimal developer
 intervention.
 
+Dedicated Claude Code slash commands for some of these workflow steps are available in `.claude/commands/`.
+
 ---
 
 ## Acknowledgements
 
 Spec Binder stands on the shoulders of the [Cucumber](https://cucumber.io/) project. Under the hood, it relies on
-Cucumber's [Gherkin parser](https://github.com/cucumber/gherkin) to read `.feature` files and on
+Cucumber's [Gherkin parser](https://github.com/cucumber/gherkin) to read `.feature` / `.specb` files and on
 the [cucumber-java](https://github.com/cucumber/cucumber-jvm) annotations library for optional `@Given`/`@When`/`@Then`
-step matching. Credit goes to the Cucumber community for building and maintaining these foundational tools that make
-Gherkin a widely adopted specification format.
+step matching. SpecBinder's own test suite is also built on top of the
+[cucumber-java](https://github.com/cucumber/cucumber-jvm) framework. Credit goes to the Cucumber community for building
+and maintaining these foundational tools that make Gherkin a widely adopted specification format.
 
 ---
 

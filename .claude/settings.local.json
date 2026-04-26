@@ -77,7 +77,8 @@
       "Bash(wait %1)",
       "mcp__idea__get_symbol_info",
       "Read(//private/tmp/**)",
-      "Bash(./gradlew buildPlugin -x test)"
+      "Bash(./gradlew buildPlugin -x test)",
+      "Bash(.idea_scripts/trigger_rebuild_project_shortcut.sh *)"
     ],
     "deny": [],
     "ask": []
