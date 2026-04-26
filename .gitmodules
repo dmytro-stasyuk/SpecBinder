@@ -1,3 +1,6 @@
 [submodule "annotation-processor/src/test"]
 	path = annotation-processor/src/test
 	url = git@github.com:dmytro-stasyuk/spec-binder-tests.git
+[submodule "execution-reporter/src/test"]
+	path = execution-reporter/src/test
+	url = git@github.com:dmytro-stasyuk/spec-binder-tests-execution-reporter.git
