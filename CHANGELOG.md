@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- Execution reporter: a JUnit 5 extension that captures hierarchical execution results (feature, rule, scenario, step) and writes per-feature JSON reports to `target/specbinder-reports/`
+- Step-level reporting via ByteBuddy bytecode instrumentation — intercepts step method calls at runtime to track individual step status, timing, and errors without requiring source-level changes
+- Bytecode call-site scanner that discovers ordered step method sequences from generated test class bytecode
+
 ### Changed
 
 - Scenario test methods inside rule nested classes are now named `rule_N_scenario_M` instead of `scenario_M` to include the rule index prefix
@@ -24,8 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - automated tests setup
 - Simplified GitHub Release creation step in the release workflow
-- Moved annotation-processor test suite to a private Git submodule for cross-project reuse
-- Release workflow now checks out the test submodule and tags the tests repository on release
 
 ### Fixed
 

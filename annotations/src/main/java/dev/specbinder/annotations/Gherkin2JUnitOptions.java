@@ -1,6 +1,7 @@
 package dev.specbinder.annotations;
 
 import java.lang.annotation.*;
+import java.util.Locale;
 
 /**
  * Specifies configuration options for generating JUnit test classes from classes annotated with {@link Gherkin2JUnit}.
@@ -114,6 +115,73 @@ public @interface Gherkin2JUnitOptions {
     }
 
     /**
+     * Controls how much detail SpecBinder writes to the build log during annotation processing.
+     * Used both as the value of {@link #verbosity()} and as the canonical set of values accepted
+     * by the {@code -Aspecbinder.verbosity=…} processor argument.
+     * <p>
+     * Levels are cumulative: each level emits everything from the levels below it.
+     */
+    enum Verbosity {
+        /**
+         * Emit only error diagnostics. No startup banner, no warnings, no per-class headers,
+         * no end-of-round summary. Intended for CI runs that should be silent on success.
+         */
+        SILENT,
+
+        /**
+         * Default level. Emits errors, warnings, the startup banner, and the end-of-round summary.
+         * Suitable for everyday local and CI builds.
+         */
+        NORMAL,
+
+        /**
+         * Adds per-class processing headers, per-feature progress, the resolved feature path for
+         * each annotated class, and skipped/filtered work. Intended for diagnosing which inputs
+         * the processor is acting on.
+         */
+        VERBOSE,
+
+        /**
+         * Adds full stack traces, parsed Gherkin AST summaries, JavaPoet code-model summaries,
+         * and per-step processing decisions. Intended for diagnosing the processor's internal
+         * behaviour — most users should never need this.
+         */
+        DEBUG;
+
+        /**
+         * Parses a string into a {@link Verbosity} level. Accepts the four canonical names
+         * case-insensitively and rejects everything else.
+         *
+         * @param value the value supplied by the user (e.g. via {@code -Aspecbinder.verbosity=verbose})
+         * @return the matching {@link Verbosity}
+         * @throws IllegalArgumentException if {@code value} is null/blank or not a recognised level
+         */
+        public static Verbosity parse(String value) {
+            if (value == null || value.isBlank()) {
+                throw new IllegalArgumentException(
+                        "Verbosity value must not be null or blank. Accepted values: " + acceptedValues());
+            }
+            String normalized = value.trim().toLowerCase(Locale.ROOT);
+            for (Verbosity v : values()) {
+                if (v.name().toLowerCase(Locale.ROOT).equals(normalized)) {
+                    return v;
+                }
+            }
+            throw new IllegalArgumentException(
+                    "Unknown verbosity value: '" + value + "'. Accepted values: " + acceptedValues());
+        }
+
+        private static String acceptedValues() {
+            StringBuilder sb = new StringBuilder();
+            for (Verbosity v : values()) {
+                if (sb.length() > 0) sb.append(", ");
+                sb.append(v.name().toLowerCase(Locale.ROOT));
+            }
+            return sb.toString();
+        }
+    }
+
+    /**
      * Specifies the file extensions that the annotation processor recognizes as Gherkin specification files.
      * <p>
      * When using convention-based discovery ({@code @Gherkin2JUnit} with no value) or glob patterns,
@@ -218,6 +286,17 @@ public @interface Gherkin2JUnitOptions {
      * @return the tag for empty scenarios
      */
     String tagForEmptyScenarios() default "new";
+
+    /**
+     * Controls how much detail SpecBinder writes to the build log during annotation processing.
+     * Annotation-level verbosity overrides the {@code -Aspecbinder.verbosity=…} processor argument.
+     * <p>
+     * The default is {@link Verbosity#NORMAL} — errors, warnings, the startup banner, and the
+     * end-of-round summary are emitted. See {@link Verbosity} for the full set of levels.
+     *
+     * @return the verbosity level for this annotated class
+     */
+    Verbosity verbosity() default Verbosity.NORMAL;
 
     /**
      * If set to true, the generator will embed source line numbers from the feature file
@@ -481,6 +560,20 @@ public @interface Gherkin2JUnitOptions {
      * @return true if enum constants should be qualified with their type name, false otherwise
      */
     boolean useQualifiedEnumConstants() default false;
+
+    /**
+     * Controls whether the generator emits a {@link dev.specbinder.annotations.output.ScenarioHash}
+     * annotation on each generated {@code @Test} / {@code @ParameterizedTest} method, carrying the
+     * canonical SHA-256 hash of the scenario's executable content (Background steps + scenario
+     * steps, including DataTables and DocStrings).
+     * <p>
+     * When {@code true}: Each generated test method is annotated with {@code @ScenarioHash("&lt;hex&gt;")}.
+     * <p>
+     * When {@code false} (default), no hash annotations are emitted.
+     *
+     * @return true if scenario hashes should be emitted, false otherwise
+     */
+    boolean emitScenarioHash() default false;
 
     /**
      * -- EXPERIMENTAL OPTION --

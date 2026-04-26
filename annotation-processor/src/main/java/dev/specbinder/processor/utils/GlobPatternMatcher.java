@@ -69,7 +69,7 @@ public class GlobPatternMatcher implements LoggingSupport {
             return matchingFiles;
         }
 
-        logInfo("Searching for files matching pattern: " + globPattern + " from root: " + searchRoot);
+        logVerbose("Searching for files matching pattern: " + globPattern + " from root: " + searchRoot);
 
         // Convert glob pattern to PathMatcher
         FileSystem fs = FileSystems.getDefault();
@@ -86,7 +86,7 @@ public class GlobPatternMatcher implements LoggingSupport {
                 // Check if it matches the pattern
                 if (matcher.matches(relativePath) || relativePathString.matches(convertGlobToRegex(globPattern))) {
                     matchingFiles.add(relativePathString);
-                    logInfo("Found matching file: " + relativePathString);
+                    logVerbose("Found matching file: " + relativePathString);
                 }
 
                 return FileVisitResult.CONTINUE;
@@ -99,7 +99,7 @@ public class GlobPatternMatcher implements LoggingSupport {
             }
         });
 
-        logInfo("Found " + matchingFiles.size() + " files matching pattern: " + globPattern);
+        logVerbose("Found " + matchingFiles.size() + " files matching pattern: " + globPattern);
 
         return matchingFiles;
     }
@@ -124,7 +124,7 @@ public class GlobPatternMatcher implements LoggingSupport {
                 URI uri = dummyResource.toUri();
                 Path path = Paths.get(uri).getParent();
                 if (path != null) {
-                    logInfo("Found classpath root from CLASS_OUTPUT: " + path);
+                    logDebug("Found classpath root from CLASS_OUTPUT: " + path);
                     return path;
                 }
             }
@@ -140,7 +140,7 @@ public class GlobPatternMatcher implements LoggingSupport {
                 if (uriString.startsWith("file:")) {
                     Path path = Paths.get(URI.create(uriString.replace("file:", "file://")));
                     if (Files.exists(path) && Files.isDirectory(path)) {
-                        logInfo("Found classpath root from CLASS_PATH: " + path);
+                        logDebug("Found classpath root from CLASS_PATH: " + path);
                         return path;
                     }
                 }
@@ -156,14 +156,14 @@ public class GlobPatternMatcher implements LoggingSupport {
                 // Common Maven structure
                 Path testClasses = projectRoot.resolve("target").resolve("test-classes");
                 if (Files.exists(testClasses) && Files.isDirectory(testClasses)) {
-                    logInfo("Found classpath root from Maven structure: " + testClasses);
+                    logDebug("Found classpath root from Maven structure: " + testClasses);
                     return testClasses;
                 }
 
                 // Common Gradle structure
                 Path gradleTestClasses = projectRoot.resolve("build").resolve("classes").resolve("test");
                 if (Files.exists(gradleTestClasses) && Files.isDirectory(gradleTestClasses)) {
-                    logInfo("Found classpath root from Gradle structure: " + gradleTestClasses);
+                    logDebug("Found classpath root from Gradle structure: " + gradleTestClasses);
                     return gradleTestClasses;
                 }
             }

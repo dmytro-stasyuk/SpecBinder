@@ -109,7 +109,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
                 // Check if base class has a compatible method (not just by name, but by signature)
                 boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, null, backgroundStepsMethodSpecs);
                 if (baseClassHasCompatibleMethod) {
-                    logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
+                    logDebug("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
                 } else {
                     classBuilder.addMethod(stepMethodSpec);
                 }

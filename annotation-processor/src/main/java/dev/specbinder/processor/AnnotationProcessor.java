@@ -1,10 +1,16 @@
 package dev.specbinder.processor;
 
 import com.google.auto.service.AutoService;
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.annotations.Gherkin2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnitOptions.Verbosity;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.support.LoggingSupport;
+import dev.specbinder.processor.support.SpecBinderVersion;
+import dev.specbinder.processor.support.VerbosityContext;
 import dev.specbinder.processor.utils.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -31,8 +37,11 @@ import java.util.*;
  */
 @SupportedAnnotationTypes("dev.specbinder.annotations.Gherkin2JUnit")
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
+@SupportedOptions({"specbinder.verbosity"})
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor implements LoggingSupport {
+
+    private static final String SPECBINDER_OPTION_PREFIX = "specbinder.";
 
     /**
      * Tracks fully qualified class names that have already been generated across processing rounds.
@@ -40,6 +49,8 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
      * that were already generated in a previous round.
      */
     private final Set<String> alreadyGeneratedFiles = new HashSet<>();
+
+    private boolean startupBannerEmitted = false;
 
     /**
      * Default constructor.
@@ -55,9 +66,11 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
             return false;
         }
 
-        int totalClassesProcessed = 0;
+        long roundStartMillis = System.currentTimeMillis();
+        emitStartupBanner();
 
-        logInfo("Running " + this.getClass().getSimpleName());
+        int totalClassesProcessed = 0;
+        int totalSpecFilesProcessed = 0;
 
         // Initialize the factory method resolver for enum type conversion
         ParameterConversionUtils.setFactoryMethodResolver(
@@ -82,8 +95,6 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
 
                 TypeElement annotatedClass = (TypeElement) annotatedElement;
 
-                logInfo("Processing '" + annotatedClass.getQualifiedName() + "'");
-
                 Gherkin2JUnit targetAnnotation = annotatedClass.getAnnotation(Gherkin2JUnit.class);
 
                 // Resolve options from the class hierarchy, supporting partial inheritance
@@ -91,7 +102,12 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                         annotatedClass, getProcessingEnv()
                 );
 
-                logOther("Resolved options: " + generatorOptions);
+                // Publish the per-class effective verbosity so helper classes
+                // (BackgroundProcessor, ScenarioProcessor, GlobPatternMatcher, …) gate their
+                // logVerbose / logDebug calls on the same level we use here.
+                VerbosityContext.set(effectiveVerbosity(generatorOptions));
+
+                try {
 
                 // Validate supportedFileExtensions
                 try {
@@ -115,12 +131,12 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                     } else {
                         annotationValue = packageName.replace('.', '/') + "/" + globWildcard;
                     }
-                    logInfo("Empty annotation value detected, using pattern: " + annotationValue);
+                    logVerbose("Empty annotation value detected, using pattern: " + annotationValue);
                 }
 
                 // Check if the annotation value is a glob pattern
                 if (GlobPatternMatcher.isGlobPattern(annotationValue)) {
-                    logInfo("Detected glob pattern: " + annotationValue);
+                    logVerbose("Detected glob pattern: " + annotationValue);
 
                     // Find all matching feature files
                     GlobPatternMatcher patternMatcher = createGlobPatternMatcher();
@@ -139,7 +155,7 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                         throw new RuntimeException(errorMessage);
                     }
 
-                    logInfo("Found " + matchingFiles.size() + " files matching pattern: " + annotationValue);
+                    emitProcessingHeader(annotatedClass, generatorOptions, matchingFiles);
 
                     // Check for duplicate generated class names (both within pattern and across all annotations)
                     String suffixToApply = generatorOptions.getClassSuffixIfAbstract();
@@ -162,9 +178,11 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                             "from @Gherkin2JUnit on " + annotatedClass.getQualifiedName() + " for " + featureFilePath);
                     }
 
+                    totalSpecFilesProcessed += matchingFiles.size();
+
                     // Generate a test class for each matching file
                     for (String featureFilePath : matchingFiles) {
-                        logInfo("Processing feature file: " + featureFilePath);
+                        emitProgressStart(generatorOptions, featureFilePath);
 
                         TestSubclassCreator.GeneratedFileResult result = null;
                         try {
@@ -174,11 +192,20 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                             continue;
                         }
 
+                        emitProgressGeneratedClass(generatorOptions, getFullyQualifiedClassName(result.javaFile), result.javaFile.typeSpec);
+
                         // Write the generated file
                         writeGeneratedFile(result, annotatedClass, generatorOptions);
+
+                        emitProgressFinish(generatorOptions, featureFilePath);
                     }
                 } else {
                     // Single feature file (original behavior)
+                    emitProcessingHeader(annotatedClass, generatorOptions, List.of(annotationValue));
+
+                    totalSpecFilesProcessed++;
+                    emitProgressStart(generatorOptions, annotationValue);
+
                     TestSubclassCreator.GeneratedFileResult result = null;
                     try {
                         result = subclassGenerator.createTestSubclass(annotatedClass, annotationValue, true);
@@ -205,13 +232,22 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                     allGeneratedClassNames.put(fullyQualifiedClassName,
                         "from @Gherkin2JUnit on " + annotatedClass.getQualifiedName() + " for " + annotationValue);
 
+                    emitProgressGeneratedClass(generatorOptions, fullyQualifiedClassName, result.javaFile.typeSpec);
+
                     // Write the generated file
                     writeGeneratedFile(result, annotatedClass, generatorOptions);
+
+                    emitProgressFinish(generatorOptions, annotationValue);
+                }
+
+                } finally {
+                    VerbosityContext.clear();
                 }
             }
         }
 
-        logInfo("Finished, total classes processed: " + totalClassesProcessed);
+        long elapsedMillis = System.currentTimeMillis() - roundStartMillis;
+        emitEndOfRoundSummary(totalClassesProcessed, totalSpecFilesProcessed, allGeneratedClassNames.size(), elapsedMillis);
 
         return true;
     }
@@ -221,7 +257,7 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
 
         // Skip if this file was already generated in a previous processing round
         if (alreadyGeneratedFiles.contains(fullyQualifiedName)) {
-            logInfo("Skipping already generated class: " + fullyQualifiedName);
+            logVerbose("Skipping already generated class: " + fullyQualifiedName);
             return;
         }
 
@@ -258,7 +294,6 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
         }
 
         alreadyGeneratedFiles.add(fullyQualifiedName);
-        logInfo("Generated test class: " + fullyQualifiedName);
     }
 
     /**
@@ -282,7 +317,7 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                 result.writeTo(writer);
             }
 
-            logInfo("Overwrote existing generated class: " + fullyQualifiedName);
+            logVerbose("Overwrote existing generated class: " + fullyQualifiedName);
         } catch (IOException overwriteException) {
             logException(overwriteException, annotatedClass);
         }
@@ -326,9 +361,271 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
         try (PrintWriter out = new PrintWriter(targetFile)) {
             result.writeTo(out);
         }
+    }
 
-        logInfo("Generated test class: " + getFullyQualifiedClassName(result.javaFile)
-                + " at " + targetFile.getAbsolutePath());
+    private void emitStartupBanner() {
+        if (startupBannerEmitted) {
+            return;
+        }
+        startupBannerEmitted = true;
+
+        Map<String, String> activeArguments = collectActiveProcessorArguments();
+
+        logInfo("====================================================================");
+        logInfo("SpecBinder annotation processor — version " + SpecBinderVersion.get());
+        if (!activeArguments.isEmpty()) {
+            logInfo("Active processor arguments:");
+            int paddingWidth = activeArguments.keySet().stream().mapToInt(String::length).max().orElse(0);
+            for (Map.Entry<String, String> entry : activeArguments.entrySet()) {
+                logInfo("  " + padRight(entry.getKey(), paddingWidth) + " = " + entry.getValue());
+            }
+        }
+        logInfo("====================================================================");
+    }
+
+    private Map<String, String> collectActiveProcessorArguments() {
+        Map<String, String> all = getProcessingEnv().getOptions();
+        if (all == null || all.isEmpty()) {
+            return Map.of();
+        }
+        Map<String, String> filtered = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : all.entrySet()) {
+            if (entry.getKey() != null && entry.getKey().startsWith(SPECBINDER_OPTION_PREFIX)) {
+                filtered.put(entry.getKey(), entry.getValue() == null ? "" : entry.getValue());
+            }
+        }
+        return filtered;
+    }
+
+    private static String padRight(String value, int width) {
+        return value.length() >= width ? value : value + " ".repeat(width - value.length());
+    }
+
+    private void emitProcessingHeader(TypeElement annotatedClass, GeneratorOptions options, List<String> matchedSpecFiles) {
+        if (effectiveVerbosity(options).ordinal() < Verbosity.VERBOSE.ordinal()) {
+            return;
+        }
+
+        Map<String, String> overridden = new LinkedHashMap<>();
+        Map<String, String> defaulted = new LinkedHashMap<>();
+        classifyOptions(options, new GeneratorOptions(), overridden, defaulted);
+
+        int paddingWidth = 0;
+        for (String key : overridden.keySet()) paddingWidth = Math.max(paddingWidth, key.length());
+        for (String key : defaulted.keySet()) paddingWidth = Math.max(paddingWidth, key.length());
+
+        logVerbose("--------------------------------------------------------------------");
+        logVerbose("Processing '" + annotatedClass.getQualifiedName() + "'");
+        if (!overridden.isEmpty()) {
+            logVerbose("Overridden options:");
+            for (Map.Entry<String, String> entry : overridden.entrySet()) {
+                logVerbose("  " + padRight(entry.getKey(), paddingWidth) + " = " + entry.getValue());
+            }
+        }
+        if (!defaulted.isEmpty()) {
+            logVerbose("Default options:");
+            for (Map.Entry<String, String> entry : defaulted.entrySet()) {
+                logVerbose("  " + padRight(entry.getKey(), paddingWidth) + " = " + entry.getValue());
+            }
+        }
+        logVerbose("Spec files matched:");
+        for (String specFilePath : matchedSpecFiles) {
+            logVerbose("  - " + specFilePath);
+        }
+        logVerbose("--------------------------------------------------------------------");
+    }
+
+    private void emitProgressStart(GeneratorOptions options, String specFilePath) {
+        if (effectiveVerbosity(options).ordinal() < Verbosity.VERBOSE.ordinal()) {
+            return;
+        }
+        logVerbose("Started  '" + specFilePath + "'");
+    }
+
+    private void emitProgressGeneratedClass(GeneratorOptions options, String fullyQualifiedClassName, TypeSpec typeSpec) {
+        if (effectiveVerbosity(options).ordinal() < Verbosity.VERBOSE.ordinal()) {
+            return;
+        }
+        logVerbose("  Generated class: " + fullyQualifiedClassName);
+        logVerbose("  Test methods:    " + countTestMethods(typeSpec));
+        logVerbose("  Step methods:    " + countStepMethods(typeSpec));
+    }
+
+    private static int countTestMethods(TypeSpec typeSpec) {
+        int count = 0;
+        for (MethodSpec method : typeSpec.methodSpecs) {
+            for (AnnotationSpec ann : method.annotations) {
+                String name = ann.type.toString();
+                if (name.endsWith(".Test") || name.endsWith(".ParameterizedTest")) {
+                    count++;
+                    break;
+                }
+            }
+        }
+        for (TypeSpec nested : typeSpec.typeSpecs) {
+            count += countTestMethods(nested);
+        }
+        return count;
+    }
+
+    private static int countStepMethods(TypeSpec typeSpec) {
+        int count = 0;
+        for (MethodSpec method : typeSpec.methodSpecs) {
+            if (method.isConstructor()) {
+                continue;
+            }
+            if (hasNonStepAnnotation(method)) {
+                continue;
+            }
+            count++;
+        }
+        for (TypeSpec nested : typeSpec.typeSpecs) {
+            count += countStepMethods(nested);
+        }
+        return count;
+    }
+
+    private static boolean hasNonStepAnnotation(MethodSpec method) {
+        for (AnnotationSpec ann : method.annotations) {
+            String name = ann.type.toString();
+            if (name.endsWith(".Test")
+                    || name.endsWith(".ParameterizedTest")
+                    || name.endsWith(".BeforeEach")
+                    || name.endsWith(".AfterEach")
+                    || name.endsWith(".BeforeAll")
+                    || name.endsWith(".AfterAll")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void emitEndOfRoundSummary(int annotatedClassesFound, int specFilesProcessed, int classesGenerated, long elapsedMillis) {
+        String delimiter = "#".repeat(68);
+        logInfo(delimiter);
+        logInfo("Annotated classes found: " + annotatedClassesFound);
+        logInfo("Spec files processed:    " + specFilesProcessed);
+        logInfo("Classes generated:       " + classesGenerated);
+        logInfo("Elapsed time:            " + elapsedMillis + " ms");
+        logInfo(delimiter);
+    }
+
+    private void emitProgressFinish(GeneratorOptions options, String specFilePath) {
+        if (effectiveVerbosity(options).ordinal() < Verbosity.VERBOSE.ordinal()) {
+            return;
+        }
+        logVerbose("Finished '" + specFilePath + "'");
+    }
+
+    /**
+     * Resolves the effective verbosity for a particular annotated class. Precedence:
+     * <ol>
+     *   <li>The class's {@code @Gherkin2JUnitOptions(verbosity = …)} value, if it is non-default
+     *       (anything other than {@link Verbosity#NORMAL}).</li>
+     *   <li>The {@code -Aspecbinder.verbosity=…} processor argument, if present and parseable.</li>
+     *   <li>{@link Verbosity#NORMAL} otherwise.</li>
+     * </ol>
+     * Unknown processor-argument values fall through to {@code NORMAL} — the VerbosityControl
+     * scenarios will surface these as a separate error.
+     */
+    private Verbosity effectiveVerbosity(GeneratorOptions options) {
+        if (options != null && options.getVerbosity() != null && options.getVerbosity() != Verbosity.NORMAL) {
+            return options.getVerbosity();
+        }
+        Map<String, String> activeOptions = getProcessingEnv().getOptions();
+        if (activeOptions != null) {
+            String value = activeOptions.get(SPECBINDER_OPTION_PREFIX + "verbosity");
+            if (value != null) {
+                try {
+                    return Verbosity.parse(value);
+                } catch (IllegalArgumentException ignored) {
+                    // Unknown values fall through to NORMAL.
+                }
+            }
+        }
+        return Verbosity.NORMAL;
+    }
+
+    /**
+     * Walks the resolved {@link GeneratorOptions} and classifies each field as either overridden
+     * (current value differs from the corresponding default) or defaulted. The two maps preserve
+     * declaration order so the rendered banner is deterministic.
+     */
+    private static void classifyOptions(
+            GeneratorOptions resolved,
+            GeneratorOptions defaults,
+            Map<String, String> overridden,
+            Map<String, String> defaulted) {
+
+        putOption("shouldBeAbstract",
+                fmtBool(resolved.isShouldBeAbstract()), fmtBool(defaults.isShouldBeAbstract()), overridden, defaulted);
+        putOption("classSuffixIfConcrete",
+                fmtString(resolved.getClassSuffixIfConcrete()), fmtString(defaults.getClassSuffixIfConcrete()), overridden, defaulted);
+        putOption("classSuffixIfAbstract",
+                fmtString(resolved.getClassSuffixIfAbstract()), fmtString(defaults.getClassSuffixIfAbstract()), overridden, defaulted);
+        putOption("addSourceLineNumbers",
+                fmtBool(resolved.isAddSourceLineNumbers()), fmtBool(defaults.isAddSourceLineNumbers()), overridden, defaulted);
+        putOption("emptyScenarioBehavior",
+                fmtEnumName(resolved.getEmptyScenarioBehavior()), fmtEnumName(defaults.getEmptyScenarioBehavior()), overridden, defaulted);
+        putOption("emptyRuleBehavior",
+                fmtEnumName(resolved.getEmptyRuleBehavior()), fmtEnumName(defaults.getEmptyRuleBehavior()), overridden, defaulted);
+        putOption("unimplementedStepBehavior",
+                fmtEnumName(resolved.getUnimplementedStepBehavior()), fmtEnumName(defaults.getUnimplementedStepBehavior()), overridden, defaulted);
+        putOption("tagForEmptyScenarios",
+                fmtString(resolved.getTagForEmptyScenarios()), fmtString(defaults.getTagForEmptyScenarios()), overridden, defaulted);
+        putOption("tagForEmptyRules",
+                fmtString(resolved.getTagForEmptyRules()), fmtString(defaults.getTagForEmptyRules()), overridden, defaulted);
+        putOption("addCucumberStepAnnotations",
+                fmtBool(resolved.isAddCucumberStepAnnotations()), fmtBool(defaults.isAddCucumberStepAnnotations()), overridden, defaulted);
+        putOption("placeGeneratedClassNextToAnnotatedClass",
+                fmtBool(resolved.isPlaceGeneratedClassNextToAnnotatedClass()), fmtBool(defaults.isPlaceGeneratedClassNextToAnnotatedClass()), overridden, defaulted);
+        putOption("dataTableParameterType",
+                fmtEnumName(resolved.getDataTableParameterType()), fmtEnumName(defaults.getDataTableParameterType()), overridden, defaulted);
+        putOption("enableCompositeSteps",
+                fmtBool(resolved.isEnableCompositeSteps()), fmtBool(defaults.isEnableCompositeSteps()), overridden, defaulted);
+        putOption("useQualifiedEnumConstants",
+                fmtBool(resolved.isUseQualifiedEnumConstants()), fmtBool(defaults.isUseQualifiedEnumConstants()), overridden, defaulted);
+        putOption("useStepKeywordInStepMethodName",
+                fmtBool(resolved.isUseStepKeywordInStepMethodName()), fmtBool(defaults.isUseStepKeywordInStepMethodName()), overridden, defaulted);
+        putOption("useCucumberAnnotationsForStepMatching",
+                fmtBool(resolved.isUseCucumberAnnotationsForStepMatching()), fmtBool(defaults.isUseCucumberAnnotationsForStepMatching()), overridden, defaulted);
+        putOption("supportedFileExtensions",
+                fmtStringArray(resolved.getSupportedFileExtensions()), fmtStringArray(defaults.getSupportedFileExtensions()), overridden, defaulted);
+        putOption("skipGenerationForTags",
+                fmtStringArray(resolved.getSkipGenerationForTags()), fmtStringArray(defaults.getSkipGenerationForTags()), overridden, defaulted);
+        putOption("emitScenarioHash",
+                fmtBool(resolved.isEmitScenarioHash()), fmtBool(defaults.isEmitScenarioHash()), overridden, defaulted);
+    }
+
+    private static void putOption(String name, String resolvedValue, String defaultValue,
+                                   Map<String, String> overridden, Map<String, String> defaulted) {
+        if (resolvedValue.equals(defaultValue)) {
+            defaulted.put(name, resolvedValue);
+        } else {
+            overridden.put(name, resolvedValue);
+        }
+    }
+
+    private static String fmtBool(boolean value) {
+        return value ? "true" : "false";
+    }
+
+    private static String fmtString(String value) {
+        return "\"" + value + "\"";
+    }
+
+    private static String fmtEnumName(String value) {
+        return value;
+    }
+
+    private static String fmtStringArray(String[] value) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < value.length; i++) {
+            if (i > 0) sb.append(", ");
+            sb.append(value[i]);
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     private void logException(Throwable t, TypeElement annotatedClass) {

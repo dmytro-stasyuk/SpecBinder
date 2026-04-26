@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>dev.specbinder</groupId>
+        <artifactId>spec-binder</artifactId>
+        <version>2026.38.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>execution-reporter</artifactId>
+    <name>${project.artifactId}</name>
+    <description>JUnit 5 TestExecutionListener that produces SpecBinder execution reports as per-feature JSON files</description>
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <jackson.version>2.18.2</jackson.version>
+        <byte-buddy.version>1.15.10</byte-buddy.version>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <waitForPublishCompletion>${central.waitForPublishCompletion}</waitForPublishCompletion>
+                </configuration>
+            </plugin>
+            <!--
+                Most types in this module are plain DTOs (FeatureReport, ScenarioNode, etc.)
+                whose getters/setters and enum constants are self-explanatory. Disable the
+                javadoc 'missing comment' check so we don't pad the codebase with boilerplate
+                /** Sets the status. */-style comments. All other doclint groups (reference,
+                syntax, HTML) remain on.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <doclint>all,-missing</doclint>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>dev.specbinder</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--
+            JUnit 5 platform + Jupiter API are 'provided' because the consumer's
+            test runtime always supplies them. We need them on the compile classpath
+            so the listener can implement TestExecutionListener and read @DisplayName
+            reflectively on generated test classes.
+        -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit.jupiter.platform.suite}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!--
+            ByteBuddy provides the runtime subclass that overrides step methods
+            on the user's concrete test class. Compile scope so it transits to the
+            consumer's test classpath via this artifact.
+        -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${byte-buddy.version}</version>
+        </dependency>
+
+        <!--
+            Test dependencies. Note: we do NOT redeclare junit-platform-launcher here —
+            it is already declared as 'provided' above, and 'provided' scope is on the test
+            classpath too. Redeclaring with scope=test would override (Maven picks the last
+            declaration), demoting it off the compile classpath.
+        -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--
+            Cucumber + JUnit Platform Suite drive the approval-style feature tests.
+            A self-contained mini test infrastructure lives in src/test/java/.../steps/
+            (compile fixture source from doc string, run it via programmatic Launcher,
+            compare the produced JSON against the expected JSON in another doc string).
+            Intentionally NOT shared with the annotation-processor module.
+        -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber-java.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <version>${cucumber-java.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit.jupiter.platform.suite}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,6 +1,7 @@
 package dev.specbinder.processor.utils;
 
 import dev.specbinder.annotations.Gherkin2JUnitOptions;
+import dev.specbinder.annotations.Gherkin2JUnitOptions.Verbosity;
 import dev.specbinder.processor.config.GeneratorOptions;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -87,6 +88,8 @@ public class Gherkin2JUnitOptionsResolver {
         boolean useCucumberAnnotationsForStepMatching = true;
         String[] supportedFileExtensions = new String[]{"feature", "specb"};
         String[] skipGenerationForTags = new String[]{};
+        Verbosity verbosity = Verbosity.NORMAL;
+        boolean emitScenarioHash = false;
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -191,6 +194,14 @@ public class Gherkin2JUnitOptionsResolver {
                                     .toArray(String[]::new);
                         }
                         break;
+                    case "verbosity":
+                        if (value instanceof VariableElement) {
+                            verbosity = Verbosity.valueOf(((VariableElement) value).getSimpleName().toString());
+                        }
+                        break;
+                    case "emitScenarioHash":
+                        emitScenarioHash = (Boolean) value;
+                        break;
                     default:
                         break;
                 }
@@ -215,7 +226,9 @@ public class Gherkin2JUnitOptionsResolver {
                 useStepKeywordInStepMethodName,
                 useCucumberAnnotationsForStepMatching,
                 supportedFileExtensions,
-                skipGenerationForTags
+                skipGenerationForTags,
+                verbosity,
+                emitScenarioHash
         );
     }
 
@@ -242,7 +255,9 @@ public class Gherkin2JUnitOptionsResolver {
                 options.useStepKeywordInStepMethodName(),
                 options.useCucumberAnnotationsForStepMatching(),
                 options.supportedFileExtensions(),
-                options.skipGenerationForTags()
+                options.skipGenerationForTags(),
+                options.verbosity(),
+                options.emitScenarioHash()
         );
     }
 }

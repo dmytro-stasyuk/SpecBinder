@@ -4,8 +4,12 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import dev.specbinder.annotations.output.ScenarioHash;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
+import dev.specbinder.processor.gherkin.hash.CanonicalStep;
+import dev.specbinder.processor.gherkin.hash.ScenarioHasher;
+import dev.specbinder.processor.gherkin.utils.CanonicalStepBuilder;
 import dev.specbinder.processor.gherkin.utils.DataTableCollector;
 import dev.specbinder.processor.gherkin.utils.EnumImportCollector;
 import dev.specbinder.processor.gherkin.utils.RecordMetadata;
@@ -36,14 +40,22 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
     private final Set<String> baseClassMethodNames;
     private final DataTableCollector dataTableCollector;
     private final EnumImportCollector enumImportCollector;
+    private final List<Step> backgroundSteps;
 
     public ScenarioProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType,
                              DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector) {
+        this(processingEnv, options, baseType, dataTableCollector, enumImportCollector, List.of());
+    }
+
+    public ScenarioProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType,
+                             DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,
+                             List<Step> backgroundSteps) {
         this.processingEnv = processingEnv;
         this.options = options;
         this.baseType = baseType;
         this.dataTableCollector = dataTableCollector;
         this.enumImportCollector = enumImportCollector;
+        this.backgroundSteps = backgroundSteps == null ? List.of() : backgroundSteps;
 
         baseClassMethodNames = ElementMethodUtils.getAllInheritedMethodNames(processingEnv, baseType);
     }
@@ -172,6 +184,8 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         addOrderAnnotation(scenarioMethodBuilder, scenarioNumber);
 
+        addScenarioHashAnnotationIfEnabled(scenarioMethodBuilder, scenarioSteps);
+
         List<Tag> tags = scenario.getTags();
 
         // Collect tags from Examples sections and combine with Scenario Outline tags
@@ -233,18 +247,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
             // Detect composite step patterns if enabled
             if (options.isEnableCompositeSteps()) {
-                logInfo("Composite steps ENABLED - detecting composite step groups");
-                logInfo("Number of scenario steps: " + scenarioSteps.size());
                 List<Object> stepGroups = detectCompositeStepGroups(scenarioSteps);
-                logInfo("Detected " + stepGroups.size() + " step groups");
-                for (int i = 0; i < stepGroups.size(); i++) {
-                    Object group = stepGroups.get(i);
-                    if (group instanceof CompositeStepGroup) {
-                        logInfo("Group " + i + ": CompositeStepGroup with " + ((CompositeStepGroup) group).size() + " sub-steps");
-                    } else {
-                        logInfo("Group " + i + ": Regular Step");
-                    }
-                }
 
                 for (Object item : stepGroups) {
                     if (item instanceof CompositeStepGroup compositeGroup) {
@@ -279,7 +282,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                             // Also check if we need an overloaded method (inherited type incompatible)
                             boolean needsOverloadedMethod = stepNeedsOverloadedMethod(regularStep);
                             if (baseClassHasCompatibleMethod && !needsOverloadedMethod) {
-                                logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
+                                logDebug("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
                             } else {
                                 classBuilder.addMethod(stepMethodSpec);
                             }
@@ -310,7 +313,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                         // Also check if we need an overloaded method (inherited type incompatible)
                         boolean needsOverloadedMethod = stepNeedsOverloadedMethod(scenarioStep);
                         if (baseClassHasCompatibleMethod && !needsOverloadedMethod) {
-                            logInfo("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
+                            logDebug("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
                         } else {
                             classBuilder.addMethod(stepMethodSpec);
                         }
@@ -354,6 +357,25 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                 .addMember("value", "" + scenarioNumber)
                 .build();
         scenarioMethodBuilder.addAnnotation(orderAnnotation);
+    }
+
+    private void addScenarioHashAnnotationIfEnabled(MethodSpec.Builder scenarioMethodBuilder, List<Step> scenarioSteps) {
+        if (!options.isEmitScenarioHash()) {
+            return;
+        }
+        List<CanonicalStep> canonicalSteps = new ArrayList<>(backgroundSteps.size() + scenarioSteps.size());
+        for (Step step : backgroundSteps) {
+            canonicalSteps.add(CanonicalStepBuilder.canonicalize(step));
+        }
+        for (Step step : scenarioSteps) {
+            canonicalSteps.add(CanonicalStepBuilder.canonicalize(step));
+        }
+        String hashValue = ScenarioHasher.hash(canonicalSteps);
+        AnnotationSpec scenarioHashAnnotation = AnnotationSpec
+                .builder(ScenarioHash.class)
+                .addMember("value", "$S", hashValue)
+                .build();
+        scenarioMethodBuilder.addAnnotation(scenarioHashAnnotation);
     }
 
     private void addJUnitAnnotationsForSingleTest(MethodSpec.Builder scenarioMethodBuilder, Scenario scenario) {

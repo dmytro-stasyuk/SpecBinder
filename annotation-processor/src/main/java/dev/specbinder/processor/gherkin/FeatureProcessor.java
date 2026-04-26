@@ -4,6 +4,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
+import dev.specbinder.processor.gherkin.utils.BackgroundStepCollector;
 import dev.specbinder.processor.gherkin.utils.DataTableCollector;
 import dev.specbinder.processor.gherkin.utils.EnumImportCollector;
 import dev.specbinder.processor.support.BaseTypeSupport;
@@ -76,6 +77,10 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
         // Pre-scan all steps to compute widened parameter types across all occurrences
         Map<String, List<Class<?>>> preComputedStepTypes = preComputeStepParameterTypes(feature);
 
+        // Pre-collect feature-level Background steps for scenario-hash assembly. Empty list when
+        // emitScenarioHash is off — collection is cheap and unused branches are pruned downstream.
+        List<Step> featureBackgroundSteps = BackgroundStepCollector.collectFeatureBackgroundSteps(feature);
+
         List<FeatureChild> children = feature.getChildren();
 
         int featureRuleCount = 0;
@@ -101,7 +106,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                 }
                 featureRuleCount++;
                 RuleProcessor ruleProcessor = new RuleProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
-                ruleProcessor.processRule(featureRuleCount, rule, classBuilder, preComputedStepTypes);
+                ruleProcessor.processRule(featureRuleCount, rule, classBuilder, preComputedStepTypes, featureBackgroundSteps);
             }
             else if (child.getScenario().isPresent()) {
 
@@ -110,7 +115,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                     continue;
                 }
                 featureScenarioCount++;
-                ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
+                ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector, featureBackgroundSteps);
                 MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario("", featureScenarioCount, scenario, classBuilder, preComputedStepTypes);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();

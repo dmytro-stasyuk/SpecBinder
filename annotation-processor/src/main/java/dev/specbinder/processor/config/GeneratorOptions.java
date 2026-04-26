@@ -1,5 +1,6 @@
 package dev.specbinder.processor.config;
 
+import dev.specbinder.annotations.Gherkin2JUnitOptions.Verbosity;
 import lombok.Getter;
 
 import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
@@ -122,6 +123,21 @@ public class GeneratorOptions {
     private final String[] skipGenerationForTags;
 
     /**
+     * The verbosity level that controls how much detail SpecBinder writes to the build log
+     * during annotation processing for this annotated class.
+     */
+    private final Verbosity verbosity;
+
+    /**
+     * If set to true, the generator emits a {@code @ScenarioHash} annotation on each generated
+     * {@code @Test} / {@code @ParameterizedTest} method, carrying the canonical SHA-256 hash of
+     * the scenario's executable content. Consumed downstream by the execution-reporter (which
+     * copies the hash into JSON output) and the IntelliJ plugin (which uses it to drive
+     * staleness-aware gutter icons).
+     */
+    private final boolean emitScenarioHash;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -143,6 +159,8 @@ public class GeneratorOptions {
         this.useCucumberAnnotationsForStepMatching = true;
         this.supportedFileExtensions = new String[]{"feature", "specb"};
         this.skipGenerationForTags = new String[]{};
+        this.verbosity = Verbosity.NORMAL;
+        this.emitScenarioHash = false;
     }
 
     /**
@@ -166,6 +184,8 @@ public class GeneratorOptions {
      * @param useCucumberAnnotationsForStepMatching see {@link #useCucumberAnnotationsForStepMatching}
      * @param supportedFileExtensions see {@link #supportedFileExtensions}
      * @param skipGenerationForTags see {@link #skipGenerationForTags}
+     * @param verbosity see {@link #verbosity}
+     * @param emitScenarioHash see {@link #emitScenarioHash}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -185,7 +205,9 @@ public class GeneratorOptions {
             boolean useStepKeywordInStepMethodName,
             boolean useCucumberAnnotationsForStepMatching,
             String[] supportedFileExtensions,
-            String[] skipGenerationForTags
+            String[] skipGenerationForTags,
+            Verbosity verbosity,
+            boolean emitScenarioHash
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -205,6 +227,8 @@ public class GeneratorOptions {
         this.useCucumberAnnotationsForStepMatching = useCucumberAnnotationsForStepMatching;
         this.supportedFileExtensions = supportedFileExtensions;
         this.skipGenerationForTags = skipGenerationForTags;
+        this.verbosity = verbosity == null ? Verbosity.NORMAL : verbosity;
+        this.emitScenarioHash = emitScenarioHash;
     }
 
 }

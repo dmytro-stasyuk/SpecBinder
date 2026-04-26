@@ -167,7 +167,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                             annotatedClass, recordName, processingEnv);
 
                     if (existingType != null) {
-                        logInfo("Found existing inner type in hierarchy: " + recordName);
+                        logDebug("Found existing inner type in hierarchy: " + recordName);
 
                         // Check if it has an all-args constructor
                         ExecutableElement constructor = InnerTypeUtils.findAllArgsConstructor(existingType);
@@ -185,13 +185,13 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                             if (mapping.canMap()) {
                                 // Success! Can reuse existing type
                                 metadata.setExistingType(existingType, mapping);
-                                logInfo("Reusing existing inner type: " + recordName);
+                                logDebug("Reusing existing inner type: " + recordName);
                             } else {
-                                logInfo("Cannot reuse " + recordName +
+                                logDebug("Cannot reuse " + recordName +
                                         " - not all data table columns can be mapped to constructor parameters");
                             }
                         } else {
-                            logInfo("Cannot reuse " + recordName +
+                            logDebug("Cannot reuse " + recordName +
                                     " - no all-args constructor found");
                         }
                     }

@@ -15,6 +15,7 @@
     <modules>
         <module>getting-started</module>
         <module>common-use-cases</module>
+        <module>reporter</module>
     </modules>
     <dependencies>
         <dependency>

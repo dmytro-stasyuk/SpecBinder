@@ -41,6 +41,7 @@
     <modules>
         <module>annotations</module>
         <module>annotation-processor</module>
+        <module>execution-reporter</module>
         <module>examples</module>
     </modules>
     <dependencies>

@@ -21,8 +21,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - This two-step approach is necessary because IntelliJ's automatic build is asynchronous - running tests immediately after code changes may execute against stale compiled classes
 - Use the `mcp__jetbrains__get_run_configurations` tool to list available run configurations
 - Use the `mcp__jetbrains__execute_run_configuration` tool to execute specific tests
-- To run ALL tests in the annotation-processor module, run the test class: `dev.specbinder.processor.tests.AllTests`
-- When the AllTests output is too large to parse, run individual test suites from `annotation-processor/src/test/java/dev/specbinder/processor/tests/` instead (e.g., `MappingStepsTest`, `MappingRuleTest`, `GeneratorOptionsTest`, etc.)
+- **NEVER run the `AllTests` suite unless the user explicitly asks you to.** Do not run it automatically after completing implementation or fix work, even when you believe the task is done. When verification of broader test coverage is genuinely needed, run individual test suites from `annotation-processor/src/test/java/dev/specbinder/processor/tests/` (e.g., `MappingStepsTest`, `MappingRuleTest`, `GeneratorOptionsTest`, `LifecycleVisibilityTest`) — and only the ones relevant to the change you just made.
+- When the user explicitly asks to run all tests, the suite is `dev.specbinder.processor.tests.AllTests`. Prefer running narrower individual suites if the AllTests output would be too large to parse.
 - This hybrid approach provides compile-time guarantees + IntelliJ's better test integration and IDE support
 - **Never use `mvn test` commands** unless explicitly requested by the user
 
@@ -59,24 +59,21 @@ mcp__jetbrains__execute_run_configuration(configurationName="AllTests")
 
 This is a Maven multi-module project with these modules:
 
-### 1. `common/`
-Foundation module containing shared infrastructure:
-- **GeneratorOptions**: Immutable configuration object controlling code generation behavior
-- **Interface traits**: LoggingSupport, OptionsSupport, BaseTypeSupport (mixin pattern)
-- **SourceLine**: Annotation for tracking feature file line numbers
-- **ProcessingException**: Custom exception for annotation processing errors
-
-### 2. `annotations/`
+### 1. `annotations/`
 Lightweight module containing public annotations for Cucumber `.feature` file processing:
 - `@Gherkin2JUnit("path/to/file.feature")` - Marks a class for test generation
 - `@Gherkin2JUnitOptions` - Configures generation behavior (inheritable)
+- `@SourceLine`, `@SourceFilePath` (in the `output` subpackage) - Output annotations emitted on generated code
 
-**Dependencies:** Only depends on `common` module.
+**Dependencies:** None on other SpecBinder modules.
 
 **Client usage:** Client projects add this as a compile dependency to access the annotations without pulling in the heavy annotation processor dependencies.
 
-### 3. `annotation-processor/` (PRIMARY MODULE)
-Annotation processor for Cucumber `.feature` files. This is the most mature and actively developed module.
+### 2. `annotation-processor/` (PRIMARY MODULE)
+Annotation processor for Cucumber `.feature` files. This is the most mature and actively developed module. Also hosts shared infrastructure:
+- **GeneratorOptions** (in `processor/config/`): Immutable configuration object controlling code generation behavior
+- **Interface traits** (in `processor/support/`): LoggingSupport, OptionsSupport, BaseTypeSupport (mixin pattern)
+- **ProcessingException** (in `processor/exception/`): Custom exception for annotation processing errors
 
 **Processing pipeline:**
 ```
@@ -98,14 +95,19 @@ AnnotationProcessor (APT entry point)
 **Utilities:** Located in `annotation-processor/src/main/java/dev/specbinder/processor/gherkin/utils/`
 - MethodNamingUtils, ParameterNamingUtils, JavaDocUtils, TableUtils, TagUtils, etc.
 
-**Dependencies:** Depends on `annotations`, `common`, and heavy processing libraries (JavaPoet, Cucumber parser, etc.)
+**Dependencies:** Depends on `annotations` and heavy processing libraries (JavaPoet, Cucumber parser, etc.)
 
 **Client usage:** Client projects add this as an annotation processor dependency (used only during compilation).
+
+### 3. `execution-reporter/`
+Runtime JUnit 5 extension that captures execution results from generated test classes and writes per-feature JSON reports under `target/specbinder-reports/<sourceFilePath>.json`. Consumed downstream by tooling such as the IntelliJ plugin's gutter icons.
+
+**Dependencies:** Depends on `annotations` (for `@SourceFilePath` lookup) plus Jackson for JSON serialization.
 
 ### 4. `examples/`
 Contains usage examples for spec binder with 6 sub-example modules covering various use cases.
 
-**Module build order:** common → annotations → annotation-processor → examples
+**Module build order:** annotations → annotation-processor → execution-reporter → examples
 
 ## Code Architecture
 
@@ -183,7 +185,7 @@ When creating or updating Java code, **avoid using Java reflection** (e.g., `Cla
 5. Add test cases in `src/test/`
 
 ### Modifying Generation Behavior
-1. Add option to `common/src/main/java/dev/specbinder/common/GeneratorOptions.java`
+1. Add option to `annotation-processor/src/main/java/dev/specbinder/processor/config/GeneratorOptions.java`
 2. Add annotation parameter to `annotations/src/main/java/dev/specbinder/annotations/Gherkin2JUnitOptions.java`
 3. Update GeneratorOptions construction in `annotation-processor/src/main/java/dev/specbinder/processor/AnnotationProcessor.process()`
 4. Use option in relevant processor
@@ -297,10 +299,35 @@ Example — a Java text block inside a DocString:
   """
 ```
 
+**IMPORTANT: Feature File Authoring Approach**
+
+When asked to create or update a feature file (rules, scenarios, steps, etc.), think from the **user's perspective** about the desired behavior — what the input is, what events occur, and what the expected output should be. Do NOT dive into codebase analysis or reverse-engineer implementation details before writing the spec. Feature files define behavior, not implementation.
+
+DO look at nearby sibling feature files (e.g., in the same parent directory or other feature-type directories at the same level) to match the project's style for rules, scenarios, and step phrasing.
+
 **Additional .feature File Guidelines:**
 - Place test feature files in `annotation-processor/src/test/resources/features/`
 - Feature files serve as living documentation of the Gherkin-to-JUnit mapping
 - Always run tests using IntelliJ IDEA's MCP server tools, NOT MAVEN COMMANDS
+
+## Shell Commands
+
+**IMPORTANT: Never use compound shell commands.**
+
+Always run each command as its own separate Bash tool call. Never chain commands with `&&`.
+
+Instead of:
+```bash
+cd /some/dir && git add file.java
+```
+
+Do this as two separate tool calls:
+```bash
+cd /some/dir
+```
+```bash
+git add file.java
+```
 
 ## Git Workflow
 
@@ -327,7 +354,7 @@ This ensures all changes are tracked and ready for commit.
 
 ## Important Notes
 
-- **Module dependency chain**: common → annotations → annotation-processor
+- **Module dependency chain**: annotations → annotation-processor → execution-reporter
 - **annotation-processor is primary**: Most mature and actively developed module
 - **Annotations separated**: annotations module contains only public API; annotation-processor contains the implementation
 - **Examples are active**: 6 sub-example modules in `examples/` directory

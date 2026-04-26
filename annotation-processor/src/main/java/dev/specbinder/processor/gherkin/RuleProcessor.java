@@ -6,6 +6,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
+import dev.specbinder.processor.gherkin.utils.BackgroundStepCollector;
 import dev.specbinder.processor.gherkin.utils.DataTableCollector;
 import dev.specbinder.processor.gherkin.utils.EnumImportCollector;
 import dev.specbinder.processor.support.BaseTypeSupport;
@@ -54,7 +55,10 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
         return baseType;
     }
 
-    void processRule(int ruleNumber, Rule rule, TypeSpec.Builder classBuilder, Map<String, List<Class<?>>> preComputedStepTypes) {
+    void processRule(int ruleNumber, Rule rule, TypeSpec.Builder classBuilder, Map<String, List<Class<?>>> preComputedStepTypes, List<Step> featureBackgroundSteps) {
+
+        List<Step> ruleBackgroundSteps = BackgroundStepCollector.collectRuleBackgroundSteps(rule);
+        List<Step> combinedBackgroundSteps = BackgroundStepCollector.combine(featureBackgroundSteps, ruleBackgroundSteps);
 
         TypeSpec.Builder nestedRuleClassBuilder = TypeSpec
                 .classBuilder("Rule_" + ruleNumber)
@@ -153,7 +157,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
                 }
 
                 ruleScenarioCount++;
-                ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
+                ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector, combinedBackgroundSteps);
                 String rulePrefix = "rule_" + ruleNumber + "_";
                 MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(rulePrefix, ruleScenarioCount, scenario, classBuilder, preComputedStepTypes);
 
