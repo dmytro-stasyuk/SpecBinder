@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.38.0]
+
+### Added
+
 - Execution reporter: a JUnit 5 extension that captures hierarchical execution results (feature, rule, scenario, step) and writes per-feature JSON reports to `target/specbinder-reports/`
 - Step-level reporting via ByteBuddy bytecode instrumentation — intercepts step method calls at runtime to track individual step status, timing, and errors without requiring source-level changes
 - Bytecode call-site scanner that discovers ordered step method sequences from generated test class bytecode
