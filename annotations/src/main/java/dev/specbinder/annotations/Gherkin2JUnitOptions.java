@@ -332,7 +332,7 @@ public @interface Gherkin2JUnitOptions {
      * Controls whether the generated test class is abstract or concrete, determining how step methods are generated
      * and where they should be implemented.
      * <p>
-     * When {@code true} (abstract generation):
+     * When {@code true} (abstract generation, default):
      * <ul>
      *     <li>The generated test class will be declared as {@code abstract}</li>
      *     <li>Step methods will be generated as {@code abstract} methods without method bodies</li>
@@ -340,7 +340,7 @@ public @interface Gherkin2JUnitOptions {
      *     <li>This approach provides compile-time safety - missing step implementations cause compilation errors</li>
      * </ul>
      * <p>
-     * When {@code false} (concrete generation, default):
+     * When {@code false} (concrete generation):
      * <ul>
      *     <li>The generated test class will be a concrete class that can be executed directly</li>
      *     <li>Step methods will be generated with method bodies containing {@code Assertions.fail("Step is not yet implemented")}</li>
@@ -353,7 +353,7 @@ public @interface Gherkin2JUnitOptions {
      *
      * @return true if the generated test class should be abstract, false otherwise
      */
-    boolean shouldBeAbstract() default false;
+    boolean shouldBeAbstract() default true;
 
     /**
      * Suffix that will be used for the name of the generated test class in case it is abstract (i.e., when shouldBeAbstract is true).

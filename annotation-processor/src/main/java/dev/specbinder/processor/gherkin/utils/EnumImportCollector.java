@@ -28,6 +28,7 @@ public class EnumImportCollector {
 
     private final Set<EnumConstant> enumConstants = new LinkedHashSet<>();
     private final Set<String> enumTypes = new LinkedHashSet<>();
+    private final Set<String> additionalImports = new LinkedHashSet<>();
 
     /**
      * Registers an enum constant that needs a static import.
@@ -79,5 +80,32 @@ public class EnumImportCollector {
      */
     public boolean hasEnumTypes() {
         return !enumTypes.isEmpty();
+    }
+
+    /**
+     * Registers an arbitrary type that needs a regular (non-static) import in the generated
+     * class. Used for types referenced by simple name from generated code (e.g., factory call
+     * receivers for domain value object fields).
+     *
+     * @param qualifiedName the fully qualified name of the type (e.g., {@code "external.domain.Money"})
+     */
+    public void registerAdditionalImport(String qualifiedName) {
+        additionalImports.add(qualifiedName);
+    }
+
+    /**
+     * Returns all collected additional imports.
+     * @return set of fully qualified type names
+     */
+    public Set<String> getAdditionalImports() {
+        return additionalImports;
+    }
+
+    /**
+     * Returns true if any additional imports have been collected.
+     * @return true if additional imports exist, false otherwise
+     */
+    public boolean hasAdditionalImports() {
+        return !additionalImports.isEmpty();
     }
 }

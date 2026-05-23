@@ -259,6 +259,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         return new GeneratedFileResult(
                 javaFile,
                 enumImportCollector.getEnumTypes(),
+                enumImportCollector.getAdditionalImports(),
                 options.isUseQualifiedEnumConstants()
         );
     }
@@ -269,11 +270,18 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
     public static class GeneratedFileResult {
         public final JavaFile javaFile;
         public final Set<String> enumTypesToImport;
+        public final Set<String> additionalImports;
         public final boolean useQualifiedEnumConstants;
 
         public GeneratedFileResult(JavaFile javaFile, Set<String> enumTypesToImport, boolean useQualifiedEnumConstants) {
+            this(javaFile, enumTypesToImport, Collections.emptySet(), useQualifiedEnumConstants);
+        }
+
+        public GeneratedFileResult(JavaFile javaFile, Set<String> enumTypesToImport,
+                                   Set<String> additionalImports, boolean useQualifiedEnumConstants) {
             this.javaFile = javaFile;
             this.enumTypesToImport = enumTypesToImport;
+            this.additionalImports = additionalImports;
             this.useQualifiedEnumConstants = useQualifiedEnumConstants;
         }
 
@@ -288,6 +296,11 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                 source = addEnumTypeImportsToSource(source, javaFile.packageName, enumTypesToImport);
             }
 
+            // Add additional regular imports collected during step processing (e.g., factory method types)
+            if (additionalImports != null && !additionalImports.isEmpty()) {
+                source = mergeAdditionalImportsIntoSource(source, additionalImports);
+            }
+
             // Replace Examples comment marker annotations with block comments
             source = replaceExamplesCommentMarkers(source);
 
@@ -295,9 +308,11 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         }
 
         /**
-         * Adds regular enum type imports to the generated source code.
+         * Adds regular (non-static) type imports to the generated source code at the position
+         * right after the package declaration. Each import is placed on its own line in its
+         * own block (separated from the JavaPoet-generated import block by a blank line).
          */
-        private String addEnumTypeImportsToSource(String source, String packageName, Set<String> enumQualifiedNames) {
+        private String addEnumTypeImportsToSource(String source, String packageName, Set<String> qualifiedNames) {
             // Find the position to insert imports (after package declaration)
             String packageDeclaration = "package " + packageName + ";";
             int insertPosition = source.indexOf(packageDeclaration);
@@ -311,10 +326,61 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             // Build the import statements (preserving insertion order)
             StringBuilder imports = new StringBuilder();
             imports.append("\n");
-            enumQualifiedNames.forEach(enumQualifiedName -> imports.append("\nimport ").append(enumQualifiedName).append(";"));
+            qualifiedNames.forEach(qualifiedName -> imports.append("\nimport ").append(qualifiedName).append(";"));
 
             // Insert the imports
             return source.substring(0, insertPosition) + imports + source.substring(insertPosition);
+        }
+
+        private static final Pattern IMPORT_LINE_PATTERN = Pattern.compile(
+                "(?m)^import\\s+(static\\s+)?([^;]+);$");
+
+        /**
+         * Merges additional regular (non-static) imports into the existing JavaPoet-generated
+         * import block in alphabetical order. Static imports are preserved in their original
+         * relative position after the merged regular import block.
+         */
+        private String mergeAdditionalImportsIntoSource(String source, Set<String> additionalQualifiedNames) {
+            Matcher matcher = IMPORT_LINE_PATTERN.matcher(source);
+            java.util.List<String> existingRegularImports = new java.util.ArrayList<>();
+            java.util.List<String> existingStaticImports = new java.util.ArrayList<>();
+            int firstImportStart = -1;
+            int lastImportEnd = -1;
+            while (matcher.find()) {
+                if (firstImportStart == -1) {
+                    firstImportStart = matcher.start();
+                }
+                lastImportEnd = matcher.end();
+                if (matcher.group(1) != null) {
+                    existingStaticImports.add(matcher.group(2).trim());
+                } else {
+                    existingRegularImports.add(matcher.group(2).trim());
+                }
+            }
+
+            java.util.Set<String> mergedRegular = new java.util.TreeSet<>(existingRegularImports);
+            mergedRegular.addAll(additionalQualifiedNames);
+
+            StringBuilder block = new StringBuilder();
+            boolean first = true;
+            for (String imp : mergedRegular) {
+                if (!first) {
+                    block.append("\n");
+                }
+                block.append("import ").append(imp).append(";");
+                first = false;
+            }
+            if (!existingStaticImports.isEmpty()) {
+                block.append("\n");
+                for (String imp : existingStaticImports) {
+                    block.append("\nimport static ").append(imp).append(";");
+                }
+            }
+
+            if (firstImportStart == -1) {
+                return source;
+            }
+            return source.substring(0, firstImportStart) + block + source.substring(lastImportEnd);
         }
 
         private static final Pattern EXAMPLES_COMMENT_MARKER_PATTERN = Pattern.compile(

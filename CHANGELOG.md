@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- Automatic wrapping of Gherkin values in a domain value object's static factory method when the target parameter or DataTable column maps to a non-enum custom type — covers quoted step parameters and `LIST_OF_OBJECT_PARAMS` cell values, including overload disambiguation by inferred value type with a unique-`String`-factory fallback
+
 ### Changed
+
+- Default value of `@Gherkin2JUnitOptions.shouldBeAbstract` flipped from `false` to `true`, making abstract test class generation the new default — opt back into concrete generation with `@Gherkin2JUnitOptions(shouldBeAbstract = false)`
 
 ### Fixed
 

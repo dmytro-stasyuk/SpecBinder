@@ -1,3 +1,5 @@
+<img src="logo.png" alt="SpecBinder logo" width="80" align="left"/>
+
 # Spec Binder
 
 **Spec Binder** turns natural-language Gherkin specs into **pure JUnit** test code at **compile time**.
@@ -75,15 +77,16 @@ JUnit method for each empty Rule/Scenario, so you immediately have red tests to 
 
    The generated class operates in one of two modes:
 
-   **Concrete mode (default):**
-    * The generated class is **concrete** and extends the marker class.
-    * Each step method contains an `Assertions.fail("Step is not yet implemented")` stub, so you immediately know what needs implementing.
-    * You implement the step methods **in the marker class**. On the next build, the generator detects these methods in the parent class and **stops generating stubs** for them — the generated test class simply inherits and calls your implementations.
+   **Abstract mode (default):**
+    * The generated class is **abstract** (named `<Name>Scenarios` by default) and extends the marker class.
+    * Each step method is declared as `abstract` — missing implementations become **compile errors**.
+    * You create a **concrete subclass** that extends the generated class and overrides every abstract step method with a real implementation. That concrete subclass is what JUnit runs.
+    * Step methods can optionally be placed on the marker class itself (or any class up the hierarchy). The generator detects them and **does not emit an abstract declaration** for those steps — the concrete subclass inherits them and only needs to implement the rest.
 
-   **Abstract mode** (`@Gherkin2JUnitOptions(shouldBeAbstract = true)`):
-    * The generated class is **abstract** with abstract step methods.
-    * You create a **concrete subclass** extending the generated test class and override the step methods with real
-      implementations.
+   **Concrete mode** (`@Gherkin2JUnitOptions(shouldBeAbstract = false)`):
+    * The generated class is **concrete** (named `<Name>Test` by default) and extends the marker class.
+    * Each step method contains an `Assertions.fail("Step is not yet implemented")` stub, so the generated class is immediately runnable.
+    * You implement the step methods **in the marker class**. On the next build, the generator detects these methods in the parent class and **stops generating stubs** for them — the generated test class simply inherits and calls your implementations.
 
 ---
 
@@ -124,7 +127,7 @@ public abstract class CartFeature {
 
 3. **Compile** the marker class. The generator writes JUnit sources under your build's generated-sources dir.
 
-**Generated class:**
+**Generated class** (default *abstract* mode):
 
 ```java
 package org.mycompany.app;
@@ -134,7 +137,6 @@ import dev.specbinder.annotations.output.SourceFilePath;
 import java.lang.String;
 import javax.annotation.processing.Generated;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -152,41 +154,31 @@ import org.junit.jupiter.api.TestMethodOrder;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @SourceFilePath("specs/cart.feature")
-public class CartFeatureTest extends CartFeature {
+public abstract class CartScenarios extends CartFeature {
 
-    public void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, Integer p2, Double p3) {
-        Assertions.fail("Step is not yet implemented");
-    }
+    public abstract void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String p1, Integer p2, Double p3);
 
-    public void iChangeTheQuantityTo$p1(Integer p1) {
-        Assertions.fail("Step is not yet implemented");
-    }
+    public abstract void iChangeTheQuantityTo$p1(Integer p1);
 
-    public void myCartSubtotalIs$p1(Double p1) {
-        Assertions.fail("Step is not yet implemented");
-    }
+    public abstract void myCartSubtotalIs$p1(Double p1);
 
-    public void iViewTheCart() {
-        Assertions.fail("Step is not yet implemented");
-    }
+    public abstract void iViewTheCart();
 
-    public void iSeeThe$p1Banner(String p1) {
-        Assertions.fail("Step is not yet implemented");
-    }
+    public abstract void iSeeThe$p1Banner(String p1);
 
     @Test
     @Order(1)
     @DisplayName("Scenario: update quantity updates subtotal")
     public void scenario_1() {
-        /**
+        /*
          * Given my cart contains "Wireless Headphones" with quantity "1" and unit price "60.00"
          */
         myCartContains$p1WithQuantity$p2AndUnitPrice$p3("Wireless Headphones", 1, 60.00);
-        /**
+        /*
          * When I change the quantity to "2"
          */
         iChangeTheQuantityTo$p1(2);
-        /**
+        /*
          * Then my cart subtotal is "120.00"
          */
         myCartSubtotalIs$p1(120.00);
@@ -201,15 +193,15 @@ public class CartFeatureTest extends CartFeature {
         @Order(1)
         @DisplayName("Scenario: show free-shipping banner when threshold is met")
         public void scenario_1() {
-            /**
+            /*
              * Given my cart subtotal is "55.00"
              */
             myCartSubtotalIs$p1(55.00);
-            /**
+            /*
              * When I view the cart
              */
             iViewTheCart();
-            /**
+            /*
              * Then I see the "Free shipping" banner
              */
             iSeeThe$p1Banner("Free shipping");
@@ -218,42 +210,45 @@ public class CartFeatureTest extends CartFeature {
 }
 ```
 
-4. **Implement the step methods** and recompile — see [How it works](#how-it-works-at-a-glance) above for details on concrete vs abstract mode.
+4. **Implement the step methods** by creating a concrete subclass of the generated abstract class — see [How it works](#how-it-works-at-a-glance) above for details on abstract vs concrete mode.
 
-**Your implementation (in the marker class):**
+**Your concrete test class:**
 
 ```java
 package org.mycompany.app;
 
-import dev.specbinder.processor.Gherkin2JUnit;
+public class CartTest extends CartScenarios {
 
-@Gherkin2JUnit("specs/cart.feature")
-public abstract class CartFeature {
-
+    @Override
     public void myCartContains$p1WithQuantity$p2AndUnitPrice$p3(String itemName, Integer quantity, Double unitPrice) {
         /* real implementation here */
     }
 
+    @Override
     public void iChangeTheQuantityTo$p1(Integer newQuantity) {
         /* real implementation here */
     }
 
+    @Override
     public void myCartSubtotalIs$p1(Double expectedSubtotal) {
         /* real implementation here */
     }
 
+    @Override
     public void iViewTheCart() {
         /* real implementation here */
     }
 
+    @Override
     public void iSeeThe$p1Banner(String bannerText) {
         /* real implementation here */
     }
 }
 ```
 
-After rebuilding, the generator sees these methods in `CartFeature` and no longer emits stubs for them in
-`CartFeatureTest`. The generated test class inherits and calls your implementations directly.
+JUnit discovers and runs `CartTest`. If any step method is left unimplemented, the project simply will not compile.
+
+> You can also place step implementations directly on the marker class `CartFeature` — the generator detects them in the class hierarchy and omits the matching abstract declarations from `CartScenarios`, so the concrete subclass only needs to override what's still missing.
 
 ---
 
@@ -290,7 +285,7 @@ The [`examples/`](examples/) directory contains ready-to-run Maven modules organ
 ## Details of mapping Gherkin → JUnit
 
 All elements of [Gherkin](https://cucumber.io/docs/gherkin/reference/) are supported, please refer to below sections for
-details
+details.
 
 ### Primary keywords:
 
@@ -1691,22 +1686,27 @@ All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You ca
 
 #### Available options
 
-| Option                                  | Type    | Default                  | Description                                                                                                                                               |
-|-----------------------------------------|---------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `shouldBeAbstract`                      | boolean | `false`                  | Generate abstract class with abstract step methods instead of concrete class with failing stubs                                                           |
-| `classSuffixIfAbstract`                 | String  | `"Scenarios"`            | Class name suffix when generating in abstract mode                                                                                                        |
-| `classSuffixIfConcrete`                 | String  | `"Test"`                 | Class name suffix when generating in concrete mode                                                                                                        |
-| `emptyScenarioBehavior`                 | enum    | `FAIL`                   | Behavior for scenarios with no steps: `FAIL` (test fails), `SKIP` (test skipped), or `NONE` (test passes)                                                |
-| `emptyRuleBehavior`                     | enum    | `FAIL`                   | Behavior for rules with no scenarios: `FAIL` (test fails), `SKIP` (test skipped), or `NONE` (test passes)                                                |
-| `tagForEmptyScenarios`                  | String  | `"new"`                  | Tag added to empty scenarios (set to `""` to disable)                                                                                                     |
-| `tagForEmptyRules`                      | String  | `"new"`                  | Tag added to empty rules (set to `""` to disable)                                                                                                         |
-| `dataTableParameterType`                | enum    | `LIST_OF_OBJECT_PARAMS`  | How data tables map to Java types: `LIST_OF_OBJECT_PARAMS`, `LIST_OF_MAPS`, or `CUCUMBER_DATA_TABLE`                                                     |
-| `useStepKeywordInStepMethodName`        | boolean | `false`                  | Include Given/When/Then keyword as a prefix in step method names                                                                                          |
-| `addCucumberStepAnnotations`            | boolean | `false`                  | Add `@Given`/`@When`/`@Then` Cucumber annotations to step methods                                                                                        |
-| `useCucumberAnnotationsForStepMatching` | boolean | `true`                   | Use Cucumber annotations for step matching when present in base class                                                                                     |
-| `addSourceLineNumbers`                  | boolean | `false`                  | Embed source line numbers from the spec file into generated code: line numbers in `@DisplayName` annotations and `[N]` prefixes in step block comments |
-| `enableCompositeSteps`                  | boolean | `false`                  | Enable composite step pattern                                                                                                                             |
-| `useQualifiedEnumConstants`             | boolean | `false`                  | Use fully qualified enum constant names in generated code                                                                                                 |
+| Option                                  | Type     | Default                  | Description                                                                                                                                               |
+|-----------------------------------------|----------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `supportedFileExtensions`               | String[] | `{"feature", "specb"}`   | File extensions recognised by convention-based discovery and glob patterns                                                                                |
+| `skipGenerationForTags`                 | String[] | `{}`                     | Regex patterns; matching tags cause the generator to skip the corresponding Feature/Rule/Scenario/Examples element entirely                              |
+| `shouldBeAbstract`                      | boolean  | `true`                   | Generate abstract class with abstract step methods (default). Set to `false` for a concrete class with failing stubs                                      |
+| `classSuffixIfAbstract`                 | String   | `"Scenarios"`            | Class name suffix when generating in abstract mode                                                                                                        |
+| `classSuffixIfConcrete`                 | String   | `"Test"`                 | Class name suffix when generating in concrete mode                                                                                                        |
+| `unimplementedStepBehavior`             | enum     | `FAIL`                   | Body of unimplemented step stubs in *concrete* mode: `FAIL`, `SKIP`, or `COMPILATION_ERROR`                                                              |
+| `emptyScenarioBehavior`                 | enum     | `FAIL`                   | Behavior for scenarios with no steps: `FAIL` (test fails), `SKIP` (test skipped), or `COMPILATION_ERROR` (project will not compile)                      |
+| `emptyRuleBehavior`                     | enum     | `FAIL`                   | Behavior for rules with no scenarios: `FAIL` (test fails), `SKIP` (test skipped), or `COMPILATION_ERROR` (project will not compile)                      |
+| `tagForEmptyScenarios`                  | String   | `"new"`                  | Tag added to empty scenarios (set to `""` to disable)                                                                                                     |
+| `tagForEmptyRules`                      | String   | `"new"`                  | Tag added to empty rules (set to `""` to disable)                                                                                                         |
+| `dataTableParameterType`                | enum     | `LIST_OF_OBJECT_PARAMS`  | How data tables map to Java types: `LIST_OF_OBJECT_PARAMS`, `LIST_OF_MAPS`, or `CUCUMBER_DATA_TABLE`                                                     |
+| `useStepKeywordInStepMethodName`        | boolean  | `false`                  | Include Given/When/Then keyword as a prefix in step method names                                                                                          |
+| `addCucumberStepAnnotations`            | boolean  | `false`                  | Add `@Given`/`@When`/`@Then` Cucumber annotations to step methods                                                                                        |
+| `useCucumberAnnotationsForStepMatching` | boolean  | `true`                   | Use Cucumber annotations for step matching when present in base class                                                                                     |
+| `addSourceLineNumbers`                  | boolean  | `false`                  | Embed source line numbers from the spec file into generated code: line numbers in `@DisplayName` annotations and `[N]` prefixes in step block comments |
+| `useQualifiedEnumConstants`             | boolean  | `false`                  | Use fully qualified enum constant names in generated code                                                                                                 |
+| `emitScenarioHash`                      | boolean  | `false`                  | Emit a `@ScenarioHash("…")` annotation carrying a SHA-256 of each scenario's executable content                                                          |
+| `verbosity`                             | enum     | `NORMAL`                 | Build log verbosity during annotation processing: `SILENT`, `NORMAL`, `VERBOSE`, or `DEBUG`                                                              |
+| `enableCompositeSteps`                  | boolean  | `false`                  | **(experimental)** Enable composite step pattern                                                                                                          |
 
 <details>
 
@@ -1759,7 +1759,7 @@ public abstract class CartFeature extends BaseFeatureOptions {
     <dependency>
         <groupId>dev.specbinder</groupId>
         <artifactId>annotations</artifactId>
-        <version>0.1.20</version>
+        <version>2026.38.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -1767,7 +1767,7 @@ public abstract class CartFeature extends BaseFeatureOptions {
     <dependency>
         <groupId>dev.specbinder</groupId>
         <artifactId>annotation-processor</artifactId>
-        <version>0.1.20</version>
+        <version>2026.38.0</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>

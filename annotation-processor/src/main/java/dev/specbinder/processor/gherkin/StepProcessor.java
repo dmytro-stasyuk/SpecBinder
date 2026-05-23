@@ -584,7 +584,20 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                             }
                         } else {
                             String literal = ParameterConversionUtils.toLiteral(parameterValue, targetType);
-                            parameterValuesSB.append(literal);
+                            // If toLiteral did not perform a conversion (returned the value as a quoted string),
+                            // try domain value object factory method resolution for non-enum declared types.
+                            String quotedFallback = "\"" + escapeForJavaStringLiteral(parameterValue) + "\"";
+                            if (!isEnumType && literal.equals(quotedFallback)) {
+                                String inferredColumnTypeName = inferredColumnTypeNameForClass(parameterTypes.get(j));
+                                String factoryCall = resolveDomainValueObjectFactoryCall(parameterValue, targetType, inferredColumnTypeName);
+                                if (factoryCall != null) {
+                                    parameterValuesSB.append(factoryCall);
+                                } else {
+                                    parameterValuesSB.append(literal);
+                                }
+                            } else {
+                                parameterValuesSB.append(literal);
+                            }
                             // Register enum constants for static import only if value resolved to a constant
                             if (enumImportCollector != null && isEnumType) {
                                 String resolvedConstant = ParameterConversionUtils.resolveEnumConstantName(parameterValue, targetType);
@@ -750,7 +763,8 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                                                 String transformedValue = transformCellValueWithPlaceholders(
                                                         cellValue, scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes, targetType);
                                                 if (targetType != null) {
-                                                    transformedValue = applyTypeConversion(transformedValue, targetType);
+                                                    String inferredColumnType = lookupInferredColumnType(recordMetadata, mappedColumnName);
+                                                    transformedValue = applyTypeConversion(transformedValue, targetType, inferredColumnType);
                                                 }
                                                 transformedValues.add(transformedValue);
                                             }
@@ -797,7 +811,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                                                     cellValue, scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes, targetType);
                                             // Apply type conversion for non-String types
                                             if (targetType != null) {
-                                                transformedValue = applyTypeConversion(transformedValue, targetType);
+                                                transformedValue = applyTypeConversion(transformedValue, targetType, columnType);
                                             }
                                             transformedValues.add(transformedValue);
                                         }
@@ -1076,6 +1090,10 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
      * @return the converted value literal (e.g., 30 for int, 30L for long, AVAILABLE for enum)
      */
     private String applyTypeConversion(String value, TypeMirror targetType) {
+        return applyTypeConversion(value, targetType, null);
+    }
+
+    private String applyTypeConversion(String value, TypeMirror targetType, String inferredColumnTypeName) {
         // For replaceAll expressions (mixed content with placeholders), return as-is.
         // This produces a String value which will cause compilation errors if the target
         // type is not String-compatible (int, long, double, boolean, enum, etc.)
@@ -1122,8 +1140,128 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             return literal;
         }
 
+        // Try domain value object factory method resolution for non-enum declared types
+        String factoryCall = resolveDomainValueObjectFactoryCall(stringValue, targetType, inferredColumnTypeName);
+        if (factoryCall != null) {
+            return factoryCall;
+        }
+
         // Return original if no conversion was applied
         return value;
+    }
+
+    private String inferredColumnTypeNameForClass(Class<?> inferredType) {
+        if (inferredType == null) {
+            return null;
+        }
+        if (inferredType == Boolean.class || inferredType == boolean.class) {
+            return "Boolean";
+        }
+        if (inferredType == Integer.class || inferredType == int.class) {
+            return "Integer";
+        }
+        if (inferredType == Long.class || inferredType == long.class) {
+            return "Long";
+        }
+        if (inferredType == Double.class || inferredType == double.class
+                || inferredType == Float.class || inferredType == float.class) {
+            return "Double";
+        }
+        if (inferredType == Character.class || inferredType == char.class) {
+            return "Character";
+        }
+        if (inferredType == String.class) {
+            return "String";
+        }
+        return null;
+    }
+
+    private String lookupInferredColumnType(RecordMetadata recordMetadata, String columnName) {
+        if (recordMetadata == null || columnName == null) {
+            return null;
+        }
+        int idx = recordMetadata.getColumnNames().indexOf(columnName);
+        if (idx < 0 || idx >= recordMetadata.getColumnTypes().size()) {
+            return null;
+        }
+        return recordMetadata.getColumnTypes().get(idx);
+    }
+
+    /**
+     * Attempts to wrap the given cell value in a static factory method call on {@code targetType}
+     * when the target is a non-enum declared domain value object type (e.g., {@code Money}).
+     *
+     * @param stringValue            the raw cell value (without surrounding quotes)
+     * @param targetType             the declared parameter class field type
+     * @param inferredColumnTypeName the inferred Gherkin column type (e.g., "Double"), or {@code null}
+     * @return the factory call expression (e.g., {@code Money.of(60.00)}), or {@code null} when no
+     * suitable factory method is found or the resolution is ambiguous
+     */
+    private String resolveDomainValueObjectFactoryCall(String stringValue, TypeMirror targetType,
+                                                       String inferredColumnTypeName) {
+        DomainValueObjectFactoryResolver.Resolution resolution =
+                DomainValueObjectFactoryResolver.resolve(targetType, inferredColumnTypeName);
+        if (resolution == null) {
+            return null;
+        }
+        TypeElement typeElement = (TypeElement) ((DeclaredType) targetType).asElement();
+        String renderedArg = ParameterConversionUtils.toLiteral(stringValue, resolution.paramType());
+        registerDomainTypeImportIfNeeded(typeElement);
+        return typeElement.getSimpleName().toString()
+                + "."
+                + resolution.factory().getSimpleName().toString()
+                + "(" + renderedArg + ")";
+    }
+
+    /**
+     * Registers an import for the given domain type unless it is already accessible by simple name
+     * from the generated test class: nested in the base class hierarchy, or a top-level type in
+     * the same package as the base class.
+     */
+    private void registerDomainTypeImportIfNeeded(TypeElement typeElement) {
+        if (enumImportCollector == null) {
+            return;
+        }
+        if (baseType != null && isNestedInBaseHierarchy(typeElement)) {
+            return;
+        }
+        if (isTopLevelInSamePackageAsBase(typeElement)) {
+            return;
+        }
+        String qualifiedName = typeElement.getQualifiedName().toString();
+        enumImportCollector.registerAdditionalImport(qualifiedName);
+    }
+
+    private boolean isNestedInBaseHierarchy(TypeElement typeElement) {
+        String qualifiedName = typeElement.getQualifiedName().toString();
+        String baseQualifiedName = baseType.getQualifiedName().toString();
+        if (qualifiedName.startsWith(baseQualifiedName + ".")) {
+            return true;
+        }
+        TypeMirror superclass = baseType.getSuperclass();
+        while (superclass != null && superclass.getKind() == javax.lang.model.type.TypeKind.DECLARED) {
+            DeclaredType declaredSuperclass = (DeclaredType) superclass;
+            TypeElement superclassElement = (TypeElement) declaredSuperclass.asElement();
+            String superQualifiedName = superclassElement.getQualifiedName().toString();
+            if (qualifiedName.startsWith(superQualifiedName + ".")) {
+                return true;
+            }
+            superclass = superclassElement.getSuperclass();
+        }
+        return false;
+    }
+
+    private boolean isTopLevelInSamePackageAsBase(TypeElement typeElement) {
+        if (baseType == null) {
+            return false;
+        }
+        Element enclosing = typeElement.getEnclosingElement();
+        if (!(enclosing instanceof PackageElement packageElement)) {
+            return false;
+        }
+        String typePackage = packageElement.getQualifiedName().toString();
+        String basePackage = processingEnv.getElementUtils().getPackageOf(baseType).getQualifiedName().toString();
+        return typePackage.equals(basePackage);
     }
 
     /**

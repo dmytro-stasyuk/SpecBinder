@@ -141,7 +141,7 @@ public class GeneratorOptions {
      * Default options
      */
     public GeneratorOptions() {
-        this.shouldBeAbstract = false;
+        this.shouldBeAbstract = true;
         this.classSuffixIfConcrete = "Test";
         this.classSuffixIfAbstract = "Scenarios";
         this.addSourceLineNumbers = false;

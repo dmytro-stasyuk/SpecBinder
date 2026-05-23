@@ -70,7 +70,7 @@ public class Gherkin2JUnitOptionsResolver {
             List<AnnotationMirror> annotationMirrors, ProcessingEnvironment processingEnv) {
 
         // Start with defaults
-        boolean shouldBeAbstract = false;
+        boolean shouldBeAbstract = true;
         String classSuffixIfConcrete = "Test";
         String classSuffixIfAbstract = "Scenarios";
         boolean addSourceLineNumbers = false;
