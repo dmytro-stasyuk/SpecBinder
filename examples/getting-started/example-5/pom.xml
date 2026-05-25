@@ -5,7 +5,7 @@
     <parent>
         <groupId>dev.specbinder.examples.gettingstarted</groupId>
         <artifactId>getting-started</artifactId>
-        <version>2026.39.0</version>
+        <version>2026.40.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-5</artifactId>
     <name>${project.artifactId}</name>
