@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.39.0]
+
+### Added
+
 - Automatic wrapping of Gherkin values in a domain value object's static factory method when the target parameter or DataTable column maps to a non-enum custom type — covers quoted step parameters and `LIST_OF_OBJECT_PARAMS` cell values, including overload disambiguation by inferred value type with a unique-`String`-factory fallback
 
 ### Changed
