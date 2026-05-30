@@ -74,29 +74,57 @@ public final class StepCallSiteScanner {
     }
 
     /**
-     * Scan the bytecode of {@code testClass}. Class bytes are located via the class's
-     * own loader, which works for classes loaded from regular JARs, exploded
-     * directories, and dynamically-compiled test fixtures.
+     * Scan the bytecode of {@code testClass} and every scannable superclass up the
+     * inheritance chain. Walking the chain matters in SpecBinder's abstract generation
+     * mode: the {@code @Test} method bodies and {@code @BeforeEach} methods live on the
+     * generated abstract intermediate class, and JUnit invokes them through the
+     * user-written concrete subclass it actually runs.
+     * <p>
+     * Visiting top-down (most-distant scannable ancestor first, then each subclass in
+     * turn) gives the desired semantics: {@code @BeforeEach} calls accumulate in
+     * JUnit's invocation order (parent first, then child), and a child-class override
+     * of a {@code @Test} method replaces any earlier entry recorded for the same
+     * name + descriptor so the most-derived body is what ends up in the plan.
+     * <p>
+     * Class bytes are located via each class's own loader, which works for classes
+     * loaded from regular JARs, exploded directories, and dynamically-compiled test
+     * fixtures.
      */
     public static Plan scan(Class<?> testClass) {
-        ClassFileLocator locator = ClassFileLocator.ForClassLoader.of(testClass.getClassLoader());
-        byte[] bytes;
-        try {
-            bytes = locator.locate(testClass.getName()).resolve();
-        } catch (IOException e) {
-            throw new IllegalStateException(
-                    "SpecBinder reporter failed to read bytecode for " + testClass.getName(), e);
-        }
-
         List<Call> backgroundCalls = new ArrayList<>();
         Map<String, List<Call>> scenarioCallsByMethod = new HashMap<>();
         Set<String> stepMethodNames = new LinkedHashSet<>();
 
-        new ClassReader(bytes).accept(
-                new ScanningClassVisitor(backgroundCalls, scenarioCallsByMethod, stepMethodNames),
-                ClassReader.SKIP_FRAMES);
+        List<Class<?>> chainTopDown = new ArrayList<>();
+        for (Class<?> c = testClass; c != null && !isInfrastructureClass(c); c = c.getSuperclass()) {
+            chainTopDown.add(0, c);
+        }
+
+        for (Class<?> cls : chainTopDown) {
+            ClassFileLocator locator = ClassFileLocator.ForClassLoader.of(cls.getClassLoader());
+            byte[] bytes;
+            try {
+                bytes = locator.locate(cls.getName()).resolve();
+            } catch (IOException e) {
+                throw new IllegalStateException(
+                        "SpecBinder reporter failed to read bytecode for " + cls.getName(), e);
+            }
+            new ClassReader(bytes).accept(
+                    new ScanningClassVisitor(backgroundCalls, scenarioCallsByMethod, stepMethodNames),
+                    ClassReader.SKIP_FRAMES);
+        }
 
         return new Plan(backgroundCalls, scenarioCallsByMethod, stepMethodNames);
+    }
+
+    private static boolean isInfrastructureClass(Class<?> cls) {
+        if (cls == Object.class) {
+            return true;
+        }
+        String name = cls.getName();
+        return name.startsWith("java.")
+                || name.startsWith("javax.")
+                || name.startsWith("jdk.");
     }
 
     static String descriptorOf(Method method) {
@@ -213,10 +241,18 @@ public final class StepCallSiteScanner {
             if (!isTest && !isBeforeEach) {
                 return;
             }
-            List<Call> sink = isBeforeEach
-                    ? backgroundSink
-                    : scenarioSinks.computeIfAbsent(
-                            methodName + methodDescriptor, k -> new ArrayList<>());
+            List<Call> sink;
+            if (isBeforeEach) {
+                // Append: multiple @BeforeEach methods across the class hierarchy all
+                // run, in chain-top-down (parent → child) order.
+                sink = backgroundSink;
+            } else {
+                // Replace: when the same @Test method is overridden in a subclass, the
+                // top-down scan visits the override last; that body is what JUnit
+                // actually invokes, so it wins over any earlier ancestor entry.
+                sink = new ArrayList<>();
+                scenarioSinks.put(methodName + methodDescriptor, sink);
+            }
             for (String callName : pendingCallNames) {
                 sink.add(new Call(callName));
                 stepMethodNames.add(callName);

@@ -253,7 +253,7 @@ public class SpecBinderReporter implements
         }
 
         ScenarioNode node = ScenarioNode.scenario();
-        node.setId(formatTestId(testMethod));
+        node.setId(formatTestId(context.getRequiredTestClass(), testMethod));
         node.setDisplayName(context.getDisplayName());
         node.setStatus(status);
         node.setSourceLine(readSourceLine(testMethod));
@@ -297,7 +297,7 @@ public class SpecBinderReporter implements
         }
         Method testMethod = context.getTestMethod().get();
         ScenarioNode node = ScenarioNode.scenario();
-        node.setId(formatTestId(testMethod));
+        node.setId(formatTestId(context.getRequiredTestClass(), testMethod));
         node.setDisplayName(context.getDisplayName());
         node.setStatus(Status.SKIPPED);
         node.setSourceLine(readSourceLine(testMethod));
@@ -410,7 +410,7 @@ public class SpecBinderReporter implements
             return existing;
         }
         ScenarioNode outline = ScenarioNode.outline();
-        outline.setId(formatTestId(testMethod));
+        outline.setId(formatTestId(rowContext.getRequiredTestClass(), testMethod));
         outline.setDisplayName(deriveOutlineDisplayName(methodCtx, testMethod));
         outline.setSourceLine(readSourceLine(testMethod));
         outline.setScenarioHash(readScenarioHash(testMethod));
@@ -540,12 +540,16 @@ public class SpecBinderReporter implements
 
     /**
      * Stable Javadoc-style identifier — {@code fqcn#method}, where {@code fqcn} is
-     * the JVM binary name (so nested-rule classes appear as {@code Outer$Rule_1}).
+     * the JVM binary name of the runtime test class JUnit actually ran (so nested-rule
+     * classes appear as {@code Outer$Rule_1}, and a user-written concrete subclass
+     * that inherits an abstract-mode SpecBinder {@code @Test} method appears as the
+     * concrete subclass, not the inherited declarer).
+     * <p>
      * Outline templates and outline rows share the same id (the row distinction
      * lives in {@code examplesRow} and {@code rowHash}).
      */
-    private static String formatTestId(Method method) {
-        return method.getDeclaringClass().getName() + "#" + method.getName();
+    private static String formatTestId(Class<?> testClass, Method method) {
+        return testClass.getName() + "#" + method.getName();
     }
 
     private static List<String> tagsOf(ExtensionContext context) {
