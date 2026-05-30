@@ -1759,7 +1759,7 @@ public abstract class CartFeature extends BaseFeatureOptions {
     <dependency>
         <groupId>dev.specbinder</groupId>
         <artifactId>annotations</artifactId>
-        <version>2026.38.0</version>
+        <version>2026.39.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -1767,7 +1767,7 @@ public abstract class CartFeature extends BaseFeatureOptions {
     <dependency>
         <groupId>dev.specbinder</groupId>
         <artifactId>annotation-processor</artifactId>
-        <version>2026.38.0</version>
+        <version>2026.39.0</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>
