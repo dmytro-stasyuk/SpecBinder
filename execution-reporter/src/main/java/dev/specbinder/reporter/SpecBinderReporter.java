@@ -102,7 +102,7 @@ public class SpecBinderReporter implements
                 return;
             }
             RuleReport rule = new RuleReport();
-            rule.setId(testClass.getName());
+            rule.setId(reportFqn(testClass, featureReport.getGeneratedClass()));
             rule.setDisplayName(displayNameOf(testClass));
             rule.setSourceLine(readSourceLine(testClass));
             featureReport.getRules().add(rule);
@@ -253,7 +253,7 @@ public class SpecBinderReporter implements
         }
 
         ScenarioNode node = ScenarioNode.scenario();
-        node.setId(formatTestId(context.getRequiredTestClass(), testMethod));
+        node.setId(formatTestId(context.getRequiredTestClass(), testMethod, featureReport.getGeneratedClass()));
         node.setDisplayName(context.getDisplayName());
         node.setStatus(status);
         node.setSourceLine(readSourceLine(testMethod));
@@ -297,7 +297,7 @@ public class SpecBinderReporter implements
         }
         Method testMethod = context.getTestMethod().get();
         ScenarioNode node = ScenarioNode.scenario();
-        node.setId(formatTestId(context.getRequiredTestClass(), testMethod));
+        node.setId(formatTestId(context.getRequiredTestClass(), testMethod, featureReport.getGeneratedClass()));
         node.setDisplayName(context.getDisplayName());
         node.setStatus(Status.SKIPPED);
         node.setSourceLine(readSourceLine(testMethod));
@@ -409,16 +409,16 @@ public class SpecBinderReporter implements
         if (existing != null) {
             return existing;
         }
+        ExtensionContext featureRoot = featureRootContextOf(rowContext);
+        FeatureReport featureReport = featureRoot.getStore(NAMESPACE).get(KEY_FEATURE_REPORT, FeatureReport.class);
         ScenarioNode outline = ScenarioNode.outline();
-        outline.setId(formatTestId(rowContext.getRequiredTestClass(), testMethod));
+        outline.setId(formatTestId(rowContext.getRequiredTestClass(), testMethod, featureReport.getGeneratedClass()));
         outline.setDisplayName(deriveOutlineDisplayName(methodCtx, testMethod));
         outline.setSourceLine(readSourceLine(testMethod));
         outline.setScenarioHash(readScenarioHash(testMethod));
         outline.setTags(tagsOf(methodCtx));
         methodStore.put(KEY_OUTLINE_NODE, outline);
 
-        ExtensionContext featureRoot = featureRootContextOf(rowContext);
-        FeatureReport featureReport = featureRoot.getStore(NAMESPACE).get(KEY_FEATURE_REPORT, FeatureReport.class);
         attachScenario(methodCtx, outline, featureReport);
         return outline;
     }
@@ -509,13 +509,31 @@ public class SpecBinderReporter implements
     }
 
     private static List<Class<?>> nestedTestClassesOf(Class<?> outer) {
+        // Walk the superclass chain so that @Nested rule classes declared on a
+        // SpecBinder abstract intermediate are picked up when the runtime test class
+        // is the user-written concrete subclass. Stops at Object and JDK
+        // infrastructure packages — those can't declare SpecBinder rule classes.
         List<Class<?>> nested = new ArrayList<>();
-        for (Class<?> declared : outer.getDeclaredClasses()) {
-            if (declared.isAnnotationPresent(Nested.class)) {
-                nested.add(declared);
+        Class<?> cls = outer;
+        while (cls != null && !isInfrastructureClass(cls)) {
+            for (Class<?> declared : cls.getDeclaredClasses()) {
+                if (declared.isAnnotationPresent(Nested.class)) {
+                    nested.add(declared);
+                }
             }
+            cls = cls.getSuperclass();
         }
         return nested;
+    }
+
+    private static boolean isInfrastructureClass(Class<?> cls) {
+        if (cls == Object.class) {
+            return true;
+        }
+        String name = cls.getName();
+        return name.startsWith("java.")
+                || name.startsWith("javax.")
+                || name.startsWith("jdk.");
     }
 
     private static String displayNameOf(Class<?> clazz) {
@@ -545,11 +563,39 @@ public class SpecBinderReporter implements
      * that inherits an abstract-mode SpecBinder {@code @Test} method appears as the
      * concrete subclass, not the inherited declarer).
      * <p>
+     * In SpecBinder's abstract generation mode the {@code @Nested} rule classes are
+     * declared on the generated abstract intermediate (so {@code testClass.getName()}
+     * reports {@code …Scenarios$Rule_1}). {@link #reportFqn} substitutes the outer
+     * class with {@code featureRootFqn} — the concrete subclass JUnit actually ran —
+     * so the emitted id anchors on the user-facing class hierarchy.
+     * <p>
      * Outline templates and outline rows share the same id (the row distinction
      * lives in {@code examplesRow} and {@code rowHash}).
      */
-    private static String formatTestId(Class<?> testClass, Method method) {
-        return testClass.getName() + "#" + method.getName();
+    private static String formatTestId(Class<?> testClass, Method method, String featureRootFqn) {
+        return reportFqn(testClass, featureRootFqn) + "#" + method.getName();
+    }
+
+    /**
+     * Returns the FQN used to identify {@code testClass} in the emitted report, with
+     * the outer class portion rewritten to {@code featureRootFqn} so that nested
+     * classes declared on a SpecBinder abstract intermediate appear under the
+     * concrete subclass JUnit ran (e.g. {@code Scenarios$Rule_1} → {@code Test$Rule_1}).
+     * Returns {@code testClass.getName()} unchanged when there is no useful root to
+     * substitute against.
+     */
+    static String reportFqn(Class<?> testClass, String featureRootFqn) {
+        String declared = testClass.getName();
+        if (featureRootFqn == null || declared.equals(featureRootFqn)) {
+            return declared;
+        }
+        int dollar = declared.indexOf('$');
+        if (dollar < 0) {
+            // Top-level class on the inheritance chain of the feature root — treat
+            // it as the root itself.
+            return featureRootFqn;
+        }
+        return featureRootFqn + declared.substring(dollar);
     }
 
     private static List<String> tagsOf(ExtensionContext context) {
