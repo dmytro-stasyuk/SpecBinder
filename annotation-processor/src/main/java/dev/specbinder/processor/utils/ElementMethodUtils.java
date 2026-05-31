@@ -103,6 +103,38 @@ public class ElementMethodUtils {
     }
 
     /**
+     * Gets all inherited executable elements (methods) from the specified base type, excluding private methods.
+     * Returned elements preserve full APT detail (parameter annotations, modifiers, etc.) so callers can
+     * inspect e.g. {@code @TempDir} annotations on individual parameters.
+     *
+     * @param processingEnv the processing environment
+     * @param baseType the base type element
+     * @return a map of method names to lists of executable elements (a method can have multiple overloads)
+     */
+    public static Map<String, List<ExecutableElement>> getAllInheritedExecutables(
+            ProcessingEnvironment processingEnv, TypeElement baseType) {
+
+        Elements elementUtils = processingEnv.getElementUtils();
+
+        List<? extends Element> allMembers = elementUtils.getAllMembers(baseType);
+
+        Map<String, List<ExecutableElement>> result = new HashMap<>();
+
+        allMembers.stream()
+                .filter(element ->
+                        element.getKind() == ElementKind.METHOD
+                                && (element.getModifiers().isEmpty() || !element.getModifiers().contains(Modifier.PRIVATE))
+                )
+                .forEach(element -> {
+                    ExecutableElement method = (ExecutableElement) element;
+                    String methodName = method.getSimpleName().toString();
+                    result.computeIfAbsent(methodName, k -> new ArrayList<>()).add(method);
+                });
+
+        return result;
+    }
+
+    /**
      * Gets all inherited methods with their parameter types from the specified base type, excluding private methods.
      * @param processingEnv the processing environment
      * @param baseType the base type element

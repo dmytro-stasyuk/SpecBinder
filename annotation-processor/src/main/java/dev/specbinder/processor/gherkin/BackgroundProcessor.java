@@ -2,6 +2,7 @@ package dev.specbinder.processor.gherkin;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.gherkin.utils.DataTableCollector;
@@ -22,6 +23,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -93,11 +95,14 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
         backgroundMethodBuilder.addParameter(TestInfo.class, "testInfo");
 
+        List<ParameterSpec> allInjectedExtras = new ArrayList<>();
+
         for (Step scenarioStep : backgroundSteps) {
 
             StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
             MethodSpec stepMethodSpec = stepProcessor.processStep(scenarioStep, backgroundMethodBuilder, backgroundStepsMethodSpecs, resolvedStepKeywords);
             backgroundStepsMethodSpecs.add(stepMethodSpec);
+            allInjectedExtras.addAll(stepProcessor.getInjectedExtras());
 
             String stepMethodName = stepMethodSpec.name;
             MethodSpec existingMethodSpec =
@@ -113,6 +118,20 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
                 } else {
                     classBuilder.addMethod(stepMethodSpec);
                 }
+            }
+        }
+
+        // Aggregate JUnit-injected parameters across all background steps, deduped by name,
+        // and add them to the @BeforeEach method's parameter list. JavaPoet preserves
+        // any @TempDir annotation carried by the ParameterSpec. The hardcoded `testInfo`
+        // above is kept for backward compatibility with existing tests.
+        Set<String> existingParamNames = new HashSet<>();
+        for (ParameterSpec p : backgroundMethodBuilder.parameters) {
+            existingParamNames.add(p.name);
+        }
+        for (ParameterSpec extra : allInjectedExtras) {
+            if (existingParamNames.add(extra.name)) {
+                backgroundMethodBuilder.addParameter(extra);
             }
         }
 

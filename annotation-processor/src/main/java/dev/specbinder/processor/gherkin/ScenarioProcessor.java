@@ -1,9 +1,6 @@
 package dev.specbinder.processor.gherkin;
 
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import dev.specbinder.annotations.output.ScenarioHash;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
@@ -84,6 +81,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         List<Step> scenarioSteps = scenario.getSteps();
         List<MethodSpec> scenarioStepsMethodSpecs = new ArrayList<>(scenarioSteps.size());
         List<String> resolvedStepKeywords = new ArrayList<>(scenarioSteps.size());
+        List<ParameterSpec> allInjectedExtras = new ArrayList<>();
 
         String scenarioMethodName = methodNamePrefix + "scenario_" + scenarioNumber;
         MethodSpec.Builder scenarioMethodBuilder = MethodSpec
@@ -269,6 +267,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                                 scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                         );
                         scenarioStepsMethodSpecs.add(stepMethodSpec);
+                        allInjectedExtras.addAll(stepProcessor.getInjectedExtras());
 
                         String stepMethodName = stepMethodSpec.name;
                         MethodSpec existingMethodSpec =
@@ -300,6 +299,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                             scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                     );
                     scenarioStepsMethodSpecs.add(stepMethodSpec);
+                    allInjectedExtras.addAll(stepProcessor.getInjectedExtras());
 
                     String stepMethodName = stepMethodSpec.name;
                     MethodSpec existingMethodSpec =
@@ -321,6 +321,19 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                 }
             }
 
+        }
+
+        // Aggregate JUnit-injected parameters across all steps, deduped by name,
+        // and add them to the scenario method's parameter list. JavaPoet preserves
+        // any @TempDir annotation carried by the ParameterSpec.
+        Set<String> existingParamNames = new HashSet<>();
+        for (ParameterSpec p : scenarioMethodBuilder.parameters) {
+            existingParamNames.add(p.name);
+        }
+        for (ParameterSpec extra : allInjectedExtras) {
+            if (existingParamNames.add(extra.name)) {
+                scenarioMethodBuilder.addParameter(extra);
+            }
         }
 
         return scenarioMethodBuilder;

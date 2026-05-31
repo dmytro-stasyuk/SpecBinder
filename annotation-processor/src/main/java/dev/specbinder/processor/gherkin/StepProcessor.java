@@ -43,8 +43,12 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private final EnumImportCollector enumImportCollector;
     private final TypeElement baseType;
     private final Map<String, List<ElementMethodUtils.MethodSignature>> baseClassMethodSignatures;
+    private final Map<String, List<ExecutableElement>> baseClassMethodExecutables;
     private final List<ElementMethodUtils.CucumberAnnotationEntry> cucumberAnnotationEntries;
     private final Map<String, List<Class<?>>> preComputedStepTypes;
+
+    private List<ParameterSpec> injectedExtras = List.of();
+    private boolean lastBaseMatchValid = true;
 
     private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)+?)(\"))");
 
@@ -66,9 +70,26 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         this.baseClassMethodSignatures = baseType != null
                 ? ElementMethodUtils.getAllInheritedMethodSignatures(processingEnv, baseType)
                 : Map.of();
+        this.baseClassMethodExecutables = baseType != null
+                ? ElementMethodUtils.getAllInheritedExecutables(processingEnv, baseType)
+                : Map.of();
         this.cucumberAnnotationEntries = baseType != null && options.isUseCucumberAnnotationsForStepMatching()
                 ? ElementMethodUtils.getCucumberAnnotationStepEntries(processingEnv, baseType)
                 : List.of();
+    }
+
+    /**
+     * Returns the JUnit-injected trailing parameters detected on the matched base step method
+     * during the most recent call to {@link #processStep}. Empty if no base method matched or
+     * the matched method declared no recognized JUnit-injected trailing parameters.
+     * <p>
+     * Callers (Scenario/Background processors) use this to aggregate the union of extras across
+     * all their steps and add them to the enclosing test method's parameter list.
+     *
+     * @return the injected extras for the last processed step
+     */
+    public List<ParameterSpec> getInjectedExtras() {
+        return injectedExtras;
     }
 
     /**
@@ -266,6 +287,29 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             stepMethodBuilder.addParameter(docStringSpec);
         }
 
+        // Detect JUnit-injected trailing parameters on a matching base method (if any).
+        // These flow into the enclosing test method's signature and onto the step call.
+        // A null detector result means the base method has trailing parameters that are
+        // neither built-in JUnit types nor @JUnitInject-marked — i.e. it is NOT a valid match
+        // for the step and the generator should fall back to emitting a fresh step method.
+        ExecutableElement matchedBaseExecutable = findMatchingBaseExecutable(stepMethodName);
+        if (matchedBaseExecutable != null) {
+            int gherkinParamCount = parameterValues.size()
+                    + ((step.getDataTable().isPresent() || step.getDocString().isPresent()) ? 1 : 0);
+            List<ParameterSpec> detectorResult = JUnitParameterDetector.detectTrailingInjectedParams(
+                    matchedBaseExecutable, gherkinParamCount);
+            if (detectorResult == null) {
+                this.injectedExtras = List.of();
+                this.lastBaseMatchValid = false;
+            } else {
+                this.injectedExtras = detectorResult;
+                this.lastBaseMatchValid = true;
+            }
+        } else {
+            this.injectedExtras = List.of();
+            this.lastBaseMatchValid = true;
+        }
+
         // add a call to the step method in the scenario method (skip if null - for composite sub-steps)
         if (scenarioMethodBuilder != null) {
             addACallToTheStepMethod(scenarioMethodBuilder,
@@ -281,6 +325,17 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
         MethodSpec stepMethodSpec = stepMethodBuilder.build();
         return stepMethodSpec;
+    }
+
+    private ExecutableElement findMatchingBaseExecutable(String stepMethodName) {
+        if (baseClassMethodExecutables == null) {
+            return null;
+        }
+        List<ExecutableElement> executables = baseClassMethodExecutables.get(stepMethodName);
+        if (executables == null || executables.isEmpty()) {
+            return null;
+        }
+        return executables.get(0);
     }
 
     /**
@@ -374,7 +429,8 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             }
         }
 
-        return findMatchingBaseMethod(stepMethodName, convertedParameterValues, hasDataTableOrDocString) != null;
+        return findMatchingBaseMethod(stepMethodName, convertedParameterValues, hasDataTableOrDocString) != null
+                && lastBaseMatchValid;
     }
 
     /**
@@ -938,6 +994,15 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                 parameterValuesSB.append(docString);
                 parameterValuesSB.append("\n\"\"\"");
             }
+        }
+
+        // Forward any JUnit-injected extras detected on the matching base method.
+        // These are passed as trailing arguments after the Gherkin-derived values.
+        for (ParameterSpec extra : injectedExtras) {
+            if (parameterValuesSB.length() > 0) {
+                parameterValuesSB.append(", ");
+            }
+            parameterValuesSB.append(extra.name);
         }
 
         String parameterValuesPart = parameterValuesSB.toString();
