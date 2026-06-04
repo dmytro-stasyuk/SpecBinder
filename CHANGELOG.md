@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.42.0]
+
+### Added
+
 - Propagation of JUnit 5's built-in injected parameters (`TestInfo`, `TestReporter`, `@TempDir Path` / `@TempDir File`) from base step methods through to the generated `@Test` / `@BeforeEach` / `@ParameterizedTest` methods — declared on the step method signature in the base/marker class, they are auto-forwarded on the step call and aggregated (deduplicated by name) across all steps of the enclosing scenario or background, with `@TempDir` and any other parameter annotations preserved verbatim on the generated method parameter
 - New `@JUnitInject` marker annotation (`@Target({PARAMETER, TYPE})`) that extends the same propagation to custom user-defined types resolved by a JUnit `ParameterResolver` — placed on the parameter directly or once on the type's class declaration; works in concrete and abstract generation modes, in scenarios, scenario outlines, and backgrounds; all non-`@JUnitInject` annotations on the source parameter are preserved verbatim so the user's resolver can observe them at runtime
 
