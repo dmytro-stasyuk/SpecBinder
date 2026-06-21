@@ -36,7 +36,7 @@
         <junit.jupiter.version>5.14.1</junit.jupiter.version>
         <junit.jupiter.platform.suite>1.14.1</junit.jupiter.platform.suite>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <central.waitForPublishCompletion>false</central.waitForPublishCompletion>
+        <central.waitUntil>uploaded</central.waitUntil>
     </properties>
     <modules>
         <module>annotations</module>

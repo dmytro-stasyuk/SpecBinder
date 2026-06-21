@@ -25,6 +25,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -943,31 +944,46 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             }
 
             DocString docString1 = step.getDocString().get();
-            String docString = docString1.getContent();
+            String rawContent = docString1.getContent();
 
-            // need to escape any occurrences of triple quotes in the doc string content
-            docString = docString.replaceAll("\"\"\"", "\\\\\"\"\"");
+            // The chunking decision is based on the RUNTIME UTF-8 byte length of the content,
+            // i.e. how big the resulting CONSTANT_Utf8 constant-pool entry would be. The JVM
+            // hard-limit is 65535; when the content exceeds the configured cap (default 65000)
+            // we split into multiple plain "..." string-literal chunks joined at runtime via
+            // String.join("", ...) so each chunk stays a separate constant-pool entry below
+            // the limit (the + operator can't be used here because javac compile-time-folds
+            // adjacent string-literal + expressions into a single constant). Below the cap we
+            // keep the existing text-block emission unchanged.
+            int contentByteLen = rawContent.getBytes(StandardCharsets.UTF_8).length;
+            boolean chunked = contentByteLen > options.getMaxStringLiteralBytes();
 
-            // Escape $ for JavaPoet ($ is a special character in JavaPoet's format strings)
-            // Must be done AFTER triple quote and backslash escaping to avoid double-escaping
-            docString = docString.replace("$", "$$");
+            boolean hasScenarioParams = scenarioParameterNames != null && !scenarioParameterNames.isEmpty();
 
-            /**
-             * in case we are processing a scenario with examples table i.e. Scenario Template type
-             * then we need to replace any references to scenario parameters with reference value from the examples table
-             * BUT only add replaceAll for parameters that are actually present in the DocString
-             */
-            if (scenarioParameterNames != null && !scenarioParameterNames.isEmpty()) {
-
+            if (chunked) {
+                // String.join(...).replaceAll(...) is a clean method chain on the String
+                // return value, so no surrounding parentheses are needed for the .replaceAll
+                // calls that may follow (Scenario Outline path).
+                appendChunkedStringLiteral(parameterValuesSB, rawContent, options.getMaxStringLiteralBytes());
+            } else {
+                // Existing text-block emission: escape triple quotes in the content, then $ for
+                // JavaPoet's format-string escape. Order matters — $ escaping is last so it's
+                // not applied to the backslash inserted by the triple-quote escape.
+                String docString = rawContent.replaceAll("\"\"\"", "\\\\\"\"\"");
+                docString = docString.replace("$", "$$");
                 parameterValuesSB.append("\"\"\"\n");
                 parameterValuesSB.append(docString);
                 parameterValuesSB.append("\n\"\"\"");
+            }
 
-                // Only add replaceAll calls for parameters that are actually present in the DocString
+            /*
+             * In case we are processing a Scenario Outline, replace any references to scenario
+             * parameters with their values from the examples row — but only add a .replaceAll(...)
+             * call for parameters that are actually present in the DocString content.
+             */
+            if (hasScenarioParams) {
                 for (int i = 0; i < scenarioParameterNames.size(); i++) {
                     String scenarioParameterName = scenarioParameterNames.get(i);
-                    // Check if this specific parameter appears in the DocString
-                    if (docString.contains("<" + scenarioParameterName + ">")) {
+                    if (rawContent.contains("<" + scenarioParameterName + ">")) {
                         String testMethodParameterName = testMethodParameterNames.get(i);
                         parameterValuesSB.append("\n.replaceAll(");
                         parameterValuesSB.append("\"<" + scenarioParameterName + ">\"");
@@ -988,11 +1004,6 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                         parameterValuesSB.append(")");
                     }
                 }
-
-            } else {
-                parameterValuesSB.append("\"\"\"\n");
-                parameterValuesSB.append(docString);
-                parameterValuesSB.append("\n\"\"\"");
             }
         }
 
@@ -1134,10 +1145,29 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         }
     }
 
+    /**
+     * Escapes a string for embedding inside a Java {@code "..."} string literal. Backslash and
+     * double-quote get the standard backslash escape; literal newline / carriage-return / tab
+     * become their {@code \n} / {@code \r} / {@code \t} escape sequences (required when this
+     * helper is used to build chunked plain-literal emissions of multi-line content, e.g. an
+     * oversized DocString that has been split into chunks). The JavaPoet format-string sigil
+     * {@code $} is doubled to {@code $$} so JavaPoet emits a single literal {@code $}.
+     */
     private static String escapeForJavaStringLiteral(String value) {
-        return value.replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                    .replace("$", "$$");
+        StringBuilder sb = new StringBuilder(value.length() + 8);
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '\\': sb.append("\\\\"); break;
+                case '"': sb.append("\\\""); break;
+                case '\n': sb.append("\\n"); break;
+                case '\r': sb.append("\\r"); break;
+                case '\t': sb.append("\\t"); break;
+                case '$': sb.append("$$"); break;
+                default: sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -1851,6 +1881,98 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         TypeElement typeElement = processingEnv.getElementUtils().getTypeElement(qualifiedTypeName);
         return typeElement != null ? typeElement.asType() :
                 processingEnv.getElementUtils().getTypeElement("java.lang.String").asType();
+    }
+
+    /**
+     * Appends a chunked plain string-literal emission of {@code rawContent} into {@code sb}.
+     * The content is split into chunks whose UTF-8 byte length is at most {@code maxBytes},
+     * each emitted as a {@code "..."} literal with standard Java escaping. Chunks are passed
+     * as separate arguments to {@code String.join("", ...)} so JavaPoet renders each on its
+     * own continuation-indented line:
+     * <pre>
+     *
+     *         String.join("",
+     *                 "chunk1",
+     *                 "chunk2"
+     *         )
+     * </pre>
+     * Why {@code String.join} instead of the {@code +} operator: javac compile-time-folds
+     * adjacent string-literal {@code +} expressions into a single constant-pool entry, which
+     * would put the merged literal right back over the 65535-byte JVM hard cap and re-trigger
+     * "constant string too long". {@code String.join("", ...)} defers concatenation to runtime,
+     * keeping each chunk as its own constant-pool entry. The leading {@code \n} (the very
+     * first character appended) puts {@code String.join} onto its own line, so the call shape
+     * is uniform whether the chunked argument is the only argument or follows other arguments
+     * (which already end with {@code ", "}).
+     */
+    private static void appendChunkedStringLiteral(StringBuilder sb, String rawContent, int maxBytes) {
+        // Strip a trailing space left over from the inter-arg separator ", " (when this
+        // chunked argument follows another parameter). Otherwise the newline that starts our
+        // chunked emission would leave a dangling trailing space at the end of the previous
+        // source line.
+        if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ') {
+            sb.setLength(sb.length() - 1);
+        }
+        List<String> chunks = chunkByUtf8Bytes(rawContent, maxBytes);
+        sb.append("\nString.join(\"\",");
+        for (int i = 0; i < chunks.size(); i++) {
+            // 8 manual spaces sit on top of JavaPoet's 8-space continuation indent, putting
+            // each chunk literal one level deeper than the surrounding String.join(.
+            sb.append("\n        \"");
+            sb.append(escapeForJavaStringLiteral(chunks.get(i)));
+            sb.append("\"");
+            if (i < chunks.size() - 1) {
+                sb.append(",");
+            }
+        }
+        sb.append("\n)");
+    }
+
+    /**
+     * Splits {@code content} into substrings whose UTF-8 byte length is at most {@code maxBytes}
+     * each. Splits happen on Unicode code-point boundaries — high-surrogate / low-surrogate
+     * pairs are always kept together — so the concatenation of the resulting chunks is
+     * byte-identical to the original {@code content}.
+     *
+     * <p>Each chunk's byte length is bounded by {@code maxBytes}. Where a single code point's
+     * UTF-8 length would push the current chunk over the cap, the chunk is closed BEFORE that
+     * code point and a new chunk is started. As a degenerate case, if {@code maxBytes} is
+     * smaller than the largest code point in {@code content}, that code point goes alone
+     * into its own chunk (still violating the cap, but only the JVM can punish that — and
+     * sensible cap values like the production default 65000 always exceed any one code point).
+     */
+    private static List<String> chunkByUtf8Bytes(String content, int maxBytes) {
+        List<String> chunks = new ArrayList<>();
+        int n = content.length();
+        if (n == 0) {
+            chunks.add("");
+            return chunks;
+        }
+        int chunkStart = 0;
+        int chunkBytes = 0;
+        int i = 0;
+        while (i < n) {
+            int cp = content.codePointAt(i);
+            int cpCharLen = Character.charCount(cp);
+            int cpByteLen = utf8ByteLength(cp);
+            if (chunkBytes > 0 && chunkBytes + cpByteLen > maxBytes) {
+                chunks.add(content.substring(chunkStart, i));
+                chunkStart = i;
+                chunkBytes = 0;
+            }
+            chunkBytes += cpByteLen;
+            i += cpCharLen;
+        }
+        chunks.add(content.substring(chunkStart, n));
+        return chunks;
+    }
+
+    /** Returns the number of UTF-8 bytes needed to encode the given Unicode code point. */
+    private static int utf8ByteLength(int codePoint) {
+        if (codePoint < 0x80) return 1;
+        if (codePoint < 0x800) return 2;
+        if (codePoint < 0x10000) return 3;
+        return 4;
     }
 
 }

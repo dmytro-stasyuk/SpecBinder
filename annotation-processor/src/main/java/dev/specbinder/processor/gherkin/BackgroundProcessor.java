@@ -10,6 +10,7 @@ import dev.specbinder.processor.gherkin.utils.EnumImportCollector;
 import dev.specbinder.processor.support.BaseTypeSupport;
 import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
+import dev.specbinder.processor.utils.DescriptionEmitter;
 import dev.specbinder.processor.utils.ElementMethodUtils;
 import dev.specbinder.processor.utils.JavaDocUtils;
 import io.cucumber.messages.types.Background;
@@ -85,13 +86,9 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
                 .methodBuilder(backgroundMethodName)
                 .addModifiers(Modifier.PUBLIC);
 
-        String description = background.getDescription();
-        if (StringUtils.isNotBlank(description)) {
-            description = JavaDocUtils.trimLeadingAndTrailingWhitespace(description);
-            backgroundMethodBuilder.addJavadoc(JavaDocUtils.escapeForJavaPoet(description));
-        }
-
         addJUnitAnnotations(backgroundMethodBuilder, background);
+
+        DescriptionEmitter.emit(backgroundMethodBuilder, background.getDescription(), options);
 
         backgroundMethodBuilder.addParameter(TestInfo.class, "testInfo");
 

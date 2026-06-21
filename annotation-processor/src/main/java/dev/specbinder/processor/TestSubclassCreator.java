@@ -146,10 +146,6 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
 
         // Add feature documentation and process feature content
         if (feature != null) {
-            String featureTextJavaDoc = JavaDocUtils.toJavaDocContent(
-                    feature.getKeyword(), feature.getName(), feature.getDescription());
-            classBuilder.addJavadoc(CodeBlock.of(featureTextJavaDoc));
-
             // Pass 1: Collect data table metadata for LIST_OF_OBJECT_PARAMS option
             DataTableCollector dataTableCollector = null;
             if ("LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
@@ -229,7 +225,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                         !TagUtils.shouldSkipElement(child.getScenario().get().getTags(), options.getSkipGenerationForTags()));
 
         addClassAnnotations(
-                featureTags, hasRules, hasScenarios, classBuilder,
+                feature, featureTags, hasRules, hasScenarios, classBuilder,
                 featureFilePathForParsing, featureFilePathForAnnotation,
                 packageName, annotatedClassName, options);
 
@@ -649,6 +645,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
     }
 
     private static void addClassAnnotations(
+            Feature feature,
             List<Tag> featureTags,
             boolean hasRules,
             boolean hasScenarios,
@@ -667,15 +664,39 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         /**
          * {@link DisplayName} annotation
          */
-        String featureFileName = featureFilePathForParsing.substring(
-                featureFilePathForParsing.lastIndexOf("/") + 1,
-                featureFilePathForParsing.lastIndexOf(".")
-        );
+        String displayNameValue;
+        if (feature != null) {
+            String featureKeyword = feature.getKeyword().trim();
+            String featureName = feature.getName();
+            if (featureName != null) {
+                featureName = featureName.replaceAll("\"", "\\\\\"");
+                if (!featureName.isEmpty()) {
+                    featureName = " " + featureName;
+                }
+            } else {
+                featureName = "";
+            }
+            if (options.isAddSourceLineNumbers()) {
+                long line = feature.getLocation().getLine();
+                displayNameValue = featureKeyword + " [" + line + "]:" + featureName;
+            } else {
+                displayNameValue = featureKeyword + ":" + featureName;
+            }
+        } else {
+            displayNameValue = featureFilePathForParsing.substring(
+                    featureFilePathForParsing.lastIndexOf("/") + 1,
+                    featureFilePathForParsing.lastIndexOf(".")
+            );
+        }
         classBuilder.addAnnotation(AnnotationSpec
                 .builder(DisplayName.class)
-                .addMember("value", "\"" + featureFileName + "\"")
+                .addMember("value", "\"" + JavaDocUtils.escapeForJavaPoet(displayNameValue) + "\"")
                 .build()
         );
+
+        if (feature != null) {
+            DescriptionEmitter.emit(classBuilder, feature.getDescription(), options);
+        }
 
         /**
          * {@link Generated} annotation

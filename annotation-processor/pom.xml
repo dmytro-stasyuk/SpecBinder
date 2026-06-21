@@ -50,8 +50,7 @@
                 <configuration>
                     <publishingServerId>central</publishingServerId>
                     <autoPublish>true</autoPublish>
-                    <!--<waitUntil>validated</waitUntil>-->
-                    <waitForPublishCompletion>${central.waitForPublishCompletion}</waitForPublishCompletion>
+                    <waitUntil>${central.waitUntil}</waitUntil>
                 </configuration>
             </plugin>
             <plugin>

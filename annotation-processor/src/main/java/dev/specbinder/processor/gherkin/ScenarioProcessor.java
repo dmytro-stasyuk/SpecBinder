@@ -89,12 +89,6 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                 //                .addParameter(TestInfo.class, "testInfo")
                 .addModifiers(Modifier.PUBLIC);
 
-        String description = scenario.getDescription();
-        if (StringUtils.isNotBlank(description)) {
-            description = JavaDocUtils.trimLeadingAndTrailingWhitespace(description);
-            scenarioMethodBuilder.addJavadoc(JavaDocUtils.escapeForJavaPoet(description));
-        }
-
         List<Examples> examples = scenario.getExamples();
         List<String> scenarioParameterNames;
         List<String> testMethodParameterNames;
@@ -229,6 +223,8 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         }
 
         addDisplayNameAnnotation(scenarioMethodBuilder, scenario);
+
+        DescriptionEmitter.emit(scenarioMethodBuilder, scenario.getDescription(), options);
 
         if (scenarioSteps.isEmpty()) {
 

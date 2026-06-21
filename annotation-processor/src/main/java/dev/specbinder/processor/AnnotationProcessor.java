@@ -595,6 +595,10 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                 fmtStringArray(resolved.getSkipGenerationForTags()), fmtStringArray(defaults.getSkipGenerationForTags()), overridden, defaulted);
         putOption("emitScenarioHash",
                 fmtBool(resolved.isEmitScenarioHash()), fmtBool(defaults.isEmitScenarioHash()), overridden, defaulted);
+        putOption("descriptionAsAnnotation",
+                fmtBool(resolved.isDescriptionAsAnnotation()), fmtBool(defaults.isDescriptionAsAnnotation()), overridden, defaulted);
+        putOption("maxStringLiteralBytes",
+                Integer.toString(resolved.getMaxStringLiteralBytes()), Integer.toString(defaults.getMaxStringLiteralBytes()), overridden, defaulted);
     }
 
     private static void putOption(String name, String resolvedValue, String defaultValue,

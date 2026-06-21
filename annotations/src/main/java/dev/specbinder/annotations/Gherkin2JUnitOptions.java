@@ -576,6 +576,46 @@ public @interface Gherkin2JUnitOptions {
     boolean emitScenarioHash() default false;
 
     /**
+     * Controls how Gherkin description text (the free-text lines under a Feature, Rule, Scenario, or
+     * Background heading) is rendered on the corresponding generated class or method.
+     * <p>
+     * When {@code true}: the description is emitted as a runtime-retained
+     * {@link dev.specbinder.annotations.output.Description @Description("&quot;&quot;&quot;...&quot;&quot;&quot;")}
+     * annotation, so downstream tooling (IDE plugins, execution reporters, custom JUnit listeners)
+     * can read it at runtime via reflection.
+     * <p>
+     * When {@code false} (default): the description is rendered as a JavaDoc block above the
+     * generated element — the legacy behaviour — and no {@code @Description} annotation is emitted.
+     * <p>
+     * The two modes are mutually exclusive: only one of {@code @Description} or the JavaDoc block
+     * is emitted for any given element, never both.
+     *
+     * @return true if description text should be emitted as a {@code @Description} annotation,
+     *         false to keep emitting it as a JavaDoc block
+     */
+    boolean descriptionAsAnnotation() default false;
+
+    /**
+     * Maximum UTF-8 byte length the generator allows in a single Java string-literal entry
+     * in the generated test class (i.e. one CONSTANT_Utf8 entry in the class file's constant
+     * pool). The JVM hard-limit is 65535 bytes; the default here is 65000 to leave headroom.
+     * <p>
+     * When a Gherkin DocString's UTF-8 byte length exceeds this cap, the generator emits the
+     * DocString as multiple plain {@code "..."} string-literal chunks joined with the {@code +}
+     * operator instead of as a single Java text block — so the test class still compiles when
+     * an individual DocString (e.g. a base64-encoded snapshot image) would otherwise overflow
+     * the constant-pool entry limit. Below the cap, the existing single-text-block emission is
+     * preserved unchanged.
+     * <p>
+     * Tests can lower this cap to a small value (e.g. {@code 30}) to exercise the chunking
+     * behaviour with manageable inputs. Production code should typically leave this at its
+     * default.
+     *
+     * @return the per-literal byte cap in UTF-8 bytes
+     */
+    int maxStringLiteralBytes() default 65000;
+
+    /**
      * -- EXPERIMENTAL OPTION --
      * <br/><br/>
      * Enables composite step pattern where a Given/When/Then/And/But step followed by one or more steps

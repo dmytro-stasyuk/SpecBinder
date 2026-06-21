@@ -1,15 +1,18 @@
 package dev.specbinder.reporter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonPropertyOrder({"id", "displayName", "sourceLine", "scenarios"})
+@JsonPropertyOrder({"id", "displayName", "description", "sourceLine", "scenarios"})
 public class RuleReport {
 
     private String id;
     private String displayName;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String description;
     private Long sourceLine;
     private List<ScenarioNode> scenarios;
 
@@ -31,6 +34,14 @@ public class RuleReport {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getSourceLine() {

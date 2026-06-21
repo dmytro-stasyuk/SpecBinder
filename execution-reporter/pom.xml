@@ -25,7 +25,7 @@
                 <configuration>
                     <publishingServerId>central</publishingServerId>
                     <autoPublish>true</autoPublish>
-                    <waitForPublishCompletion>${central.waitForPublishCompletion}</waitForPublishCompletion>
+                    <waitUntil>${central.waitUntil}</waitUntil>
                 </configuration>
             </plugin>
             <!--
@@ -87,6 +87,23 @@
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
             <version>${byte-buddy.version}</version>
+        </dependency>
+
+        <!--
+            Cucumber Gherkin parser. Used at runtime to parse the spec file behind a
+            generated test class (via @SourceFilePath), so each StepReport can be
+            stamped with its original "<keyword> <text>" line. Compile scope so it
+            transits to the consumer's test classpath together with this artifact.
+        -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-gherkin</artifactId>
+            <version>${cucumber-java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-gherkin-messages</artifactId>
+            <version>${cucumber-java.version}</version>
         </dependency>
 
         <!--

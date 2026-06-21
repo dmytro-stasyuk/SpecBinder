@@ -229,6 +229,15 @@ When tests fail because the actual behavior doesn't match the expected behavior 
 - The implementation must conform to the specification, not the other way around
 - Only modify .feature files when explicitly asked by the user
 
+**CRITICAL: Once a .feature / .specb file has been confirmed by the user, do NOT modify it during implementation**
+
+After the user has reviewed and confirmed a feature/specb file (the standing review gate that precedes any implementation work), the file is frozen for the duration of the implementation phase. While implementing:
+- **NEVER** edit the confirmed feature/specb file unilaterally — not to adjust shapes, not to drop or add parameters, not to swap argument values, not to tune expected JSON, not for any reason
+- If you believe a change to the feature/specb file is needed (e.g., you discover the spec models behaviour incorrectly, or a different fixture shape is required for the test to be meaningful), **PAUSE** implementation
+- Explain in plain words what you want to change in the feature/specb file, why you believe the change is necessary, and what the alternative would be
+- Ask the user to **review and explicitly confirm or reject** the proposed change
+- Only proceed with the change after explicit confirmation; if rejected, find an implementation path that respects the confirmed spec
+
 **IMPORTANT: Reading Tool Results**
 
 You have permission to read files from the `.claude/projects/` directory, particularly tool-results files. These contain output from previous tool executions (like test runs) and can be read freely without asking for permission. Use the `Bash` tool or `Read` tool to access these files when you need to analyze test results or other tool outputs.

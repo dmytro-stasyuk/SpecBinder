@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,15 +17,19 @@ import java.util.List;
  * enclosing scenario, so the per-step record carries no kind discriminator.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"methodName", "arguments", "status", "startedAt", "durationMs", "error"})
+@JsonPropertyOrder({"methodName", "text", "arguments", "status", "startedAt", "durationMs",
+        "publishedReporterEntries", "error"})
 public class StepReport {
 
     private String methodName;
+    private String text;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Object> arguments;
     private Status status;
     private Instant startedAt;
     private Long durationMs;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<PublishedReporterEntry> publishedReporterEntries;
     private ErrorInfo error;
 
     public StepReport() {
@@ -43,6 +48,14 @@ public class StepReport {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public List<Object> getArguments() {
@@ -75,6 +88,21 @@ public class StepReport {
 
     public void setDurationMs(Long durationMs) {
         this.durationMs = durationMs;
+    }
+
+    public List<PublishedReporterEntry> getPublishedReporterEntries() {
+        return publishedReporterEntries;
+    }
+
+    public void setPublishedReporterEntries(List<PublishedReporterEntry> publishedReporterEntries) {
+        this.publishedReporterEntries = publishedReporterEntries;
+    }
+
+    public void appendPublishedReporterEntry(PublishedReporterEntry entry) {
+        if (publishedReporterEntries == null) {
+            publishedReporterEntries = new ArrayList<>();
+        }
+        publishedReporterEntries.add(entry);
     }
 
     public ErrorInfo getError() {

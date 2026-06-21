@@ -12,6 +12,7 @@ import dev.specbinder.processor.gherkin.utils.EnumImportCollector;
 import dev.specbinder.processor.support.BaseTypeSupport;
 import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
+import dev.specbinder.processor.utils.DescriptionEmitter;
 import dev.specbinder.processor.utils.JavaDocUtils;
 import dev.specbinder.processor.utils.TagUtils;
 import io.cucumber.messages.types.*;
@@ -63,12 +64,6 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
         TypeSpec.Builder nestedRuleClassBuilder = TypeSpec
                 .classBuilder("Rule_" + ruleNumber)
                 .addModifiers(Modifier.PUBLIC);
-
-        String description = rule.getDescription();
-        if (StringUtils.isNotBlank(description)) {
-            description = JavaDocUtils.trimLeadingAndTrailingWhitespace(description);
-            nestedRuleClassBuilder.addJavadoc(JavaDocUtils.escapeForJavaPoet(description));
-        }
 
         /*
           add {@link org.junit.jupiter.api.Nested} annotation
@@ -143,6 +138,8 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
                         .addMember("value", "\"" + JavaDocUtils.escapeForJavaPoet(displayNameValue) + "\"")
                         .build()
         );
+
+        DescriptionEmitter.emit(nestedRuleClassBuilder, rule.getDescription(), options);
 
         int ruleScenarioCount = 0;
 

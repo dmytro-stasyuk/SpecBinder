@@ -138,6 +138,23 @@ public class GeneratorOptions {
     private final boolean emitScenarioHash;
 
     /**
+     * If set to true, Gherkin description text (under Feature, Rule, Scenario, or Background) is
+     * emitted as a {@code @Description("""...""")} annotation on the corresponding generated class
+     * or method instead of as a JavaDoc block. Default is {@code false} — descriptions remain as
+     * JavaDoc.
+     */
+    private final boolean descriptionAsAnnotation;
+
+    /**
+     * Maximum UTF-8 byte length the generator allows in a single Java string-literal entry in
+     * the generated test class. Defaults to 65000 — just under the JVM CONSTANT_Utf8 hard limit
+     * of 65535. When a DocString's UTF-8 byte length exceeds this cap, the generator splits it
+     * into multiple plain string-literal chunks concatenated with the + operator instead of
+     * emitting one Java text block.
+     */
+    private final int maxStringLiteralBytes;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -161,6 +178,8 @@ public class GeneratorOptions {
         this.skipGenerationForTags = new String[]{};
         this.verbosity = Verbosity.NORMAL;
         this.emitScenarioHash = false;
+        this.descriptionAsAnnotation = false;
+        this.maxStringLiteralBytes = 65000;
     }
 
     /**
@@ -186,6 +205,8 @@ public class GeneratorOptions {
      * @param skipGenerationForTags see {@link #skipGenerationForTags}
      * @param verbosity see {@link #verbosity}
      * @param emitScenarioHash see {@link #emitScenarioHash}
+     * @param descriptionAsAnnotation see {@link #descriptionAsAnnotation}
+     * @param maxStringLiteralBytes see {@link #maxStringLiteralBytes}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -207,7 +228,9 @@ public class GeneratorOptions {
             String[] supportedFileExtensions,
             String[] skipGenerationForTags,
             Verbosity verbosity,
-            boolean emitScenarioHash
+            boolean emitScenarioHash,
+            boolean descriptionAsAnnotation,
+            int maxStringLiteralBytes
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -229,6 +252,8 @@ public class GeneratorOptions {
         this.skipGenerationForTags = skipGenerationForTags;
         this.verbosity = verbosity == null ? Verbosity.NORMAL : verbosity;
         this.emitScenarioHash = emitScenarioHash;
+        this.descriptionAsAnnotation = descriptionAsAnnotation;
+        this.maxStringLiteralBytes = maxStringLiteralBytes;
     }
 
 }

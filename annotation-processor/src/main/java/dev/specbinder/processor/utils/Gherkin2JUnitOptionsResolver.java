@@ -90,6 +90,8 @@ public class Gherkin2JUnitOptionsResolver {
         String[] skipGenerationForTags = new String[]{};
         Verbosity verbosity = Verbosity.NORMAL;
         boolean emitScenarioHash = false;
+        boolean descriptionAsAnnotation = false;
+        int maxStringLiteralBytes = 65000;
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -202,6 +204,12 @@ public class Gherkin2JUnitOptionsResolver {
                     case "emitScenarioHash":
                         emitScenarioHash = (Boolean) value;
                         break;
+                    case "descriptionAsAnnotation":
+                        descriptionAsAnnotation = (Boolean) value;
+                        break;
+                    case "maxStringLiteralBytes":
+                        maxStringLiteralBytes = (Integer) value;
+                        break;
                     default:
                         break;
                 }
@@ -228,7 +236,9 @@ public class Gherkin2JUnitOptionsResolver {
                 supportedFileExtensions,
                 skipGenerationForTags,
                 verbosity,
-                emitScenarioHash
+                emitScenarioHash,
+                descriptionAsAnnotation,
+                maxStringLiteralBytes
         );
     }
 
@@ -257,7 +267,9 @@ public class Gherkin2JUnitOptionsResolver {
                 options.supportedFileExtensions(),
                 options.skipGenerationForTags(),
                 options.verbosity(),
-                options.emitScenarioHash()
+                options.emitScenarioHash(),
+                options.descriptionAsAnnotation(),
+                options.maxStringLiteralBytes()
         );
     }
 }
