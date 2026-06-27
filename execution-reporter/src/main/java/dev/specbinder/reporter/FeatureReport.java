@@ -8,19 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonPropertyOrder({
-        "schemaVersion", "sourceFilePath", "displayName", "description", "generatedClass",
+        "schemaVersion", "sourceFilePath", "displayName", "description", "testClass",
         "executedAt", "totalDurationMs", "summary", "scenarios", "rules"
 })
 public class FeatureReport {
 
-    public static final int SCHEMA_VERSION = 7;
+    public static final int SCHEMA_VERSION = 8;
 
     private int schemaVersion = SCHEMA_VERSION;
     private String sourceFilePath;
     private String displayName;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
-    private String generatedClass;
+    private String testClass;
     private Instant executedAt;
     private long totalDurationMs;
     private Summary summary;
@@ -67,12 +67,12 @@ public class FeatureReport {
         this.description = description;
     }
 
-    public String getGeneratedClass() {
-        return generatedClass;
+    public String getTestClass() {
+        return testClass;
     }
 
-    public void setGeneratedClass(String generatedClass) {
-        this.generatedClass = generatedClass;
+    public void setTestClass(String testClass) {
+        this.testClass = testClass;
     }
 
     public Instant getExecutedAt() {

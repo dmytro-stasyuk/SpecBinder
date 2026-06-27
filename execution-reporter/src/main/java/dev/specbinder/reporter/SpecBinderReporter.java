@@ -133,7 +133,7 @@ public class SpecBinderReporter implements
                 return;
             }
             RuleReport rule = new RuleReport();
-            rule.setId(reportFqn(testClass, featureReport.getGeneratedClass()));
+            rule.setId(reportFqn(testClass, featureReport.getTestClass()));
             rule.setDisplayName(displayNameOf(testClass));
             rule.setDescription(readDescription(testClass));
             rule.setSourceLine(readSourceLine(testClass));
@@ -148,7 +148,7 @@ public class SpecBinderReporter implements
         // Feature root.
         FeatureReport report = new FeatureReport();
         report.setSourceFilePath(sourceFilePath.get());
-        report.setGeneratedClass(testClass.getName());
+        report.setTestClass(testClass.getName());
         report.setDisplayName(featureDisplayNameOf(testClass));
         report.setDescription(readDescription(testClass));
         report.setExecutedAt(Instant.now());
@@ -286,7 +286,7 @@ public class SpecBinderReporter implements
         }
 
         ScenarioNode node = ScenarioNode.scenario();
-        node.setId(formatTestId(context.getRequiredTestClass(), testMethod, featureReport.getGeneratedClass()));
+        node.setId(formatTestId(context.getRequiredTestClass(), testMethod, featureReport.getTestClass()));
         node.setDisplayName(context.getDisplayName());
         node.setDescription(readDescription(testMethod));
         node.setStatus(status);
@@ -331,7 +331,7 @@ public class SpecBinderReporter implements
         }
         Method testMethod = context.getTestMethod().get();
         ScenarioNode node = ScenarioNode.scenario();
-        node.setId(formatTestId(context.getRequiredTestClass(), testMethod, featureReport.getGeneratedClass()));
+        node.setId(formatTestId(context.getRequiredTestClass(), testMethod, featureReport.getTestClass()));
         node.setDisplayName(context.getDisplayName());
         node.setDescription(readDescription(testMethod));
         node.setStatus(Status.SKIPPED);
@@ -457,7 +457,7 @@ public class SpecBinderReporter implements
         ExtensionContext featureRoot = featureRootContextOf(rowContext);
         FeatureReport featureReport = featureRoot.getStore(NAMESPACE).get(KEY_FEATURE_REPORT, FeatureReport.class);
         ScenarioNode outline = ScenarioNode.outline();
-        outline.setId(formatTestId(rowContext.getRequiredTestClass(), testMethod, featureReport.getGeneratedClass()));
+        outline.setId(formatTestId(rowContext.getRequiredTestClass(), testMethod, featureReport.getTestClass()));
         outline.setDisplayName(deriveOutlineDisplayName(methodCtx, testMethod));
         outline.setDescription(readDescription(testMethod));
         outline.setSourceLine(readSourceLine(testMethod));

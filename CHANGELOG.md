@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - Class-level `@DisplayName` on the generated test class now reflects the Feature title line (e.g., `Feature: Shopping Cart`) instead of the annotated class name, matching the convention already used for `Rule:` and `Scenario:` `@DisplayName` values; when `addSourceLineNumbers` is enabled the line number is included as `Feature [N]: ...`. The class-level JavaDoc now contains only the feature description lines and is omitted entirely when the feature has no description, so reports and generated code read consistently with the Gherkin source
 - Execution reporter: the per-feature JSON report's top-level `displayName` now reflects the Gherkin Feature title regardless of whether SpecBinder runs in concrete or abstract generation mode — in abstract mode the reporter now walks the JUnit test class's superclass chain to read the generated class's `@DisplayName` rather than falling back to the user-written concrete subclass's simple name
-- Execution reporter: per-feature JSON report's `schemaVersion` bumped from 6 to 7 to reflect the new typed-arguments envelope shape
+- Execution reporter: the per-feature JSON report's `generatedClass` field has been renamed to `testClass`, to accurately reflect that it names the test class that was actually run — which is not always the same as the generated class
+- Execution reporter: per-feature JSON report's `schemaVersion` bumped from 6 to 8 to reflect the new typed-arguments envelope shape and the renamed `testClass` field
 
 ### Fixed
 
