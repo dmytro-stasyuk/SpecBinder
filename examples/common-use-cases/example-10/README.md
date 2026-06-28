@@ -13,7 +13,7 @@ Demonstrates two related features: generating `@Given`/`@When`/`@Then` Cucumber 
 
 ### 2. Annotation-based step matching (`useCucumberAnnotationsForStepMatching`)
 
-- `useCucumberAnnotationsForStepMatching` is `true` **by default**
+- `useCucumberAnnotationsForStepMatching` defaults to `false`; this example opts in with `@Gherkin2JUnitOptions(..., useCucumberAnnotationsForStepMatching = true)`
 - When the generator looks for already-implemented steps in the marker class, it matches by **Cucumber annotation pattern** — not by method name
 - This means you can use **any method name** you like, as long as the `@Given`/`@When`/`@Then` annotation pattern matches the Gherkin step text
 - The generator recognises the inherited method and does not emit a stub for it

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * matching the original Gherkin step text. And/But steps inherit the keyword from the
  * preceding Given/When/Then step.
  *
- * Since useCucumberAnnotationsForStepMatching is true by default, the generator matches
+ * With useCucumberAnnotationsForStepMatching enabled, the generator matches
  * inherited step methods by their Cucumber annotation pattern — NOT by method name.
  * This means you can use any method name you like, as long as the annotation pattern
  * matches the Gherkin step text.
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Both Cucumber expressions (e.g. {string}) and regular expressions (e.g. ^...$)
  * are supported for annotation-based matching. This example mixes both styles.
  */
-@Gherkin2JUnitOptions(addCucumberStepAnnotations = true)
+@Gherkin2JUnitOptions(addCucumberStepAnnotations = true, useCucumberAnnotationsForStepMatching = true)
 @Gherkin2JUnit("specs/ShoppingCart.feature")
 public abstract class ShoppingCartFeature {
 

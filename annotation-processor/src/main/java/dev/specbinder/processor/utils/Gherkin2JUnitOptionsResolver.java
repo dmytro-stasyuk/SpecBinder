@@ -85,7 +85,7 @@ public class Gherkin2JUnitOptionsResolver {
         boolean enableCompositeSteps = false;
         boolean useQualifiedEnumConstants = false;
         boolean useStepKeywordInStepMethodName = false;
-        boolean useCucumberAnnotationsForStepMatching = true;
+        boolean useCucumberAnnotationsForStepMatching = false;
         String[] supportedFileExtensions = new String[]{"feature", "specb"};
         String[] skipGenerationForTags = new String[]{};
         Verbosity verbosity = Verbosity.NORMAL;

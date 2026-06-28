@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Execution reporter: the per-feature JSON report's top-level `displayName` now reflects the Gherkin Feature title regardless of whether SpecBinder runs in concrete or abstract generation mode — in abstract mode the reporter now walks the JUnit test class's superclass chain to read the generated class's `@DisplayName` rather than falling back to the user-written concrete subclass's simple name
 - Execution reporter: the per-feature JSON report's `generatedClass` field has been renamed to `testClass`, to accurately reflect that it names the test class that was actually run — which is not always the same as the generated class
 - Execution reporter: per-feature JSON report's `schemaVersion` bumped from 6 to 8 to reflect the new typed-arguments envelope shape and the renamed `testClass` field
+- **⚠️ BREAKING:** The default value of `@Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = ...)` has been flipped from `true` to `false`. By default the generator now matches existing step implementations in the base/marker class by method name only, ignoring `@Given`/`@When`/`@Then` annotation values. Projects that relied on annotation-pattern matching — typically when migrating from Cucumber and keeping descriptive method names — must now opt back in with `@Gherkin2JUnitOptions(useCucumberAnnotationsForStepMatching = true)`, otherwise those steps will no longer be recognised as implemented and will be (re)generated
 
 ### Fixed
 

@@ -173,7 +173,7 @@ public class GeneratorOptions {
         this.enableCompositeSteps = false;
         this.useQualifiedEnumConstants = false;
         this.useStepKeywordInStepMethodName = false;
-        this.useCucumberAnnotationsForStepMatching = true;
+        this.useCucumberAnnotationsForStepMatching = false;
         this.supportedFileExtensions = new String[]{"feature", "specb"};
         this.skipGenerationForTags = new String[]{};
         this.verbosity = Verbosity.NORMAL;

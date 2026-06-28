@@ -461,7 +461,7 @@ public @interface Gherkin2JUnitOptions {
      * on methods in the class hierarchy are used to match steps from the feature file to existing
      * method implementations.
      * <p>
-     * When {@code true} (default):
+     * When {@code true}:
      * <ul>
      *     <li>The generator inspects Cucumber step annotations on inherited methods to determine
      *     if a step is already implemented</li>
@@ -509,7 +509,7 @@ public @interface Gherkin2JUnitOptions {
      * public void theTotalIs(String value) { ... }
      * </pre>
      * <p>
-     * When {@code false}:
+     * When {@code false} (default):
      * <ul>
      *     <li>Only method name matching is used to look up existing step implementations</li>
      *     <li>Cucumber step annotations on inherited methods are ignored during lookup</li>
@@ -526,7 +526,7 @@ public @interface Gherkin2JUnitOptions {
      *
      * @return true if Cucumber step annotations should be used for step matching, false otherwise
      */
-    boolean useCucumberAnnotationsForStepMatching() default true;
+    boolean useCucumberAnnotationsForStepMatching() default false;
 
     /**
      * Controls how enum constants from parent/ancestor classes are referenced in generated test code
