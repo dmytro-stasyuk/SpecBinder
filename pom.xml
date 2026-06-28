@@ -37,6 +37,10 @@
         <junit.jupiter.platform.suite>1.14.1</junit.jupiter.platform.suite>
         <maven.deploy.skip>true</maven.deploy.skip>
         <central.waitUntil>uploaded</central.waitUntil>
+        <!-- Test coverage: fail the build when line/branch coverage drops below these ratios (0.0-1.0). -->
+        <jacoco.version>0.8.13</jacoco.version>
+        <jacoco.line.coverage>0.50</jacoco.line.coverage>
+        <jacoco.branch.coverage>0.50</jacoco.branch.coverage>
     </properties>
     <modules>
         <module>annotations</module>
@@ -53,6 +57,64 @@
         </dependency>
     </dependencies>
     <build>
+        <pluginManagement>
+            <plugins>
+                <!--
+                    JaCoCo test coverage. Defined here once (version, executions, rules) and
+                    activated only in test-bearing modules (annotation-processor, execution-reporter)
+                    via a bare <plugin> reference. Thresholds are the jacoco.*.coverage properties.
+                -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                    <executions>
+                        <!-- Attach the coverage agent to the surefire-forked JVM (sets argLine). -->
+                        <execution>
+                            <id>jacoco-prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <!-- Emit HTML/XML reports under target/site/jacoco/ after tests run. -->
+                        <execution>
+                            <id>jacoco-report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                        <!-- Fail the build in the verify phase if coverage is below threshold. -->
+                        <execution>
+                            <id>jacoco-check</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <rule>
+                                        <element>BUNDLE</element>
+                                        <limits>
+                                            <limit>
+                                                <counter>LINE</counter>
+                                                <value>COVEREDRATIO</value>
+                                                <minimum>${jacoco.line.coverage}</minimum>
+                                            </limit>
+                                            <limit>
+                                                <counter>BRANCH</counter>
+                                                <value>COVEREDRATIO</value>
+                                                <minimum>${jacoco.branch.coverage}</minimum>
+                                            </limit>
+                                        </limits>
+                                    </rule>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -3,6 +3,7 @@ package dev.specbinder.processor;
 import com.squareup.javapoet.*;
 import dev.specbinder.annotations.Gherkin2JUnit;
 import dev.specbinder.annotations.output.SourceFilePath;
+import dev.specbinder.annotations.output.SourceTimestamp;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
 import dev.specbinder.processor.gherkin.FeatureFileParser;
@@ -26,6 +27,7 @@ import javax.lang.model.type.TypeMirror;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.OptionalLong;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -127,8 +129,35 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         String packageName = extractPackageNameFromFeaturePath(featureFilePathForParsing);
         String annotatedClassName = annotatedClass.getSimpleName().toString();
 
+        // When skipUnchangedSpecs is enabled, compute the newest last-modified time across the spec file,
+        // the marker class, and the marker's hierarchy. If a previously generated class recorded the same
+        // value, none of the inputs have advanced past it, so regeneration is skipped (return null — the
+        // caller then leaves the existing class untouched). Computed before parsing so an unchanged spec
+        // pays no parse cost. The value is also stamped onto the class below so later runs can compare.
+        long inputsTimestamp = 0L;
+        if (options.isSkipUnchangedSpecs()) {
+            SpecTimestampSupport timestampSupport = new SpecTimestampSupport(processingEnv);
+            inputsTimestamp = timestampSupport.computeNewestInputTimestamp(annotatedClass, featureFilePathForParsing);
+            String fullyQualifiedName = packageName.isEmpty()
+                    ? generatedClassName
+                    : packageName + "." + generatedClassName;
+            OptionalLong recorded = timestampSupport.readRecordedTimestamp(fullyQualifiedName);
+            if (inputsTimestamp > 0 && recorded.isPresent() && recorded.getAsLong() == inputsTimestamp) {
+                logDebug("Skipping regeneration of " + fullyQualifiedName
+                        + " — generation inputs unchanged (newest last-modified " + inputsTimestamp + ")");
+                return null;
+            }
+        }
+
         // Parse the feature file
         Feature feature = featureFileParser.parseUsingPath(featureFilePathForParsing);
+
+        // A Feature carrying a matching skip tag produces no generated class at all — return null so
+        // the caller skips writing (and name registration) entirely. Skip-tagged Rules/Scenarios still
+        // generate skipped stubs and are handled inside the feature processing below.
+        if (feature != null && TagUtils.shouldSkipElement(feature.getTags(), options.getSkipGenerationForTags())) {
+            return null;
+        }
 
         // Build the class
         TypeMirror asTypeMirror = annotatedClass.asType();
@@ -215,19 +244,18 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
 
         // Add class annotations
         List<Tag> featureTags = feature != null ? feature.getTags() : Collections.emptyList();
-        boolean featureSkipped = feature != null &&
-                TagUtils.shouldSkipElement(feature.getTags(), options.getSkipGenerationForTags());
-        boolean hasRules = feature != null && !featureSkipped && feature.getChildren().stream()
-                .anyMatch(child -> child.getRule().isPresent() &&
-                        !TagUtils.shouldSkipElement(child.getRule().get().getTags(), options.getSkipGenerationForTags()));
-        boolean hasScenarios = feature != null && !featureSkipped && feature.getChildren().stream()
-                .anyMatch(child -> child.getScenario().isPresent() &&
-                        !TagUtils.shouldSkipElement(child.getScenario().get().getTags(), options.getSkipGenerationForTags()));
+        // A skip-tagged Feature has already returned null above, so any feature reaching here is generated in
+        // full. Skip-tagged Rules/Scenarios still emit stubs (nested classes / test methods), so they require
+        // the class-level order annotations.
+        boolean hasRules = feature != null && feature.getChildren().stream()
+                .anyMatch(child -> child.getRule().isPresent());
+        boolean hasScenarios = feature != null && feature.getChildren().stream()
+                .anyMatch(child -> child.getScenario().isPresent());
 
         addClassAnnotations(
                 feature, featureTags, hasRules, hasScenarios, classBuilder,
                 featureFilePathForParsing, featureFilePathForAnnotation,
-                packageName, annotatedClassName, options);
+                packageName, annotatedClassName, options, inputsTimestamp);
 
         TypeSpec typeSpec = classBuilder.build();
 
@@ -654,7 +682,8 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             String featureFilePath,
             String packageName,
             String annotatedClassName,
-            GeneratorOptions options) {
+            GeneratorOptions options,
+            long inputsTimestamp) {
 
         if (!featureTags.isEmpty()) {
             AnnotationSpec jUnitTagsAnnotation = TagUtils.toJUnitTagsAnnotation(featureTags);
@@ -746,6 +775,18 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                 .addMember("value", "\"" + featureFilePathForAnnotation + "\"")
                 .build()
         );
+
+        /**
+         * {@link SourceTimestamp} annotation — records the newest last-modified time across the
+         * generation inputs so a later run can skip regenerating an unchanged spec.
+         */
+        if (options.isSkipUnchangedSpecs()) {
+            classBuilder.addAnnotation(AnnotationSpec
+                    .builder(SourceTimestamp.class)
+                    .addMember("value", "$L", inputsTimestamp)
+                    .build()
+            );
+        }
     }
 
     @Override

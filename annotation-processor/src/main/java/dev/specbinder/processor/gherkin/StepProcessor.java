@@ -512,23 +512,17 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         return null;
     }
 
-    private void addACallToTheStepMethod(
-            MethodSpec.Builder scenarioMethodBuilder,
-            String stepMethodName,
-            List<String> parameterValues,
-            List<Class<?>> parameterTypes,
-            Step step,
-            List<String> scenarioParameterNames,
-            List<String> testMethodParameterNames,
-            List<Class<?>> scenarioParameterTypes,
-            Map<Integer, TypeMirror> enumParameterTypes
-    ) {
-
-        /**
-         * add block comment for the step as it appears in the feature file
-         */
+    /**
+     * Appends the inner comment lines (the {@code  * ...} lines, without the opening {@code /*} or the
+     * closing) for a single Gherkin step to the given method builder. Shared by the normal call-site
+     * emission and the skipped-scenario body so both render the step text identically.
+     *
+     * @param scenarioMethodBuilder the method builder to append the comment lines to
+     * @param step the Gherkin step to render
+     * @param options the generator options controlling source-line and DataTable rendering
+     */
+    static void appendStepCommentLines(MethodSpec.Builder scenarioMethodBuilder, Step step, GeneratorOptions options) {
         String stepFirstLine = step.getKeyword() + step.getText();
-        scenarioMethodBuilder.addCode("/*");
         if (options.isAddSourceLineNumbers()) {
             scenarioMethodBuilder.addCode("\n * [$L] $L", step.getLocation().getLine(), stepFirstLine);
         } else {
@@ -544,6 +538,25 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                 scenarioMethodBuilder.addCode("\n *   $L", tableLine);
             }
         }
+    }
+
+    private void addACallToTheStepMethod(
+            MethodSpec.Builder scenarioMethodBuilder,
+            String stepMethodName,
+            List<String> parameterValues,
+            List<Class<?>> parameterTypes,
+            Step step,
+            List<String> scenarioParameterNames,
+            List<String> testMethodParameterNames,
+            List<Class<?>> scenarioParameterTypes,
+            Map<Integer, TypeMirror> enumParameterTypes
+    ) {
+
+        /**
+         * add block comment for the step as it appears in the feature file
+         */
+        scenarioMethodBuilder.addCode("/*");
+        appendStepCommentLines(scenarioMethodBuilder, step, options);
         scenarioMethodBuilder.addCode("\n */\n");
 
         /**

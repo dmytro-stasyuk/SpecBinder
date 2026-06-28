@@ -56,7 +56,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
         return baseType;
     }
 
-    void processRule(int ruleNumber, Rule rule, TypeSpec.Builder classBuilder, Map<String, List<Class<?>>> preComputedStepTypes, List<Step> featureBackgroundSteps) {
+    void processRule(int ruleNumber, Rule rule, TypeSpec.Builder classBuilder, Map<String, List<Class<?>>> preComputedStepTypes, List<Step> featureBackgroundSteps, boolean ruleSkipped) {
 
         List<Step> ruleBackgroundSteps = BackgroundStepCollector.collectRuleBackgroundSteps(rule);
         List<Step> combinedBackgroundSteps = BackgroundStepCollector.combine(featureBackgroundSteps, ruleBackgroundSteps);
@@ -83,9 +83,9 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
         List<RuleChild> children = rule.getChildren();
 
-        boolean hasScenarios = children.stream().anyMatch(child ->
-                child.getScenario().isPresent() &&
-                !TagUtils.shouldSkipElement(child.getScenario().get().getTags(), options.getSkipGenerationForTags()));
+        // Skip-tagged scenarios now generate skipped stub methods, so a rule "has scenarios" whenever any
+        // scenario is present, regardless of skip tags.
+        boolean hasScenarios = children.stream().anyMatch(child -> child.getScenario().isPresent());
 
         /*
           add {@link Tag} annotations from Gherkin tags
@@ -149,14 +149,12 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
                 Scenario scenario = child.getScenario().get();
 
-                if (TagUtils.shouldSkipElement(scenario.getTags(), options.getSkipGenerationForTags())) {
-                    continue;
-                }
+                boolean scenarioSkipped = ruleSkipped || TagUtils.shouldSkipElement(scenario.getTags(), options.getSkipGenerationForTags());
 
                 ruleScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector, combinedBackgroundSteps);
                 String rulePrefix = "rule_" + ruleNumber + "_";
-                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(rulePrefix, ruleScenarioCount, scenario, classBuilder, preComputedStepTypes);
+                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(rulePrefix, ruleScenarioCount, scenario, classBuilder, preComputedStepTypes, scenarioSkipped);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
                 nestedRuleClassBuilder.addMethod(scenarioMethod);
@@ -184,7 +182,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
                     .methodBuilder("noScenariosInRule")
                     .addModifiers(Modifier.PUBLIC);
 
-            if ("SKIP".equals(options.getEmptyRuleBehavior())) {
+            if (ruleSkipped || "SKIP".equals(options.getEmptyRuleBehavior())) {
                 noScenariosInRuleMSB.addStatement("$T.assumeTrue(false, \"Rule has no scenarios\")", Assumptions.class);
             } else if ("COMPILATION_ERROR".equals(options.getEmptyRuleBehavior())) {
                 noScenariosInRuleMSB.addCode("Rule doesn't have any scenarios\n");

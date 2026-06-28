@@ -155,6 +155,17 @@ public class GeneratorOptions {
     private final int maxStringLiteralBytes;
 
     /**
+     * If set to true, the generator skips regenerating a test class when none of its generation
+     * inputs (the spec file, the {@code @Gherkin2JUnit} marker class, and every source class in the
+     * marker's hierarchy) have changed since it was last generated. Enabling this makes the
+     * generator emit a {@code @SourceTimestamp} annotation recording the newest last-modified time
+     * across those inputs, and compare it against the freshly computed newest time on later runs.
+     * Detection follows the newest input time, so it does not notice a change that fails to advance
+     * that maximum (e.g. a git checkout of an older revision). Default is {@code false}.
+     */
+    private final boolean skipUnchangedSpecs;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -180,6 +191,7 @@ public class GeneratorOptions {
         this.emitScenarioHash = false;
         this.descriptionAsAnnotation = false;
         this.maxStringLiteralBytes = 65000;
+        this.skipUnchangedSpecs = false;
     }
 
     /**
@@ -207,6 +219,7 @@ public class GeneratorOptions {
      * @param emitScenarioHash see {@link #emitScenarioHash}
      * @param descriptionAsAnnotation see {@link #descriptionAsAnnotation}
      * @param maxStringLiteralBytes see {@link #maxStringLiteralBytes}
+     * @param skipUnchangedSpecs see {@link #skipUnchangedSpecs}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -230,7 +243,8 @@ public class GeneratorOptions {
             Verbosity verbosity,
             boolean emitScenarioHash,
             boolean descriptionAsAnnotation,
-            int maxStringLiteralBytes
+            int maxStringLiteralBytes,
+            boolean skipUnchangedSpecs
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -254,6 +268,7 @@ public class GeneratorOptions {
         this.emitScenarioHash = emitScenarioHash;
         this.descriptionAsAnnotation = descriptionAsAnnotation;
         this.maxStringLiteralBytes = maxStringLiteralBytes;
+        this.skipUnchangedSpecs = skipUnchangedSpecs;
     }
 
 }

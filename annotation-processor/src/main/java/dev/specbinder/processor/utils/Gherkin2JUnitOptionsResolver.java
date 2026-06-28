@@ -92,6 +92,7 @@ public class Gherkin2JUnitOptionsResolver {
         boolean emitScenarioHash = false;
         boolean descriptionAsAnnotation = false;
         int maxStringLiteralBytes = 65000;
+        boolean skipUnchangedSpecs = false;
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -210,6 +211,9 @@ public class Gherkin2JUnitOptionsResolver {
                     case "maxStringLiteralBytes":
                         maxStringLiteralBytes = (Integer) value;
                         break;
+                    case "skipUnchangedSpecs":
+                        skipUnchangedSpecs = (Boolean) value;
+                        break;
                     default:
                         break;
                 }
@@ -238,7 +242,8 @@ public class Gherkin2JUnitOptionsResolver {
                 verbosity,
                 emitScenarioHash,
                 descriptionAsAnnotation,
-                maxStringLiteralBytes
+                maxStringLiteralBytes,
+                skipUnchangedSpecs
         );
     }
 
@@ -269,7 +274,8 @@ public class Gherkin2JUnitOptionsResolver {
                 options.verbosity(),
                 options.emitScenarioHash(),
                 options.descriptionAsAnnotation(),
-                options.maxStringLiteralBytes()
+                options.maxStringLiteralBytes(),
+                options.skipUnchangedSpecs()
         );
     }
 }

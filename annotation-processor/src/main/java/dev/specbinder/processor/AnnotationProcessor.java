@@ -134,16 +134,20 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                     logVerbose("Empty annotation value detected, using pattern: " + annotationValue);
                 }
 
+                // Resolve a leading "./" against the annotated class's package directory.
+                // The original annotationValue is preserved for user-facing messages.
+                String resolvedValue = resolveRelativePath(annotationValue, annotatedClass);
+
                 // Check if the annotation value is a glob pattern
-                if (GlobPatternMatcher.isGlobPattern(annotationValue)) {
-                    logVerbose("Detected glob pattern: " + annotationValue);
+                if (GlobPatternMatcher.isGlobPattern(resolvedValue)) {
+                    logVerbose("Detected glob pattern: " + resolvedValue);
 
                     // Find all matching feature files
                     GlobPatternMatcher patternMatcher = createGlobPatternMatcher();
                     List<String> matchingFiles;
 
                     try {
-                        matchingFiles = patternMatcher.findMatchingFiles(annotationValue);
+                        matchingFiles = patternMatcher.findMatchingFiles(resolvedValue);
                     } catch (IOException e) {
                         logException(e, annotatedClass);
                         continue;
@@ -192,6 +196,18 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                             continue;
                         }
 
+                        if (result == null) {
+                            // Feature carries a matching skip tag — no class is generated. Release the
+                            // reserved class name so it is not counted or flagged as a duplicate.
+                            String skippedClassName = subclassGenerator.extractFeatureFileName(featureFilePath) + suffixToApply;
+                            String skippedFqcn = packageName.isEmpty()
+                                    ? skippedClassName
+                                    : packageName + "." + skippedClassName;
+                            allGeneratedClassNames.remove(skippedFqcn);
+                            emitProgressSkipped(generatorOptions, featureFilePath);
+                            continue;
+                        }
+
                         emitProgressGeneratedClass(generatorOptions, getFullyQualifiedClassName(result.javaFile), result.javaFile.typeSpec);
 
                         // Write the generated file
@@ -208,13 +224,20 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
 
                     TestSubclassCreator.GeneratedFileResult result = null;
                     try {
-                        result = subclassGenerator.createTestSubclass(annotatedClass, annotationValue, true);
+                        result = subclassGenerator.createTestSubclass(annotatedClass, resolvedValue, true);
                     } catch (FileNotFoundException e) {
                         String errorMessage = "No feature file found for path '" + annotationValue + "'";
                         logError(errorMessage);
                         throw new RuntimeException(errorMessage, e);
                     } catch (IOException e) {
                         logException(e, annotatedClass);
+                        continue;
+                    }
+
+                    if (result == null) {
+                        // Feature carries a matching skip tag — no class is generated for it.
+                        emitProgressSkipped(generatorOptions, annotationValue);
+                        emitProgressFinish(generatorOptions, annotationValue);
                         continue;
                     }
 
@@ -517,6 +540,13 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
         logVerbose("Finished '" + specFilePath + "'");
     }
 
+    private void emitProgressSkipped(GeneratorOptions options, String specFilePath) {
+        if (effectiveVerbosity(options).ordinal() < Verbosity.VERBOSE.ordinal()) {
+            return;
+        }
+        logVerbose("Skipped '" + specFilePath + "' — Feature tagged for skip generation; no class generated");
+    }
+
     /**
      * Resolves the effective verbosity for a particular annotated class. Precedence:
      * <ol>
@@ -599,6 +629,8 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                 fmtBool(resolved.isDescriptionAsAnnotation()), fmtBool(defaults.isDescriptionAsAnnotation()), overridden, defaulted);
         putOption("maxStringLiteralBytes",
                 Integer.toString(resolved.getMaxStringLiteralBytes()), Integer.toString(defaults.getMaxStringLiteralBytes()), overridden, defaulted);
+        putOption("skipUnchangedSpecs",
+                fmtBool(resolved.isSkipUnchangedSpecs()), fmtBool(defaults.isSkipUnchangedSpecs()), overridden, defaulted);
     }
 
     private static void putOption(String name, String resolvedValue, String defaultValue,
@@ -673,6 +705,24 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
             return ((PackageElement) enclosingElement).getQualifiedName().toString();
         }
         return "";
+    }
+
+    /**
+     * Resolves a path that begins with {@code "./"} against the package directory of the annotated class.
+     * The leading {@code "."} denotes the annotated class's package; the remainder is appended after it.
+     * Applies equally to glob patterns and individual file paths. Paths that do not start with {@code "./"}
+     * are returned unchanged.
+     */
+    private String resolveRelativePath(String value, TypeElement annotatedClass) {
+        if (value == null || !value.startsWith("./")) {
+            return value;
+        }
+        String remainder = value.substring(2);
+        String packageName = getPackageName(annotatedClass);
+        if (packageName.isEmpty()) {
+            return remainder;
+        }
+        return packageName.replace('.', '/') + "/" + remainder;
     }
 
     // Add this helper method inside the AnnotationProcessor class:

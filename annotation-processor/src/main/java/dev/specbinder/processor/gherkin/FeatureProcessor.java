@@ -101,22 +101,18 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
             else if (child.getRule().isPresent()) {
 
                 Rule rule = child.getRule().get();
-                if (TagUtils.shouldSkipElement(rule.getTags(), options.getSkipGenerationForTags())) {
-                    continue;
-                }
+                boolean ruleSkipped = TagUtils.shouldSkipElement(rule.getTags(), options.getSkipGenerationForTags());
                 featureRuleCount++;
                 RuleProcessor ruleProcessor = new RuleProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
-                ruleProcessor.processRule(featureRuleCount, rule, classBuilder, preComputedStepTypes, featureBackgroundSteps);
+                ruleProcessor.processRule(featureRuleCount, rule, classBuilder, preComputedStepTypes, featureBackgroundSteps, ruleSkipped);
             }
             else if (child.getScenario().isPresent()) {
 
                 Scenario scenario = child.getScenario().get();
-                if (TagUtils.shouldSkipElement(scenario.getTags(), options.getSkipGenerationForTags())) {
-                    continue;
-                }
+                boolean scenarioSkipped = TagUtils.shouldSkipElement(scenario.getTags(), options.getSkipGenerationForTags());
                 featureScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector, featureBackgroundSteps);
-                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario("", featureScenarioCount, scenario, classBuilder, preComputedStepTypes);
+                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario("", featureScenarioCount, scenario, classBuilder, preComputedStepTypes, scenarioSkipped);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
                 classBuilder.addMethod(scenarioMethod);

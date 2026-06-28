@@ -8,9 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- The `@Gherkin2JUnit` path now accepts a leading `./` to anchor matching at the annotated class's own package directory instead of the classpath root — for both glob patterns (e.g. `"./**/*.feature"`) and individual files (e.g. `"./Cart.feature"`). This lets a marker class pick up the feature files sitting alongside it without repeating its full package path; generated class names and packages still mirror each matched file's real location. A `./` pattern that matches nothing reports the pattern exactly as written
+- New opt-in `@Gherkin2JUnitOptions(skipUnchangedSpecs = true)` flag that skips regenerating a test class when none of its generation inputs have changed since it was last generated — cutting wasted work on incremental builds for projects with many feature files. The generator stamps each generated class with a `@SourceTimestamp` recording the newest last-modified time across the spec file, the marker class, and the marker's class hierarchy (where options typically live, so editing options forces regeneration); on a later run it re-stamps only when that value has advanced. A previously generated class that is missing or carries no recorded timestamp — for example after a clean build — always regenerates, so the optimization never leaves stale output behind. Detection follows the newest input time, so a change that does not advance it (such as a `git checkout` of an older revision) is not picked up; the default remains `false`
+
 ### Changed
 
+- `@Gherkin2JUnitOptions(skipGenerationForTags = ...)` now keeps tagged Scenarios and Rules visible in the generated test class as skipped tests instead of omitting them entirely: the `@Test` method is still generated with its Gherkin steps rendered as a comment, and its body reports the test as skipped via `Assumptions.assumeTrue(false, ...)`; a tagged Rule's nested class is generated with each of its scenarios skipped this way. A tagged Feature generates no test class at all — the whole feature is dropped from generation. This surfaces manual or work-in-progress items as skipped in test reports rather than silently disappearing from the suite
+
 ### Fixed
+
+- Execution reporter: a hand-written `@BeforeEach` lifecycle method on a base or marker class (for example a `setUp()` that builds a test fixture) is no longer mistaken for a Gherkin `Background`. Only `@BeforeEach` methods on SpecBinder-generated test classes contribute background steps now, so infrastructure setup — and any non-serializable values it passes around — no longer leak into the per-feature JSON report as spurious background steps or step arguments
+- Execution reporter: the per-feature JSON report is now written atomically — serialized in full, then moved into place — so a failure partway through serialization can no longer leave a truncated, unparseable report on disk. A previously written valid report survives intact, and a consumer reading the file never observes a partially written report
 
 ### Removed
 

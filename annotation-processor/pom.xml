@@ -13,6 +13,9 @@
     <properties>
         <!--<cucumber-java.version>7.14.0</cucumber-java.version>-->
         <maven.deploy.skip>false</maven.deploy.skip>
+        <!-- Coverage gate for this module (overrides parent defaults). -->
+        <jacoco.line.coverage>0.85</jacoco.line.coverage>
+        <jacoco.branch.coverage>0.73</jacoco.branch.coverage>
     </properties>
     <build>
         <resources>
@@ -41,6 +44,11 @@
                         <include>**/AllTests.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <!-- Test coverage measurement + threshold gate (config inherited from parent pluginManagement). -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.central</groupId>

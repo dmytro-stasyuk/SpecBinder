@@ -70,11 +70,11 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
     }
 
     MethodSpec.Builder processScenario(int scenarioNumber, Scenario scenario, TypeSpec.Builder classBuilder) {
-        return processScenario("", scenarioNumber, scenario, classBuilder, Map.of());
+        return processScenario("", scenarioNumber, scenario, classBuilder, Map.of(), false);
     }
 
     MethodSpec.Builder processScenario(String methodNamePrefix, int scenarioNumber, Scenario scenario, TypeSpec.Builder classBuilder,
-                                       Map<String, List<Class<?>>> preComputedStepTypes) {
+                                       Map<String, List<Class<?>>> preComputedStepTypes, boolean skipped) {
 
         List<MethodSpec> allMethodSpecs = classBuilder.methodSpecs;
 
@@ -226,7 +226,23 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         DescriptionEmitter.emit(scenarioMethodBuilder, scenario.getDescription(), options);
 
-        if (scenarioSteps.isEmpty()) {
+        if (skipped) {
+
+            // Skipped scenario: render the Gherkin steps as a single block comment (no call sites, no
+            // step methods) and end the body with a skip assumption.
+            if (!scenarioSteps.isEmpty()) {
+                scenarioMethodBuilder.addCode("/*");
+                for (int i = 0; i < scenarioSteps.size(); i++) {
+                    if (i > 0) {
+                        scenarioMethodBuilder.addCode("\n *");
+                    }
+                    StepProcessor.appendStepCommentLines(scenarioMethodBuilder, scenarioSteps.get(i), options);
+                }
+                scenarioMethodBuilder.addCode("\n */\n");
+            }
+            scenarioMethodBuilder.addStatement("$T.assumeTrue(false, \"Scenario skipped by tag\")", Assumptions.class);
+
+        } else if (scenarioSteps.isEmpty()) {
 
             if ("SKIP".equals(options.getEmptyScenarioBehavior())) {
                 scenarioMethodBuilder.addStatement("$T.assumeTrue(false, \"Scenario has no steps\")", Assumptions.class);

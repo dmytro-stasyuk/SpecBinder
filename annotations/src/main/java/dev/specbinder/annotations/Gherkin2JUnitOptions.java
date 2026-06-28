@@ -201,17 +201,28 @@ public @interface Gherkin2JUnitOptions {
     String[] supportedFileExtensions() default {"feature", "specb"};
 
     /**
-     * Specifies regex patterns for Gherkin tags for which the generator should skip code generation entirely.
+     * Specifies regex patterns for Gherkin tags that mark elements to be generated as skipped rather than
+     * executed.
      * <p>
      * Each value is treated as a Java regular expression and matched against the tag names
-     * on Feature, Rule, Scenario, and Examples elements (without the leading {@code @} symbol).
-     * When any tag on an element matches any of the specified patterns, the generator will not
-     * produce the corresponding generated code element (test class, {@code @Nested} class,
-     * {@code @Test} method, or {@code @ParameterizedTest} parameter set, respectively).
+     * on Feature, Rule, and Scenario elements (without the leading {@code @} symbol).
+     * When any tag on an element matches any of the specified patterns, the generator handles that element
+     * as follows:
+     * <ul>
+     *   <li><b>Scenario</b> &mdash; the {@code @Test} (or {@code @ParameterizedTest}) method is still
+     *       generated, but its body contains only the Gherkin steps as a comment followed by
+     *       {@code Assumptions.assumeTrue(false, ...)}, so the test is reported as skipped. No step methods
+     *       are generated for steps that appear only in skipped scenarios.</li>
+     *   <li><b>Rule</b> &mdash; the {@code @Nested} class is still generated and each of its scenarios is
+     *       generated as a skipped test (as above). A tagged Rule with no scenarios generates the usual
+     *       single skipped placeholder test.</li>
+     *   <li><b>Feature</b> &mdash; no test class is generated at all; the feature is dropped entirely from
+     *       code generation.</li>
+     * </ul>
      * <p>
-     * This is useful for excluding elements that are not meant to be executed as automated tests,
-     * such as manual test cases or work-in-progress scenarios, without removing them from the
-     * specification.
+     * This is useful for keeping elements that are not meant to be executed as automated tests,
+     * such as manual test cases or work-in-progress scenarios, visible in the generated test class
+     * (reported as skipped) without removing them from the specification.
      * <p>
      * Each pattern is matched against the full tag name (without the leading {@code @}).
      * Use {@code .*} for wildcard matching. Patterns are case-sensitive by default;
@@ -221,7 +232,7 @@ public @interface Gherkin2JUnitOptions {
      * <pre>
      * &#64;Gherkin2JUnitOptions(skipGenerationForTags = {"manual", "wip-.*", "(?i)ignore"})
      * </pre>
-     * This would skip generation for elements tagged with {@code @manual}, any tag starting
+     * This would generate skipped tests for elements tagged with {@code @manual}, any tag starting
      * with {@code @wip-} (e.g., {@code @wip-sprint-42}), or {@code @ignore}/{@code @IGNORE}/{@code @Ignore}.
      * <p>
      * Given the following feature file:
@@ -231,9 +242,10 @@ public @interface Gherkin2JUnitOptions {
      *   Given a printed report
      *   Then the layout matches the approved template
      * </pre>
-     * The above scenario would be excluded from the generated test class entirely.
+     * The above scenario would be generated as a {@code @Test} method whose body skips via
+     * {@code Assumptions.assumeTrue(false, ...)} instead of executing the steps.
      *
-     * @return the array of regex patterns for tags for which code generation should be skipped
+     * @return the array of regex patterns for tags whose elements should be generated as skipped
      */
     String[] skipGenerationForTags() default {};
 
@@ -614,6 +626,37 @@ public @interface Gherkin2JUnitOptions {
      * @return the per-literal byte cap in UTF-8 bytes
      */
     int maxStringLiteralBytes() default 65000;
+
+    /**
+     * Controls whether the generator skips regenerating a test class when none of its generation
+     * inputs have changed since the class was last generated.
+     * <p>
+     * When {@code true}: the generated class is stamped with a
+     * {@link dev.specbinder.annotations.output.SourceTimestamp @SourceTimestamp} annotation carrying
+     * the newest last-modified time (epoch millis) across all of its generation inputs — the spec
+     * ({@code .feature}/{@code .specb}) file, the {@code @Gherkin2JUnit} marker class, and every
+     * source class in the marker's hierarchy (which is where {@code @Gherkin2JUnitOptions} typically
+     * lives, so editing options bumps that source's timestamp and forces regeneration). On a later
+     * run the generator reads that recorded value back off the previously generated class and, if it
+     * equals the freshly computed newest input time, leaves the class untouched instead of
+     * re-parsing and re-generating it. If the previously generated class is missing or carries no
+     * recorded timestamp (for example after a clean build, or because it predates this option), the
+     * class is always regenerated — so the optimization can never leave stale output behind.
+     * <p>
+     * When {@code false} (default): no {@code @SourceTimestamp} is emitted and every run regenerates
+     * the class unconditionally.
+     * <p>
+     * <strong>Limitation.</strong> Detection is driven by the <em>newest</em> last-modified time
+     * across the inputs, so it only notices changes that advance that maximum. Normal editing bumps
+     * a file's time to "now", making it the newest input, so ordinary edits are always detected. But
+     * a non-monotonic timestamp move — most commonly a {@code git checkout} of an older revision, or
+     * any edit whose resulting time stays below another input's time — does not advance the maximum
+     * and is therefore not detected, so the class is not regenerated. If that matters for your
+     * workflow, leave this option disabled (a clean build always regenerates).
+     *
+     * @return true to skip regenerating unchanged specs, false to always regenerate
+     */
+    boolean skipUnchangedSpecs() default false;
 
     /**
      * -- EXPERIMENTAL OPTION --

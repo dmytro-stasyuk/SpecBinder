@@ -1,5 +1,6 @@
 package dev.specbinder.reporter.internal;
 
+import dev.specbinder.annotations.output.SourceFilePath;
 import net.bytebuddy.dynamic.ClassFileLocator;
 import net.bytebuddy.jar.asm.*;
 
@@ -109,12 +110,30 @@ public final class StepCallSiteScanner {
                 throw new IllegalStateException(
                         "SpecBinder reporter failed to read bytecode for " + cls.getName(), e);
             }
+            boolean generated = isGeneratedTestClass(cls);
             new ClassReader(bytes).accept(
-                    new ScanningClassVisitor(backgroundCalls, scenarioCallsByMethod, stepMethodNames),
+                    new ScanningClassVisitor(generated, backgroundCalls, scenarioCallsByMethod, stepMethodNames),
                     ClassReader.SKIP_FRAMES);
         }
 
         return new Plan(backgroundCalls, scenarioCallsByMethod, stepMethodNames);
+    }
+
+    /**
+     * A class contributes Gherkin <em>Background</em> steps only if it is a SpecBinder-generated
+     * test class — i.e. it (or an enclosing class, for {@code @Nested} rule classes) carries the
+     * generated {@link SourceFilePath} annotation. This excludes hand-written infrastructure
+     * {@code @BeforeEach} lifecycle methods on base/marker classes (e.g. a {@code setUp()} that
+     * builds a test fixture): those are not Gherkin Background, and treating them as such polluted
+     * the report with spurious background steps and captured non-serializable setup arguments.
+     */
+    private static boolean isGeneratedTestClass(Class<?> cls) {
+        for (Class<?> c = cls; c != null; c = c.getEnclosingClass()) {
+            if (c.isAnnotationPresent(SourceFilePath.class)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isInfrastructureClass(Class<?> cls) {
@@ -154,14 +173,17 @@ public final class StepCallSiteScanner {
 
     /** Routes each method to a {@link MethodScanner} that records its body's call sites. */
     private static final class ScanningClassVisitor extends ClassVisitor {
+        private final boolean classGenerated;
         private final List<Call> backgroundCalls;
         private final Map<String, List<Call>> scenarioCallsByMethod;
         private final Set<String> stepMethodNames;
 
-        ScanningClassVisitor(List<Call> backgroundCalls,
+        ScanningClassVisitor(boolean classGenerated,
+                             List<Call> backgroundCalls,
                              Map<String, List<Call>> scenarioCallsByMethod,
                              Set<String> stepMethodNames) {
             super(ASM_API);
+            this.classGenerated = classGenerated;
             this.backgroundCalls = backgroundCalls;
             this.scenarioCallsByMethod = scenarioCallsByMethod;
             this.stepMethodNames = stepMethodNames;
@@ -170,7 +192,7 @@ public final class StepCallSiteScanner {
         @Override
         public MethodVisitor visitMethod(int access, String name, String descriptor,
                                          String signature, String[] exceptions) {
-            return new MethodScanner(name, descriptor,
+            return new MethodScanner(classGenerated, name, descriptor,
                     backgroundCalls, scenarioCallsByMethod, stepMethodNames);
         }
     }
@@ -187,6 +209,7 @@ public final class StepCallSiteScanner {
         private static final String DESC_PARAMETERIZED = "Lorg/junit/jupiter/params/ParameterizedTest;";
         private static final String DESC_BEFORE_EACH = "Lorg/junit/jupiter/api/BeforeEach;";
 
+        private final boolean classGenerated;
         private final String methodName;
         private final String methodDescriptor;
         private final List<Call> backgroundSink;
@@ -196,12 +219,14 @@ public final class StepCallSiteScanner {
         private boolean isTest;
         private boolean isBeforeEach;
 
-        MethodScanner(String methodName,
+        MethodScanner(boolean classGenerated,
+                      String methodName,
                       String methodDescriptor,
                       List<Call> backgroundSink,
                       Map<String, List<Call>> scenarioSinks,
                       Set<String> stepMethodNames) {
             super(ASM_API);
+            this.classGenerated = classGenerated;
             this.methodName = methodName;
             this.methodDescriptor = methodDescriptor;
             this.backgroundSink = backgroundSink;
@@ -243,6 +268,14 @@ public final class StepCallSiteScanner {
             }
             List<Call> sink;
             if (isBeforeEach) {
+                // Only SpecBinder-generated test classes contribute Gherkin Background steps.
+                // A @BeforeEach on a hand-written base/marker class (e.g. an infrastructure
+                // setUp() that builds a test fixture) is NOT a Gherkin Background and must not
+                // pollute the report — nor have its (possibly non-serializable) call arguments
+                // captured as step arguments.
+                if (!classGenerated) {
+                    return;
+                }
                 // Append: multiple @BeforeEach methods across the class hierarchy all
                 // run, in chain-top-down (parent → child) order.
                 sink = backgroundSink;

@@ -14,6 +14,9 @@
         <maven.deploy.skip>false</maven.deploy.skip>
         <jackson.version>2.18.2</jackson.version>
         <byte-buddy.version>1.15.10</byte-buddy.version>
+        <!-- Coverage gate for this module (overrides parent defaults). -->
+        <jacoco.line.coverage>0.86</jacoco.line.coverage>
+        <jacoco.branch.coverage>0.70</jacoco.branch.coverage>
     </properties>
     <build>
         <plugins>
@@ -41,6 +44,11 @@
                 <configuration>
                     <doclint>all,-missing</doclint>
                 </configuration>
+            </plugin>
+            <!-- Test coverage measurement + threshold gate (config inherited from parent pluginManagement). -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
