@@ -3,7 +3,7 @@ Feature: ReceiptWriter
   Demonstrates JUnit ParameterResolver injection in step methods:
   - `@TempDir Path` gives each test a fresh receipt output directory
   - `TestInfo` enriches the failure message with the test display name
-  - A custom `@JUnitInject Clock` (resolved by `FixedClockResolver`) makes
+  - A custom `@JUnitResolved Clock` (resolved by `FixedClockResolver`) makes
     the receipt timestamp deterministic and independent of system time
 
   Scenario: Write a timestamped receipt for an order

@@ -291,7 +291,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         // Detect JUnit-injected trailing parameters on a matching base method (if any).
         // These flow into the enclosing test method's signature and onto the step call.
         // A null detector result means the base method has trailing parameters that are
-        // neither built-in JUnit types nor @JUnitInject-marked — i.e. it is NOT a valid match
+        // neither built-in JUnit types nor @JUnitResolved-marked — i.e. it is NOT a valid match
         // for the step and the generator should fall back to emitting a fresh step method.
         ExecutableElement matchedBaseExecutable = findMatchingBaseExecutable(stepMethodName);
         if (matchedBaseExecutable != null) {

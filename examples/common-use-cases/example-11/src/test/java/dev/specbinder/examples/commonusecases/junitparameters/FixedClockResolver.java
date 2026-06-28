@@ -14,7 +14,7 @@ import java.time.ZoneOffset;
  * <p>
  * Registered on the marker class via {@code @ExtendWith(FixedClockResolver.class)}.
  * Step methods opt into receiving the resolved {@code Clock} by annotating the
- * parameter with {@code @JUnitInject} — this is what tells the SpecBinder
+ * parameter with {@code @JUnitResolved} — this is what tells the SpecBinder
  * processor to propagate the parameter from the base step method through to
  * the generated {@code @Test} method.
  */

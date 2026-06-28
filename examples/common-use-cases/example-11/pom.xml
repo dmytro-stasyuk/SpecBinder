@@ -9,5 +9,5 @@
     </parent>
     <artifactId>example-11</artifactId>
     <name>${project.artifactId}</name>
-    <description>JUnit ParameterResolver injection in step methods — built-in (TestInfo, @TempDir) and custom via @JUnitInject</description>
+    <description>JUnit ParameterResolver injection in step methods — built-in (TestInfo, @TempDir) and custom via @JUnitResolved</description>
 </project>

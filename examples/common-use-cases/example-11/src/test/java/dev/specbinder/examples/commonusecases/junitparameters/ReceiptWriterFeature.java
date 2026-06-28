@@ -2,7 +2,7 @@ package dev.specbinder.examples.commonusecases.junitparameters;
 
 import dev.specbinder.annotations.Gherkin2JUnit;
 import dev.specbinder.annotations.Gherkin2JUnitOptions;
-import dev.specbinder.annotations.JUnitInject;
+import dev.specbinder.annotations.JUnitResolved;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * The {@code @ExtendWith(FixedClockResolver.class)} registers a custom resolver
  * for the {@link Clock} type. SpecBinder's annotation processor sees
- * {@code @JUnitInject Clock} on the step methods and propagates the parameter
+ * {@code @JUnitResolved Clock} on the step methods and propagates the parameter
  * to the generated {@code @Test} method, where JUnit fills it at runtime via
  * the resolver. The built-in types ({@code @TempDir Path}, {@link TestInfo})
  * are recognized implicitly and need no marker.
@@ -35,12 +35,12 @@ public abstract class ReceiptWriterFeature {
     /**
      * Mixes a Gherkin-derived parameter ({@code orderId}), a built-in
      * injected parameter ({@code @TempDir Path}), and a custom injected
-     * parameter ({@code @JUnitInject Clock}) on a single step.
+     * parameter ({@code @JUnitResolved Clock}) on a single step.
      */
     public void anOrder$p1WithItemsHasBeenPlaced(
             String orderId,
             @TempDir Path receiptsDir,
-            @JUnitInject Clock clock) {
+            @JUnitResolved Clock clock) {
         receiptFile = receiptsDir.resolve(orderId + ".txt");
         try {
             Files.writeString(receiptFile, "Order " + orderId + " issued at " + clock.instant());
@@ -59,10 +59,10 @@ public abstract class ReceiptWriterFeature {
     }
 
     /**
-     * Custom {@code @JUnitInject Clock} only — verifies the file content
+     * Custom {@code @JUnitResolved Clock} only — verifies the file content
      * carries the fixed clock's instant, proving the resolver fired.
      */
-    public void theReceiptIsTimestampedWithTheTestClock(@JUnitInject Clock clock) {
+    public void theReceiptIsTimestampedWithTheTestClock(@JUnitResolved Clock clock) {
         String content;
         try {
             content = Files.readString(receiptFile);

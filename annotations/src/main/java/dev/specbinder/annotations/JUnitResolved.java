@@ -6,18 +6,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a step method parameter (or a type used as one) as a JUnit-injected parameter
+ * Marks a step method parameter (or a type used as one) as a JUnit-resolved parameter
  * to be filled at test execution time by a registered {@code org.junit.jupiter.api.extension.ParameterResolver}.
  * <p>
  * Built-in JUnit-resolved types ({@code TestInfo}, {@code TestReporter}, {@code @TempDir Path}/{@code File})
- * are recognized implicitly and do not require this annotation. {@code @JUnitInject} exists so the SpecBinder
+ * are recognized implicitly and do not require this annotation. {@code @JUnitResolved} exists so the SpecBinder
  * annotation processor can distinguish, on a base step method, between Gherkin-derived parameters and
  * user-supplied custom-resolver parameters.
  * <p>
  * Placement options:
  * <ul>
- *   <li><b>On the parameter:</b> {@code void user(@JUnitInject MyType ctx)} — per-parameter opt-in.</li>
- *   <li><b>On the type's class declaration:</b> {@code @JUnitInject class MyType { ... }} — every parameter
+ *   <li><b>On the parameter:</b> {@code void user(@JUnitResolved MyType ctx)} — per-parameter opt-in.</li>
+ *   <li><b>On the type's class declaration:</b> {@code @JUnitResolved class MyType { ... }} — every parameter
  *       of that type is implicitly opted in; useful for user-controlled types that are always JUnit-resolved.</li>
  * </ul>
  * <p>
@@ -28,5 +28,5 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.PARAMETER, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JUnitInject {
+public @interface JUnitResolved {
 }

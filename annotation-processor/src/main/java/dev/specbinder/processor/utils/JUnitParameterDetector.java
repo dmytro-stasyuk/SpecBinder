@@ -27,11 +27,11 @@ import java.util.List;
  *       <li>{@code java.io.File} annotated with {@code @org.junit.jupiter.api.io.TempDir}</li>
  *     </ul>
  *   </li>
- *   <li><b>Custom types marked with {@code @dev.specbinder.annotations.JUnitInject}</b>
+ *   <li><b>Custom types marked with {@code @dev.specbinder.annotations.JUnitResolved}</b>
  *     (either on the parameter or on the type's class declaration).</li>
  * </ul>
  * <p>
- * All annotations on the source parameter except {@code @JUnitInject} are preserved verbatim
+ * All annotations on the source parameter except {@code @JUnitResolved} are preserved verbatim
  * on the returned {@link ParameterSpec} so user-registered ParameterResolvers can observe them.
  */
 public final class JUnitParameterDetector {
@@ -41,7 +41,7 @@ public final class JUnitParameterDetector {
     private static final String TEMP_DIR_ANNOTATION = "org.junit.jupiter.api.io.TempDir";
     private static final String PATH = "java.nio.file.Path";
     private static final String FILE = "java.io.File";
-    private static final String JUNIT_INJECT = "dev.specbinder.annotations.JUnitInject";
+    private static final String JUNIT_RESOLVED = "dev.specbinder.annotations.JUnitResolved";
 
     private JUnitParameterDetector() {
         // utility class
@@ -91,7 +91,7 @@ public final class JUnitParameterDetector {
         } else if ((PATH.equals(typeStr) || FILE.equals(typeStr))
                 && hasParamAnnotation(param, TEMP_DIR_ANNOTATION)) {
             recognized = true;
-        } else if (hasParamAnnotation(param, JUNIT_INJECT) || hasTypeAnnotation(type, JUNIT_INJECT)) {
+        } else if (hasParamAnnotation(param, JUNIT_RESOLVED) || hasTypeAnnotation(type, JUNIT_RESOLVED)) {
             recognized = true;
         }
 
@@ -101,7 +101,7 @@ public final class JUnitParameterDetector {
 
         ParameterSpec.Builder builder = ParameterSpec.builder(TypeName.get(type), paramName);
         for (AnnotationMirror am : param.getAnnotationMirrors()) {
-            if (!JUNIT_INJECT.equals(am.getAnnotationType().toString())) {
+            if (!JUNIT_RESOLVED.equals(am.getAnnotationType().toString())) {
                 builder.addAnnotation(AnnotationSpec.get(am));
             }
         }

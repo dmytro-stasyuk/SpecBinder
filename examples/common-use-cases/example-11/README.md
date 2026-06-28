@@ -1,14 +1,14 @@
 # Example 11: JUnit ParameterResolver Injection in Step Methods
 
-Demonstrates how step methods can receive parameters filled by JUnit's parameter resolution at test execution time — both JUnit's built-in resolvers and custom user-registered `ParameterResolver`s opted in via the `@JUnitInject` marker annotation.
+Demonstrates how step methods can receive parameters filled by JUnit's parameter resolution at test execution time — both JUnit's built-in resolvers and custom user-registered `ParameterResolver`s opted in via the `@JUnitResolved` marker annotation.
 
 ## What this demonstrates
 
 - **Built-in implicit injection** — `@TempDir Path` (per-test temporary directory) and `TestInfo` (test metadata) are recognized by the generator without any marker
-- **Custom resolver injection** — a `Clock` filled by `FixedClockResolver` is opted in with `@JUnitInject` on the parameter
+- **Custom resolver injection** — a `Clock` filled by `FixedClockResolver` is opted in with `@JUnitResolved` on the parameter
 - **Mixing on a single step** — one step method has a Gherkin-derived parameter plus both built-in and custom injected parameters
 - **Aggregation across steps** — the generated `@Test scenario_1` method receives the union (deduplicated) of every injected parameter required by any of the scenario's steps
-- **Annotation passthrough** — `@TempDir` is preserved on the generated parameter so JUnit's resolver fires; `@JUnitInject` is a SpecBinder-internal marker and is stripped
+- **Annotation passthrough** — `@TempDir` is preserved on the generated parameter so JUnit's resolver fires; `@JUnitResolved` is a SpecBinder-internal marker and is stripped
 
 ## Why each injection type is used here
 
@@ -16,22 +16,22 @@ Demonstrates how step methods can receive parameters filled by JUnit's parameter
 |------|-----|
 | `@TempDir Path` | Each test gets a fresh receipt output directory, so file assertions never collide between tests |
 | `TestInfo` | Failure message includes the test display name, so a CI log makes it obvious which scenario broke |
-| `@JUnitInject Clock` | The receipt timestamp comes from a fixed clock, making the test deterministic regardless of when it runs |
+| `@JUnitResolved Clock` | The receipt timestamp comes from a fixed clock, making the test deterministic regardless of when it runs |
 
 ## Step method signatures (from `ReceiptWriterFeature`)
 
 ```java
-// Gherkin-derived + built-in @TempDir + custom @JUnitInject — three sources on one step
+// Gherkin-derived + built-in @TempDir + custom @JUnitResolved — three sources on one step
 public void anOrder$p1WithItemsHasBeenPlaced(
         String orderId,
         @TempDir Path receiptsDir,
-        @JUnitInject Clock clock) throws IOException { ... }
+        @JUnitResolved Clock clock) throws IOException { ... }
 
 // Built-in TestInfo only — used in the failure message
 public void theReceiptFileExists(TestInfo testInfo) { ... }
 
-// Custom @JUnitInject Clock only
-public void theReceiptIsTimestampedWithTheTestClock(@JUnitInject Clock clock) throws IOException { ... }
+// Custom @JUnitResolved Clock only
+public void theReceiptIsTimestampedWithTheTestClock(@JUnitResolved Clock clock) throws IOException { ... }
 ```
 
 ## Generated `@Test` method (excerpt)
@@ -58,14 +58,14 @@ public void scenario_1(@TempDir Path receiptsDir, Clock clock, TestInfo testInfo
 }
 ```
 
-Note: `@JUnitInject` is stripped from the generated parameter (it has no JUnit semantics), while `@TempDir` is preserved so JUnit's resolver fires.
+Note: `@JUnitResolved` is stripped from the generated parameter (it has no JUnit semantics), while `@TempDir` is preserved so JUnit's resolver fires.
 
-## `@JUnitInject` placement options
+## `@JUnitResolved` placement options
 
-This example uses **parameter-level** placement (`@JUnitInject Clock clock`), which is required for JDK types like `Clock` that you can't modify. For user-controlled types, the **type-level** placement is equivalent and more convenient — mark the type once and use it freely:
+This example uses **parameter-level** placement (`@JUnitResolved Clock clock`), which is required for JDK types like `Clock` that you can't modify. For user-controlled types, the **type-level** placement is equivalent and more convenient — mark the type once and use it freely:
 
 ```java
-@JUnitInject
+@JUnitResolved
 public class OrderContext { ... }
 
 // then anywhere:
@@ -82,7 +82,7 @@ public void anOrderIsBeingProcessed(OrderContext ctx) { ... }
 
 ## Key points
 
-- **Built-in JUnit types don't require `@JUnitInject`** — they are recognized by type (and by `@TempDir` for the temp-dir variants)
-- **Custom types do require `@JUnitInject`** — without it, the generator does not recognize the parameter as JUnit-injected and falls back to its default behavior (regenerates a fresh step method, treating the user's declaration as an unused overload)
+- **Built-in JUnit types don't require `@JUnitResolved`** — they are recognized by type (and by `@TempDir` for the temp-dir variants)
+- **Custom types do require `@JUnitResolved`** — without it, the generator does not recognize the parameter as JUnit-injected and falls back to its default behavior (regenerates a fresh step method, treating the user's declaration as an unused overload)
 - **Order matters in the source signature, not in the generated test method** — JUnit's parameter resolution is type-based, so the generated signature lists params in a deterministic but order-agnostic way
 - **`@ExtendWith` on the marker class** registers the custom resolver; because `@ExtendWith` is `@Inherited`, the generated `MyFeatureTest` picks it up automatically
