@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.43.0]
+
+### Added
+
 - Execution reporter: each step in the per-feature JSON report now carries a `publishedReporterEntries` array of `TestReporter.publishEntry(...)` calls made from that step's code, each with its key, value, and timestamp — so structured per-step diagnostics flow through to downstream tooling alongside status and timing
 - Execution reporter: each step in the per-feature JSON report now carries a `text` field with the original Gherkin line (keyword + spec text verbatim) for Backgrounds, scenarios, and Scenario Outline example rows — so consumers can render a readable Given/When/Then trace without re-parsing the `.feature` file; omitted when the spec has been edited since the test was generated
 - Execution reporter: each entry of a step's `arguments` array now self-describes its Gherkin kind via a `{type, value}` envelope — `type` is one of `simple`, `docString`, or `dataTable`. DocString entries additionally carry the opening-fence media-type identifier (e.g. `html` from `"""html`) on a `mediaType` field. DataTable entries additionally carry a `columns` array of `{header, field}` pairs in source-file column order, so consumers know both the spec-verbatim column heading and the JSON key used in each row — useful when SpecBinder rewrites multi-word headers like `User Name` to `userName`. Gated on the same scenario-hash match as `text` stamping; on a mismatch or absent hash, `arguments` stay as today's bare runtime values
