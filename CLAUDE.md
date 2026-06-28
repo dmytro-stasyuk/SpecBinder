@@ -319,11 +319,7 @@ git add file.java
 
 ## CHANGELOG
 
-**CRITICAL: Never modify a CHANGELOG entry that is grouped under a past/already-released version.**
-
-Entries under a released version heading (e.g. `## [2026.42.0]`) are an immutable historical record of what actually shipped — do NOT edit, reword, rename, or "correct" them, even when later refactoring makes the wording technically inaccurate (e.g. an API was renamed afterwards). The released entry must continue to describe what that release actually contained.
-
-When a change (including a rename or correction of something that shipped in a prior release) needs a changelog note, add a NEW entry under the `## Unreleased` section (in the appropriate `### Added` / `### Changed` / `### Fixed` / `### Removed` subsection). Only the `## Unreleased` section is editable.
+When updating `CHANGELOG.md`, use the `/changelog` skill — it carries the full conventions (only the `## Unreleased` section is editable, released entries are immutable, and breaking API changes get a `**⚠️ BREAKING:** ` prefix).
 
 ## Git Workflow
 

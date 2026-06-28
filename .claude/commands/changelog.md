@@ -5,6 +5,8 @@ allowed-tools: Read, Edit
 
 Add a changelog entry to the `## Unreleased` section of `CHANGELOG.md`.
 
+**CRITICAL: Only the `## Unreleased` section is editable.** Never modify, reword, rename, or "correct" an entry grouped under a past/already-released version heading (e.g. `## [2026.42.0]`) — those entries are an immutable historical record of what actually shipped, even when later refactoring makes the wording technically inaccurate (e.g. an API was renamed afterwards). When a change (including a rename or correction of something that shipped in a prior release) needs a note, add a NEW entry under `## Unreleased`.
+
 Usage:
 - `/changelog` - Add an entry about the most recent change in the conversation (infer from context)
 - `/changelog <description>` - Add an entry under the appropriate category (Added/Changed/Fixed/Removed)
@@ -31,12 +33,14 @@ Usage:
    - Start with a verb or noun phrase (e.g., "Support for...", "Switched from...", "Fixed incorrect...")
    - Keep it to one line where possible
 
-5. **Insert the entry** under the correct `### Category` heading within `## Unreleased`:
-   - Format as `- <description>` (single dash, one space, then text)
+5. **Flag breaking API changes prominently.** If the change breaks source/binary compatibility for client projects — e.g. a renamed/removed/relocated public annotation, a renamed/removed public type or method, a changed annotation parameter, or any change that requires consumers to edit their code — prefix the entry text with **`**⚠️ BREAKING:** `** (the bold marker, then a space, then the description). The entry still goes under its normal `### Added` / `### Changed` / `### Removed` category; the prefix just makes it stand out. Non-breaking entries get no prefix. When in doubt about whether a change is breaking, ask the user.
+
+6. **Insert the entry** under the correct `### Category` heading within `## Unreleased`:
+   - Format as `- <description>` (single dash, one space, then text), with the optional `**⚠️ BREAKING:** ` prefix immediately after the `- `
    - Place after any existing entries in that category
    - If the category heading has no entries yet, place on the blank line directly after the heading
 
-6. **Stage the file** with `git add CHANGELOG.md`
+7. **Stage the file** with `git add CHANGELOG.md`
 
 ## Examples
 
@@ -48,3 +52,6 @@ Result: adds `- Incorrect escaping of backslashes in generated code` under `### 
 
 `/changelog Changed: Switched from JUnit 5.10 to 5.14`
 Result: adds `- Switched from JUnit 5.10 to 5.14` under `### Changed`
+
+`/changelog Changed: Renamed the @JUnitInject annotation to @JUnitResolved`
+Result (breaking — requires consumers to update their code): adds `- **⚠️ BREAKING:** Renamed the @JUnitInject annotation to @JUnitResolved ...` under `### Changed`
