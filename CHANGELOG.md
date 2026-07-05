@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - Execution reporter: a hand-written `@BeforeEach` lifecycle method on a base or marker class (for example a `setUp()` that builds a test fixture) is no longer mistaken for a Gherkin `Background`. Only `@BeforeEach` methods on SpecBinder-generated test classes contribute background steps now, so infrastructure setup — and any non-serializable values it passes around — no longer leak into the per-feature JSON report as spurious background steps or step arguments
 - Execution reporter: the per-feature JSON report is now written atomically — serialized in full, then moved into place — so a failure partway through serialization can no longer leave a truncated, unparseable report on disk. A previously written valid report survives intact, and a consumer reading the file never observes a partially written report
+- Gherkin description text (under a Feature, Rule, Scenario, or Background) that contains a `*/` sequence — for example a glob pattern such as `**/*.feature` — no longer produces uncompilable generated test code. Such descriptions are rendered as a JavaDoc comment by default, and the sequence previously closed that comment early; it is now emitted so it stays inside the comment and reads as written
 
 ### Removed
 

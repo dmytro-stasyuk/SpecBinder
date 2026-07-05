@@ -39,7 +39,7 @@ public final class DescriptionEmitter {
         if (options.isDescriptionAsAnnotation()) {
             builder.addAnnotation(buildAnnotation(trimmed));
         } else {
-            builder.addJavadoc(JavaDocUtils.escapeForJavaPoet(trimmed));
+            builder.addJavadoc(JavaDocUtils.escapeForJavaDoc(trimmed));
         }
     }
 
@@ -59,7 +59,7 @@ public final class DescriptionEmitter {
         if (options.isDescriptionAsAnnotation()) {
             builder.addAnnotation(buildAnnotation(trimmed));
         } else {
-            builder.addJavadoc(JavaDocUtils.escapeForJavaPoet(trimmed));
+            builder.addJavadoc(JavaDocUtils.escapeForJavaDoc(trimmed));
         }
     }
 
