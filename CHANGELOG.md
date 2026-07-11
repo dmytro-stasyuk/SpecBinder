@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.44.0]
+
+### Added
+
 - The `@Gherkin2JUnit` path now accepts a leading `./` to anchor matching at the annotated class's own package directory instead of the classpath root — for both glob patterns (e.g. `"./**/*.feature"`) and individual files (e.g. `"./Cart.feature"`). This lets a marker class pick up the feature files sitting alongside it without repeating its full package path; generated class names and packages still mirror each matched file's real location. A `./` pattern that matches nothing reports the pattern exactly as written
 - New opt-in `@Gherkin2JUnitOptions(skipUnchangedSpecs = true)` flag that skips regenerating a test class when none of its generation inputs have changed since it was last generated — cutting wasted work on incremental builds for projects with many feature files. The generator stamps each generated class with a `@SourceTimestamp` recording the newest last-modified time across the spec file, the marker class, and the marker's class hierarchy (where options typically live, so editing options forces regeneration); on a later run it re-stamps only when that value has advanced. A previously generated class that is missing or carries no recorded timestamp — for example after a clean build — always regenerates, so the optimization never leaves stale output behind. Detection follows the newest input time, so a change that does not advance it (such as a `git checkout` of an older revision) is not picked up; the default remains `false`
 
