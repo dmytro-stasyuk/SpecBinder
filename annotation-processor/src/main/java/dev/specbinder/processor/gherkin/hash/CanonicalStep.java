@@ -6,8 +6,11 @@ package dev.specbinder.processor.gherkin.hash;
  * <p>The fields are pre-canonicalized strings as defined by the scenario-hash spec:
  * <ul>
  *   <li>{@code stepText} — the textual portion AFTER the keyword and the single space
- *       following it, taken literally (no trim, no normalization). The keyword
- *       (Given/When/Then/And/But) is excluded.</li>
+ *       following it, with inter-word whitespace normalized: runs of whitespace are
+ *       collapsed to a single space and leading/trailing whitespace is stripped, so
+ *       cosmetic spacing differences do not affect the hash. The keyword
+ *       (Given/When/Then/And/But/*) is excluded and therefore also has no effect on the
+ *       hash.</li>
  *   <li>{@code canonicalDataTable} — null if the step has no DataTable; otherwise the
  *       canonical serialization: cell values trimmed of leading/trailing whitespace,
  *       cells joined by {@code |} with the leading/trailing {@code |} kept, rows

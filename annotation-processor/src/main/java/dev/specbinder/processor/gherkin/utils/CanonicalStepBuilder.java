@@ -26,7 +26,7 @@ public final class CanonicalStepBuilder {
      * @return canonical step suitable for hash computation
      */
     public static CanonicalStep canonicalize(Step step) {
-        String stepText = step.getText();
+        String stepText = normalizeInterWordWhitespace(step.getText());
         String canonicalDataTable = step.getDataTable()
                 .map(CanonicalStepBuilder::canonicalizeDataTable)
                 .orElse(null);
@@ -34,6 +34,19 @@ public final class CanonicalStepBuilder {
                 .map(CanonicalStepBuilder::canonicalizeDocString)
                 .orElse(null);
         return new CanonicalStep(stepText, canonicalDataTable, canonicalDocString);
+    }
+
+    /**
+     * Normalizes whitespace between a step's words so that cosmetic spacing differences do not
+     * affect the scenario hash: runs of whitespace are collapsed to a single space and
+     * leading/trailing whitespace is stripped. Whitespace inside quoted parameter values is not
+     * treated specially here — the collapse applies to the whole step text uniformly.
+     *
+     * @param text the raw step text after the keyword
+     * @return the step text with inter-word whitespace normalized
+     */
+    private static String normalizeInterWordWhitespace(String text) {
+        return text.strip().replaceAll("\\s+", " ");
     }
 
     private static String canonicalizeDataTable(DataTable dataTable) {

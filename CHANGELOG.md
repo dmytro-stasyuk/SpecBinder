@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 - `@Gherkin2JUnitOptions(skipGenerationForTags = ...)` now keeps tagged Scenarios and Rules visible in the generated test class as skipped tests instead of omitting them entirely: the `@Test` method is still generated with its Gherkin steps rendered as a comment, and its body reports the test as skipped via `Assumptions.assumeTrue(false, ...)`; a tagged Rule's nested class is generated with each of its scenarios skipped this way. A tagged Feature generates no test class at all — the whole feature is dropped from generation. This surfaces manual or work-in-progress items as skipped in test reports rather than silently disappearing from the suite
+- The `@ScenarioHash` value now ignores inter-word whitespace within a step, so steps that differ only in the number of spaces between words produce the same hash — matching the existing behavior where blank lines between steps and the step keyword (`Given`/`When`/`Then`/`And`/`But`/`*`) already have no effect. Downstream tooling comparing hashes against live source no longer sees spurious changes from cosmetic re-spacing
 
 ### Fixed
 
