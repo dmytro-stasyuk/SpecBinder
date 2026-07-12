@@ -37,7 +37,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
     private final EnumImportCollector enumImportCollector;
     private final TypeElement baseType;
 
-    private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)+?)(\"))");
+    private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)*?)(\"))");
 
     public CompositeStepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options,
                                    DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,

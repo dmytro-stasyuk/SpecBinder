@@ -63,7 +63,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
     MethodSpec.Builder processFeatureBackground(Background background, TypeSpec.Builder classBuilder) {
 
-        return processBackground(background, classBuilder, "featureBackground");
+        return processBackground(background, classBuilder, "background");
     }
 
     MethodSpec.Builder processRuleBackground(Background background, TypeSpec.Builder classBuilder) {

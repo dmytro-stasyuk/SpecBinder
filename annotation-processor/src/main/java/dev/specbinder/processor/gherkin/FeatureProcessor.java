@@ -124,7 +124,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
         }
     }
 
-    private static final Pattern PARAM_PATTERN = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]+?)(\"))");
+    private static final Pattern PARAM_PATTERN = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]*?)(\"))");
 
     /**
      * Pre-scans all steps across all scenarios in the feature to determine widened parameter types.

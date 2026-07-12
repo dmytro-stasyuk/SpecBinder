@@ -51,7 +51,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private List<ParameterSpec> injectedExtras = List.of();
     private boolean lastBaseMatchValid = true;
 
-    private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)+?)(\"))");
+    private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)*?)(\"))");
 
     public StepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options,
                          DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,

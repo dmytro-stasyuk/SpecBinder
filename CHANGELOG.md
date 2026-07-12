@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- The `@BeforeEach` method generated from a feature-level `Background` is now named `background` (previously `featureBackground`). Rule-level background methods are unchanged (`ruleBackground`)
+
 ### Fixed
 
 ### Removed
