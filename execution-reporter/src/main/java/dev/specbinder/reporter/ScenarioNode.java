@@ -11,13 +11,13 @@ import java.util.List;
 /**
  * Union type for the children of a feature or rule. Discriminated by {@link #type}.
  * Scenario-only fields ({@code id}, {@code startedAt}, {@code durationMs}) and
- * outline-only fields ({@code totalDurationMs}, {@code examples}) are nullable;
+ * outline-only fields ({@code totalDurationMs}, {@code templateSteps}, {@code examples}) are nullable;
  * Jackson omits nulls so each kind serializes to its own fields.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "type", "id", "displayName", "description", "status", "sourceLine", "scenarioHash", "tags",
-        "startedAt", "durationMs", "backgroundSteps", "steps", "totalDurationMs", "examples"
+        "startedAt", "durationMs", "backgroundSteps", "steps", "totalDurationMs", "templateSteps", "examples"
 })
 public class ScenarioNode {
 
@@ -53,6 +53,7 @@ public class ScenarioNode {
     private List<StepReport> steps;
     // outline-only
     private Long totalDurationMs;
+    private List<StepReport> templateSteps;
     private List<ExampleReport> examples;
 
     public ScenarioNode() {
@@ -175,6 +176,14 @@ public class ScenarioNode {
 
     public void setTotalDurationMs(Long totalDurationMs) {
         this.totalDurationMs = totalDurationMs;
+    }
+
+    public List<StepReport> getTemplateSteps() {
+        return templateSteps;
+    }
+
+    public void setTemplateSteps(List<StepReport> templateSteps) {
+        this.templateSteps = templateSteps;
     }
 
     public List<ExampleReport> getExamples() {

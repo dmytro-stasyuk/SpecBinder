@@ -420,7 +420,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         // Add @ParameterizedTest annotation once
         AnnotationSpec parameterizedTestAnnotation = AnnotationSpec
                 .builder(ParameterizedTest.class)
-                .addMember("name", "\"Example {index}: [{arguments}]\"")
+                .addMember("name", "\"Example: [{arguments}]\"")
                 .build();
         scenarioMethodBuilder.addAnnotation(parameterizedTestAnnotation);
 

@@ -1017,7 +1017,7 @@ Its body is the *template* of the outline; the concrete values come from the `Ex
 
 ```java
 
-@ParameterizedTest(name = "Example {index}: [{arguments}]")
+@ParameterizedTest(name = "Example: [{arguments}]")
 @CsvSource(
         useHeadersInDisplayName = true,
         delimiter = '|',
@@ -1042,8 +1042,8 @@ public void scenario_1(String name, Integer startQty, Double price, Integer newQ
 
 * The **cell delimiter** mirrors the table separator (`|`), specified via `delimiter = '|'`.
 
-* The display name pattern `name = "Example {index}: [{arguments}]"` makes IDE/CI output like:
-  `Example 1: [Wireless Headphones, 1, 60.00, 2, 120.00]`, `Example 2: [Coffee Beans 1kg, 2, 15.50, 3, 46.50]`.
+* The display name pattern `name = "Example: [{arguments}]"` makes IDE/CI output like:
+  `Example: [Wireless Headphones, 1, 60.00, 2, 120.00]`, `Example: [Coffee Beans 1kg, 2, 15.50, 3, 46.50]`.
 
 #### 3) Placeholders `<…>` in steps → argument variables
 
@@ -1111,7 +1111,7 @@ public class CartFeatureTest extends CartFeature {
     }
 
     @ParameterizedTest(
-            name = "Example {index}: [{arguments}]"
+            name = "Example: [{arguments}]"
     )
     @CsvSource(
             useHeadersInDisplayName = true,

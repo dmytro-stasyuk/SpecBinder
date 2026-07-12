@@ -42,6 +42,21 @@ public class StepReport {
         return step;
     }
 
+    /**
+     * A status-less step carrying the called method name and its original Gherkin
+     * {@code "<keyword> <text>"} line. Used for a Scenario Outline's {@code templateSteps},
+     * which describe the outline template (with its {@code <>} placeholders) rather than a
+     * single execution — so they carry no status, timing, or error. A trailing DocString or
+     * DataTable block argument (in template/placeholder form) may be attached afterwards by
+     * the caller via {@link #setArguments(List)}.
+     */
+    public static StepReport template(String methodName, String text) {
+        StepReport step = new StepReport();
+        step.methodName = methodName;
+        step.text = text;
+        return step;
+    }
+
     public String getMethodName() {
         return methodName;
     }

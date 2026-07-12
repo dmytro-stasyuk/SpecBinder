@@ -2,6 +2,8 @@ package dev.specbinder.examples.commonusecases.basesteps;
 
 import specs.ShoppingCartScenarios;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Concrete test class. It implements only the feature-specific assertion steps —
  * the cart setup steps ({@code iHaveAnEmptyShoppingCart}, {@code iAdd…}) are

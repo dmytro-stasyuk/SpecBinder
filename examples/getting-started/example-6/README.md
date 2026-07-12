@@ -31,7 +31,7 @@ Demonstrates how `Scenario Outline` with `Examples` tables maps to JUnit `@Param
 ## Generated output
 
 ```java
-@ParameterizedTest(name = "Example {index}: [{arguments}]")
+@ParameterizedTest(name = "Example: [{arguments}]")
 @CsvSource(
         useHeadersInDisplayName = true,
         delimiter = '|',

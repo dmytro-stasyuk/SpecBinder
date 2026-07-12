@@ -162,12 +162,7 @@ public class SpecBinderReporter implements
         // Build the instrumented subclass once, covering every step name discovered
         // on the feature root and on every @Nested rule member class — the same
         // outer instance is shared across direct tests and nested rule tests.
-        Set<String> allStepNames = new LinkedHashSet<>(plan.stepMethodNames());
-        for (Class<?> nested : nestedTestClassesOf(testClass)) {
-            StepCallSiteScanner.Plan nestedPlan = StepCallSiteScanner.scan(nested);
-            allStepNames.addAll(nestedPlan.stepMethodNames());
-        }
-        Class<?> instrumented = InstrumentedClassFactory.instrumentedSubclassOf(testClass, allStepNames);
+        Class<?> instrumented = buildInstrumentedClass(testClass);
         store.put(KEY_INSTRUMENTED_CLASS, instrumented);
 
         Optional<Path> reportDir = ReportPaths.resolve();
@@ -203,13 +198,40 @@ public class SpecBinderReporter implements
         }
     }
 
-    private static Class<?> lookupInstrumentedClass(ExtensionContext context, Class<?> fallback) {
+    private static Class<?> lookupInstrumentedClass(ExtensionContext context, Class<?> testClass) {
+        // Fast path: beforeAll already built and cached the instrumented subclass.
         ExtensionContext featureRoot = featureRootContextOf(context);
-        if (featureRoot == null) {
-            return fallback;
+        if (featureRoot != null) {
+            Class<?> stored = featureRoot.getStore(NAMESPACE).get(KEY_INSTRUMENTED_CLASS, Class.class);
+            if (stored != null) {
+                return stored;
+            }
         }
-        Class<?> instrumented = featureRoot.getStore(NAMESPACE).get(KEY_INSTRUMENTED_CLASS, Class.class);
-        return instrumented == null ? fallback : instrumented;
+        // Under @TestInstance(PER_CLASS) JUnit eagerly creates the test instance before
+        // any BeforeAllCallback runs, so beforeAll has not yet stored the instrumented
+        // class (and the feature report seeded there is likewise absent, so featureRoot
+        // may be null). Build it on demand — InstrumentedClassFactory caches per concrete
+        // class, so beforeAll's later build resolves to this same class. Only SpecBinder
+        // feature classes are instrumented; anything else instantiates plainly, mirroring
+        // the early return in beforeAll.
+        if (findSourceFilePath(testClass).isEmpty()) {
+            return testClass;
+        }
+        return buildInstrumentedClass(testClass);
+    }
+
+    /**
+     * Builds (or returns the cached) ByteBuddy subclass of {@code testClass} that overrides
+     * every step method discovered on the feature root and on every {@code @Nested} rule
+     * member class — the same outer instance is shared across direct tests and nested rule
+     * tests. Returns {@code testClass} unchanged when no step call sites are found.
+     */
+    private static Class<?> buildInstrumentedClass(Class<?> testClass) {
+        Set<String> allStepNames = new LinkedHashSet<>(StepCallSiteScanner.scan(testClass).stepMethodNames());
+        for (Class<?> nested : nestedTestClassesOf(testClass)) {
+            allStepNames.addAll(StepCallSiteScanner.scan(nested).stepMethodNames());
+        }
+        return InstrumentedClassFactory.instrumentedSubclassOf(testClass, allStepNames);
     }
 
     // ---- BeforeEach: pre-populate the per-scenario step buffer ----
@@ -513,12 +535,40 @@ public class SpecBinderReporter implements
 
     private static void rollupOutline(ScenarioNode outline) {
         long total = 0L;
+        Status worst = null;
         if (outline.getExamples() != null) {
             for (ExampleReport row : outline.getExamples()) {
                 total += row.getDurationMs();
+                worst = worstOf(worst, row.getStatus());
             }
         }
         outline.setTotalDurationMs(total);
+        outline.setStatus(worst);
+    }
+
+    /**
+     * Rolls two example-row statuses up to the "worse" of the pair, worst-first:
+     * failed &gt; aborted &gt; skipped &gt; passed. So an outline reports failed if any row
+     * failed, else aborted if any row aborted, else skipped if any row was skipped,
+     * else passed — an all-passing outline reads as passed rather than not-executed.
+     */
+    private static Status worstOf(Status current, Status candidate) {
+        if (candidate == null) {
+            return current;
+        }
+        if (current == null || severity(candidate) > severity(current)) {
+            return candidate;
+        }
+        return current;
+    }
+
+    private static int severity(Status status) {
+        return switch (status) {
+            case FAILED -> 3;
+            case ABORTED -> 2;
+            case SKIPPED -> 1;
+            case PASSED -> 0;
+        };
     }
 
     /**
@@ -592,6 +642,7 @@ public class SpecBinderReporter implements
                     enrichArguments(row.getBackgroundSteps(), parsed.backgroundBlockArgs());
                     enrichArguments(row.getSteps(), parsed.scenarioBlockArgs());
                 }
+                stampOutlineTemplateSteps(node, parsed);
             }
         } else {
             stampSteps(node.getBackgroundSteps(), parsed.backgroundStepLines());
@@ -611,6 +662,60 @@ public class SpecBinderReporter implements
         for (int i = 0; i < bound; i++) {
             steps.get(i).setText(stepLines.get(i));
         }
+    }
+
+    /**
+     * Populates an outline's {@code templateSteps} — a single de-duplicated view of the
+     * Scenario Outline's own steps as they appear in the spec, with their {@code <>}
+     * placeholders intact. The method names come from any example row (identical across
+     * rows), the text from the parsed scenario step lines; background steps are excluded.
+     * A step whose spec carries a trailing DocString or DataTable also gets that block as a
+     * typed {@code arguments} entry in template form — placeholders intact, sourced from the
+     * spec rather than a single row's substituted runtime value (see
+     * {@link #buildTemplateBlockArgument(StepBlockArgument)}). Runs only when the
+     * scenario-hash gate matched (same trust guarantee as step text).
+     */
+    private static void stampOutlineTemplateSteps(ScenarioNode node, ParsedScenario parsed) {
+        List<ExampleReport> examples = node.getExamples();
+        List<String> stepLines = parsed.scenarioStepLines();
+        if (examples == null || examples.isEmpty() || stepLines == null) {
+            return;
+        }
+        List<StepReport> rowSteps = examples.get(0).getSteps();
+        if (rowSteps == null) {
+            return;
+        }
+        List<StepBlockArgument> blockArgs = parsed.scenarioBlockArgs();
+        int bound = Math.min(rowSteps.size(), stepLines.size());
+        List<StepReport> templateSteps = new ArrayList<>(bound);
+        for (int i = 0; i < bound; i++) {
+            StepReport templateStep = StepReport.template(rowSteps.get(i).getMethodName(), stepLines.get(i));
+            if (blockArgs != null && i < blockArgs.size()) {
+                Object templateArg = buildTemplateBlockArgument(blockArgs.get(i));
+                if (templateArg != null) {
+                    templateStep.setArguments(new ArrayList<>(List.of(templateArg)));
+                }
+            }
+            templateSteps.add(templateStep);
+        }
+        node.setTemplateSteps(templateSteps);
+    }
+
+    /**
+     * Builds the single {@code arguments} entry for an outline {@code templateSteps} step from
+     * the parsed spec block. The template describes the outline itself — no runtime object is
+     * bound to it — so DocStrings and DataTables surface with their {@code <>} placeholders
+     * intact, taken verbatim from the spec. DataTables reuse the spec-only shape
+     * ({@link #buildDataTableArgFromSpec}): header strings as row keys and no {@code columns},
+     * since there is no runtime POJO to pair header names against. Returns {@code null} for a
+     * step with no trailing block argument.
+     */
+    private static Object buildTemplateBlockArgument(StepBlockArgument blockArg) {
+        return switch (blockArg.kind()) {
+            case DOC_STRING -> buildDocStringArg(blockArg.docStringValue(), blockArg.docStringMediaType());
+            case DATA_TABLE -> buildDataTableArgFromSpec(blockArg.dataTableHeaders(), blockArg.dataTableBodyRows());
+            case NONE -> null;
+        };
     }
 
     /**
@@ -996,7 +1101,8 @@ public class SpecBinderReporter implements
     /**
      * Parse the leaf display name of a parameterized invocation produced by
      * {@code @CsvSource(useHeadersInDisplayName = true)} — format
-     * {@code "Example {n}: [header = value, header = value, ...]"}.
+     * {@code "Example: [header = value, header = value, ...]"}. Only the
+     * bracketed segment is used, so the leading label is irrelevant.
      */
     static Map<String, String> parseExamplesRow(String displayName) {
         if (displayName == null) {

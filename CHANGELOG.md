@@ -8,12 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- Execution reporter: a Scenario Outline in the per-feature JSON report now carries a `templateSteps` array on the outline node — a single view of the outline's own steps with their `<>` placeholders intact, each entry pairing the called `methodName` with the original Gherkin `text`. A template step whose spec has a trailing DocString or DataTable also carries it as a typed `arguments` entry in template form — placeholders left unresolved, and DataTables keyed by their column headers without the runtime `columns` mapping since no row object is bound to the template. This complements the per-row `examples`, which resolve those placeholders to concrete values, so consumers can render the outline template once instead of re-deriving it from every row. Gated on the same scenario-hash match as step `text`; omitted when the hash is absent or the spec has been edited since the test was generated
+- Execution reporter: a Scenario Outline in the per-feature JSON report now carries an aggregate `status` on the outline node, rolled up from its example rows worst-first — failed if any row failed, else aborted if any row aborted, else skipped if any row was skipped, else passed. Previously the outline node had no status of its own, so consumers had to derive one from the rows; an outline whose rows all passed could be shown as not-executed
+
 ### Changed
 
 - The `@BeforeEach` method generated from a feature-level `Background` is now named `background` (previously `featureBackground`). Rule-level background methods are unchanged (`ruleBackground`)
 - Internal terminology cleanup: the annotation processor's internal identifiers and comments that still used the old "inject" wording were renamed to "resolved" (e.g. the trailing parameters propagated from a matched base step method), completing the alignment behind the earlier `@JUnitInject` → `@JUnitResolved` rename. No behavior or public API change
+- **⚠️ BREAKING:** Scenario Outline example rows are now named `Example: [...]` instead of `Example 1: [...]` — the row number was dropped from the generated `@ParameterizedTest` display name, so IDE/CI test output and the `displayName` in execution reports no longer include it. Tooling that matches on the `Example N:` prefix must be updated; rows remain distinguishable by their `[argument = value, ...]` suffix
 
 ### Fixed
+
+- Execution reporter: per-step outcomes are now captured for tests that use a per-class test-instance lifecycle (JUnit's `@TestInstance(Lifecycle.PER_CLASS)`, such as a base class with a non-static `@BeforeAll`). Previously every step in such a feature was reported as `skipped` in the JSON report even when it actually ran and passed or failed; now each step's true status, timing, and error are recorded just as they are under the default per-method lifecycle
 
 ### Removed
 
