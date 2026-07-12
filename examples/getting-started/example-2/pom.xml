@@ -8,6 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-2</artifactId>
-    <name>${project.artifactId}</name>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
     <description>Step parameters and type inference</description>
 </project>

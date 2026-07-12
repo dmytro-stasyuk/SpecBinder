@@ -48,7 +48,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private final List<ElementMethodUtils.CucumberAnnotationEntry> cucumberAnnotationEntries;
     private final Map<String, List<Class<?>>> preComputedStepTypes;
 
-    private List<ParameterSpec> injectedExtras = List.of();
+    private List<ParameterSpec> resolvedExtras = List.of();
     private boolean lastBaseMatchValid = true;
 
     private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)*?)(\"))");
@@ -80,17 +80,17 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     }
 
     /**
-     * Returns the JUnit-injected trailing parameters detected on the matched base step method
+     * Returns the JUnit-resolved trailing parameters detected on the matched base step method
      * during the most recent call to {@link #processStep}. Empty if no base method matched or
-     * the matched method declared no recognized JUnit-injected trailing parameters.
+     * the matched method declared no recognized JUnit-resolved trailing parameters.
      * <p>
      * Callers (Scenario/Background processors) use this to aggregate the union of extras across
      * all their steps and add them to the enclosing test method's parameter list.
      *
-     * @return the injected extras for the last processed step
+     * @return the resolved extras for the last processed step
      */
-    public List<ParameterSpec> getInjectedExtras() {
-        return injectedExtras;
+    public List<ParameterSpec> getResolvedExtras() {
+        return resolvedExtras;
     }
 
     /**
@@ -288,7 +288,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             stepMethodBuilder.addParameter(docStringSpec);
         }
 
-        // Detect JUnit-injected trailing parameters on a matching base method (if any).
+        // Detect JUnit-resolved trailing parameters on a matching base method (if any).
         // These flow into the enclosing test method's signature and onto the step call.
         // A null detector result means the base method has trailing parameters that are
         // neither built-in JUnit types nor @JUnitResolved-marked — i.e. it is NOT a valid match
@@ -297,17 +297,17 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         if (matchedBaseExecutable != null) {
             int gherkinParamCount = parameterValues.size()
                     + ((step.getDataTable().isPresent() || step.getDocString().isPresent()) ? 1 : 0);
-            List<ParameterSpec> detectorResult = JUnitParameterDetector.detectTrailingInjectedParams(
+            List<ParameterSpec> detectorResult = JUnitParameterDetector.detectTrailingResolvedParams(
                     matchedBaseExecutable, gherkinParamCount);
             if (detectorResult == null) {
-                this.injectedExtras = List.of();
+                this.resolvedExtras = List.of();
                 this.lastBaseMatchValid = false;
             } else {
-                this.injectedExtras = detectorResult;
+                this.resolvedExtras = detectorResult;
                 this.lastBaseMatchValid = true;
             }
         } else {
-            this.injectedExtras = List.of();
+            this.resolvedExtras = List.of();
             this.lastBaseMatchValid = true;
         }
 
@@ -1020,9 +1020,9 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             }
         }
 
-        // Forward any JUnit-injected extras detected on the matching base method.
+        // Forward any JUnit-resolved extras detected on the matching base method.
         // These are passed as trailing arguments after the Gherkin-derived values.
-        for (ParameterSpec extra : injectedExtras) {
+        for (ParameterSpec extra : resolvedExtras) {
             if (parameterValuesSB.length() > 0) {
                 parameterValuesSB.append(", ");
             }

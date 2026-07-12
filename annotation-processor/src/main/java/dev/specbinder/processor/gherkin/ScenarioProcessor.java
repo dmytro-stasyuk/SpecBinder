@@ -81,7 +81,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
         List<Step> scenarioSteps = scenario.getSteps();
         List<MethodSpec> scenarioStepsMethodSpecs = new ArrayList<>(scenarioSteps.size());
         List<String> resolvedStepKeywords = new ArrayList<>(scenarioSteps.size());
-        List<ParameterSpec> allInjectedExtras = new ArrayList<>();
+        List<ParameterSpec> allResolvedExtras = new ArrayList<>();
 
         String scenarioMethodName = methodNamePrefix + "scenario_" + scenarioNumber;
         MethodSpec.Builder scenarioMethodBuilder = MethodSpec
@@ -279,7 +279,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                                 scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                         );
                         scenarioStepsMethodSpecs.add(stepMethodSpec);
-                        allInjectedExtras.addAll(stepProcessor.getInjectedExtras());
+                        allResolvedExtras.addAll(stepProcessor.getResolvedExtras());
 
                         String stepMethodName = stepMethodSpec.name;
                         MethodSpec existingMethodSpec =
@@ -311,7 +311,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                             scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes
                     );
                     scenarioStepsMethodSpecs.add(stepMethodSpec);
-                    allInjectedExtras.addAll(stepProcessor.getInjectedExtras());
+                    allResolvedExtras.addAll(stepProcessor.getResolvedExtras());
 
                     String stepMethodName = stepMethodSpec.name;
                     MethodSpec existingMethodSpec =
@@ -335,14 +335,14 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         }
 
-        // Aggregate JUnit-injected parameters across all steps, deduped by name,
+        // Aggregate JUnit-resolved parameters across all steps, deduped by name,
         // and add them to the scenario method's parameter list. JavaPoet preserves
         // any @TempDir annotation carried by the ParameterSpec.
         Set<String> existingParamNames = new HashSet<>();
         for (ParameterSpec p : scenarioMethodBuilder.parameters) {
             existingParamNames.add(p.name);
         }
-        for (ParameterSpec extra : allInjectedExtras) {
+        for (ParameterSpec extra : allResolvedExtras) {
             if (existingParamNames.add(extra.name)) {
                 scenarioMethodBuilder.addParameter(extra);
             }

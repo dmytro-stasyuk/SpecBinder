@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 - The `@BeforeEach` method generated from a feature-level `Background` is now named `background` (previously `featureBackground`). Rule-level background methods are unchanged (`ruleBackground`)
+- Internal terminology cleanup: the annotation processor's internal identifiers and comments that still used the old "inject" wording were renamed to "resolved" (e.g. the trailing parameters propagated from a matched base step method), completing the alignment behind the earlier `@JUnitInject` → `@JUnitResolved` rename. No behavior or public API change
 
 ### Fixed
 

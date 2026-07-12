@@ -8,6 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-4</artifactId>
-    <name>${project.artifactId}</name>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
     <description>Rules and nested scenarios</description>
 </project>

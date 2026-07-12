@@ -8,6 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-4</artifactId>
-    <name>${project.artifactId}</name>
-    <description>Abstract mode — compile-time enforcement of step implementations</description>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
+    <description>Data table type refinement with enums — compile-time safety for table values</description>
 </project>

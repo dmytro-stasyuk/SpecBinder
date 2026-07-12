@@ -8,14 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-2</artifactId>
-    <name>${project.artifactId}</name>
-    <description>Data tables with Cucumber DataTable integration</description>
-    <dependencies>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>7.14.0</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
+    <description>DocStrings for multi-line input</description>
 </project>

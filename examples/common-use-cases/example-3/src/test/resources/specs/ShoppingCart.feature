@@ -1,23 +1,11 @@
 Feature: ShoppingCart
 
-  Demonstrates the TDD workflow with Spec Binder.
-  Start with rule and scenario titles only — no steps yet.
-  Each empty rule/scenario generates a failing test tagged @new,
-  giving you a red test to drive development.
+  Demonstrates sharing common step implementations via a base class: the cart
+  setup steps live in BaseShopSteps, while the feature-specific assertion steps
+  are implemented in the concrete test class.
 
-  Rule: Cannot checkout with an empty cart
-
-  Rule: Free shipping applies to orders over 50 euros
-
-    Scenario: Free shipping when subtotal exceeds threshold
-
-    Scenario: Shipping fee when subtotal is below threshold
-
-  Rule: Discount codes apply a percentage reduction
-
-    Scenario: Apply a valid discount code
-      Given my cart subtotal is "100.00"
-      When I apply discount code "SAVE10"
-      Then the cart subtotal should be "90.00"
-
-    Scenario: Reject an expired discount code
+  Scenario: Add an item and verify the cart
+    Given I have an empty shopping cart
+    When I add "Wireless Headphones" with quantity "2" and unit price "59.99"
+    Then the cart should contain "1" item
+    And the cart subtotal should be "119.98"

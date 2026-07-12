@@ -1,55 +1,65 @@
-# Example 6: Convention-Based Discovery & Co-located Feature Files
+# Example 6: Glob Pattern Discovery (Multiple Features)
 
-Demonstrates using `@Gherkin2JUnit` without a path — the processor discovers `.feature` files automatically by convention. Feature files live alongside their marker classes in `src/test/java`.
+Demonstrates using a glob pattern in `@Gherkin2JUnit` to discover and process multiple feature files from a single marker class — one generated test class per discovered feature.
 
 ## What this demonstrates
 
-- `@Gherkin2JUnit` (no value) uses convention-based discovery
-- The processor looks for `.feature` files in the same package as the annotated class
-- Feature files placed in `src/test/java` alongside Java classes for easy navigation
-- Maven `testResources` configuration to include `.feature` files from `src/test/java`
-
-## Convention-based discovery rules
-
-When `@Gherkin2JUnit` has no path value, the processor searches for `.feature` files in the same package directory as the annotated class. All `.feature` files found are processed.
+- `@Gherkin2JUnit("specs/**/*.specb")` matches all `.specb` files recursively
+- One marker class generates **separate test classes** for each discovered feature file
+- All generated classes extend the same marker class
+- Hierarchical feature file organization (`specs/cart/`, `specs/user/`) is preserved
 
 ## Directory layout
 
 ```
-src/test/java/
-  └── dev/specbinder/examples/commonusecases/colocated/
-      ├── ShoppingCart.java        ← marker class (@Gherkin2JUnit)
-      └── ShoppingCart.feature     ← co-located feature file
+src/test/resources/
+  └── specs/
+      ├── cart/
+      │   ├── AddToCart.specb
+      │   └── Checkout.specb
+      └── user/
+          ├── Login.specb
+          └── Registration.specb
+
+src/test/java/.../glob/
+  └── AllFeatures.java   ← single marker class with the glob pattern
 ```
 
-Both files are in the same package — easy to navigate between them in the IDE.
+## Generated output
 
-## Required Maven configuration
+The processor discovers 4 feature files and generates 4 abstract test classes, all extending `AllFeatures`:
 
-To make Maven treat `.feature` files in `src/test/java` as test resources:
-
-```xml
-<build>
-    <testResources>
-        <testResource>
-            <directory>src/test/java</directory>
-            <includes>
-                <include>**/*.feature</include>
-            </includes>
-        </testResource>
-        <testResource>
-            <directory>src/test/resources</directory>
-        </testResource>
-    </testResources>
-</build>
+```
+AllFeatures.java
+  ├→ AddToCartScenarios.java      (from specs/cart/AddToCart.specb)
+  ├→ CheckoutScenarios.java       (from specs/cart/Checkout.specb)
+  ├→ LoginScenarios.java          (from specs/user/Login.specb)
+  └→ RegistrationScenarios.java   (from specs/user/Registration.specb)
 ```
 
-Without this, Maven won't copy `.feature` files from `src/test/java` to the classpath.
+## The marker class
+
+The marker only needs the glob pattern — it carries no step wiring of its own:
+
+```java
+@Gherkin2JUnit("specs/**/*.specb")
+public abstract class AllFeatures {
+}
+```
+
+Step methods are implemented as usual — directly on the marker, in a concrete subclass, or organized into interfaces. For sharing a set of step interfaces across many discovered features, see the **Organizing Steps into Interfaces** example (`going-further/example-3`).
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `src/test/java/.../ShoppingCart.feature` | Feature file co-located with its marker class |
-| `src/test/java/.../ShoppingCart.java` | Marker class with bare `@Gherkin2JUnit` (no path) |
-| `pom.xml` | Includes `testResources` configuration for `.feature` files |
+| `src/test/resources/specs/cart/*.specb` | Cart and checkout feature files |
+| `src/test/resources/specs/user/*.specb` | Login and registration feature files |
+| `src/test/java/.../AllFeatures.java` | Marker class with the glob pattern |
+
+## Run it
+
+```bash
+cd examples/common-use-cases/example-6
+mvn test
+```

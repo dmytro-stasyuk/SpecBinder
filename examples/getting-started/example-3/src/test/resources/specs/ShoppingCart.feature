@@ -1,7 +1,7 @@
 Feature: ShoppingCart
 
   A fully working example where step methods are implemented
-  in the marker class with real assertions.
+  in a concrete subclass of the generated abstract class, with real assertions.
 
   Scenario: Add item and verify cart contents
     Given I have an empty shopping cart

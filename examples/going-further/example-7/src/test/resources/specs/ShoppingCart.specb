@@ -1,0 +1,10 @@
+Feature: ShoppingCart
+
+  A minimal spec used to show SpecBinder's build-log diagnostics. Compile this
+  module (mvn test-compile) with verbosity = VERBOSE to see per-class and
+  per-feature processing detail printed by the annotation processor.
+
+  Scenario: Add an item and check the subtotal
+    Given I have an empty shopping cart
+    When I add "Wireless Headphones" with quantity "2" and unit price "59.99"
+    Then the cart subtotal should be "119.98"

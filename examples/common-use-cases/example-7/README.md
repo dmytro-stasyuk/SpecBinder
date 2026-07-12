@@ -1,73 +1,58 @@
-# Example 7: Glob Pattern Discovery (Multiple Features)
+# Example 7: Configuration Inheritance via `@Gherkin2JUnitOptions`
 
-Demonstrates using a glob pattern in `@Gherkin2JUnit` to discover and process multiple feature files from a single marker class, with step methods organized into interfaces by domain.
+Demonstrates how to define shared generation options in a base class and selectively override them in individual marker classes.
 
 ## What this demonstrates
 
-- `@Gherkin2JUnit("specs/**/*.feature")` matches all `.feature` files recursively
-- One marker class generates **separate test classes** for each discovered feature file
-- All generated classes extend the same marker class
-- Step methods organized into interfaces (`CartSteps`, `LoginSteps`, etc.)
-- Marker class implements all step interfaces — shared steps are inherited by all generated classes
-- Hierarchical feature file organization (`specs/cart/`, `specs/user/`)
+- `@Gherkin2JUnitOptions` on a base class applies to all extending marker classes
+- Child marker classes **inherit** all options from the parent
+- A child can place its own `@Gherkin2JUnitOptions` to **override specific options** — unspecified options continue to inherit
+- Standardize generation behavior across a project via a single base class
 
-## Directory layout
+## Class hierarchy
 
 ```
-src/test/resources/
-  └── specs/
-      ├── cart/
-      │   ├── AddToCart.feature
-      │   └── Checkout.feature
-      └── user/
-          ├── Login.feature
-          └── Registration.feature
-
-src/test/java/.../glob/
-  ├── AllFeatures.java           ← single marker class with glob pattern
-  └── steps/
-      ├── CartSteps.java         ← interface with cart step methods
-      ├── CheckoutSteps.java     ← interface with checkout step methods
-      ├── LoginSteps.java        ← interface with login step methods
-      └── RegistrationSteps.java ← interface with registration step methods
+BaseFeature.java                          (@Gherkin2JUnitOptions — shared options)
+  ├── ShoppingCartFeature.java            (inherits all options)
+  │     └→ ShoppingCartFeatureTest.java   (generated — concrete, keyword prefixes)
+  └── CheckoutFeature.java               (@Gherkin2JUnitOptions — overrides shouldBeAbstract)
+        └→ CheckoutFeatureScenarios.java  (generated — abstract, keyword prefixes)
 ```
 
-## Generated output
+## Options flow
 
-The processor discovers 4 feature files and generates 4 test classes, all extending `AllFeatures`:
+| Option | BaseFeature | ShoppingCartFeature | CheckoutFeature |
+|--------|-------------|---------------------|-----------------|
+| `useStepKeywordInStepMethodName` | `true` | inherited (`true`) | inherited (`true`) |
+| `tagForEmptyScenarios` | `"todo"` | inherited (`"todo"`) | inherited (`"todo"`) |
+| `tagForEmptyRules` | `"todo"` | inherited (`"todo"`) | inherited (`"todo"`) |
+| `shouldBeAbstract` | `false` (default) | inherited (`false`) | **overridden** (`true`) |
 
-```
-AllFeatures.java
-  ├→ AddToCartTest.java      (generated from specs/cart/AddToCart.feature)
-  ├→ CheckoutTest.java       (generated from specs/cart/Checkout.feature)
-  ├→ LoginTest.java          (generated from specs/user/Login.feature)
-  └→ RegistrationTest.java   (generated from specs/user/Registration.feature)
-```
+## Effect on generated code
 
-## Step interface pattern
-
-Organize step methods by domain area using Java interfaces with `default` methods:
-
+**ShoppingCartFeature** (inherits all, concrete mode):
 ```java
-public interface CartSteps {
-    default void iHaveAnEmptyShoppingCart() { /* ... */ }
-    default void iAdd$p1ToTheCart(String item) { /* ... */ }
-}
+// Step methods include keyword prefix (useStepKeywordInStepMethodName = true)
+public void givenIHaveAnEmptyShoppingCart() { ... }
+public void whenIAdd$p1ToTheCart(String p1) { ... }
+public void thenTheCartShouldContain$p1Item(Integer p1) { ... }
 ```
 
-The marker class implements all interfaces:
-
+**CheckoutFeature** (overrides shouldBeAbstract):
 ```java
-@Gherkin2JUnit("specs/**/*.feature")
-public abstract class AllFeatures implements CartSteps, CheckoutSteps, LoginSteps, RegistrationSteps {
-}
+// Abstract class (shouldBeAbstract = true) + keyword prefixes (inherited)
+public abstract void givenIHaveACartWith$p1Items(Integer p1);
+public abstract void whenIProceedToCheckout();
+public abstract void whenIPayWithCard$p1(String p1);
+public abstract void thenTheOrderShouldBeConfirmed();
 ```
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/cart/*.feature` | Cart and checkout feature files |
-| `src/test/resources/specs/user/*.feature` | Login and registration feature files |
-| `src/test/java/.../AllFeatures.java` | Marker class with glob pattern, implements step interfaces |
-| `src/test/java/.../steps/*.java` | Step method interfaces organized by domain |
+| `src/test/resources/specs/ShoppingCart.feature` | Simple cart feature |
+| `src/test/resources/specs/Checkout.feature` | Checkout feature |
+| `src/test/java/.../BaseFeature.java` | Base class with shared `@Gherkin2JUnitOptions` |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class inheriting all options |
+| `src/test/java/.../CheckoutFeature.java` | Marker class overriding `shouldBeAbstract` |

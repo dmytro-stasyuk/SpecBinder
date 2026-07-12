@@ -8,6 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-1</artifactId>
-    <name>${project.artifactId}</name>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
     <description>Data tables with type-safe generated classes</description>
 </project>

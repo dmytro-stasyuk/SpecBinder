@@ -8,19 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-6</artifactId>
-    <name>${project.artifactId}</name>
-    <description>Convention-based discovery and co-located feature files</description>
-    <build>
-        <testResources>
-            <testResource>
-                <directory>src/test/java</directory>
-                <includes>
-                    <include>**/*.feature</include>
-                </includes>
-            </testResource>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
-    </build>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
+    <description>Glob pattern discovery — multiple features from one marker class</description>
 </project>

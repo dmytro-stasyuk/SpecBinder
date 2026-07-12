@@ -8,6 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-7</artifactId>
-    <name>${project.artifactId}</name>
-    <description>Glob pattern discovery — multiple features from one marker class</description>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
+    <description>Configuration inheritance via @Gherkin2JUnitOptions</description>
 </project>

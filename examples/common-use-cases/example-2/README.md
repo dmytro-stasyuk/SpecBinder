@@ -1,64 +1,63 @@
-# Example 2: Data Tables with Cucumber DataTable Integration
+# Example 2: DocStrings for Multi-line Input
 
-Demonstrates the `CUCUMBER_DATA_TABLE` mode where Gherkin data tables are passed as Cucumber `DataTable` objects, giving access to the full Cucumber DataTable API for type conversions and POJO mapping.
+Demonstrates how Gherkin doc strings (triple-quoted blocks) map to `String` parameters with formatting preserved via Java text blocks.
 
 ## What this demonstrates
 
-- `@Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)` changes data table handling
-- Step methods receive `DataTable` instead of `List<Param>`
-- The generator creates a `createDataTable()` helper that parses text blocks into `DataTable` objects
-- You must provide a `getTableConverter()` method in your class hierarchy
-- Full access to Cucumber's `DataTable` API: `asList()`, `asMap()`, `asMaps()`, POJO mapping
-- Requires `cucumber-java` dependency
+- Doc strings become a trailing `String` parameter on the step method
+- Method naming is **unaffected** by the doc string (no extra `$p` placeholder)
+- Formatting (newlines, indentation) is **preserved** via Java text blocks (`"""..."""`)
+- Doc strings can be combined with quoted parameters in the same step
+- Works with any content: JSON, plain text, XML, etc.
 
-## Comparison with default mode
+## Gherkin → JUnit mapping
 
-| Aspect | LIST_OF_OBJECT_PARAMS (default) | CUCUMBER_DATA_TABLE |
-|--------|--------------------------------|---------------------|
-| Parameter type | `List<GeneratedParam>` | `DataTable` |
-| Type safety | Compile-time (typed fields) | Runtime (string-based) |
-| POJO mapping | Automatic (generated classes) | Manual (DataTableTypeRegistry) |
-| Dependencies | None | `cucumber-java` |
-| Best for | New projects, compile-time safety | Cucumber migration, complex conversions |
+### Doc string only (no quoted args)
 
-## Generated code
-
-```java
-// Generated helper method (if not already in base class)
-protected DataTable createDataTable(String tableLines) {
-    // parses pipe-delimited text block into DataTable
-    // using getTableConverter()
-}
-
-// Generated call site
-myCartContainsTheFollowingProducts(createDataTable("""
-        |name               |qty|unit price|
-        |Wireless Headphones|1  |59.99     |
-        |Coffee Beans 1kg   |3  |12.50     |
-        """));
+```gherkin
+When I submit the following shipping address:
+  """
+  {
+    "line1": "Baker St 221B",
+    "city": "London"
+  }
+  """
 ```
 
-## POJO mapping with DataTableTypeRegistry
+```java
+// Step method — one String parameter for the doc string
+void iSubmitTheFollowingShippingAddress(String docString) { ... }
+
+// Call site — Java text block preserves formatting
+iSubmitTheFollowingShippingAddress("""
+        {
+          "line1": "Baker St 221B",
+          "city": "London"
+        }
+        """);
+```
+
+### Quoted args + doc string
+
+```gherkin
+When I add item "Wireless Headphones" with options:
+  """
+  { "color": "Black" }
+  """
+```
 
 ```java
-registry.defineDataTableType(new DataTableType(
-        Product.class,
-        (Map<String, String> row) -> new Product(
-                row.get("name"),
-                Integer.parseInt(row.get("qty")),
-                Double.parseDouble(row.get("unit price"))
-        )
-));
+// Quoted arg comes first, doc string is appended after
+void iAddItem$p1WithOptions(String p1, String docString) { ... }
 
-// Then in step method:
-List<Product> products = dataTable.asList(Product.class);
+iAddItem$p1WithOptions("Wireless Headphones", """
+        { "color": "Black" }
+        """);
 ```
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.feature` | Feature with data tables |
-| `src/test/java/.../BaseFeature.java` | Base class with `@Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)` |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class with `getTableConverter()`, POJO type registration, and step implementations |
-| `pom.xml` | Includes `cucumber-java` dependency |
+| `src/test/resources/specs/ShoppingCart.specb` | Three scenarios: JSON doc string, quoted arg + doc string, plain text doc string |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |

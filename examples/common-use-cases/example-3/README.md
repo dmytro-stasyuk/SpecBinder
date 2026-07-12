@@ -1,96 +1,93 @@
-# Example 3: TDD Workflow — Iterative Red-Green Development
+# Example 3: Sharing Steps via a Base Class
 
-Demonstrates how Spec Binder supports test-first development by generating failing tests from incomplete feature files.
+Demonstrates sharing common step implementations by placing them in a **base class** that multiple markers extend. The generator detects step methods already present anywhere in a marker's class hierarchy and reuses them — it emits no abstract declaration (or stub) for a step a base class already implements.
+
+Two feature files (`ShoppingCart` and `Checkout`) each have their own marker that extends the same `BaseShopSteps`, so the cart setup steps are implemented **once** and reused across both.
 
 ## What this demonstrates
 
-- Empty Rules (no scenarios) generate a failing `noScenariosInRule()` test
-- Empty Scenarios (no steps) generate a failing `Assertions.fail("Scenario has no steps")` test
-- Both are tagged `@new` by default for easy filtering
-- Scenarios with steps generate normal tests with step method stubs
-- Mix of complete and incomplete specifications in the same feature
+- Common step methods live in a reusable base class (`BaseShopSteps`)
+- **Two** marker classes extend the base — the shared steps are reused across both feature implementations
+- The generator declares abstract methods only for each feature's *own* steps
+- Shared state (the cart) and helpers (`subtotal()`) also live in the base class — no per-feature glue
+- Base-class inheritance as an alternative to interface composition (see the *Organizing Steps into Interfaces* example)
 
-## TDD iteration cycle
+## Class hierarchy
 
-1. **List Rules** — write just the rule titles to outline the business domain
-2. **Compile** — each empty rule becomes a failing `@Test` tagged `@new`
-3. **Add Scenario titles** under the first rule — still no steps
-4. **Compile** — each empty scenario becomes a failing `@Test` tagged `@new`
-5. **Add steps** to one scenario — it now generates step method stubs
-6. **Implement** step methods in the marker class
-7. **Green** — that scenario passes
-8. **Repeat** for the next scenario, then the next rule
+```
+BaseShopSteps.java                       (shared cart steps + state + helpers)
+  ├→ ShoppingCartFeature.java            (marker → specs/ShoppingCart.feature)
+  │     └→ ShoppingCartScenarios.java    (generated, abstract)
+  │           └→ ShoppingCartTest.java   (concrete — cart-assertion steps)
+  └→ CheckoutFeature.java                (marker → specs/Checkout.feature)
+        └→ CheckoutScenarios.java        (generated, abstract)
+              └→ CheckoutTest.java       (concrete — checkout steps)
+```
 
-## Generated output for this example
+Both `ShoppingCart.feature` and `Checkout.feature` use `Given I have an empty shopping cart`
+and `When I add "…" with quantity "…" and unit price "…"` — implemented once in `BaseShopSteps`.
+
+## The base class
+
+Common steps, shared state, and helpers live here:
 
 ```java
-public class ShoppingCartFeatureTest extends ShoppingCartFeature {
+public abstract class BaseShopSteps {
 
-    // Rule with no scenarios — fails immediately
-    @Nested
-    @Tag("new")
-    @DisplayName("Rule: Cannot checkout with an empty cart")
-    public class Rule_1 {
-        @Test
-        public void noScenariosInRule() {
-            Assertions.fail("Rule doesn't have any scenarios");
-        }
+    protected final List<CartItem> cart = new ArrayList<>();
+
+    public void iHaveAnEmptyShoppingCart() {
+        cart.clear();
     }
 
-    @Nested
-    @DisplayName("Rule: Free shipping applies to orders over 50 euros")
-    public class Rule_2 {
-        // Scenario with no steps — fails immediately
-        @Test
-        @Tag("new")
-        @DisplayName("Scenario: Free shipping when subtotal exceeds threshold")
-        public void scenario_1() {
-            Assertions.fail("Scenario has no steps");
-        }
-
-        @Test
-        @Tag("new")
-        @DisplayName("Scenario: Shipping fee when subtotal is below threshold")
-        public void scenario_2() {
-            Assertions.fail("Scenario has no steps");
-        }
+    public void iAdd$p1WithQuantity$p2AndUnitPrice$p3(String name, Integer quantity, Double unitPrice) {
+        cart.add(new CartItem(name, quantity, unitPrice));
     }
 
-    @Nested
-    @DisplayName("Rule: Discount codes apply a percentage reduction")
-    public class Rule_3 {
-        // Scenario with steps — normal test with step calls
-        @Test
-        @DisplayName("Scenario: Apply a valid discount code")
-        public void scenario_1() {
-            myCartSubtotalIs$p1(100.00);
-            iApplyDiscountCode$p1("SAVE10");
-            theCartSubtotalShouldBe$p1(90.00);
-        }
-
-        // Scenario with no steps — still failing
-        @Test
-        @Tag("new")
-        @DisplayName("Scenario: Reject an expired discount code")
-        public void scenario_2() {
-            Assertions.fail("Scenario has no steps");
-        }
-    }
+    // protected itemCount() / subtotal() helpers reused by both features
 }
 ```
 
-## Configuration options
+## Two markers, two concrete tests
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `emptyScenarioBehavior` | `FAIL` | `FAIL`, `SKIP`, or `NONE` for stepless scenarios |
-| `emptyRuleBehavior` | `FAIL` | `FAIL`, `SKIP`, or `NONE` for scenarioless rules |
-| `tagForEmptyScenarios` | `"new"` | Tag added to empty scenarios (set to `""` to disable) |
-| `tagForEmptyRules` | `"new"` | Tag added to empty rules (set to `""` to disable) |
+Each marker extends the base and points at its own feature; each concrete test implements only its feature's own steps:
+
+```java
+@Gherkin2JUnit("specs/ShoppingCart.feature")
+public abstract class ShoppingCartFeature extends BaseShopSteps {}
+
+@Gherkin2JUnit("specs/Checkout.feature")
+public abstract class CheckoutFeature extends BaseShopSteps {}
+
+public class ShoppingCartTest extends ShoppingCartScenarios {
+    @Override public void theCartShouldContain$p1Item(Integer expected) { assertEquals(expected, itemCount()); }
+    @Override public void theCartSubtotalShouldBe$p1(Double expected)   { assertEquals(expected, subtotal(), 0.001); }
+}
+
+public class CheckoutTest extends CheckoutScenarios {
+    private double orderTotal;
+    @Override public void iCheckOut()                              { orderTotal = subtotal(); }
+    @Override public void theOrderTotalShouldBe$p1(Double expected) { assertEquals(expected, orderTotal, 0.001); }
+}
+```
+
+Neither generated class re-declares `iHaveAnEmptyShoppingCart` or `iAdd…` as abstract — both inherit them from `BaseShopSteps`.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.feature` | Feature with a mix of empty rules, empty scenarios, and one fully specified scenario |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
+| `src/test/resources/specs/ShoppingCart.feature` | First feature — cart setup + cart assertions |
+| `src/test/resources/specs/Checkout.feature` | Second feature — reuses the base cart steps, adds checkout steps |
+| `src/test/java/.../BaseShopSteps.java` | Base class with shared step implementations, state, and helpers |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker for the first feature (extends the base) |
+| `src/test/java/.../CheckoutFeature.java` | Marker for the second feature (extends the base) |
+| `src/test/java/.../ShoppingCartTest.java` | Concrete test — cart-assertion steps |
+| `src/test/java/.../CheckoutTest.java` | Concrete test — checkout steps |
+
+## Run it
+
+```bash
+cd examples/common-use-cases/example-3
+mvn test
+```

@@ -1,42 +1,23 @@
 Feature: ShoppingCart
 
-  Demonstrates how Gherkin doc strings map to String parameters
-  with formatting preserved via Java text blocks.
+  Demonstrates the TDD workflow with Spec Binder.
+  Start with rule and scenario titles only — no steps yet.
+  Each empty rule/scenario generates a failing test tagged @new,
+  giving you a red test to drive development.
 
-  Scenario: Submit a shipping address as JSON
-    Given I have a shopping cart with items
-    When I submit the following shipping address:
-      """
-      {
-        "line1": "Baker St 221B",
-        "city": "London",
-        "postcode": "NW1 6XE",
-        "country": "UK"
-      }
-      """
-    Then the order should be ready for checkout
+  Rule: Cannot checkout with an empty cart
 
-  Scenario: Add item with JSON options
-    Given I have a shopping cart with items
-    When I add item "Wireless Headphones" with options:
-      """
-      {
-        "color": "Black",
-        "warranty": "2 years",
-        "gift_wrap": true
-      }
-      """
-    Then the cart should contain "1" customized item
+  Rule: Free shipping applies to orders over 50 euros
 
-  Scenario: Display order confirmation as plain text
-    Given I have completed a purchase
-    Then I should receive the following confirmation:
-      """
-      Thank you for your order!
+    Scenario: Free shipping when subtotal exceeds threshold
 
-      Order #12345
-      Items: 3
-      Total: €97.49
+    Scenario: Shipping fee when subtotal is below threshold
 
-      Your order will be shipped within 2 business days.
-      """
+  Rule: Discount codes apply a percentage reduction
+
+    Scenario: Apply a valid discount code
+      Given my cart subtotal is "100.00"
+      When I apply discount code "SAVE10"
+      Then the cart subtotal should be "90.00"
+
+    Scenario: Reject an expired discount code

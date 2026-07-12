@@ -1,63 +1,96 @@
-# Example 5: DocStrings for Multi-line Input
+# Example 5: TDD Workflow — Iterative Red-Green Development
 
-Demonstrates how Gherkin doc strings (triple-quoted blocks) map to `String` parameters with formatting preserved via Java text blocks.
+Demonstrates how Spec Binder supports test-first development by generating failing tests from incomplete feature files.
 
 ## What this demonstrates
 
-- Doc strings become a trailing `String` parameter on the step method
-- Method naming is **unaffected** by the doc string (no extra `$p` placeholder)
-- Formatting (newlines, indentation) is **preserved** via Java text blocks (`"""..."""`)
-- Doc strings can be combined with quoted parameters in the same step
-- Works with any content: JSON, plain text, XML, etc.
+- Empty Rules (no scenarios) generate a failing `noScenariosInRule()` test
+- Empty Scenarios (no steps) generate a failing `Assertions.fail("Scenario has no steps")` test
+- Both are tagged `@new` by default for easy filtering
+- Scenarios with steps generate normal tests with step method stubs
+- Mix of complete and incomplete specifications in the same feature
 
-## Gherkin → JUnit mapping
+## TDD iteration cycle
 
-### Doc string only (no quoted args)
+1. **List Rules** — write just the rule titles to outline the business domain
+2. **Compile** — each empty rule becomes a failing `@Test` tagged `@new`
+3. **Add Scenario titles** under the first rule — still no steps
+4. **Compile** — each empty scenario becomes a failing `@Test` tagged `@new`
+5. **Add steps** to one scenario — it now generates step method stubs
+6. **Implement** step methods in the marker class
+7. **Green** — that scenario passes
+8. **Repeat** for the next scenario, then the next rule
 
-```gherkin
-When I submit the following shipping address:
-  """
-  {
-    "line1": "Baker St 221B",
-    "city": "London"
-  }
-  """
-```
+## Generated output for this example
 
 ```java
-// Step method — one String parameter for the doc string
-void iSubmitTheFollowingShippingAddress(String docString) { ... }
+public class ShoppingCartFeatureTest extends ShoppingCartFeature {
 
-// Call site — Java text block preserves formatting
-iSubmitTheFollowingShippingAddress("""
-        {
-          "line1": "Baker St 221B",
-          "city": "London"
+    // Rule with no scenarios — fails immediately
+    @Nested
+    @Tag("new")
+    @DisplayName("Rule: Cannot checkout with an empty cart")
+    public class Rule_1 {
+        @Test
+        public void noScenariosInRule() {
+            Assertions.fail("Rule doesn't have any scenarios");
         }
-        """);
+    }
+
+    @Nested
+    @DisplayName("Rule: Free shipping applies to orders over 50 euros")
+    public class Rule_2 {
+        // Scenario with no steps — fails immediately
+        @Test
+        @Tag("new")
+        @DisplayName("Scenario: Free shipping when subtotal exceeds threshold")
+        public void scenario_1() {
+            Assertions.fail("Scenario has no steps");
+        }
+
+        @Test
+        @Tag("new")
+        @DisplayName("Scenario: Shipping fee when subtotal is below threshold")
+        public void scenario_2() {
+            Assertions.fail("Scenario has no steps");
+        }
+    }
+
+    @Nested
+    @DisplayName("Rule: Discount codes apply a percentage reduction")
+    public class Rule_3 {
+        // Scenario with steps — normal test with step calls
+        @Test
+        @DisplayName("Scenario: Apply a valid discount code")
+        public void scenario_1() {
+            myCartSubtotalIs$p1(100.00);
+            iApplyDiscountCode$p1("SAVE10");
+            theCartSubtotalShouldBe$p1(90.00);
+        }
+
+        // Scenario with no steps — still failing
+        @Test
+        @Tag("new")
+        @DisplayName("Scenario: Reject an expired discount code")
+        public void scenario_2() {
+            Assertions.fail("Scenario has no steps");
+        }
+    }
+}
 ```
 
-### Quoted args + doc string
+## Configuration options
 
-```gherkin
-When I add item "Wireless Headphones" with options:
-  """
-  { "color": "Black" }
-  """
-```
-
-```java
-// Quoted arg comes first, doc string is appended after
-void iAddItem$p1WithOptions(String p1, String docString) { ... }
-
-iAddItem$p1WithOptions("Wireless Headphones", """
-        { "color": "Black" }
-        """);
-```
+| Option | Default | Description |
+|--------|---------|-------------|
+| `emptyScenarioBehavior` | `FAIL` | `FAIL`, `SKIP`, or `NONE` for stepless scenarios |
+| `emptyRuleBehavior` | `FAIL` | `FAIL`, `SKIP`, or `NONE` for scenarioless rules |
+| `tagForEmptyScenarios` | `"new"` | Tag added to empty scenarios (set to `""` to disable) |
+| `tagForEmptyRules` | `"new"` | Tag added to empty rules (set to `""` to disable) |
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.feature` | Three scenarios: JSON doc string, quoted arg + doc string, plain text doc string |
+| `src/test/resources/specs/ShoppingCart.feature` | Feature with a mix of empty rules, empty scenarios, and one fully specified scenario |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |

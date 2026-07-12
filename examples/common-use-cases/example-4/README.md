@@ -1,54 +1,68 @@
-# Example 4: Abstract Mode (`shouldBeAbstract = true`)
+# Example 4: Data Table Type Refinement with Enums
 
-Demonstrates abstract mode where the generated class declares abstract step methods, and you create a concrete subclass to implement them. Missing implementations cause **compilation errors**.
+Demonstrates how to refine generated `String` fields to enum types in data table Param classes, catching invalid values at **compile time** instead of runtime.
 
 ## What this demonstrates
 
-- `@Gherkin2JUnitOptions(shouldBeAbstract = true)` generates an abstract class
-- Generated class suffix changes from `Test` to `Scenarios` (configurable)
-- All step methods are declared `abstract` — no failing stubs
-- You create a concrete test class extending the generated abstract class
-- Missing `@Override` methods cause a **compiler error**, not a runtime failure
-- Three-layer hierarchy: marker → generated abstract → concrete test
+- Move the generated `ProductsParam` class into the marker class
+- Change the `category` field from `String` to a `Category` enum
+- The generator detects the existing class and uses it instead of generating a new one
+- Invalid enum values in the feature file cause **compiler errors**
+- Compile-time safety for data table values — a key Spec Binder differentiator
 
-## Class hierarchy
+## How it works
 
+### Step 1: Generator produces initial code
+
+On first compilation, the generator creates `ProductsParam` with all `String`/inferred types:
+
+```java
+// Generated (before refinement)
+public static class ProductsParam {
+    private final String name;
+    private final Integer qty;
+    private final Double unitPrice;
+    private final String category;  // ← String by default
+    // ...
+}
 ```
-ShoppingCartFeature.java          (marker class, @Gherkin2JUnit)
-  └→ ShoppingCartScenarios.java   (generated, abstract, contains @Test methods)
-      └→ ShoppingCartTest.java    (your concrete class, implements step methods)
+
+### Step 2: Refine in marker class
+
+Move `ProductsParam` into your marker class and change `category` to an enum:
+
+```java
+public enum Category { electronics, grocery, sports }
+
+public static class ProductsParam {
+    // ...
+    private final Category category;  // ← now an enum
+    // ...
+}
 ```
 
-## Concrete vs Abstract mode comparison
+### Step 3: Compile-time safety
 
-| Aspect | Concrete (default) | Abstract                                      |
-|--------|-------------------|-----------------------------------------------|
-| Generated class | Concrete, extends marker | Abstract, extends marker                      |
-| New step methods | Failing stubs (`Assertions.fail(...)`) | `abstract` declarations                       |
-| Inherited step methods | Not generated (inherited from marker) | Not generated (inherited from marker)         |
-| Missing steps | Runtime failure | **Compilation error**                         |
-| Where you implement | In the marker class | In the marker class, or the concrete subclass |
-| Class suffix | `Test` | `Scenarios`                                   |
+The generator now uses your `ProductsParam` from the marker class. The generated call site uses enum constants:
 
-**Key point:** In both modes, step methods already present in the marker class are inherited — the generator does not emit stubs or abstract declarations for them. The difference is only in how *new* (unimplemented) steps are handled.
+```java
+new ProductsParam("Wireless Headphones", 1, 59.99, Category.electronics)
+new ProductsParam("Coffee Beans 1kg", 3, 12.50, Category.grocery)
+```
 
-## Inherited vs abstract step methods in this example
+### Step 4: Invalid values caught at compile time
 
-In `ShoppingCartFeature.java` (marker class):
-- `myCartSubtotalIs$p1()` — implemented here, **inherited** by the generated class
-- `iViewTheCart()` — implemented here, **inherited** by the generated class
+If someone adds a row with an unknown category:
 
-In `ShoppingCartScenarios.java` (generated abstract class):
-- `iHaveAnEmptyShoppingCart()` — **abstract**, must be implemented in `ShoppingCartTest`
-- `iAdd$p1WithQuantity$p2AndUnitPrice$p3()` — **abstract**
-- `theCartShouldContain$p1Item()` — **abstract**
-- `theCartSubtotalShouldBe$p1()` — **abstract**
-- `iShouldSeeThe$p1Banner()` — **abstract**
+```gherkin
+| Yoga Mat | 1 | 25.00 | fitness |
+```
+
+The generated code tries `Category.fitness` — **compilation error!** The mismatch is caught before tests ever run.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.feature` | Feature with scenarios and a rule |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class with `@Gherkin2JUnitOptions(shouldBeAbstract = true)` and two inherited step methods |
-| `src/test/java/.../ShoppingCartTest.java` | Concrete test class implementing only the abstract step methods |
+| `src/test/resources/specs/ShoppingCart.specb` | Feature with categorized products in data tables |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class with `Category` enum and refined `ProductsParam` class |

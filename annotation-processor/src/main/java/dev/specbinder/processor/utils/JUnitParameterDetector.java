@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Detects JUnit-injected parameter types on inherited step methods so they can be propagated
+ * Detects JUnit-resolved parameter types on inherited step methods so they can be propagated
  * to the generated test method and forwarded on the step call.
  * <p>
  * Two categories are recognized:
@@ -49,19 +49,19 @@ public final class JUnitParameterDetector {
 
     /**
      * Returns the list of trailing parameters of {@code baseMethod} (starting at {@code gherkinParamCount})
-     * recognized as JUnit-injected parameters, or {@code null} if any trailing parameter is unrecognized.
+     * recognized as JUnit-resolved parameters, or {@code null} if any trailing parameter is unrecognized.
      * <p>
      * A {@code null} return means the base method is <em>not a valid match</em> for the step — the caller
      * should treat the base method as if it does not match (and fall back to generating a fresh
      * abstract/stub step method). An empty list means a valid match with no extras to propagate. A
-     * non-empty list means a valid match with the listed parameters to inject into the generated
+     * non-empty list means a valid match with the listed parameters to resolve into the generated
      * {@code @Test} / {@code @BeforeEach} method.
      *
      * @param baseMethod the matched base class step method
      * @param gherkinParamCount the number of leading Gherkin-derived parameters to skip
-     * @return ordered list of injected ParameterSpec (possibly empty), or {@code null} if invalid match
+     * @return ordered list of resolved ParameterSpec (possibly empty), or {@code null} if invalid match
      */
-    public static List<ParameterSpec> detectTrailingInjectedParams(
+    public static List<ParameterSpec> detectTrailingResolvedParams(
             ExecutableElement baseMethod, int gherkinParamCount) {
 
         List<? extends VariableElement> params = baseMethod.getParameters();
@@ -71,7 +71,7 @@ public final class JUnitParameterDetector {
 
         List<ParameterSpec> extras = new ArrayList<>();
         for (int i = gherkinParamCount; i < params.size(); i++) {
-            ParameterSpec extra = toInjectedParamSpec(params.get(i));
+            ParameterSpec extra = toResolvedParamSpec(params.get(i));
             if (extra == null) {
                 return null;
             }
@@ -80,7 +80,7 @@ public final class JUnitParameterDetector {
         return extras;
     }
 
-    private static ParameterSpec toInjectedParamSpec(VariableElement param) {
+    private static ParameterSpec toResolvedParamSpec(VariableElement param) {
         TypeMirror type = param.asType();
         String typeStr = type.toString();
         String paramName = param.getSimpleName().toString();

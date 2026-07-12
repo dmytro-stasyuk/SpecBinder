@@ -92,14 +92,14 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
         backgroundMethodBuilder.addParameter(TestInfo.class, "testInfo");
 
-        List<ParameterSpec> allInjectedExtras = new ArrayList<>();
+        List<ParameterSpec> allResolvedExtras = new ArrayList<>();
 
         for (Step scenarioStep : backgroundSteps) {
 
             StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
             MethodSpec stepMethodSpec = stepProcessor.processStep(scenarioStep, backgroundMethodBuilder, backgroundStepsMethodSpecs, resolvedStepKeywords);
             backgroundStepsMethodSpecs.add(stepMethodSpec);
-            allInjectedExtras.addAll(stepProcessor.getInjectedExtras());
+            allResolvedExtras.addAll(stepProcessor.getResolvedExtras());
 
             String stepMethodName = stepMethodSpec.name;
             MethodSpec existingMethodSpec =
@@ -118,7 +118,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
             }
         }
 
-        // Aggregate JUnit-injected parameters across all background steps, deduped by name,
+        // Aggregate JUnit-resolved parameters across all background steps, deduped by name,
         // and add them to the @BeforeEach method's parameter list. JavaPoet preserves
         // any @TempDir annotation carried by the ParameterSpec. The hardcoded `testInfo`
         // above is kept for backward compatibility with existing tests.
@@ -126,7 +126,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
         for (ParameterSpec p : backgroundMethodBuilder.parameters) {
             existingParamNames.add(p.name);
         }
-        for (ParameterSpec extra : allInjectedExtras) {
+        for (ParameterSpec extra : allResolvedExtras) {
             if (existingParamNames.add(extra.name)) {
                 backgroundMethodBuilder.addParameter(extra);
             }

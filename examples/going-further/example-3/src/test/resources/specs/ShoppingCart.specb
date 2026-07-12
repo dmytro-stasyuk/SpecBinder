@@ -1,0 +1,11 @@
+Feature: ShoppingCart
+
+  Demonstrates organizing step methods into domain interfaces
+  (cart steps and checkout steps) that the marker class implements.
+
+  Scenario: Add an item and check out
+    Given I have an empty shopping cart
+    When I add "Wireless Headphones" to the cart
+    And I proceed to checkout
+    And I pay with card "4111111111111111"
+    Then the order should be confirmed

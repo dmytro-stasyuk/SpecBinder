@@ -23,7 +23,7 @@ Demonstrates how Gherkin tags (`@smoke`, `@regression`, etc.) map to JUnit `@Tag
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.feature` | Feature with tags at feature, rule, and scenario levels |
+| `src/test/resources/specs/ShoppingCart.specb` | Feature with tags at feature, rule, and scenario levels |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
 
 ## Running filtered tests

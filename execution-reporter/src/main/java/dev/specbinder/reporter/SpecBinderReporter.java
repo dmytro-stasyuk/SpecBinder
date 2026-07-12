@@ -1075,7 +1075,7 @@ public class SpecBinderReporter implements
             }
             current = queue.pollFirst();
             StepReport step = current.step();
-            List<Object> reportableArgs = filterOutInjectedFrameworkArgs(args);
+            List<Object> reportableArgs = filterOutResolvedFrameworkArgs(args);
             if (!reportableArgs.isEmpty()) {
                 step.setArguments(reportableArgs);
             }
@@ -1084,13 +1084,13 @@ public class SpecBinderReporter implements
         }
 
         /**
-         * Drops JUnit-injected framework arguments (currently {@link TestReporter}) so
+         * Drops JUnit-resolved framework arguments (currently {@link TestReporter}) so
          * Jackson never tries to serialize their internals — JUnit's
          * {@code DefaultTestReporter} carries an {@code Optional<ExtensionContext>} that
          * the default ObjectMapper cannot handle, and it would not be meaningful
          * diagnostic content anyway.
          */
-        private static List<Object> filterOutInjectedFrameworkArgs(Object[] args) {
+        private static List<Object> filterOutResolvedFrameworkArgs(Object[] args) {
             if (args == null || args.length == 0) {
                 return List.of();
             }

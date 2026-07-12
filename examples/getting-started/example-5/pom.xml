@@ -8,6 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-5</artifactId>
-    <name>${project.artifactId}</name>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
     <description>Background — feature-level and rule-level</description>
 </project>

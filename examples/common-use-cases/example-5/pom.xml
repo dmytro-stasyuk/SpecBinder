@@ -8,6 +8,6 @@
         <version>2026.45.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-5</artifactId>
-    <name>${project.artifactId}</name>
-    <description>DocStrings for multi-line input</description>
+    <name>${project.parent.artifactId}-${project.artifactId}</name>
+    <description>TDD workflow — iterative red-green development</description>
 </project>
