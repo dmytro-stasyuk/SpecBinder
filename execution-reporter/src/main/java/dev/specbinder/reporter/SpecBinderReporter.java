@@ -26,6 +26,8 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -69,11 +71,59 @@ public class SpecBinderReporter implements
     private static final String KEY_REPORT_DIR = "reportDir";
     private static final String KEY_RULE_REPORT = "ruleReport";
     private static final String KEY_OUTLINE_NODE = "outlineNode";
+    private static final String KEY_PARSED_INDEX = "parsedIndex";
 
     private static final ThreadLocal<ScenarioStepBuffer> CURRENT_BUFFER = new ThreadLocal<>();
     private static final ThreadLocal<Throwable> CURRENT_SCENARIO_ERROR = new ThreadLocal<>();
 
     private static final ReportWriter REPORT_WRITER = new ReportWriter();
+
+    /**
+     * Registered {@link ExecutionBoundaryListener}s, fanned out to at every feature/rule/
+     * scenario/step boundary. Empty by default, so the reporter carries no observers unless
+     * a consumer opts in. {@code CopyOnWriteArrayList} keeps iteration lock-free on the step
+     * hot path and safe against concurrent (un)registration between test classes.
+     */
+    private static final List<ExecutionBoundaryListener> BOUNDARY_LISTENERS = new CopyOnWriteArrayList<>();
+
+    // ---- boundary listener SPI (see ExecutionBoundaryListener) ----
+
+    /**
+     * Registers a listener to receive execution boundaries. Typically called from a test
+     * project's own JUnit extension (which owns any per-run resource the listener needs, such
+     * as a Playwright {@code BrowserContext}), and paired with
+     * {@link #removeBoundaryListener(ExecutionBoundaryListener)} when that resource is torn
+     * down. A {@code null} listener is ignored.
+     */
+    public static void addBoundaryListener(ExecutionBoundaryListener listener) {
+        if (listener != null) {
+            BOUNDARY_LISTENERS.add(listener);
+        }
+    }
+
+    /** Unregisters a previously {@link #addBoundaryListener(ExecutionBoundaryListener) added} listener. */
+    public static void removeBoundaryListener(ExecutionBoundaryListener listener) {
+        BOUNDARY_LISTENERS.remove(listener);
+    }
+
+    /**
+     * Dispatches {@code action} to every registered boundary listener, isolating each so a
+     * misbehaving listener is logged and skipped rather than allowed to fail the test run or
+     * corrupt the report. Returns immediately when no listeners are registered, so the common
+     * (unobserved) case allocates nothing.
+     */
+    private static void fireBoundary(Consumer<ExecutionBoundaryListener> action) {
+        if (BOUNDARY_LISTENERS.isEmpty()) {
+            return;
+        }
+        for (ExecutionBoundaryListener listener : BOUNDARY_LISTENERS) {
+            try {
+                action.accept(listener);
+            } catch (RuntimeException e) {
+                LOGGER.log(Level.WARNING, "SpecBinder reporter: execution boundary listener threw; skipping it", e);
+            }
+        }
+    }
 
     // ---- step interceptor entry points (called by ByteBuddy overrides) ----
 
@@ -83,21 +133,41 @@ public class SpecBinderReporter implements
         if (buffer != null) {
             buffer.started(methodName, args);
         }
+        // Fast-path guard: the step hook fires for every SpecBinder run, so skip building the
+        // boundary payload entirely when nobody is observing.
+        if (!BOUNDARY_LISTENERS.isEmpty()) {
+            String text = buffer != null ? buffer.currentText() : null;
+            fireBoundary(l -> l.stepStarted(new ExecutionBoundaryListener.StepBoundary(methodName, text, null)));
+        }
     }
 
     /** Invoked by an instrumented step override after the {@code super} call returns. */
     public static void stepPassed() {
         ScenarioStepBuffer buffer = CURRENT_BUFFER.get();
+        boolean observed = !BOUNDARY_LISTENERS.isEmpty();
+        String methodName = (observed && buffer != null) ? buffer.currentMethodName() : null;
+        String text = (observed && buffer != null) ? buffer.currentText() : null;
         if (buffer != null) {
             buffer.passed();
+        }
+        if (observed) {
+            fireBoundary(l -> l.stepFinished(new ExecutionBoundaryListener.StepBoundary(methodName, text, Status.PASSED)));
         }
     }
 
     /** Invoked by an instrumented step override when the {@code super} call throws. */
     public static void stepFailed(Throwable throwable) {
         ScenarioStepBuffer buffer = CURRENT_BUFFER.get();
+        boolean observed = !BOUNDARY_LISTENERS.isEmpty();
+        String methodName = (observed && buffer != null) ? buffer.currentMethodName() : null;
+        String text = (observed && buffer != null) ? buffer.currentText() : null;
         if (buffer != null) {
             buffer.failed(throwable);
+        }
+        if (observed) {
+            Status status = "org.opentest4j.TestAbortedException".equals(throwable.getClass().getName())
+                    ? Status.ABORTED : Status.FAILED;
+            fireBoundary(l -> l.stepFinished(new ExecutionBoundaryListener.StepBoundary(methodName, text, status)));
         }
     }
 
@@ -142,6 +212,9 @@ public class SpecBinderReporter implements
 
             StepCallSiteScanner.Plan plan = StepCallSiteScanner.scan(testClass);
             store.put(KEY_PLAN, plan);
+
+            String ruleName = rule.getDisplayName();
+            fireBoundary(l -> l.ruleStarted(new ExecutionBoundaryListener.RuleBoundary(ruleName)));
             return;
         }
 
@@ -155,6 +228,10 @@ public class SpecBinderReporter implements
         store.put(KEY_FEATURE_REPORT, report);
         store.put(KEY_SOURCE_FILE_PATH, sourceFilePath.get());
         store.put(KEY_FEATURE_START_NANOS, System.nanoTime());
+
+        String featureName = report.getDisplayName();
+        String featurePath = report.getSourceFilePath();
+        fireBoundary(l -> l.featureStarted(new ExecutionBoundaryListener.FeatureBoundary(featureName, featurePath)));
 
         StepCallSiteScanner.Plan plan = StepCallSiteScanner.scan(testClass);
         store.put(KEY_PLAN, plan);
@@ -253,6 +330,103 @@ public class SpecBinderReporter implements
         ScenarioStepBuffer buffer = ScenarioStepBuffer.preallocated(backgroundCalls, scenarioCalls);
         CURRENT_BUFFER.set(buffer);
         CURRENT_SCENARIO_ERROR.remove();
+
+        // Only observed runs need per-step Gherkin text at runtime; resolve it now (parsing the
+        // spec once per feature, cached) so stepStarted can carry the real step line rather than
+        // an approximation. Leaves text null when there is no @ScenarioHash to anchor the match.
+        if (!BOUNDARY_LISTENERS.isEmpty()) {
+            stampBufferStepText(featureRoot, context, testMethod, buffer);
+        }
+
+        ExecutionBoundaryListener.ScenarioBoundary scenarioBoundary = scenarioBoundaryOf(context);
+        fireBoundary(l -> l.scenarioStarted(scenarioBoundary));
+    }
+
+    /**
+     * Builds the {@link ExecutionBoundaryListener.ScenarioBoundary} for the current test method,
+     * carrying its human display name plus the generated (rule-qualified, unique) test method name
+     * and, for Scenario Outline invocations, the 1-based example-row index parsed from the JUnit
+     * unique id.
+     */
+    private static ExecutionBoundaryListener.ScenarioBoundary scenarioBoundaryOf(ExtensionContext context) {
+        String displayName = context.getDisplayName();
+        String testMethodName = context.getTestMethod().map(Method::getName).orElse(null);
+        return new ExecutionBoundaryListener.ScenarioBoundary(displayName, testMethodName, exampleRowIndexOf(context));
+    }
+
+    /**
+     * The 1-based row number of a Scenario Outline invocation, parsed from the JUnit unique-id
+     * segment {@code [test-template-invocation:#N]}, or {@code null} for a plain scenario.
+     */
+    private static Integer exampleRowIndexOf(ExtensionContext context) {
+        String marker = "test-template-invocation:#";
+        String uniqueId = context.getUniqueId();
+        int at = uniqueId.lastIndexOf(marker);
+        if (at < 0) {
+            return null;
+        }
+        int start = at + marker.length();
+        int end = start;
+        while (end < uniqueId.length() && Character.isDigit(uniqueId.charAt(end))) {
+            end++;
+        }
+        if (end == start) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(uniqueId.substring(start, end));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Pre-populates the buffer's {@link StepReport}s with their verbatim Gherkin step lines so
+     * the step boundary can report real text at runtime — the same spec-derived text the
+     * {@code afterAll} stamping would later assign, resolved early via the same
+     * {@code @ScenarioHash} integrity gate. A no-op (leaving text {@code null}) when the spec
+     * can't be parsed, the scenario has no hash, or no parsed scenario matches it.
+     */
+    private static void stampBufferStepText(ExtensionContext featureRoot, ExtensionContext context,
+                                            Method testMethod, ScenarioStepBuffer buffer) {
+        ParsedIndex index = parsedIndex(featureRoot, context);
+        if (index == null) {
+            return;
+        }
+        String wantHash = readScenarioHash(testMethod);
+        if (wantHash == null) {
+            return;
+        }
+        ParsedScenario match = index.matchByHash(wantHash);
+        if (match != null) {
+            buffer.stampText(match.backgroundStepLines(), match.scenarioStepLines());
+        }
+    }
+
+    /**
+     * Returns the feature's parsed-scenario index (flattened scenarios + their canonical
+     * hashes), parsing and caching it on the feature-root store on first use. Cached because
+     * every scenario in the feature reuses it, and only built for observed runs (see the
+     * caller's guard).
+     */
+    private static ParsedIndex parsedIndex(ExtensionContext featureRoot, ExtensionContext context) {
+        if (featureRoot == null) {
+            return null;
+        }
+        ExtensionContext.Store store = featureRoot.getStore(NAMESPACE);
+        ParsedIndex existing = store.get(KEY_PARSED_INDEX, ParsedIndex.class);
+        if (existing != null) {
+            return existing;
+        }
+        String sourceFilePath = store.get(KEY_SOURCE_FILE_PATH, String.class);
+        if (sourceFilePath == null) {
+            return null;
+        }
+        ParsedFeature parsed = SourceFeatureReader.parse(
+                sourceFilePath, context.getRequiredTestClass().getClassLoader());
+        ParsedIndex index = ParsedIndex.of(parsed);
+        store.put(KEY_PARSED_INDEX, index);
+        return index;
     }
 
     // ---- AfterEach: drain step buffer onto a ScenarioNode / ExampleReport ----
@@ -266,6 +440,12 @@ public class SpecBinderReporter implements
         if (buffer == null) {
             return;
         }
+
+        // Fire before the report-shaping early returns below so this always pairs with the
+        // scenarioStarted emitted in beforeEach (both gated on the buffer being present),
+        // keeping any listener's open-group stack balanced.
+        ExecutionBoundaryListener.ScenarioBoundary scenarioBoundary = scenarioBoundaryOf(context);
+        fireBoundary(l -> l.scenarioFinished(scenarioBoundary));
 
         ExtensionContext featureRoot = featureRootContextOf(context);
         if (featureRoot == null) {
@@ -376,6 +556,11 @@ public class SpecBinderReporter implements
         // N times for a feature with N-1 @Nested Rules, and argument-envelope wrapping
         // accumulates (each pass wraps the previously wrapped entries again).
         if (context.getTestClass().filter(SpecBinderReporter::isNestedRule).isPresent()) {
+            RuleReport rule = context.getStore(NAMESPACE).get(KEY_RULE_REPORT, RuleReport.class);
+            if (rule != null) {
+                String ruleName = rule.getDisplayName();
+                fireBoundary(l -> l.ruleFinished(new ExecutionBoundaryListener.RuleBoundary(ruleName)));
+            }
             return;
         }
         ExtensionContext.Store store = context.getStore(NAMESPACE);
@@ -391,6 +576,12 @@ public class SpecBinderReporter implements
         finalizeOutlineNodes(featureReport);
         sortByLine(featureReport);
         stampStepTexts(featureReport, context.getRequiredTestClass().getClassLoader());
+
+        // Fire feature-finished before the disk-write early return so it always pairs with the
+        // feature-started emitted in beforeAll, regardless of whether a report directory resolved.
+        String featureName = featureReport.getDisplayName();
+        String featurePath = featureReport.getSourceFilePath();
+        fireBoundary(l -> l.featureFinished(new ExecutionBoundaryListener.FeatureBoundary(featureName, featurePath)));
 
         Path reportDir = store.get(KEY_REPORT_DIR, Path.class);
         if (reportDir == null) {
@@ -1125,6 +1316,38 @@ public class SpecBinderReporter implements
         return row.isEmpty() ? null : row;
     }
 
+    /**
+     * A feature's parsed scenarios flattened to source order (feature-level first, then each
+     * Rule's), paired with their precomputed canonical {@code @ScenarioHash}es. Lets
+     * {@code beforeEach} resolve the running scenario's spec counterpart by hash so its step
+     * lines can be stamped onto the buffer before any step fires. Built once per feature and
+     * cached on the feature-root store.
+     */
+    private record ParsedIndex(List<ParsedScenario> scenarios, List<String> hashes) {
+
+        static ParsedIndex of(ParsedFeature parsed) {
+            List<ParsedScenario> flat = new ArrayList<>(parsed.scenarios());
+            for (ParsedRule rule : parsed.rules()) {
+                flat.addAll(rule.scenarios());
+            }
+            List<String> hashes = new ArrayList<>(flat.size());
+            for (ParsedScenario scenario : flat) {
+                hashes.add(ScenarioHasher.hash(scenario.canonicalSteps()));
+            }
+            return new ParsedIndex(flat, hashes);
+        }
+
+        /** First parsed scenario whose canonical hash equals {@code wantHash}, or {@code null}. */
+        ParsedScenario matchByHash(String wantHash) {
+            for (int i = 0; i < scenarios.size(); i++) {
+                if (wantHash.equals(hashes.get(i))) {
+                    return scenarios.get(i);
+                }
+            }
+            return null;
+        }
+    }
+
     // ---- step buffer ----
 
     /**
@@ -1208,6 +1431,45 @@ public class SpecBinderReporter implements
                 kept.add(arg);
             }
             return kept;
+        }
+
+        /**
+         * The method name of the step currently in flight, or {@code null} when no step is
+         * active (e.g. an unexpected call not in the pre-scanned plan). Read before
+         * {@link #passed()} / {@link #failed(Throwable)} clears {@code current}.
+         */
+        String currentMethodName() {
+            return current == null ? null : current.step().getMethodName();
+        }
+
+        /**
+         * The verbatim Gherkin line of the step currently in flight, if it was stamped by
+         * {@link #stampText(List, List)}; {@code null} otherwise. Read before
+         * {@link #passed()} / {@link #failed(Throwable)} clears {@code current}.
+         */
+        String currentText() {
+            return current == null ? null : current.step().getText();
+        }
+
+        /**
+         * Assigns the spec's background and scenario step lines onto the pre-allocated
+         * {@link StepReport}s positionally, so a boundary listener can read real step text as
+         * each step fires. Idempotent with the later {@code afterAll} stamping (same source,
+         * same values); a shorter list simply leaves the surplus reports' text {@code null}.
+         */
+        void stampText(List<String> backgroundLines, List<String> scenarioLines) {
+            stampInto(backgroundSteps, backgroundLines);
+            stampInto(scenarioSteps, scenarioLines);
+        }
+
+        private static void stampInto(List<StepReport> steps, List<String> lines) {
+            if (steps == null || lines == null) {
+                return;
+            }
+            int bound = Math.min(steps.size(), lines.size());
+            for (int i = 0; i < bound; i++) {
+                steps.get(i).setText(lines.get(i));
+            }
         }
 
         void appendEntryToCurrentStep(Map<String, String> values, Instant publishedAt) {
