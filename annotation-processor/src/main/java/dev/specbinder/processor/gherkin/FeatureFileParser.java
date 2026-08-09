@@ -1,5 +1,6 @@
 package dev.specbinder.processor.gherkin;
 
+import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
 import dev.specbinder.processor.support.LoggingSupport;
 import io.cucumber.gherkin.GherkinParser;
@@ -46,13 +47,24 @@ public class FeatureFileParser implements LoggingSupport {
     /**
      * Parses a Gherkin feature file using the provided file path and returns the Feature object.
      *
+     * <p>Options are passed in per call rather than held as a field because they are resolved per
+     * annotated element (and are inheritable), while this parser is constructed once.
+     *
      * @param featureFilePath the path to the feature file, relative to the classpath
+     * @param options         the resolved generator options for the annotated class
      * @return the Feature object extracted from the Gherkin document
      * @throws IOException if an error occurs while reading the file or parsing the Gherkin document
      */
-    public Feature parseUsingPath(String featureFilePath) throws IOException {
+    public Feature parseUsingPath(String featureFilePath, GeneratorOptions options) throws IOException {
 
         String fileContent = loadFileContent(featureFilePath);
+
+        SpecMarkupStripper markupStripper = SpecMarkupStripper.from(options);
+        boolean markupWasStripped = markupStripper.isEnabled();
+        if (markupWasStripped) {
+            fileContent = markupStripper.strip(fileContent);
+        }
+
         InputStream inputStream = new ByteArrayInputStream(fileContent.getBytes(StandardCharsets.UTF_8));
 
         Stream<Envelope> envelopeStream = gherkinParser.parse(featureFilePath, inputStream);
@@ -68,7 +80,12 @@ public class FeatureFileParser implements LoggingSupport {
             Feature feature = gherkinDocument.getFeature().orElse(null);
             return feature;
         } else {
-            throw new ProcessingException("Unable to parse Feature from the specified gherkin document: " + featureFilePath);
+            String markupHint = markupWasStripped
+                    ? " (revision markup was stripped from this file before parsing - check that a marked"
+                    + " range has not removed a Feature, Rule or Scenario line)"
+                    : "";
+            throw new ProcessingException(
+                    "Unable to parse Feature from the specified gherkin document: " + featureFilePath + markupHint);
         }
     }
 

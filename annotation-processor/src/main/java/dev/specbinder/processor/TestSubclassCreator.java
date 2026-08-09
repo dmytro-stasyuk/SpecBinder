@@ -150,7 +150,7 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         }
 
         // Parse the feature file
-        Feature feature = featureFileParser.parseUsingPath(featureFilePathForParsing);
+        Feature feature = featureFileParser.parseUsingPath(featureFilePathForParsing, options);
 
         // A Feature carrying a matching skip tag produces no generated class at all — return null so
         // the caller skips writing (and name registration) entirely. Skip-tagged Rules/Scenarios still

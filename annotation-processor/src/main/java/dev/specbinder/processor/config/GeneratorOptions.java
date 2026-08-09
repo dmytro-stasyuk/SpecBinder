@@ -87,6 +87,8 @@ public class GeneratorOptions {
     private final String dataTableParameterType;
 
     /**
+     * -- EXPERIMENTAL OPTION --
+     * <p>
      * If set to true, enables composite step pattern where Given/When/Then/And/But steps followed by '*' steps
      * generate composite methods with lambda parameters.
      */
@@ -166,6 +168,24 @@ public class GeneratorOptions {
     private final boolean skipUnchangedSpecs;
 
     /**
+     * -- EXPERIMENTAL OPTION --
+     * <p>
+     * Regex patterns matching HTML-like revision markers that are removed from the spec file before it is
+     * parsed, keeping the text they wrap. Each pattern matches a single marker (opening or closing) and
+     * every match is removed independently, so markers are not treated as a balanced structure.
+     */
+    private final String[] stripMarkerPatterns;
+
+    /**
+     * -- EXPERIMENTAL OPTION --
+     * <p>
+     * Regex patterns matching HTML-like revision ranges that are removed from the spec file before it is
+     * parsed, together with the text they wrap. Each pattern matches a whole range, opening marker through
+     * closing marker. Ranges are removed before markers.
+     */
+    private final String[] stripRangePatterns;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -192,6 +212,8 @@ public class GeneratorOptions {
         this.descriptionAsAnnotation = false;
         this.maxStringLiteralBytes = 65000;
         this.skipUnchangedSpecs = false;
+        this.stripMarkerPatterns = new String[]{};
+        this.stripRangePatterns = new String[]{};
     }
 
     /**
@@ -220,6 +242,8 @@ public class GeneratorOptions {
      * @param descriptionAsAnnotation see {@link #descriptionAsAnnotation}
      * @param maxStringLiteralBytes see {@link #maxStringLiteralBytes}
      * @param skipUnchangedSpecs see {@link #skipUnchangedSpecs}
+     * @param stripMarkerPatterns see {@link #stripMarkerPatterns}
+     * @param stripRangePatterns see {@link #stripRangePatterns}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -244,7 +268,9 @@ public class GeneratorOptions {
             boolean emitScenarioHash,
             boolean descriptionAsAnnotation,
             int maxStringLiteralBytes,
-            boolean skipUnchangedSpecs
+            boolean skipUnchangedSpecs,
+            String[] stripMarkerPatterns,
+            String[] stripRangePatterns
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -269,6 +295,8 @@ public class GeneratorOptions {
         this.descriptionAsAnnotation = descriptionAsAnnotation;
         this.maxStringLiteralBytes = maxStringLiteralBytes;
         this.skipUnchangedSpecs = skipUnchangedSpecs;
+        this.stripMarkerPatterns = stripMarkerPatterns == null ? new String[]{} : stripMarkerPatterns;
+        this.stripRangePatterns = stripRangePatterns == null ? new String[]{} : stripRangePatterns;
     }
 
 }

@@ -516,6 +516,9 @@ public class CartFeatureTest extends CartFeature {
 + Where the step had quoted arguments, the method name includes **positional placeholders** to indicate argument slots (
   e.g., `$p1`, `$p2`, …).
 
++ If [revision markup stripping](#stripping-revision-markup-from-spec-files--experimental) is configured, that markup is
+  removed **before** the name is derived — so adding or editing a `<CHANGED …>` marker never renames a step method.
+
 > Resulting shape:
 `camelCasedWordsAroundArgsWithPlaceholders`
 >
@@ -1707,6 +1710,8 @@ All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You ca
 | `emitScenarioHash`                      | boolean  | `false`                  | Emit a `@ScenarioHash("…")` annotation carrying a SHA-256 of each scenario's executable content                                                          |
 | `verbosity`                             | enum     | `NORMAL`                 | Build log verbosity during annotation processing: `SILENT`, `NORMAL`, `VERBOSE`, or `DEBUG`                                                              |
 | `enableCompositeSteps`                  | boolean  | `false`                  | **(experimental)** Enable composite step pattern                                                                                                          |
+| `stripMarkerPatterns`                   | String[] | `{}`                     | **(experimental)** Regex patterns matching HTML-like revision markers to remove from the spec file, keeping the text they wrap                            |
+| `stripRangePatterns`                    | String[] | `{}`                     | **(experimental)** Regex patterns matching HTML-like revision ranges to remove from the spec file, together with the text they wrap                       |
 
 <details>
 
@@ -1742,6 +1747,65 @@ public abstract class CartFeature extends BaseFeatureOptions {
 ```
 
 </details>
+
+#### Stripping revision markup from spec files — *(experimental)*
+
+Teams often annotate specs with HTML-like markup tying wording back to an issue tracker:
+
+```gherkin
+Given the user has a <CHANGED BR-123>premium</CHANGED BR-123> account
+And the <NEW BY BR-456>loyalty tier</NEW BY BR-456> is shown
+When the <REMOVED BR-789>legacy discount </REMOVED BR-789>is applied
+```
+
+Left in place, that markup reaches the generated code. Most importantly it becomes part of **step method
+names** — so adding or editing a marker renames an abstract step method and the hand-written test class
+that implements it no longer compiles. It also corrupts record field names derived from data table
+headers, and emits unbalanced HTML into JavaDoc.
+
+Two options remove it before the spec is parsed. Both take regular expressions, because in-house markup
+conventions vary, and both default to `{}` (nothing is stripped):
+
+| Option                | What a match means                                                     |
+|-----------------------|------------------------------------------------------------------------|
+| `stripMarkerPatterns` | one marker — opening *or* closing. Removed on its own; wrapped text stays |
+| `stripRangePatterns`  | a whole range, opening marker through closing marker. Removed *with* the text between them |
+
+Starter patterns to copy:
+
+```java
+@Gherkin2JUnitOptions(
+        stripMarkerPatterns = {"(?i)(<\\s*(NEW|CHANGED)\\s+[^<>]*>|</\\s*(NEW|CHANGED)\\b[^<>]*>)"},
+        stripRangePatterns = {"(?is)<\\s*REMOVED\\b[^<>]*>.*?</\\s*REMOVED\\b[^<>]*>"}
+)
+```
+
+Markup is removed everywhere it can appear: step text, Feature/Rule/Scenario names, descriptions, doc
+strings, data tables and `Examples` tables — including **header cells**, where it would otherwise corrupt
+generated field names and test method parameter names.
+
+Points worth knowing:
+
+* **Keep marker patterns specific enough to miss `<placeholder>`.** Requiring whitespace and content after
+  the keyword (`<\s*CHANGED\s+[^<>]*>`) is what stops a pattern from also matching a Scenario Outline
+  placeholder such as `<changed>`. A looser pattern strips the placeholder, silently removing the step's
+  parameter and changing the generated method signature.
+* **Markers are not a balanced structure.** Each match is removed independently, so an unpaired marker is
+  removed just the same, and a pair may wrap several steps without affecting what sits between them.
+* **Ranges may wrap whole constructs** — several steps, an entire Scenario, or table rows. Use the `(?s)`
+  flag so the range can span lines; the reluctant `.*?` stops at the nearest closing marker. Nesting ranges
+  of the same keyword is not supported.
+* **Emptied lines are dropped.** Any line left holding only whitespace once a range is removed disappears
+  entirely, so deleting a table row does not leave a gap that would terminate the table. This shifts the
+  source line numbers of everything below the range, which affects `addSourceLineNumbers` output.
+* **Ranges are removed before markers**, so content marked as removed stays removed even when a marker
+  pattern would also have matched the range's own markers.
+* **A range that takes all of a step's text but leaves its keyword fails the build**, naming the line —
+  include the step keyword inside the marked range instead.
+
+> **Using the IntelliJ plugin?** Until the plugin applies the same patterns, a spec that relies on these
+> options will show markup-bearing scenarios as permanently stale in the gutter, and Ctrl+Click from a
+> markup-bearing Scenario title will not resolve.
 
 ---
 

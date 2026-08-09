@@ -93,6 +93,8 @@ public class Gherkin2JUnitOptionsResolver {
         boolean descriptionAsAnnotation = false;
         int maxStringLiteralBytes = 65000;
         boolean skipUnchangedSpecs = false;
+        String[] stripMarkerPatterns = new String[]{};
+        String[] stripRangePatterns = new String[]{};
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -214,6 +216,16 @@ public class Gherkin2JUnitOptionsResolver {
                     case "skipUnchangedSpecs":
                         skipUnchangedSpecs = (Boolean) value;
                         break;
+                    case "stripMarkerPatterns":
+                        if (value instanceof List<?> list) {
+                            stripMarkerPatterns = toStringArray(list);
+                        }
+                        break;
+                    case "stripRangePatterns":
+                        if (value instanceof List<?> list) {
+                            stripRangePatterns = toStringArray(list);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -243,8 +255,24 @@ public class Gherkin2JUnitOptionsResolver {
                 emitScenarioHash,
                 descriptionAsAnnotation,
                 maxStringLiteralBytes,
-                skipUnchangedSpecs
+                skipUnchangedSpecs,
+                stripMarkerPatterns,
+                stripRangePatterns
         );
+    }
+
+    /**
+     * Converts an annotation array value to a String array, unwrapping AnnotationValue entries.
+     */
+    private static String[] toStringArray(List<?> list) {
+        return list.stream()
+                .map(item -> {
+                    if (item instanceof AnnotationValue av) {
+                        return (String) av.getValue();
+                    }
+                    return item.toString();
+                })
+                .toArray(String[]::new);
     }
 
     /**
@@ -275,7 +303,9 @@ public class Gherkin2JUnitOptionsResolver {
                 options.emitScenarioHash(),
                 options.descriptionAsAnnotation(),
                 options.maxStringLiteralBytes(),
-                options.skipUnchangedSpecs()
+                options.skipUnchangedSpecs(),
+                options.stripMarkerPatterns(),
+                options.stripRangePatterns()
         );
     }
 }
