@@ -12,36 +12,33 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Removes HTML-like revision markup from a Gherkin spec file before it is handed to the parser.
+ * Strips configured text from a Gherkin spec file before it is handed to the parser.
  *
- * <p>Teams often annotate specs with traceability markup tied to an issue tracker, such as
+ * <p>Teams often annotate specs with revision markers tying wording back to an issue tracker, such as
  * {@code <CHANGED BR-123>premium</CHANGED BR-123>} or {@code <REMOVED BR-789>legacy </REMOVED BR-789>}.
- * Left in place that markup reaches generated Java, where it changes step method names, corrupts record
- * type and field names derived from data table headers, and emits unbalanced HTML into JavaDoc.
+ * Left in place those markers reach generated Java, where they change step method names, corrupt record
+ * type and field names derived from data table headers, and emit unbalanced HTML into JavaDoc.
  *
- * <p>Two kinds of pattern are supported, and they are applied in this order:
- * <ol>
- *     <li><b>Ranges</b> ({@code stripRangePatterns}) — the whole match, opening marker through closing
- *     marker, is removed along with the text between them.</li>
- *     <li><b>Markers</b> ({@code stripMarkerPatterns}) — each match is a single marker and is removed on
- *     its own, keeping the text it wrapped.</li>
- * </ol>
- * Ranges must go first, and the order is observable: when a marker pattern also matches a range's own
- * markers, running markers first would strip those markers individually, leaving the range pattern nothing
- * to match and resurrecting text the author had marked as removed.
+ * <p>There is a single rule: <b>every match of every configured pattern is removed</b>. What a pattern
+ * matches therefore decides what disappears — a pattern matching only a marker keeps the text that marker
+ * wrapped, while a pattern matching an opening marker through a closing marker takes the wrapped text with
+ * it. No separate configuration distinguishes the two shapes.
  *
- * <p>Removal is done in two steps so that a range may wrap whole Gherkin constructs without corrupting the
- * document. Matches are first replaced by the newlines they contained, which keeps every line at its
+ * <p>Patterns are applied in declaration order, and the order is observable when they overlap: a
+ * marker-only pattern applied first can strip the markers a wrapping pattern was relying on, leaving text
+ * the author had marked as removed. Wrapping patterns should be listed first.
+ *
+ * <p>Removal happens in two steps so that a pattern may wrap whole Gherkin constructs without corrupting
+ * the document. Matches are first replaced by the newlines they contained, which keeps every line at its
  * original number while diagnostics are produced; afterwards, any line that a removal left containing only
  * whitespace is dropped entirely. Dropping those lines is what allows a data table or {@code Examples} row
  * to be removed — a blank line left mid-table would otherwise terminate the table and orphan every row
  * below it. Lines that were already blank are never dropped, because a blank line inside a doc string is
  * content.
  */
-public final class SpecMarkupStripper {
+public final class SpecTextStripper {
 
-    private static final String MARKER_OPTION = "stripMarkerPatterns";
-    private static final String RANGE_OPTION = "stripRangePatterns";
+    private static final String OPTION_NAME = "stripPatterns";
 
     /**
      * Matches a line left holding nothing but a Gherkin step keyword.
@@ -49,12 +46,10 @@ public final class SpecMarkupStripper {
     private static final Pattern STEP_KEYWORD_ONLY_LINE =
             Pattern.compile("^\\s*(Given|When|Then|And|But|\\*)\\s*$");
 
-    private final List<Pattern> markerPatterns;
-    private final List<Pattern> rangePatterns;
+    private final List<Pattern> stripPatterns;
 
-    private SpecMarkupStripper(List<Pattern> markerPatterns, List<Pattern> rangePatterns) {
-        this.markerPatterns = markerPatterns;
-        this.rangePatterns = rangePatterns;
+    private SpecTextStripper(List<Pattern> stripPatterns) {
+        this.stripPatterns = stripPatterns;
     }
 
     /**
@@ -64,14 +59,11 @@ public final class SpecMarkupStripper {
      * @return a stripper for those options
      * @throws ProcessingException if any configured pattern is not a valid regular expression
      */
-    public static SpecMarkupStripper from(GeneratorOptions options) {
-        return new SpecMarkupStripper(
-                compileAll(options.getStripMarkerPatterns(), MARKER_OPTION),
-                compileAll(options.getStripRangePatterns(), RANGE_OPTION)
-        );
+    public static SpecTextStripper from(GeneratorOptions options) {
+        return new SpecTextStripper(compileAll(options.getStripPatterns()));
     }
 
-    private static List<Pattern> compileAll(String[] patterns, String optionName) {
+    private static List<Pattern> compileAll(String[] patterns) {
         List<Pattern> compiled = new ArrayList<>();
         if (patterns == null) {
             return compiled;
@@ -84,7 +76,7 @@ public final class SpecMarkupStripper {
                 compiled.add(Pattern.compile(pattern));
             } catch (PatternSyntaxException e) {
                 throw new ProcessingException(
-                        "Invalid regular expression in " + optionName + " option: '" + pattern + "' - "
+                        "Invalid regular expression in " + OPTION_NAME + " option: '" + pattern + "' - "
                                 + e.getDescription());
             }
         }
@@ -92,18 +84,18 @@ public final class SpecMarkupStripper {
     }
 
     /**
-     * @return true if at least one marker or range pattern is configured
+     * @return true if at least one pattern is configured
      */
     public boolean isEnabled() {
-        return !markerPatterns.isEmpty() || !rangePatterns.isEmpty();
+        return !stripPatterns.isEmpty();
     }
 
     /**
-     * Removes every configured range and marker from the given spec file content.
+     * Removes every match of every configured pattern from the given spec file content.
      *
      * @param content the raw spec file content
-     * @return the content with revision markup removed
-     * @throws ProcessingException if a range removal leaves a step keyword with no text after it
+     * @return the content with the configured text removed
+     * @throws ProcessingException if a removal leaves a step keyword with no text after it
      */
     public String strip(String content) {
         if (!isEnabled() || content == null || content.isEmpty()) {
@@ -113,16 +105,11 @@ public final class SpecMarkupStripper {
         Set<Integer> touchedLines = new HashSet<>();
 
         String working = content;
-        for (Pattern rangePattern : rangePatterns) {
-            working = removeKeepingLineCount(working, rangePattern, touchedLines);
-        }
-        for (Pattern markerPattern : markerPatterns) {
-            working = removeKeepingLineCount(working, markerPattern, touchedLines);
+        for (Pattern stripPattern : stripPatterns) {
+            working = removeKeepingLineCount(working, stripPattern, touchedLines);
         }
 
-        if (!rangePatterns.isEmpty()) {
-            failIfAnyStepLostItsText(working);
-        }
+        failIfAnyStepLostItsText(working);
 
         return dropEmptiedLines(working, touchedLines);
     }
@@ -168,9 +155,9 @@ public final class SpecMarkupStripper {
     }
 
     /**
-     * Fails the build when a range removal has taken all of a step's text but left its keyword behind,
-     * rather than letting a step with no text reach code generation. Line numbers are still the original
-     * ones at this point, because removals have preserved the line count.
+     * Fails the build when a removal has taken all of a step's text but left its keyword behind, rather
+     * than letting a step with no text reach code generation. Line numbers are still the original ones at
+     * this point, because removals have preserved the line count.
      */
     private static void failIfAnyStepLostItsText(String content) {
         String[] lines = content.split("\n", -1);
@@ -178,7 +165,8 @@ public final class SpecMarkupStripper {
             if (STEP_KEYWORD_ONLY_LINE.matcher(lines[i]).matches()) {
                 throw new ProcessingException(
                         "Step on line - " + (i + 1)
-                                + " has no text left after range removal - include the step keyword in the marked range");
+                                + " has no text left after pattern removal - include the step keyword in the"
+                                + " matched text");
             }
         }
     }

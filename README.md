@@ -516,7 +516,7 @@ public class CartFeatureTest extends CartFeature {
 + Where the step had quoted arguments, the method name includes **positional placeholders** to indicate argument slots (
   e.g., `$p1`, `$p2`, …).
 
-+ If [revision markup stripping](#stripping-revision-markup-from-spec-files--experimental) is configured, that markup is
++ If [spec text stripping](#stripping-text-from-spec-files--experimental) is configured, that markup is
   removed **before** the name is derived — so adding or editing a `<CHANGED …>` marker never renames a step method.
 
 > Resulting shape:
@@ -1710,8 +1710,7 @@ All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You ca
 | `emitScenarioHash`                      | boolean  | `false`                  | Emit a `@ScenarioHash("…")` annotation carrying a SHA-256 of each scenario's executable content                                                          |
 | `verbosity`                             | enum     | `NORMAL`                 | Build log verbosity during annotation processing: `SILENT`, `NORMAL`, `VERBOSE`, or `DEBUG`                                                              |
 | `enableCompositeSteps`                  | boolean  | `false`                  | **(experimental)** Enable composite step pattern                                                                                                          |
-| `stripMarkerPatterns`                   | String[] | `{}`                     | **(experimental)** Regex patterns matching HTML-like revision markers to remove from the spec file, keeping the text they wrap                            |
-| `stripRangePatterns`                    | String[] | `{}`                     | **(experimental)** Regex patterns matching HTML-like revision ranges to remove from the spec file, together with the text they wrap                       |
+| `stripPatterns`                         | String[] | `{}`                     | **(experimental)** Regex patterns; every match is stripped from the spec file before it is parsed — used to remove revision markers                       |
 
 <details>
 
@@ -1748,7 +1747,7 @@ public abstract class CartFeature extends BaseFeatureOptions {
 
 </details>
 
-#### Stripping revision markup from spec files — *(experimental)*
+#### Stripping text from spec files — *(experimental)*
 
 Teams often annotate specs with HTML-like markup tying wording back to an issue tracker:
 
@@ -1763,20 +1762,21 @@ names** — so adding or editing a marker renames an abstract step method and th
 that implements it no longer compiles. It also corrupts record field names derived from data table
 headers, and emits unbalanced HTML into JavaDoc.
 
-Two options remove it before the spec is parsed. Both take regular expressions, because in-house markup
-conventions vary, and both default to `{}` (nothing is stripped):
+`stripPatterns` removes it before the spec is parsed. It takes regular expressions, because in-house
+markup conventions vary, and defaults to `{}` (nothing is stripped).
 
-| Option                | What a match means                                                     |
-|-----------------------|------------------------------------------------------------------------|
-| `stripMarkerPatterns` | one marker — opening *or* closing. Removed on its own; wrapped text stays |
-| `stripRangePatterns`  | a whole range, opening marker through closing marker. Removed *with* the text between them |
-
-Starter patterns to copy:
+There is one rule: **every match is removed**. So the shape of the pattern decides what disappears —
+match only a marker and the text it wrapped survives; match an opening marker *through* a closing marker
+and the wrapped text goes with them. Starter patterns for both shapes:
 
 ```java
 @Gherkin2JUnitOptions(
-        stripMarkerPatterns = {"(?i)(<\\s*(NEW|CHANGED)\\s+[^<>]*>|</\\s*(NEW|CHANGED)\\b[^<>]*>)"},
-        stripRangePatterns = {"(?is)<\\s*REMOVED\\b[^<>]*>.*?</\\s*REMOVED\\b[^<>]*>"}
+        stripPatterns = {
+                // removes the marked text as well - list these first
+                "(?is)<\\s*REMOVED\\b[^<>]*>.*?</\\s*REMOVED\\b[^<>]*>",
+                // removes only the markers, keeping the text they wrap
+                "(?i)(<\\s*(NEW|CHANGED)\\s+[^<>]*>|</\\s*(NEW|CHANGED)\\b[^<>]*>)"
+        }
 )
 ```
 
@@ -1792,16 +1792,17 @@ Points worth knowing:
   parameter and changing the generated method signature.
 * **Markers are not a balanced structure.** Each match is removed independently, so an unpaired marker is
   removed just the same, and a pair may wrap several steps without affecting what sits between them.
-* **Ranges may wrap whole constructs** — several steps, an entire Scenario, or table rows. Use the `(?s)`
-  flag so the range can span lines; the reluctant `.*?` stops at the nearest closing marker. Nesting ranges
-  of the same keyword is not supported.
-* **Emptied lines are dropped.** Any line left holding only whitespace once a range is removed disappears
+* **A pattern may wrap whole constructs** — several steps, an entire Scenario, or table rows. Use the
+  `(?s)` flag so it can span lines; the reluctant `.*?` stops at the nearest closing marker. Nesting
+  wrapping patterns of the same keyword is not supported.
+* **Emptied lines are dropped.** Any line left holding only whitespace once a match is removed disappears
   entirely, so deleting a table row does not leave a gap that would terminate the table. This shifts the
-  source line numbers of everything below the range, which affects `addSourceLineNumbers` output.
-* **Ranges are removed before markers**, so content marked as removed stays removed even when a marker
-  pattern would also have matched the range's own markers.
-* **A range that takes all of a step's text but leaves its keyword fails the build**, naming the line —
-  include the step keyword inside the marked range instead.
+  source line numbers of everything below it, which affects `addSourceLineNumbers` output.
+* **Order matters when patterns overlap.** Patterns are applied in the order declared; a marker-only
+  pattern listed first can strip the markers a wrapping pattern was relying on, leaving text the author had
+  marked as removed. List wrapping patterns first.
+* **A match that takes all of a step's text but leaves its keyword fails the build**, naming the line —
+  include the step keyword inside the matched text instead.
 
 > **Using the IntelliJ plugin?** Until the plugin applies the same patterns, a spec that relies on these
 > options will show markup-bearing scenarios as permanently stale in the gutter, and Ctrl+Click from a

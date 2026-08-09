@@ -661,76 +661,53 @@ public @interface Gherkin2JUnitOptions {
     /**
      * -- EXPERIMENTAL OPTION --
      * <br/><br/>
-     * Regular expressions matching HTML-like revision markers that should be removed from the spec file
-     * before it is turned into test code, keeping the text they wrap.
+     * Regular expressions matching text to strip from the spec file before it is turned into test code.
+     * Every match is removed, so what a pattern matches decides what disappears.
      * <p>
-     * Teams often annotate specs with traceability markup tied to an issue tracker, for example
+     * Teams often annotate specs with revision markers tying wording back to an issue tracker, for example
      * {@code <CHANGED BR-123>premium</CHANGED BR-123>} or {@code <NEW BY BR-456>loyalty tier</NEW BY BR-456>}.
-     * Left in place, that markup reaches generated Java: it changes step method names (so adding a marker
-     * renames an abstract method and breaks the hand-written subclass that overrides it), corrupts record
-     * type and field names derived from data table headers, and emits unbalanced HTML into JavaDoc.
+     * Left in place, such markers reach generated Java: they change step method names (so adding a marker
+     * renames an abstract method and breaks the hand-written subclass that overrides it), corrupt record
+     * type and field names derived from data table headers, and emit unbalanced HTML into JavaDoc.
      * <p>
-     * Each pattern matches a <em>single</em> marker — opening or closing — and every match is removed on
-     * its own. Markers are not treated as a balanced structure, so an unpaired marker is removed just the
-     * same, and a pair may span any number of lines without affecting what sits between them.
-     * <p>
-     * A recommended starter pattern, which tolerates arbitrary wording after the keyword while leaving a
-     * Scenario Outline {@code <placeholder>} alone:
+     * A pattern that matches only a marker removes that marker and <b>keeps</b> the text it wrapped. A
+     * pattern that matches an opening marker, the text between, and a closing marker removes the wrapped
+     * text <b>along with</b> the markers — use the {@code (?s)} flag so such a pattern may span lines.
+     * Recommended starter patterns for the two shapes:
      * <pre>
      * &#64;Gherkin2JUnitOptions(
-     *     stripMarkerPatterns = {"(?i)(&lt;\\s*(NEW|CHANGED)\\s+[^&lt;&gt;]*&gt;|&lt;/\\s*(NEW|CHANGED)\\b[^&lt;&gt;]*&gt;)"}
+     *     stripPatterns = {
+     *         // removes the marked text as well - list these first
+     *         "(?is)&lt;\s*REMOVED\b[^&lt;&gt;]*&gt;.*?&lt;/\s*REMOVED\b[^&lt;&gt;]*&gt;",
+     *         // removes only the markers, keeping the text they wrap
+     *         "(?i)(&lt;\s*(NEW|CHANGED)\s+[^&lt;&gt;]*&gt;|&lt;/\s*(NEW|CHANGED)\b[^&lt;&gt;]*&gt;)"
+     *     }
      * )
      * </pre>
-     * Requiring whitespace and content after the keyword in the opening form is what stops the pattern
-     * from matching a bare placeholder such as {@code <changed>}. A looser pattern that does match one
-     * will strip it, silently removing the step's parameter.
+     * Patterns are applied <b>in the order they are declared</b>, and the order matters when they overlap:
+     * a marker-only pattern listed first can strip the markers a wrapping pattern was relying on, leaving
+     * text the author had marked as removed. List the wrapping patterns first.
      * <p>
-     * Defaults to an empty array, which leaves all markup untouched.
+     * Markers are not treated as a balanced structure — each match is removed on its own, so an unpaired
+     * marker is removed just the same, and a marker pair may span any number of lines without affecting
+     * what sits between them.
+     * <p>
+     * Requiring whitespace and content after the keyword in the opening form, as above, is what stops a
+     * pattern from also matching a bare Scenario Outline placeholder such as {@code <changed>}. A looser
+     * pattern that does match one will strip it, silently removing the step's parameter.
+     * <p>
+     * A pattern may wrap whole Gherkin constructs — several steps, an entire Scenario, or rows of a data
+     * table or {@code Examples} table. Any line left containing only whitespace once a match is removed is
+     * dropped entirely, so removing a table row does not leave a blank line that would terminate the table.
+     * Note that this shifts the source line numbers of everything below the removed text.
+     * <p>
+     * Defaults to an empty array, which leaves the spec file untouched.
      * <p>
      * Note: This feature is experimental and the API may change in future versions.
      *
-     * @return regular expressions matching markers to remove, keeping the text they wrap
-     * @see #stripRangePatterns()
+     * @return regular expressions matching text to strip from the spec file
      */
-    String[] stripMarkerPatterns() default {};
-
-    /**
-     * -- EXPERIMENTAL OPTION --
-     * <br/><br/>
-     * Regular expressions matching HTML-like revision ranges that should be removed from the spec file
-     * before it is turned into test code, <em>together with</em> the text they wrap.
-     * <p>
-     * Where {@link #stripMarkerPatterns()} keeps the wrapped text, this option discards it — the case for
-     * markup that records content retired by an issue, for example
-     * {@code <REMOVED BR-789>legacy discount </REMOVED BR-789>}. Each pattern matches a whole range,
-     * opening marker through closing marker, so no open/close pairing configuration is needed; use the
-     * {@code (?s)} flag so the range may span lines.
-     * <p>
-     * A recommended starter pattern:
-     * <pre>
-     * &#64;Gherkin2JUnitOptions(
-     *     stripRangePatterns = {"(?is)&lt;\\s*REMOVED\\b[^&lt;&gt;]*&gt;.*?&lt;/\\s*REMOVED\\b[^&lt;&gt;]*&gt;"}
-     * )
-     * </pre>
-     * The reluctant {@code .*?} stops at the nearest closing marker; nesting ranges of the same keyword is
-     * not supported.
-     * <p>
-     * A range may wrap whole Gherkin constructs — several steps, an entire Scenario, or rows of a data
-     * table or {@code Examples} table. Any line left containing only whitespace once the range is removed
-     * is dropped entirely, so removing a table row does not leave a blank line that would terminate the
-     * table. Note that this shifts the source line numbers of everything below the range.
-     * <p>
-     * Ranges are removed before markers, so a range still disappears wholesale even when a marker pattern
-     * would also have matched its opening and closing markers individually.
-     * <p>
-     * Defaults to an empty array, which leaves all markup untouched.
-     * <p>
-     * Note: This feature is experimental and the API may change in future versions.
-     *
-     * @return regular expressions matching ranges to remove along with the text they wrap
-     * @see #stripMarkerPatterns()
-     */
-    String[] stripRangePatterns() default {};
+    String[] stripPatterns() default {};
 
     /**
      * -- EXPERIMENTAL OPTION --

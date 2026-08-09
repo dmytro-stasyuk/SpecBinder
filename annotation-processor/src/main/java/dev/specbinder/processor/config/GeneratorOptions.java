@@ -170,20 +170,11 @@ public class GeneratorOptions {
     /**
      * -- EXPERIMENTAL OPTION --
      * <p>
-     * Regex patterns matching HTML-like revision markers that are removed from the spec file before it is
-     * parsed, keeping the text they wrap. Each pattern matches a single marker (opening or closing) and
-     * every match is removed independently, so markers are not treated as a balanced structure.
+     * Regex patterns matching text that is stripped from the spec file before it is parsed. Every match is
+     * removed, so a pattern matching only a marker keeps the text it wrapped, while a pattern matching an
+     * opening marker through a closing marker removes the wrapped text too. Applied in declaration order.
      */
-    private final String[] stripMarkerPatterns;
-
-    /**
-     * -- EXPERIMENTAL OPTION --
-     * <p>
-     * Regex patterns matching HTML-like revision ranges that are removed from the spec file before it is
-     * parsed, together with the text they wrap. Each pattern matches a whole range, opening marker through
-     * closing marker. Ranges are removed before markers.
-     */
-    private final String[] stripRangePatterns;
+    private final String[] stripPatterns;
 
     /**
      * Default options
@@ -212,8 +203,7 @@ public class GeneratorOptions {
         this.descriptionAsAnnotation = false;
         this.maxStringLiteralBytes = 65000;
         this.skipUnchangedSpecs = false;
-        this.stripMarkerPatterns = new String[]{};
-        this.stripRangePatterns = new String[]{};
+        this.stripPatterns = new String[]{};
     }
 
     /**
@@ -242,8 +232,7 @@ public class GeneratorOptions {
      * @param descriptionAsAnnotation see {@link #descriptionAsAnnotation}
      * @param maxStringLiteralBytes see {@link #maxStringLiteralBytes}
      * @param skipUnchangedSpecs see {@link #skipUnchangedSpecs}
-     * @param stripMarkerPatterns see {@link #stripMarkerPatterns}
-     * @param stripRangePatterns see {@link #stripRangePatterns}
+     * @param stripPatterns see {@link #stripPatterns}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -269,8 +258,7 @@ public class GeneratorOptions {
             boolean descriptionAsAnnotation,
             int maxStringLiteralBytes,
             boolean skipUnchangedSpecs,
-            String[] stripMarkerPatterns,
-            String[] stripRangePatterns
+            String[] stripPatterns
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -295,8 +283,7 @@ public class GeneratorOptions {
         this.descriptionAsAnnotation = descriptionAsAnnotation;
         this.maxStringLiteralBytes = maxStringLiteralBytes;
         this.skipUnchangedSpecs = skipUnchangedSpecs;
-        this.stripMarkerPatterns = stripMarkerPatterns == null ? new String[]{} : stripMarkerPatterns;
-        this.stripRangePatterns = stripRangePatterns == null ? new String[]{} : stripRangePatterns;
+        this.stripPatterns = stripPatterns == null ? new String[]{} : stripPatterns;
     }
 
 }

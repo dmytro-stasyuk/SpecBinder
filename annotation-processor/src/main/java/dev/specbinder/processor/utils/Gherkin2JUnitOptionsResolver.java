@@ -93,8 +93,7 @@ public class Gherkin2JUnitOptionsResolver {
         boolean descriptionAsAnnotation = false;
         int maxStringLiteralBytes = 65000;
         boolean skipUnchangedSpecs = false;
-        String[] stripMarkerPatterns = new String[]{};
-        String[] stripRangePatterns = new String[]{};
+        String[] stripPatterns = new String[]{};
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -216,14 +215,9 @@ public class Gherkin2JUnitOptionsResolver {
                     case "skipUnchangedSpecs":
                         skipUnchangedSpecs = (Boolean) value;
                         break;
-                    case "stripMarkerPatterns":
+                    case "stripPatterns":
                         if (value instanceof List<?> list) {
-                            stripMarkerPatterns = toStringArray(list);
-                        }
-                        break;
-                    case "stripRangePatterns":
-                        if (value instanceof List<?> list) {
-                            stripRangePatterns = toStringArray(list);
+                            stripPatterns = toStringArray(list);
                         }
                         break;
                     default:
@@ -256,8 +250,7 @@ public class Gherkin2JUnitOptionsResolver {
                 descriptionAsAnnotation,
                 maxStringLiteralBytes,
                 skipUnchangedSpecs,
-                stripMarkerPatterns,
-                stripRangePatterns
+                stripPatterns
         );
     }
 
@@ -304,8 +297,7 @@ public class Gherkin2JUnitOptionsResolver {
                 options.descriptionAsAnnotation(),
                 options.maxStringLiteralBytes(),
                 options.skipUnchangedSpecs(),
-                options.stripMarkerPatterns(),
-                options.stripRangePatterns()
+                options.stripPatterns()
         );
     }
 }

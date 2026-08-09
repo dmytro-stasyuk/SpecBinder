@@ -59,10 +59,10 @@ public class FeatureFileParser implements LoggingSupport {
 
         String fileContent = loadFileContent(featureFilePath);
 
-        SpecMarkupStripper markupStripper = SpecMarkupStripper.from(options);
-        boolean markupWasStripped = markupStripper.isEnabled();
-        if (markupWasStripped) {
-            fileContent = markupStripper.strip(fileContent);
+        SpecTextStripper textStripper = SpecTextStripper.from(options);
+        boolean textWasStripped = textStripper.isEnabled();
+        if (textWasStripped) {
+            fileContent = textStripper.strip(fileContent);
         }
 
         InputStream inputStream = new ByteArrayInputStream(fileContent.getBytes(StandardCharsets.UTF_8));
@@ -80,12 +80,12 @@ public class FeatureFileParser implements LoggingSupport {
             Feature feature = gherkinDocument.getFeature().orElse(null);
             return feature;
         } else {
-            String markupHint = markupWasStripped
-                    ? " (revision markup was stripped from this file before parsing - check that a marked"
-                    + " range has not removed a Feature, Rule or Scenario line)"
+            String strippedHint = textWasStripped
+                    ? " (text was stripped from this file before parsing - check that a stripPatterns match"
+                    + " has not removed a Feature, Rule or Scenario line)"
                     : "";
             throw new ProcessingException(
-                    "Unable to parse Feature from the specified gherkin document: " + featureFilePath + markupHint);
+                    "Unable to parse Feature from the specified gherkin document: " + featureFilePath + strippedHint);
         }
     }
 
