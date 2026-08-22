@@ -25,3 +25,4 @@ todo.txt
 docs/
 **/.flattened-pom.xml
 .aider*
+.idea
