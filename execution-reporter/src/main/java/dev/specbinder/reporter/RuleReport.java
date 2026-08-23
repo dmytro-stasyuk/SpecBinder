@@ -6,14 +6,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonPropertyOrder({"id", "displayName", "description", "sourceLine", "scenarios"})
+@JsonPropertyOrder({"id", "displayName", "description", "scenarios"})
 public class RuleReport {
 
     private String id;
     private String displayName;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
-    private Long sourceLine;
     private List<ScenarioNode> scenarios;
 
     public RuleReport() {
@@ -42,14 +41,6 @@ public class RuleReport {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Long getSourceLine() {
-        return sourceLine;
-    }
-
-    public void setSourceLine(Long sourceLine) {
-        this.sourceLine = sourceLine;
     }
 
     public List<ScenarioNode> getScenarios() {

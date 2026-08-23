@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
+- **⚠️ BREAKING:** Execution reporter: the `sourceLine` field has been removed from every node of the per-feature JSON report — scenarios, Scenario Outlines, example rows and Rules. The field could only ever be populated when the generated test code carried a source-line marker, which generation does not produce, so in practice it was absent from real reports and present only in hand-written test classes. Scenarios and Rules are no longer re-sorted by source line either; they now appear in the order they executed, which for generated code is spec order. Tooling reading `sourceLine` should locate a scenario by its `scenarioHash` or its `id` instead
+
 ## [2026.44.0]
 
 ### Added

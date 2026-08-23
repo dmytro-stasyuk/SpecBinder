@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 @JsonPropertyOrder({
-        "displayName", "status", "sourceLine", "startedAt", "durationMs",
+        "displayName", "status", "startedAt", "durationMs",
         "examplesRow", "rowHash", "backgroundSteps", "steps"
 })
 public class ExampleReport {
 
     private String displayName;
     private Status status;
-    private Long sourceLine;
     private Instant startedAt;
     private long durationMs;
     private Map<String, String> examplesRow;
@@ -45,14 +44,6 @@ public class ExampleReport {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public Long getSourceLine() {
-        return sourceLine;
-    }
-
-    public void setSourceLine(Long sourceLine) {
-        this.sourceLine = sourceLine;
     }
 
     public Instant getStartedAt() {

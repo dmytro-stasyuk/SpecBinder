@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.specbinder.annotations.output.Description;
 import dev.specbinder.annotations.output.ScenarioHash;
 import dev.specbinder.annotations.output.SourceFilePath;
-import dev.specbinder.annotations.output.SourceLine;
 import dev.specbinder.reporter.internal.InstrumentedClassFactory;
 import dev.specbinder.reporter.internal.ScenarioHasher;
 import dev.specbinder.reporter.internal.SourceFeatureReader;
@@ -206,7 +205,6 @@ public class SpecBinderReporter implements
             rule.setId(reportFqn(testClass, featureReport.getTestClass()));
             rule.setDisplayName(displayNameOf(testClass));
             rule.setDescription(readDescription(testClass));
-            rule.setSourceLine(readSourceLine(testClass));
             featureReport.getRules().add(rule);
             store.put(KEY_RULE_REPORT, rule);
 
@@ -470,7 +468,6 @@ public class SpecBinderReporter implements
             ExampleReport row = new ExampleReport();
             row.setDisplayName(context.getDisplayName());
             row.setStatus(status);
-            row.setSourceLine(outline.getSourceLine());
             row.setStartedAt(startedAt);
             row.setDurationMs(durationMs);
             Map<String, String> examplesRow = parseExamplesRow(context.getDisplayName());
@@ -492,7 +489,6 @@ public class SpecBinderReporter implements
         node.setDisplayName(context.getDisplayName());
         node.setDescription(readDescription(testMethod));
         node.setStatus(status);
-        node.setSourceLine(readSourceLine(testMethod));
         node.setScenarioHash(readScenarioHash(testMethod));
         node.setTags(tagsOf(context));
         node.setStartedAt(startedAt);
@@ -537,7 +533,6 @@ public class SpecBinderReporter implements
         node.setDisplayName(context.getDisplayName());
         node.setDescription(readDescription(testMethod));
         node.setStatus(Status.SKIPPED);
-        node.setSourceLine(readSourceLine(testMethod));
         node.setScenarioHash(readScenarioHash(testMethod));
         node.setTags(tagsOf(context));
         attachScenario(context, node, featureReport);
@@ -574,7 +569,6 @@ public class SpecBinderReporter implements
         }
 
         finalizeOutlineNodes(featureReport);
-        sortByLine(featureReport);
         stampStepTexts(featureReport, context.getRequiredTestClass().getClassLoader());
 
         // Fire feature-finished before the disk-write early return so it always pairs with the
@@ -673,7 +667,6 @@ public class SpecBinderReporter implements
         outline.setId(formatTestId(rowContext.getRequiredTestClass(), testMethod, featureReport.getTestClass()));
         outline.setDisplayName(deriveOutlineDisplayName(methodCtx, testMethod));
         outline.setDescription(readDescription(testMethod));
-        outline.setSourceLine(readSourceLine(testMethod));
         outline.setScenarioHash(readScenarioHash(testMethod));
         outline.setTags(tagsOf(methodCtx));
         methodStore.put(KEY_OUTLINE_NODE, outline);
@@ -767,8 +760,8 @@ public class SpecBinderReporter implements
      * corresponding {@link StepReport}, gated by {@code @ScenarioHash} integrity.
      * <p>
      * Pairs runtime {@link ScenarioNode}s with parsed spec scenarios by position — both
-     * lists are in source order (the report's by execution {@code @Order} or by
-     * {@code @SourceLine} sort, the parser's by file order). Within each pair the recorded
+     * lists are in source order (the report's by execution order, which the generated
+     * {@code @Order} annotations pin to spec order; the parser's by file order). Within each pair the recorded
      * {@code @ScenarioHash} is compared to the canonical hash recomputed from the parsed
      * spec; on match the spec's step lines are stamped onto the report. On mismatch the
      * code falls back to a linear scan for any parsed scenario whose hash matches —
@@ -1111,17 +1104,6 @@ public class SpecBinderReporter implements
         return columns;
     }
 
-    private static void sortByLine(FeatureReport report) {
-        Comparator<ScenarioNode> byLine = Comparator.comparing(
-                ScenarioNode::getSourceLine, Comparator.nullsLast(Comparator.naturalOrder()));
-        report.getScenarios().sort(byLine);
-        report.getRules().sort(Comparator.comparing(
-                RuleReport::getSourceLine, Comparator.nullsLast(Comparator.naturalOrder())));
-        for (RuleReport rule : report.getRules()) {
-            rule.getScenarios().sort(byLine);
-        }
-    }
-
     private static FeatureReport findFeatureReport(ExtensionContext context) {
         ExtensionContext root = featureRootContextOf(context);
         return root == null ? null : root.getStore(NAMESPACE).get(KEY_FEATURE_REPORT, FeatureReport.class);
@@ -1201,16 +1183,6 @@ public class SpecBinderReporter implements
             cls = next;
         }
         return displayNameOf(start);
-    }
-
-    private static Long readSourceLine(Class<?> clazz) {
-        SourceLine ann = clazz.getAnnotation(SourceLine.class);
-        return ann == null ? null : ann.value();
-    }
-
-    private static Long readSourceLine(Method method) {
-        SourceLine ann = method.getAnnotation(SourceLine.class);
-        return ann == null ? null : ann.value();
     }
 
     private static String readScenarioHash(Method method) {

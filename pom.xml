@@ -41,6 +41,12 @@
         <jacoco.version>0.8.13</jacoco.version>
         <jacoco.line.coverage>0.50</jacoco.line.coverage>
         <jacoco.branch.coverage>0.50</jacoco.branch.coverage>
+        <!--
+            Coverage ratchet opt-out, mirroring maven.deploy.skip above: the coverage-ratchet
+            profile is declared once for the whole reactor, and only the test-bearing modules
+            (annotation-processor, execution-reporter) flip this to false to let it run.
+        -->
+        <coverage.ratchet.skip>true</coverage.ratchet.skip>
     </properties>
     <modules>
         <module>annotations</module>
@@ -112,6 +118,15 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <!--
+                    Version pinned here so the coverage-ratchet profile in each test-bearing module
+                    can reference the plugin bare. See .mvn/coverage-ratchet.sh.
+                -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.5.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -383,6 +398,56 @@
                                 </configuration>
                             </execution>
 
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--
+            Coverage ratchet (opt-in): ./mvnw clean install -Pcoverage-ratchet
+
+            After jacoco-check passes, raises jacoco.line.coverage / jacoco.branch.coverage in the
+            module's own pom to the ratio it actually achieved, floored to two decimals. Only ever
+            raises, so a partial run is harmless. Declared once here and inherited by every module;
+            coverage.ratchet.skip keeps it inert everywhere except the test-bearing modules that
+            set it to false.
+
+            Deliberately opt-in rather than always-on. It must never fire inside -Prelease, which
+            commits the release before running its inner `clean deploy`, and it must only run after
+            a `clean` — the JaCoCo agent appends to jacoco.exec, so an uncleaned rerun reports the
+            union of several runs and would ratchet to a threshold no single run can meet.
+
+            Bound to install, the first phase after the verify-bound jacoco-check, so the gate has
+            always been evaluated by the time this runs. Note that `install` is therefore required —
+            a plain `verify` stops before it. Ordering alone is not sufficient, though: it proves
+            only that check ran, not that it passed (jacoco.haltOnFailure=false, jacoco.skip=true,
+            or a missing jacoco.exec all let a red or unevaluated build through). The script
+            re-checks both achieved ratios against the pom's configured gates and does nothing
+            unless both clear.
+        -->
+        <profile>
+            <id>coverage-ratchet</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>ratchet-coverage</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${coverage.ratchet.skip}</skip>
+                                    <executable>${maven.multiModuleProjectDirectory}/.mvn/coverage-ratchet.sh</executable>
+                                    <arguments>
+                                        <argument>${project.build.directory}/site/jacoco/jacoco.csv</argument>
+                                        <argument>${project.basedir}/pom.xml</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>

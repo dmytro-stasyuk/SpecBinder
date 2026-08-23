@@ -16,7 +16,7 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "type", "id", "displayName", "description", "status", "sourceLine", "scenarioHash", "tags",
+        "type", "id", "displayName", "description", "status", "scenarioHash", "tags",
         "startedAt", "durationMs", "backgroundSteps", "steps", "totalDurationMs", "templateSteps", "examples"
 })
 public class ScenarioNode {
@@ -42,7 +42,6 @@ public class ScenarioNode {
     private String displayName;
     private String description;
     private Status status;
-    private Long sourceLine;
     private String scenarioHash;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<String> tags;
@@ -112,14 +111,6 @@ public class ScenarioNode {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public Long getSourceLine() {
-        return sourceLine;
-    }
-
-    public void setSourceLine(Long sourceLine) {
-        this.sourceLine = sourceLine;
     }
 
     public String getScenarioHash() {

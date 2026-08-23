@@ -84,6 +84,7 @@ public final class SpecTextStripper {
     }
 
     /**
+     * Enabled or not.
      * @return true if at least one pattern is configured
      */
     public boolean isEnabled() {

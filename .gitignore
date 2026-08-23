@@ -26,3 +26,4 @@ docs/
 **/.flattened-pom.xml
 .aider*
 .idea
+/.local/

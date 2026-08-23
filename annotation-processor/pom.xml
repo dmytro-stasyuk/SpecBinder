@@ -14,8 +14,10 @@
         <!--<cucumber-java.version>7.14.0</cucumber-java.version>-->
         <maven.deploy.skip>false</maven.deploy.skip>
         <!-- Coverage gate for this module (overrides parent defaults). -->
-        <jacoco.line.coverage>0.85</jacoco.line.coverage>
-        <jacoco.branch.coverage>0.73</jacoco.branch.coverage>
+        <jacoco.line.coverage>0.86</jacoco.line.coverage>
+        <jacoco.branch.coverage>0.74</jacoco.branch.coverage>
+        <!-- Let the parent's coverage-ratchet profile raise the two gates above. -->
+        <coverage.ratchet.skip>false</coverage.ratchet.skip>
     </properties>
     <build>
         <resources>
