@@ -5,7 +5,7 @@
     <parent>
         <groupId>dev.specbinder.examples.goingfurther</groupId>
         <artifactId>going-further</artifactId>
-        <version>2026.45.0</version>
+        <version>2026.46.0-SNAPSHOT</version>
     </parent>
     <artifactId>example-7</artifactId>
     <name>${project.parent.artifactId}-${project.artifactId}</name>
