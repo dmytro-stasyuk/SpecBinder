@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.45.0]
+
+### Added
+
 - Execution reporter: a Scenario Outline in the per-feature JSON report now carries a `templateSteps` array on the outline node — a single view of the outline's own steps with their `<>` placeholders intact, each entry pairing the called `methodName` with the original Gherkin `text`. A template step whose spec has a trailing DocString or DataTable also carries it as a typed `arguments` entry in template form — placeholders left unresolved, and DataTables keyed by their column headers without the runtime `columns` mapping since no row object is bound to the template. This complements the per-row `examples`, which resolve those placeholders to concrete values, so consumers can render the outline template once instead of re-deriving it from every row. Gated on the same scenario-hash match as step `text`; omitted when the hash is absent or the spec has been edited since the test was generated
 - Execution reporter: a Scenario Outline in the per-feature JSON report now carries an aggregate `status` on the outline node, rolled up from its example rows worst-first — failed if any row failed, else aborted if any row aborted, else skipped if any row was skipped, else passed. Previously the outline node had no status of its own, so consumers had to derive one from the rows; an outline whose rows all passed could be shown as not-executed
 - **(experimental)** New opt-in `@Gherkin2JUnitOptions(stripPatterns = {...})` option that strips matching text out of a spec file before it is turned into test code. Teams that annotate specs with revision markers tying wording back to an issue tracker — for example `<CHANGED BR-123>premium</CHANGED BR-123>` or `<REMOVED BR-789>legacy discount </REMOVED BR-789>` — previously found those markers reaching the generated code: they became part of step method names, so adding or editing a marker renamed an abstract step method and broke the hand-written test class implementing it, and they corrupted field names derived from data table headers and emitted unbalanced HTML into JavaDoc. Every match of every configured regular expression is removed, so the shape of the pattern decides what disappears: match only a marker and the text it wrapped survives, match an opening marker through a closing marker and the wrapped text goes with it. Text is stripped everywhere it can appear — step text, Feature/Rule/Scenario names, descriptions, doc strings, data tables and `Examples` tables, including header cells. A pattern may wrap whole Gherkin constructs such as several steps, an entire Scenario, or table rows; any line left holding only whitespace is dropped, so removing a table row does not leave a gap that would break the table, though this shifts the source line numbers of everything below it. Patterns are applied in the order declared, which matters when they overlap — a marker-only pattern listed first can strip the markers a wrapping pattern was relying on, so list wrapping patterns first. A match that takes all of a step’s text but leaves its keyword behind fails the build with a message naming the line; the default is an empty list, which leaves the spec file untouched
