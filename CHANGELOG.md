@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- **(experimental)** New opt-in `@Gherkin2JUnitOptions(stripBetweenPatterns = {...})` option that declares the two ends of a span of spec file text as separate patterns — `@StripBetween(start = "...", end = "...")` — and strips everything from the start marker to the end marker, markers included. It is the safer companion to `stripPatterns` for deleting text retired by an issue, such as `<REMOVED BR-789>legacy discount </REMOVED BR-789>`. Expressing the same span as a single regex has three traps that each produce a successful build with quietly wrong output: forgetting the dot-all flag makes a span crossing a newline silently fail to match; a greedy quantifier makes the span run to the last closing marker in the file, deleting everything in between; and an unclosed marker simply does not match. Declaring the ends separately removes the first two entirely, because the span is located by position rather than by one regex — so neither pattern needs a flag to cross lines, and each start always pairs with the nearest following end. A span may wrap whole Gherkin constructs such as several steps, an entire Scenario, or table rows; nesting is not supported, and a start with no following end leaves the text untouched. These pairs are applied before `stripPatterns`, so a span still disappears wholesale even when a pattern there would also have matched its markers individually; the default is an empty list, which leaves the spec file untouched
+
 ### Changed
 
 ### Fixed

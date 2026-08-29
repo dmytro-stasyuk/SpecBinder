@@ -1,6 +1,7 @@
 package dev.specbinder.processor.gherkin;
 
 import dev.specbinder.processor.config.GeneratorOptions;
+import dev.specbinder.processor.config.StripBetweenPattern;
 import dev.specbinder.processor.exception.ProcessingException;
 
 import java.util.ArrayList;
@@ -19,17 +20,22 @@ import java.util.regex.PatternSyntaxException;
  * Left in place those markers reach generated Java, where they change step method names, corrupt record
  * type and field names derived from data table headers, and emit unbalanced HTML into JavaDoc.
  *
- * <p>There is a single rule: <b>every match of every configured pattern is removed</b>. What a pattern
- * matches therefore decides what disappears — a pattern matching only a marker keeps the text that marker
- * wrapped, while a pattern matching an opening marker through a closing marker takes the wrapped text with
- * it. No separate configuration distinguishes the two shapes.
+ * <p>Two options feed this, and both reduce to the same rule — <b>every span they identify is removed</b>:
+ * <ul>
+ *     <li>{@code stripBetweenPatterns} declares the two ends of a span separately. Each {@code start}
+ *     pairs with the <em>nearest</em> following {@code end}, and the span is located by offset, so neither
+ *     pattern needs a DOTALL flag to cross lines and neither needs a reluctant quantifier. A {@code start}
+ *     with no following {@code end} leaves the text untouched.</li>
+ *     <li>{@code stripPatterns} removes each match of a single regex. What that regex matches decides what
+ *     disappears — match only a marker and the text it wrapped survives.</li>
+ * </ul>
  *
- * <p>Patterns are applied in declaration order, and the order is observable when they overlap: a
- * marker-only pattern applied first can strip the markers a wrapping pattern was relying on, leaving text
- * the author had marked as removed. Wrapping patterns should be listed first.
+ * <p>Between-pairs are applied first, then patterns. The order is observable: a marker-only pattern
+ * applied first could strip the markers a between-pair was relying on, leaving text the author had marked
+ * as removed.
  *
- * <p>Removal happens in two steps so that a pattern may wrap whole Gherkin constructs without corrupting
- * the document. Matches are first replaced by the newlines they contained, which keeps every line at its
+ * <p>Removal happens in two steps so that a span may wrap whole Gherkin constructs without corrupting the
+ * document. Matches are first replaced by the newlines they contained, which keeps every line at its
  * original number while diagnostics are produced; afterwards, any line that a removal left containing only
  * whitespace is dropped entirely. Dropping those lines is what allows a data table or {@code Examples} row
  * to be removed — a blank line left mid-table would otherwise terminate the table and orphan every row
@@ -39,6 +45,7 @@ import java.util.regex.PatternSyntaxException;
 public final class SpecTextStripper {
 
     private static final String OPTION_NAME = "stripPatterns";
+    private static final String BETWEEN_OPTION_NAME = "stripBetweenPatterns";
 
     /**
      * Matches a line left holding nothing but a Gherkin step keyword.
@@ -46,9 +53,17 @@ public final class SpecTextStripper {
     private static final Pattern STEP_KEYWORD_ONLY_LINE =
             Pattern.compile("^\\s*(Given|When|Then|And|But|\\*)\\s*$");
 
+    private final List<CompiledBetweenPattern> betweenPatterns;
     private final List<Pattern> stripPatterns;
 
-    private SpecTextStripper(List<Pattern> stripPatterns) {
+    /**
+     * A {@code stripBetweenPatterns} entry with both ends compiled.
+     */
+    private record CompiledBetweenPattern(Pattern start, Pattern end) {
+    }
+
+    private SpecTextStripper(List<CompiledBetweenPattern> betweenPatterns, List<Pattern> stripPatterns) {
+        this.betweenPatterns = betweenPatterns;
         this.stripPatterns = stripPatterns;
     }
 
@@ -57,10 +72,36 @@ public final class SpecTextStripper {
      *
      * @param options the resolved generator options for the annotated class
      * @return a stripper for those options
-     * @throws ProcessingException if any configured pattern is not a valid regular expression
+     * @throws ProcessingException if any configured pattern is not a valid regular expression, or a
+     *                             between-pair is missing one of its two ends
      */
     public static SpecTextStripper from(GeneratorOptions options) {
-        return new SpecTextStripper(compileAll(options.getStripPatterns()));
+        return new SpecTextStripper(
+                compileBetweenPatterns(options.getStripBetweenPatterns()),
+                compileAll(options.getStripPatterns())
+        );
+    }
+
+    private static List<CompiledBetweenPattern> compileBetweenPatterns(StripBetweenPattern[] betweenPatterns) {
+        List<CompiledBetweenPattern> compiled = new ArrayList<>();
+        if (betweenPatterns == null) {
+            return compiled;
+        }
+        for (StripBetweenPattern betweenPattern : betweenPatterns) {
+            if (betweenPattern == null) {
+                continue;
+            }
+            String start = betweenPattern.start();
+            String end = betweenPattern.end();
+            if (start == null || start.isBlank() || end == null || end.isBlank()) {
+                throw new ProcessingException(
+                        "Invalid " + BETWEEN_OPTION_NAME + " entry: both start and end must be set");
+            }
+            compiled.add(new CompiledBetweenPattern(
+                    compile(start, BETWEEN_OPTION_NAME),
+                    compile(end, BETWEEN_OPTION_NAME)));
+        }
+        return compiled;
     }
 
     private static List<Pattern> compileAll(String[] patterns) {
@@ -72,15 +113,19 @@ public final class SpecTextStripper {
             if (pattern == null || pattern.isEmpty()) {
                 continue;
             }
-            try {
-                compiled.add(Pattern.compile(pattern));
-            } catch (PatternSyntaxException e) {
-                throw new ProcessingException(
-                        "Invalid regular expression in " + OPTION_NAME + " option: '" + pattern + "' - "
-                                + e.getDescription());
-            }
+            compiled.add(compile(pattern, OPTION_NAME));
         }
         return compiled;
+    }
+
+    private static Pattern compile(String pattern, String optionName) {
+        try {
+            return Pattern.compile(pattern);
+        } catch (PatternSyntaxException e) {
+            throw new ProcessingException(
+                    "Invalid regular expression in " + optionName + " option: '" + pattern + "' - "
+                            + e.getDescription());
+        }
     }
 
     /**
@@ -88,11 +133,11 @@ public final class SpecTextStripper {
      * @return true if at least one pattern is configured
      */
     public boolean isEnabled() {
-        return !stripPatterns.isEmpty();
+        return !betweenPatterns.isEmpty() || !stripPatterns.isEmpty();
     }
 
     /**
-     * Removes every match of every configured pattern from the given spec file content.
+     * Removes every span identified by the configured options from the given spec file content.
      *
      * @param content the raw spec file content
      * @return the content with the configured text removed
@@ -106,8 +151,11 @@ public final class SpecTextStripper {
         Set<Integer> touchedLines = new HashSet<>();
 
         String working = content;
+        for (CompiledBetweenPattern betweenPattern : betweenPatterns) {
+            working = removeSpansKeepingLineCount(working, findSpansBetween(working, betweenPattern), touchedLines);
+        }
         for (Pattern stripPattern : stripPatterns) {
-            working = removeKeepingLineCount(working, stripPattern, touchedLines);
+            working = removeSpansKeepingLineCount(working, findSpansMatching(working, stripPattern), touchedLines);
         }
 
         failIfAnyStepLostItsText(working);
@@ -116,13 +164,54 @@ public final class SpecTextStripper {
     }
 
     /**
-     * Removes every match of the pattern, replacing it with the newlines it contained so that all
-     * following lines keep their original line number, and records which lines the removal touched.
+     * Collects the span of every match of the pattern.
      */
-    private static String removeKeepingLineCount(String content, Pattern pattern, Set<Integer> touchedLines) {
-
+    private static List<int[]> findSpansMatching(String content, Pattern pattern) {
+        List<int[]> spans = new ArrayList<>();
         Matcher matcher = pattern.matcher(content);
-        if (!matcher.find()) {
+        while (matcher.find()) {
+            if (matcher.end() > matcher.start()) {
+                // a zero-length match removes nothing - skip it rather than record a phantom span
+                spans.add(new int[]{matcher.start(), matcher.end()});
+            }
+        }
+        return spans;
+    }
+
+    /**
+     * Collects the span from each start marker to the nearest end marker that follows it. A start with no
+     * following end leaves the text untouched, and ends the scan — any later end would already have been
+     * found by this start, so no later start can pair either.
+     */
+    private static List<int[]> findSpansBetween(String content, CompiledBetweenPattern betweenPattern) {
+        List<int[]> spans = new ArrayList<>();
+        Matcher startMatcher = betweenPattern.start().matcher(content);
+        Matcher endMatcher = betweenPattern.end().matcher(content);
+
+        int scanFrom = 0;
+        while (scanFrom <= content.length() && startMatcher.find(scanFrom)) {
+            if (!endMatcher.find(startMatcher.end())) {
+                break;
+            }
+            int spanEnd = endMatcher.end();
+            if (spanEnd <= scanFrom) {
+                // no forward progress - stop rather than spin on zero-length matches
+                break;
+            }
+            spans.add(new int[]{startMatcher.start(), spanEnd});
+            scanFrom = spanEnd;
+        }
+        return spans;
+    }
+
+    /**
+     * Removes each span, replacing it with the newlines it contained so that all following lines keep
+     * their original line number, and records which lines the removal touched. Spans must be
+     * non-overlapping and in ascending order, which is how both finders produce them.
+     */
+    private static String removeSpansKeepingLineCount(String content, List<int[]> spans, Set<Integer> touchedLines) {
+
+        if (spans.isEmpty()) {
             return content;
         }
 
@@ -130,26 +219,23 @@ public final class SpecTextStripper {
         int copiedUpTo = 0;
         int lineAtCopiedUpTo = 1;
 
-        do {
-            if (matcher.end() == matcher.start()) {
-                // a zero-length match removes nothing - skip it rather than record a phantom touch
-                continue;
+        for (int[] span : spans) {
+            int spanStart = span[0];
+            int spanEnd = span[1];
+
+            result.append(content, copiedUpTo, spanStart);
+
+            int firstLineOfSpan = lineAtCopiedUpTo + countNewlines(content, copiedUpTo, spanStart);
+            int newlinesInSpan = countNewlines(content, spanStart, spanEnd);
+            for (int i = 0; i <= newlinesInSpan; i++) {
+                touchedLines.add(firstLineOfSpan + i);
             }
 
-            result.append(content, copiedUpTo, matcher.start());
+            result.append("\n".repeat(newlinesInSpan));
 
-            int firstLineOfMatch = lineAtCopiedUpTo + countNewlines(content, copiedUpTo, matcher.start());
-            int newlinesInMatch = countNewlines(content, matcher.start(), matcher.end());
-            for (int i = 0; i <= newlinesInMatch; i++) {
-                touchedLines.add(firstLineOfMatch + i);
-            }
-
-            result.append("\n".repeat(newlinesInMatch));
-
-            copiedUpTo = matcher.end();
-            lineAtCopiedUpTo = firstLineOfMatch + newlinesInMatch;
-
-        } while (matcher.find());
+            copiedUpTo = spanEnd;
+            lineAtCopiedUpTo = firstLineOfSpan + newlinesInSpan;
+        }
 
         result.append(content, copiedUpTo, content.length());
         return result.toString();

@@ -1711,6 +1711,7 @@ All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You ca
 | `verbosity`                             | enum     | `NORMAL`                 | Build log verbosity during annotation processing: `SILENT`, `NORMAL`, `VERBOSE`, or `DEBUG`                                                              |
 | `enableCompositeSteps`                  | boolean  | `false`                  | **(experimental)** Enable composite step pattern                                                                                                          |
 | `stripPatterns`                         | String[] | `{}`                     | **(experimental)** Regex patterns; every match is stripped from the spec file before it is parsed — used to remove revision markers                       |
+| `stripBetweenPatterns`                  | @StripBetween[] | `{}`            | **(experimental)** Pairs of start/end regex patterns; the span between them is stripped, markers included                                                 |
 
 <details>
 
@@ -1762,45 +1763,78 @@ names** — so adding or editing a marker renames an abstract step method and th
 that implements it no longer compiles. It also corrupts record field names derived from data table
 headers, and emits unbalanced HTML into JavaDoc.
 
-`stripPatterns` removes it before the spec is parsed. It takes regular expressions, because in-house
-markup conventions vary, and defaults to `{}` (nothing is stripped).
+Two options remove it before the spec is parsed. Both take regular expressions, because in-house markup
+conventions vary, and both default to `{}` (nothing is stripped).
 
-There is one rule: **every match is removed**. So the shape of the pattern decides what disappears —
-match only a marker and the text it wrapped survives; match an opening marker *through* a closing marker
-and the wrapped text goes with them. Starter patterns for both shapes:
+| Option | Use it for |
+|--------|------------|
+| `stripBetweenPatterns` | removing a **span** — an opening marker, the text it wraps, and a closing marker |
+| `stripPatterns`        | removing **individual markers**, keeping the text they wrap |
+
+##### Removing a span — `stripBetweenPatterns`
+
+Declare the two ends separately and SpecBinder locates the span for you:
 
 ```java
 @Gherkin2JUnitOptions(
-        stripPatterns = {
-                // removes the marked text as well - list these first
-                "(?is)<\\s*REMOVED\\b[^<>]*>.*?</\\s*REMOVED\\b[^<>]*>",
-                // removes only the markers, keeping the text they wrap
-                "(?i)(<\\s*(NEW|CHANGED)\\s+[^<>]*>|</\\s*(NEW|CHANGED)\\b[^<>]*>)"
+        stripBetweenPatterns = {
+                @StripBetween(start = "<\\s*REMOVED\\b[^<>]*>", end = "</\\s*REMOVED\\b[^<>]*>")
         }
 )
 ```
+
+This is the safer way to delete a marked span, and worth preferring over expressing the same thing as one
+`stripPatterns` regex. Writing `"(?is)<REMOVED[^<>]*>.*?</REMOVED[^<>]*>"` by hand has three failure modes
+that all produce a **successful build with quietly wrong output**:
+
+| Mistake | What happens |
+|---|---|
+| omitting `(?s)` | a span crossing a newline silently does not match |
+| `.*` instead of `.*?` | the span runs to the **last** closing marker in the file, deleting everything between |
+| an unclosed marker | no match, no error, no hint |
+
+Declaring the ends separately removes the first two possibilities outright — the span is found by offset,
+so no flag is needed to cross lines, and each `start` always pairs with the **nearest** following `end`.
+
+##### Removing markers only — `stripPatterns`
+
+Every match of every pattern is removed, so what the pattern matches decides what disappears:
+
+```java
+@Gherkin2JUnitOptions(
+        stripPatterns = {"(?i)(<\\s*(NEW|CHANGED)\\s+[^<>]*>|</\\s*(NEW|CHANGED)\\b[^<>]*>)"}
+)
+```
+
+A `stripPatterns` entry can also express a whole span, if you would rather keep everything in one option —
+just mind the three traps above, and list span-matching patterns before marker-only ones.
+
+##### Points worth knowing
 
 Markup is removed everywhere it can appear: step text, Feature/Rule/Scenario names, descriptions, doc
 strings, data tables and `Examples` tables — including **header cells**, where it would otherwise corrupt
 generated field names and test method parameter names.
 
-Points worth knowing:
-
 * **Keep marker patterns specific enough to miss `<placeholder>`.** Requiring whitespace and content after
   the keyword (`<\s*CHANGED\s+[^<>]*>`) is what stops a pattern from also matching a Scenario Outline
   placeholder such as `<changed>`. A looser pattern strips the placeholder, silently removing the step's
   parameter and changing the generated method signature.
-* **Markers are not a balanced structure.** Each match is removed independently, so an unpaired marker is
-  removed just the same, and a pair may wrap several steps without affecting what sits between them.
-* **A pattern may wrap whole constructs** — several steps, an entire Scenario, or table rows. Use the
-  `(?s)` flag so it can span lines; the reluctant `.*?` stops at the nearest closing marker. Nesting
-  wrapping patterns of the same keyword is not supported.
+* **Markers are not a balanced structure.** Each `stripPatterns` match is removed independently, so an
+  unpaired marker is removed just the same, and a pair may wrap several steps without affecting what sits
+  between them.
+* **Nesting is not supported.** A second `start` appearing before the first `end` is simply consumed by the
+  outer span.
+* **An unclosed span leaves the text untouched.** A `stripBetweenPatterns` start with no following end
+  removes nothing.
+* **A span may wrap whole constructs** — several steps, an entire Scenario, or table rows. Markers on their
+  own lines give the cleanest result; a span that starts or ends mid-line leaves the remainder of that line
+  at column zero.
 * **Emptied lines are dropped.** Any line left holding only whitespace once a match is removed disappears
   entirely, so deleting a table row does not leave a gap that would terminate the table. This shifts the
   source line numbers of everything below it, which affects `addSourceLineNumbers` output.
-* **Order matters when patterns overlap.** Patterns are applied in the order declared; a marker-only
-  pattern listed first can strip the markers a wrapping pattern was relying on, leaving text the author had
-  marked as removed. List wrapping patterns first.
+* **`stripBetweenPatterns` is applied before `stripPatterns`**, so a span still disappears wholesale even
+  when a pattern would also have matched its markers individually. Within `stripPatterns`, entries are
+  applied in the order declared.
 * **A match that takes all of a step's text but leaves its keyword fails the build**, naming the line —
   include the step keyword inside the matched text instead.
 

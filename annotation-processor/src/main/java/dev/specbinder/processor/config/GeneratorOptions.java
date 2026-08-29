@@ -177,6 +177,15 @@ public class GeneratorOptions {
     private final String[] stripPatterns;
 
     /**
+     * -- EXPERIMENTAL OPTION --
+     * <p>
+     * Pairs of regex patterns marking the two ends of a span of spec file text that is stripped before the
+     * file is parsed. Everything from the start marker to the end marker is removed, markers included.
+     * Applied before {@link #stripPatterns}.
+     */
+    private final StripBetweenPattern[] stripBetweenPatterns;
+
+    /**
      * Default options
      */
     public GeneratorOptions() {
@@ -204,6 +213,7 @@ public class GeneratorOptions {
         this.maxStringLiteralBytes = 65000;
         this.skipUnchangedSpecs = false;
         this.stripPatterns = new String[]{};
+        this.stripBetweenPatterns = new StripBetweenPattern[]{};
     }
 
     /**
@@ -233,6 +243,7 @@ public class GeneratorOptions {
      * @param maxStringLiteralBytes see {@link #maxStringLiteralBytes}
      * @param skipUnchangedSpecs see {@link #skipUnchangedSpecs}
      * @param stripPatterns see {@link #stripPatterns}
+     * @param stripBetweenPatterns see {@link #stripBetweenPatterns}
      */
     public GeneratorOptions(
             boolean shouldBeAbstract,
@@ -258,7 +269,8 @@ public class GeneratorOptions {
             boolean descriptionAsAnnotation,
             int maxStringLiteralBytes,
             boolean skipUnchangedSpecs,
-            String[] stripPatterns
+            String[] stripPatterns,
+            StripBetweenPattern[] stripBetweenPatterns
     ) {
         this.shouldBeAbstract = shouldBeAbstract;
         this.classSuffixIfConcrete = classSuffixIfConcrete;
@@ -284,6 +296,8 @@ public class GeneratorOptions {
         this.maxStringLiteralBytes = maxStringLiteralBytes;
         this.skipUnchangedSpecs = skipUnchangedSpecs;
         this.stripPatterns = stripPatterns == null ? new String[]{} : stripPatterns;
+        this.stripBetweenPatterns =
+                stripBetweenPatterns == null ? new StripBetweenPattern[]{} : stripBetweenPatterns;
     }
 
 }

@@ -81,8 +81,8 @@ public class FeatureFileParser implements LoggingSupport {
             return feature;
         } else {
             String strippedHint = textWasStripped
-                    ? " (text was stripped from this file before parsing - check that a stripPatterns match"
-                    + " has not removed a Feature, Rule or Scenario line)"
+                    ? " (text was stripped from this file before parsing - check that a stripPatterns or"
+                    + " stripBetweenPatterns match has not removed a Feature, Rule or Scenario line)"
                     : "";
             throw new ProcessingException(
                     "Unable to parse Feature from the specified gherkin document: " + featureFilePath + strippedHint);

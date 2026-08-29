@@ -2,11 +2,14 @@ package dev.specbinder.processor.utils;
 
 import dev.specbinder.annotations.Gherkin2JUnitOptions;
 import dev.specbinder.annotations.Gherkin2JUnitOptions.Verbosity;
+import dev.specbinder.annotations.StripBetween;
 import dev.specbinder.processor.config.GeneratorOptions;
+import dev.specbinder.processor.config.StripBetweenPattern;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,6 +97,7 @@ public class Gherkin2JUnitOptionsResolver {
         int maxStringLiteralBytes = 65000;
         boolean skipUnchangedSpecs = false;
         String[] stripPatterns = new String[]{};
+        StripBetweenPattern[] stripBetweenPatterns = new StripBetweenPattern[]{};
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -220,6 +224,11 @@ public class Gherkin2JUnitOptionsResolver {
                             stripPatterns = toStringArray(list);
                         }
                         break;
+                    case "stripBetweenPatterns":
+                        if (value instanceof List<?> list) {
+                            stripBetweenPatterns = toStripBetweenPatterns(list, elements);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -250,7 +259,8 @@ public class Gherkin2JUnitOptionsResolver {
                 descriptionAsAnnotation,
                 maxStringLiteralBytes,
                 skipUnchangedSpecs,
-                stripPatterns
+                stripPatterns,
+                stripBetweenPatterns
         );
     }
 
@@ -266,6 +276,51 @@ public class Gherkin2JUnitOptionsResolver {
                     return item.toString();
                 })
                 .toArray(String[]::new);
+    }
+
+    /**
+     * Converts the nested {@code @StripBetween} annotation mirrors of an array member to resolved pairs.
+     */
+    private static StripBetweenPattern[] toStripBetweenPatterns(List<?> list, Elements elements) {
+        List<StripBetweenPattern> pairs = new ArrayList<>();
+        for (Object item : list) {
+            Object element = item instanceof AnnotationValue av ? av.getValue() : item;
+            if (element instanceof AnnotationMirror mirror) {
+                pairs.add(new StripBetweenPattern(
+                        readAnnotationMember(mirror, "start", elements),
+                        readAnnotationMember(mirror, "end", elements)));
+            }
+        }
+        return pairs.toArray(new StripBetweenPattern[0]);
+    }
+
+    /**
+     * Converts real {@code @StripBetween} annotation instances to resolved pairs. Used by the fallback
+     * path, where annotations are read directly rather than through mirrors.
+     */
+    private static StripBetweenPattern[] toStripBetweenPatterns(StripBetween[] betweenAnnotations) {
+        if (betweenAnnotations == null) {
+            return new StripBetweenPattern[0];
+        }
+        StripBetweenPattern[] pairs = new StripBetweenPattern[betweenAnnotations.length];
+        for (int i = 0; i < betweenAnnotations.length; i++) {
+            pairs[i] = new StripBetweenPattern(betweenAnnotations[i].start(), betweenAnnotations[i].end());
+        }
+        return pairs;
+    }
+
+    /**
+     * Reads a single String member off a nested annotation mirror.
+     */
+    private static String readAnnotationMember(AnnotationMirror mirror, String memberName, Elements elements) {
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry
+                : elements.getElementValuesWithDefaults(mirror).entrySet()) {
+            if (entry.getKey().getSimpleName().contentEquals(memberName)) {
+                Object memberValue = entry.getValue().getValue();
+                return memberValue == null ? "" : memberValue.toString();
+            }
+        }
+        return "";
     }
 
     /**
@@ -297,7 +352,8 @@ public class Gherkin2JUnitOptionsResolver {
                 options.descriptionAsAnnotation(),
                 options.maxStringLiteralBytes(),
                 options.skipUnchangedSpecs(),
-                options.stripPatterns()
+                options.stripPatterns(),
+                toStripBetweenPatterns(options.stripBetweenPatterns())
         );
     }
 }

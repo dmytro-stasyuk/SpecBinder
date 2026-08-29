@@ -712,6 +712,52 @@ public @interface Gherkin2JUnitOptions {
     /**
      * -- EXPERIMENTAL OPTION --
      * <br/><br/>
+     * Pairs of regular expressions marking the two ends of a span of text to strip from the spec file
+     * before it is turned into test code. Everything from the start marker to the end marker is removed,
+     * markers included.
+     * <p>
+     * This is the safer way to express what {@link #stripPatterns()} can also express as a single regex.
+     * Writing {@code "(?is)<REMOVED[^<>]*>.*?</REMOVED[^<>]*>"} by hand has three failure modes that all
+     * produce a successful build with quietly wrong output: omitting {@code (?s)} makes a span crossing a
+     * newline silently fail to match; writing {@code .*} instead of {@code .*?} makes the span run to the
+     * <em>last</em> closing marker in the file, deleting everything in between; and an unclosed marker
+     * simply does not match. Declaring the two ends separately removes the first two possibilities
+     * entirely.
+     * <pre>
+     * &#64;Gherkin2JUnitOptions(
+     *     stripBetweenPatterns = {
+     *         &#64;StripBetween(start = "&lt;\\s*REMOVED\\b[^&lt;&gt;]*&gt;", end = "&lt;/\\s*REMOVED\\b[^&lt;&gt;]*&gt;")
+     *     },
+     *     stripPatterns = {"(?i)&lt;/?(NEW|CHANGED)\\b[^&lt;&gt;]*&gt;"}
+     * )
+     * </pre>
+     * Each {@code start} pairs with the <b>nearest</b> following {@code end}, so two spans on one line are
+     * removed independently and the text between them survives. Nesting is not supported — a second
+     * {@code start} appearing before the first {@code end} is simply consumed by the outer span. A
+     * {@code start} with no following {@code end} leaves the text untouched.
+     * <p>
+     * A span may wrap whole Gherkin constructs — several steps, an entire Scenario, or rows of a data
+     * table or {@code Examples} table. Any line left containing only whitespace once the span is removed is
+     * dropped entirely, so removing a table row does not leave a blank line that would terminate the table.
+     * Note that this shifts the source line numbers of everything below the span. Markers that sit on their
+     * own lines give the cleanest result; a span that starts or ends mid-line leaves the remainder of that
+     * line at column zero.
+     * <p>
+     * These pairs are applied <b>before</b> {@link #stripPatterns()}, so a span still disappears wholesale
+     * even when a pattern there would also have matched its opening and closing markers individually.
+     * <p>
+     * Defaults to an empty array, which leaves the spec file untouched.
+     * <p>
+     * Note: This feature is experimental and the API may change in future versions.
+     *
+     * @return pairs of regular expressions marking spans of text to strip
+     * @see #stripPatterns()
+     */
+    StripBetween[] stripBetweenPatterns() default {};
+
+    /**
+     * -- EXPERIMENTAL OPTION --
+     * <br/><br/>
      * Enables composite step pattern where a Given/When/Then/And/But step followed by one or more steps
      * using the '*' keyword generates a composite step method that wraps the sub-steps.
      * <p>
