@@ -1,0 +1,35 @@
+<meta charset="utf-8">
+<title>Ideas · SpecBinder</title>
+<link rel="stylesheet" href="../DESIGN/doc.css">
+<main>
+  <nav class="docnav">
+    <span class="home">Ideas</span>
+    <a href="index.html" aria-current="page">Index</a>
+    <a href="0001-java-language-floor.html">Java floor</a>
+  </nav>
+
+  <header>
+    <p class="eyebrow">SpecBinder · proposals not yet acted on</p>
+    <h1>Explorations and proposals for the library</h1>
+    <p class="standfirst">Idea pages hold a proposal and the evidence gathered for it, written down so the
+      reasoning survives until someone acts on it. Nothing described on these pages is implemented. Decisions
+      that <em>have</em> been taken belong in <code>CHANGELOG.md</code>; how the library behaves belongs in
+      <code>README.md</code>.</p>
+  </header>
+  <hr>
+
+  <section id="pages">
+    <h2>1 · Idea 0001 · Build &amp; compatibility</h2>
+
+    <div class="cards">
+      <a class="card in" href="0001-java-language-floor.html">
+        <span class="scope">build &amp; compatibility · 2026-08-31</span>
+        <h3>Lower the published Java floor from 21 to 17</h3>
+        <p>All three jars run inside the consumer's own processes, so <code>&lt;release&gt;</code> decides who
+          can adopt SpecBinder at all. The dependency and language audits both come back clear — every
+          dependency is Java 8 bytecode, nothing in the source is newer than Java 16 — leaving a single
+          <code>List.getFirst()</code> in the way.</p>
+      </a>
+    </div>
+  </section>
+</main>
