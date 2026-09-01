@@ -579,13 +579,17 @@ public @interface Gherkin2JUnitOptions {
      * canonical SHA-256 hash of the scenario's executable content (Background steps + scenario
      * steps, including DataTables and DocStrings).
      * <p>
-     * When {@code true}: Each generated test method is annotated with {@code @ScenarioHash("&lt;hex&gt;")}.
+     * When {@code true} (default): Each generated test method is annotated with
+     * {@code @ScenarioHash("&lt;hex&gt;")}.
      * <p>
-     * When {@code false} (default), no hash annotations are emitted.
+     * When {@code false}, no hash annotations are emitted. The execution report then carries no
+     * scenario hashes, and with them goes the Gherkin step text, a Scenario Outline's template
+     * steps, typed step arguments, and the ability to tell a stale recorded outcome from a current
+     * one — so turning this off yields a materially thinner report.
      *
      * @return true if scenario hashes should be emitted, false otherwise
      */
-    boolean emitScenarioHash() default false;
+    boolean emitScenarioHash() default true;
 
     /**
      * Controls how Gherkin description text (the free-text lines under a Feature, Rule, Scenario, or

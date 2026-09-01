@@ -5,10 +5,7 @@ import io.cucumber.messages.types.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -55,13 +52,21 @@ public final class SourceFeatureReader {
     public record ParsedRule(List<ParsedScenario> scenarios) {
     }
 
-    /** A single scenario's canonical-hash input, spec lines, and per-step block-arg metadata. */
+    /**
+     * A single scenario's canonical-hash input, spec lines, and per-step block-arg metadata.
+     *
+     * <p>{@code examplesRows} holds a Scenario Outline's Examples table as it reads today: each
+     * row as column-name to value, in the order the table declares them. It is empty for a plain
+     * Scenario. Tooling reconciling a report uses it to lay merged rows out in the order the
+     * spec now shows, rather than the order some earlier run happened to record.
+     */
     public record ParsedScenario(
             List<CanonicalStep> canonicalSteps,
             List<String> backgroundStepLines,
             List<String> scenarioStepLines,
             List<StepBlockArgument> backgroundBlockArgs,
-            List<StepBlockArgument> scenarioBlockArgs) {
+            List<StepBlockArgument> scenarioBlockArgs,
+            List<Map<String, String>> examplesRows) {
     }
 
     /**
@@ -198,7 +203,34 @@ public final class SourceFeatureReader {
                 Collections.unmodifiableList(toLineList(backgroundSteps)),
                 Collections.unmodifiableList(toLineList(scenarioSteps)),
                 Collections.unmodifiableList(toBlockArgList(backgroundSteps)),
-                Collections.unmodifiableList(toBlockArgList(scenarioSteps)));
+                Collections.unmodifiableList(toBlockArgList(scenarioSteps)),
+                Collections.unmodifiableList(toExamplesRows(scenario)));
+    }
+
+    /**
+     * A Scenario Outline's Examples rows, flattened across every Examples block in declaration
+     * order and keyed by column name. A plain Scenario contributes nothing. A row with fewer
+     * cells than headers keeps only the columns it actually has, so a malformed table degrades
+     * to a partial row rather than failing the whole parse.
+     */
+    private static List<Map<String, String>> toExamplesRows(Scenario scenario) {
+        List<Map<String, String>> rows = new ArrayList<>();
+        for (Examples examples : scenario.getExamples()) {
+            if (examples.getTableHeader().isEmpty()) {
+                continue;
+            }
+            List<String> headers = examples.getTableHeader().get().getCells().stream()
+                    .map(TableCell::getValue).toList();
+            for (TableRow row : examples.getTableBody()) {
+                List<TableCell> cells = row.getCells();
+                Map<String, String> values = new LinkedHashMap<>();
+                for (int i = 0; i < headers.size() && i < cells.size(); i++) {
+                    values.put(headers.get(i), cells.get(i).getValue());
+                }
+                rows.add(Collections.unmodifiableMap(values));
+            }
+        }
+        return rows;
     }
 
     /**

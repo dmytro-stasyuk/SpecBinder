@@ -92,7 +92,7 @@ public class Gherkin2JUnitOptionsResolver {
         String[] supportedFileExtensions = new String[]{"feature", "specb"};
         String[] skipGenerationForTags = new String[]{};
         Verbosity verbosity = Verbosity.NORMAL;
-        boolean emitScenarioHash = false;
+        boolean emitScenarioHash = true;
         boolean descriptionAsAnnotation = false;
         int maxStringLiteralBytes = 65000;
         boolean skipUnchangedSpecs = false;

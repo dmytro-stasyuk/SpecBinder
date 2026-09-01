@@ -1,4 +1,4 @@
-package dev.specbinder.reporter;
+package dev.specbinder.reporter.internal;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -8,12 +8,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-final class RowHasher {
+/**
+ * Identity of a single Scenario Outline example row, derived from the row's values alone.
+ * <p>
+ * Because the hash ignores where the row sits in the Examples table, a row keeps its identity
+ * when the table is reordered — which is what lets a recorded outcome follow its row rather
+ * than the ordinal it happened to occupy. Column order does not matter either: keys are sorted
+ * before hashing.
+ * <p>
+ * Lives beside {@link ScenarioHasher} so that tooling reconciling reports can compute the same
+ * identity the reporter records.
+ */
+public final class RowHasher {
 
     private RowHasher() {
     }
 
-    static String hash(Map<String, String> row) {
+    public static String hash(Map<String, String> row) {
         if (row == null || row.isEmpty()) {
             return null;
         }

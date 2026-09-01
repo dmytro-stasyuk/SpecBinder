@@ -208,7 +208,7 @@ public class GeneratorOptions {
         this.supportedFileExtensions = new String[]{"feature", "specb"};
         this.skipGenerationForTags = new String[]{};
         this.verbosity = Verbosity.NORMAL;
-        this.emitScenarioHash = false;
+        this.emitScenarioHash = true;
         this.descriptionAsAnnotation = false;
         this.maxStringLiteralBytes = 65000;
         this.skipUnchangedSpecs = false;

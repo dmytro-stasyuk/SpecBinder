@@ -4,14 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.specbinder.annotations.output.Description;
 import dev.specbinder.annotations.output.ScenarioHash;
 import dev.specbinder.annotations.output.SourceFilePath;
-import dev.specbinder.reporter.internal.InstrumentedClassFactory;
-import dev.specbinder.reporter.internal.ScenarioHasher;
-import dev.specbinder.reporter.internal.SourceFeatureReader;
+import dev.specbinder.reporter.internal.*;
 import dev.specbinder.reporter.internal.SourceFeatureReader.ParsedFeature;
 import dev.specbinder.reporter.internal.SourceFeatureReader.ParsedRule;
 import dev.specbinder.reporter.internal.SourceFeatureReader.ParsedScenario;
 import dev.specbinder.reporter.internal.SourceFeatureReader.StepBlockArgument;
-import dev.specbinder.reporter.internal.StepCallSiteScanner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.TestReporter;
@@ -583,7 +580,11 @@ public class SpecBinderReporter implements
         }
         Path target = ReportPaths.featureReportFile(reportDir, featureReport.getSourceFilePath());
         try {
-            REPORT_WRITER.write(featureReport, target);
+            // A run may cover only part of the feature — fold its results into whatever is
+            // already recorded rather than replacing the file wholesale.
+            REPORT_WRITER.write(
+                    ReportMerger.mergeOver(featureReport, target, REPORT_WRITER.objectMapper(),
+                            context.getRequiredTestClass()), target);
         } catch (JsonProcessingException e) {
             LOGGER.log(Level.WARNING, "SpecBinder reporter: failed to serialize report for "
                     + featureReport.getSourceFilePath(), e);
