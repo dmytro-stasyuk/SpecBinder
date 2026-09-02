@@ -1,0 +1,310 @@
+<meta charset="utf-8">
+<title>Lower the Java floor to 17 · idea 0001 · SpecBinder</title>
+<link rel="stylesheet" href="../DESIGN/doc.css">
+<main>
+  <nav class="docnav">
+    <span class="home">Ideas</span>
+    <a href="index.html">Index</a>
+    <a href="0001-java-language-floor.html" aria-current="page">Java floor</a>
+  </nav>
+
+  <header>
+    <p class="eyebrow">Idea 0001 · build &amp; compatibility · 2026-08-31</p>
+    <h1>Lower the published Java floor from 21 to 17 — the audit says it costs one line</h1>
+    <p class="standfirst">SpecBinder compiles with <code>&lt;release&gt;21&lt;/release&gt;</code>, which makes
+      JDK&nbsp;21 the <em>minimum</em> a consumer must run: all three jars execute inside the consumer's own
+      processes, and a JVM refuses to load class files newer than itself. Dropping the floor to 17 picks up the
+      whole Java&nbsp;17 LTS install base. The audit below found <strong>no dependency and no language feature
+      standing in the way</strong> — every dependency is Java&nbsp;8 bytecode, and the newest language features
+      in use are records and <code>instanceof</code> patterns, both Java&nbsp;16/17. Exactly one call site
+      blocks it: a <code>List.getFirst()</code> in <code>StepProcessor</code>, which is Java&nbsp;21.</p>
+  </header>
+  <hr>
+
+  <div class="note">
+    <p><strong>Scope and status.</strong> Nothing here is implemented; this page records a proposal and the
+      evidence for it, to be acted on later. The audit was run by inspection — greps over the three
+      <code>src/main</code> trees and class-file version reads of the resolved jars — <strong>not</strong> by
+      compiling with <code>--release 17</code>, which is the one step that settles it conclusively
+      (see <a href="#doing-it">§6</a>). The related <code>latestSupported()</code> change sitting in
+      <code>## Unreleased</code> is a prerequisite in spirit but not in code: it makes the floor and the
+      ceiling independent, so this proposal touches only the floor.</p>
+  </div>
+
+  <section id="what-the-floor-is">
+    <h2>1 · What the floor actually controls</h2>
+
+    <p><code>--release N</code> does two things: it compiles against the JDK&nbsp;N API, and it stamps the
+      output class files as format&nbsp;N. The stamp is the part consumers feel, because it is enforced
+      absolutely — no compatibility mode, no warning-and-continue:</p>
+
+    <pre><code>UnsupportedClassVersionError: dev/specbinder/processor/AnnotationProcessor
+has been compiled by a more recent version of the Java Runtime
+(class file version 65.0), this version of the Java Runtime only
+recognizes class file versions up to 61.0</code></pre>
+
+    <p>What makes this bite harder for SpecBinder than for an ordinary library is that <strong>all three
+      artifacts run inside the consumer's processes</strong> — there is no part of it that stays at arm's
+      length:</p>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Artifact</th><th>Where it runs in a consumer's project</th><th>Whose JDK must satisfy the floor</th></tr></thead>
+        <tbody>
+          <tr><td><code>annotations</code></td><td>On their compile classpath.</td><td>Their build JDK.</td></tr>
+          <tr><td><code>annotation-processor</code></td><td><strong>Inside their <code>javac</code> process.</strong></td><td>Their build JDK.</td></tr>
+          <tr><td><code>execution-reporter</code></td><td>As a JUnit extension in their test JVM.</td><td>Their test JDK.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>So the floor is not a soft recommendation in a README — it is the exact set of teams who can adopt a new
+      SpecBinder release at all. A team on JDK&nbsp;17 today cannot upgrade past 2026.46.0; their only options
+      are to move their whole project to 21 or stay pinned forever.</p>
+
+    <p class="note"><strong>Compile low, run high.</strong> The floor is independent of the JDK that builds
+      SpecBinder. <code>--release 17</code> on a JDK&nbsp;25 machine emits Java&nbsp;17 bytecode <em>and</em>
+      verifies no post-17 API was called. That verification is why <code>--release</code> is strictly better
+      than the old <code>-source</code>/<code>-target</code> pair, which would happily let a Java&nbsp;21 call
+      through and produce a jar that explodes at the consumer's runtime instead of at our compile time.</p>
+  </section>
+
+  <section id="current-state">
+    <h2>2 · Where the floor is set today</h2>
+
+    <p>Two places, and only one of them is live:</p>
+
+    <div class="panels two">
+      <div class="panel in">
+        <span class="scope">pom.xml · the real setting</span>
+        <h3><code>&lt;release&gt;21&lt;/release&gt;</code></h3>
+        <p>On <code>maven-compiler-plugin</code> in the reactor root, inherited by every module. This is the one
+          that decides the floor, for both main and test compilation.</p>
+      </div>
+      <div class="panel warn">
+        <span class="scope">annotation-processor/pom.xml · dead config</span>
+        <h3><code>&lt;source&gt;21&lt;/source&gt;&nbsp;&lt;target&gt;21&lt;/target&gt;</code></h3>
+        <p>Merged in alongside the inherited <code>&lt;release&gt;</code>, and ignored: when
+          <code>release</code> is set the compiler plugin uses it and disregards source/target. It changes
+          nothing today.</p>
+      </div>
+    </div>
+
+    <div class="pitfall">
+      <h3>Delete the dead source/target rather than editing it</h3>
+      <p>Leaving a second, silently-ignored copy of the version invites a future edit to the wrong one — change
+        <code>&lt;release&gt;</code> in the root and the override still reads <code>21</code>, suggesting a
+        floor that isn't in effect. Worse, if the root <code>&lt;release&gt;</code> is ever removed, the
+        override wakes up and applies <code>-source 21 -target 21</code>, quietly losing the API verification
+        that <code>--release</code> was providing. There is no reason for that block to exist; the whole
+        <code>maven-compiler-plugin</code> stanza in <code>annotation-processor/pom.xml</code> can go.</p>
+    </div>
+  </section>
+
+  <section id="dependencies">
+    <h2>3 · Dependency audit — nothing above Java 8</h2>
+
+    <p>A library can only go as low as its dependencies allow. The check is direct: read the class-file major
+      version out of the resolved jar (major&nbsp;61&nbsp;=&nbsp;Java&nbsp;17, 52&nbsp;=&nbsp;Java&nbsp;8).
+      Every runtime dependency came back at <strong>Java&nbsp;8</strong>:</p>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Dependency</th><th>Version</th><th>Class-file version</th><th>Floor imposed</th></tr></thead>
+        <tbody>
+          <tr><td><code>junit-jupiter-api</code></td><td>5.14.1</td><td>52</td><td>Java 8</td></tr>
+          <tr><td><code>cucumber-java</code></td><td>7.33.0</td><td>52</td><td>Java 8</td></tr>
+          <tr><td><code>javapoet</code></td><td>1.13.0</td><td>52</td><td>Java 8</td></tr>
+          <tr><td><code>auto-service</code></td><td>1.1.1</td><td>52</td><td>Java 8</td></tr>
+          <tr><td><code>jackson-databind</code></td><td>2.18.2</td><td>52</td><td>Java 8</td></tr>
+          <tr><td><code>commons-lang3</code></td><td>3.17.0</td><td>52</td><td>Java 8</td></tr>
+          <tr><td><code>byte-buddy</code></td><td>1.15.10</td><td>49</td><td>Java 5</td></tr>
+          <tr><td><code>annotation-processor</code> <em>(control)</em></td><td>2026.46.0</td><td><strong>65</strong></td><td><strong>Java 21</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The last row is the control that validates the method: SpecBinder's own published jar reads back as
+      major&nbsp;65, which is precisely the <code>&lt;release&gt;21&lt;/release&gt;</code> we set. So the
+      readings are trustworthy, and <strong>the floor is entirely self-imposed</strong> — no dependency is
+      holding it up.</p>
+
+    <p class="note">JUnit is the one worth calling out, because it is the usual suspect for a Java&nbsp;17
+      baseline: Jupiter stayed on Java&nbsp;8 bytecode across the whole 5.x line, and it is JUnit&nbsp;<strong>6</strong>
+      that raises the floor to 17. On 5.14.1 there is no constraint. <code>lombok</code> is
+      <code>provided</code> scope — build-time only, never on a consumer's classpath — so it is irrelevant to
+      the floor, though it must independently stay new enough for whatever JDK builds SpecBinder.</p>
+  </section>
+
+  <section id="language">
+    <h2>4 · Language-feature audit — nothing above Java 17</h2>
+
+    <p>Counts across the three <code>src/main</code> trees:</p>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Feature</th><th>Occurrences</th><th>Introduced</th><th>Survives <code>--release 17</code>?</th></tr></thead>
+        <tbody>
+          <tr><td>Records</td><td>20</td><td>Java 16</td><td>Yes</td></tr>
+          <tr><td><code>instanceof</code> patterns</td><td>18</td><td>Java 16</td><td>Yes</td></tr>
+          <tr><td>Text blocks</td><td>6</td><td>Java 15</td><td>Yes</td></tr>
+          <tr><td>Sealed types</td><td>0</td><td>Java 17</td><td>—</td></tr>
+          <tr><td>Switch type patterns</td><td>0</td><td>Java 21</td><td>—</td></tr>
+          <tr><td>Record patterns</td><td>0</td><td>Java 21</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The newest thing actually in use is a Java&nbsp;16 feature. Nothing in the codebase exercises the
+      21-only language surface, which is what makes 17 reachable at all.</p>
+
+    <p><strong>This also fixes where the floor should stop.</strong> Going below 17 is a different proposition
+      entirely: records, text blocks and <code>instanceof</code> patterns are 15/16 features, so a Java&nbsp;11
+      floor would mean rewriting all 44 of those usages into constructor-and-getter classes, concatenated
+      strings and casts. Java&nbsp;17 is the floor that costs a one-line change; Java&nbsp;11 is a
+      refactor.</p>
+  </section>
+
+  <section id="blocker">
+    <h2>5 · The one real blocker</h2>
+
+    <p>The language audit is about syntax; the <em>API</em> surface is a separate risk, because a Java&nbsp;21
+      method call looks like ordinary code. The highest-risk family is
+      <code>SequencedCollection</code> — <code>getFirst()</code>, <code>getLast()</code>,
+      <code>reversed()</code> — added to <code>List</code> in Java&nbsp;21 and very easy to reach for. One hit:</p>
+
+    <div class="panel warn">
+      <span class="where">annotation-processor/src/main/java/dev/specbinder/processor/gherkin/StepProcessor.java:509</span>
+      <h3><code>signatures.getFirst()</code> — <code>List.getFirst()</code> is Java 21</h3>
+      <pre><code>List&lt;ElementMethodUtils.MethodSignature&gt; signatures = baseClassMethodSignatures.get(stepMethodName);
+if (!signatures.isEmpty()) {
+    return signatures.getFirst();   // -> signatures.get(0);
+}</code></pre>
+      <p>Replaceable with <code>signatures.get(0)</code> with no change in behaviour or readability: the
+        receiver is a plain <code>List</code> out of a map, and the emptiness guard sits on the line
+        immediately above, so index&nbsp;0 is exactly as safe as <code>getFirst()</code> is. This is the
+        &ldquo;one line&rdquo; in the title.</p>
+    </div>
+
+    <p>The same grep over the test submodule and the three <code>examples/</code> modules came back clean —
+      worth checking because <code>--release</code> in the reactor root governs test compilation too, so a
+      Java&nbsp;21 API call in a test would break the build just as surely as one in main.</p>
+
+    <p class="note">Greps find the families you think to look for, which is why they are evidence and not
+      proof. Post-17 additions are not limited to <code>SequencedCollection</code> —
+      <code>Math.clamp</code> (21), <code>HashMap.newHashMap</code> (19),
+      <code>Objects.toIdentityString</code> (19) and others were also checked and are absent, but the space is
+      large. §6 is how you stop guessing.</p>
+  </section>
+
+  <section id="doing-it">
+    <h2>6 · How to do it, and how the compiler finishes the audit</h2>
+
+    <p>The point of <code>--release</code> is that it turns this from a research problem into a to-do list:
+      compile against the JDK&nbsp;17 API and <strong>every</strong> post-17 API call becomes an error with a
+      file and a line number. Flip the flag, build, and read the list.</p>
+
+    <ol class="flow">
+      <li>
+        <div>
+          <h3>Fix the known blocker</h3>
+          <p><code>signatures.getFirst()</code> → <code>signatures.get(0)</code>.</p>
+          <span class="where">annotation-processor/.../gherkin/StepProcessor.java:509</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Lower the floor, delete the dead override</h3>
+          <p><code>&lt;release&gt;21&lt;/release&gt;</code> → <code>&lt;release&gt;17&lt;/release&gt;</code>
+            in the reactor root; remove the <code>maven-compiler-plugin</code> stanza from the
+            annotation-processor pom entirely (§2).</p>
+          <span class="where">pom.xml · annotation-processor/pom.xml</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Compile — this is the real audit</h3>
+          <p>A full reactor build, main and tests. Any remaining post-17 API call fails here by name. Expect
+            either a clean build or a short list of mechanical substitutions.</p>
+          <span class="where">./mvnw clean test-compile</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Verify the stamp landed</h3>
+          <p>Read the class-file major version back out of the built jars — it should be <strong>61</strong>,
+            not 65. This is the same check as §3 and it is worth doing: it confirms the flag took effect
+            rather than being overridden somewhere unnoticed.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Run the suite, then update the promise</h3>
+          <p>Bytecode level does not change behaviour, but the test suite is cheap insurance. Then the
+            documented requirement — <code>README.md</code> says Java&nbsp;<strong>21+</strong>,
+            <code>CLAUDE.md</code> says Java&nbsp;21+ — plus a <code>### Changed</code> changelog entry.</p>
+          <span class="where">README.md · CLAUDE.md · CHANGELOG.md</span>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section id="risk">
+    <h2>7 · What it costs, and what it does not</h2>
+
+    <div class="panels two">
+      <div class="panel st">
+        <span class="scope">Not a breaking change</span>
+        <h3>Lowering a floor can never break an existing consumer</h3>
+        <p>Every JDK that could load major-65 class files can load major-61. Reach only widens, so this needs
+          no <code>⚠️ BREAKING</code> marker and no special release handling — a plain
+          <code>### Changed</code> entry.</p>
+      </div>
+      <div class="panel warn">
+        <span class="scope">But it is a one-way door</span>
+        <h3>Raising it again later <em>is</em> breaking</h3>
+        <p>Publishing a floor is publishing a compatibility promise. Going 21&nbsp;→&nbsp;17 is free;
+          17&nbsp;→&nbsp;21 afterwards cuts off everyone who adopted in between. Worth choosing the number
+          deliberately rather than drifting to it.</p>
+      </div>
+    </div>
+
+    <p>The standing cost is that SpecBinder's own source may not use Java&nbsp;18–21 language or API features.
+      After the one-line fix, nothing does — but it is a real constraint on future work, and the
+      <code>SequencedCollection</code> methods are exactly the sort of thing that gets typed by habit. A CI job
+      building on the floor JDK would catch that at the point it is introduced rather than at release time.</p>
+
+    <p class="note">No effect on our own consumers either way: the ForgeApps workspace builds on JDK&nbsp;25 and
+      the IntelliJ plugin reads the reporter's JSON rather than linking the jar. This change is entirely about
+      reach for <em>other</em> people — which is also why it is easy to keep deferring, and worth writing down
+      instead.</p>
+  </section>
+
+  <section id="ceiling">
+    <h2>8 · The ceiling, for contrast</h2>
+
+    <p>Worth keeping the two straight, because they pull in opposite directions and are set in different
+      places:</p>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th></th><th>Floor</th><th>Ceiling</th></tr></thead>
+        <tbody>
+          <tr><td>Set by</td><td><code>&lt;release&gt;</code> in the pom</td><td><code>getSupportedSourceVersion()</code> in the processor</td></tr>
+          <tr><td>Means</td><td>Minimum JDK a consumer may run</td><td>Newest <code>-source</code> the processor claims to handle</td></tr>
+          <tr><td>Want it</td><td>As low as the code allows</td><td>As high as the running <code>javac</code> goes</td></tr>
+          <tr><td>Getting it wrong</td><td><code>UnsupportedClassVersionError</code> — a hard failure</td><td>A javac warning on every consumer build</td></tr>
+          <tr><td>Status</td><td><strong>This page — 21, proposed 17</strong></td><td>Solved in <code>## Unreleased</code> via <code>SourceVersion.latestSupported()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The ceiling fix is what makes this page purely about the floor. A pinned <code>RELEASE_n</code> would
+      have tied the two together — naming <code>RELEASE_25</code> requires compiling against the JDK&nbsp;25
+      API, so the ceiling would have dragged the floor up with it. Reporting
+      <code>latestSupported()</code> instead — a method that has existed since Java&nbsp;6, and therefore
+      compiles fine under <code>--release 17</code> — decouples them: the processor answers with whatever
+      <code>javac</code> is actually running, 25 today and 26 later, while the floor stays wherever we choose
+      to put it.</p>
+  </section>
+</main>
