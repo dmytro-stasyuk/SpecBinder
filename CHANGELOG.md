@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.47.0]
+
+### Added
+
 - Execution reporter: re-running only part of a spec — a single scenario, a single Rule, or one example row of a Scenario Outline — now folds that run's results into the per-feature JSON report already on disk instead of replacing the file. Previously any partial run left behind a report describing only what had just run, discarding every other scenario's outcome, so keeping a complete picture meant re-running the whole spec every time. A scenario that did not run keeps the outcome of its last execution, and the report's summary, start time and total duration are re-derived from everything the merged report holds. Results are matched to scenarios by position and by content together, because neither survives editing on its own: a scenario that moved keeps its outcome, one whose own steps changed keeps the hash recorded against it so a consumer can still tell the outcome describes an older version, and one deleted from the spec is dropped rather than lingering as a failure nothing can clear. Example rows are matched on their values rather than their place in the `Examples` table, so reordering the table does not shuffle outcomes between rows, and a row no longer in the table takes its result with it; the merged rows are laid out in the order the table now reads. Merging happens only when the file on disk fits the run — readable, describing this same feature, and carrying the current report schema version — so a stale or foreign report is replaced rather than allowed to contribute results. A full run needs no special handling and produces exactly what it did before
 
 ### Changed
