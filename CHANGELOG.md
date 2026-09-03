@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.47.0]
+## [2026.47.0] - 2026-09-02
 
 ### Added
 
@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.46.0]
+## [2026.46.0] - 2026-08-29
 
 ### Added
 
@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.45.0]
+## [2026.45.0] - 2026-08-24
 
 ### Added
 
@@ -64,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - **⚠️ BREAKING:** Execution reporter: the `sourceLine` field has been removed from every node of the per-feature JSON report — scenarios, Scenario Outlines, example rows and Rules. The field could only ever be populated when the generated test code carried a source-line marker, which generation does not produce, so in practice it was absent from real reports and present only in hand-written test classes. Scenarios and Rules are no longer re-sorted by source line either; they now appear in the order they executed, which for generated code is spec order. Tooling reading `sourceLine` should locate a scenario by its `scenarioHash` or its `id` instead
 
-## [2026.44.0]
+## [2026.44.0] - 2026-07-11
 
 ### Added
 
@@ -84,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.43.0]
+## [2026.43.0] - 2026-06-28
 
 ### Added
 
@@ -111,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.42.0]
+## [2026.42.0] - 2026-06-04
 
 ### Added
 
@@ -124,7 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.41.0]
+## [2026.41.0] - 2026-06-03
 
 ### Added
 
@@ -134,7 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.40.0]
+## [2026.40.0] - 2026-06-03
 
 ### Added
 
@@ -144,7 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.39.0]
+## [2026.39.0] - 2026-05-25
 
 ### Added
 
@@ -158,7 +158,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.38.0]
+## [2026.38.0] - 2026-05-05
 
 ### Added
 
@@ -176,7 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.37.0]
+## [2026.37.0] - 2026-04-06
 
 ### Added
 
@@ -189,7 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.34.0]
+## [2026.34.0] - 2026-04-06
 
 ### Added
 
@@ -199,21 +199,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.33.0]
-
-### Added
-
-### Changed
-
-- Upgraded GitHub Actions to v5 to resolve Node.js 20 deprecation warnings
-
-### Fixed
-
-- Excluded auto-generated source code archives from GitHub Releases
-
-### Removed
-
-## [2026.32.0]
+## [2026.33.0] - 2026-04-06
 
 ### Added
 
@@ -227,7 +213,21 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.31.0]
+## [2026.32.0] - 2026-04-06
+
+### Added
+
+### Changed
+
+- Upgraded GitHub Actions to v5 to resolve Node.js 20 deprecation warnings
+
+### Fixed
+
+- Excluded auto-generated source code archives from GitHub Releases
+
+### Removed
+
+## [2026.31.0] - 2026-04-06
 
 ### Added
 
@@ -239,7 +239,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [2026.30.0]
+## [2026.30.0] - 2026-04-06
 
 ### Added
 
@@ -254,7 +254,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [0.29.0]
+## [0.29.0] - 2026-04-06
 
 ### Added
 
@@ -266,7 +266,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Removed
 
-## [0.28.0]
+## [0.28.0] - 2026-04-06
 
 ### Added
 
