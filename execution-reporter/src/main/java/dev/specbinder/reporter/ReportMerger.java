@@ -456,7 +456,7 @@ final class ReportMerger {
     private static FeatureReport recomputeDerivedFields(FeatureReport report) {
         List<ScenarioNode> all = allNodes(report);
         Summary summary = new Summary();
-        Instant oldest = null;
+        Instant newest = null;
         long total = 0;
         for (ScenarioNode node : all) {
             // An outline counts once per example row, not once for the outline: that is what the
@@ -471,14 +471,17 @@ final class ReportMerger {
                 summary.increment(node.getStatus());
             }
             Instant started = startedAt(node);
-            if (started != null && (oldest == null || started.isBefore(oldest))) {
-                oldest = started;
+            if (started != null && (newest == null || started.isAfter(newest))) {
+                newest = started;
             }
             total += durationOf(node);
         }
         report.setSummary(summary);
-        if (oldest != null) {
-            report.setExecutedAt(oldest);
+        // The most recent moment, so the header says when the report was last brought up to date.
+        // Any run's own scenarios are newer than anything carried over, so this is effectively the
+        // moment the last scenario of this run started.
+        if (newest != null) {
+            report.setExecutedAt(newest);
         }
         report.setTotalDurationMs(total);
         return report;
@@ -492,18 +495,18 @@ final class ReportMerger {
         return all;
     }
 
-    /** A plain scenario carries its own moment; an outline's is the earliest of its rows. */
+    /** A plain scenario carries its own moment; an outline's is the latest of its rows. */
     private static Instant startedAt(ScenarioNode node) {
         if (node.getStartedAt() != null) {
             return node.getStartedAt();
         }
-        Instant earliest = null;
+        Instant latest = null;
         for (ExampleReport row : nullToEmpty(node.getExamples())) {
-            if (row.getStartedAt() != null && (earliest == null || row.getStartedAt().isBefore(earliest))) {
-                earliest = row.getStartedAt();
+            if (row.getStartedAt() != null && (latest == null || row.getStartedAt().isAfter(latest))) {
+                latest = row.getStartedAt();
             }
         }
-        return earliest;
+        return latest;
     }
 
     private static long durationOf(ScenarioNode node) {

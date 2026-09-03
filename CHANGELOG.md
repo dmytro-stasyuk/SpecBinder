@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- Execution reporter: `executedAt` in the per-feature JSON report now names the most recent moment among the scenarios the report holds, rather than the oldest. Since a run's own results are always newer than anything carried over from an earlier one, the field now reads as when the report was last brought up to date — the natural thing to show against a spec — where previously re-running a single scenario left the header pinned to whichever scenario had gone longest without running. Consumers displaying this as a "last run" time no longer need to derive it from the scenarios themselves. An outline node's moment likewise comes from its most recent example row instead of its earliest
+
 ### Fixed
 
 ### Removed
