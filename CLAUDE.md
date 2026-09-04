@@ -147,7 +147,7 @@ When creating or updating Java code, **avoid using Java reflection** (e.g., `Cla
 
 ## Technology Stack
 
-- **Java:** 17+
+- **Java:** 21+ (`maven-compiler-plugin` `<release>21</release>` in the root `pom.xml`)
 - **Build:** Maven 3.x
 - **Code Generation:** JavaPoet 1.13.0
 - **Gherkin Parsing:** Cucumber Java 7.23.0

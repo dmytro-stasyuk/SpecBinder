@@ -117,7 +117,7 @@ Feature: Online shopping cart
 ```java
 package org.mycompany.app;
 
-import dev.specbinder.processor.Gherkin2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnit;
 
 @Gherkin2JUnit("specs/cart.feature")
 public abstract class CartFeature {
@@ -294,8 +294,11 @@ details.
 <summary>Feature</summary>
 
 + The feature’s keyword, title, and description lines appear as a **class-level JavaDoc** comment on the generated
-  class. A `@DisplayName` annotation is also added, using the **spec file name** (without `.feature` / `.specb` extension) — not
-  the Feature title.
+  class. A `@DisplayName` annotation is also added, carrying the **keyword and the Feature title** — for
+  `Feature: Customer checkout` that is `@DisplayName("Feature: Customer checkout")`. Only when the file has no
+  parseable `Feature:` block does the display name fall back to the spec file name.
+  Note this is separate from the generated **class name**, which comes from the spec file name — see
+  [Details of mapping Gherkin → JUnit](#details-of-mapping-gherkin--junit).
 
 <table>
   <tr>
@@ -1692,7 +1695,7 @@ All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You ca
 | Option                                  | Type     | Default                  | Description                                                                                                                                               |
 |-----------------------------------------|----------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `supportedFileExtensions`               | String[] | `{"feature", "specb"}`   | File extensions recognised by convention-based discovery and glob patterns                                                                                |
-| `skipGenerationForTags`                 | String[] | `{}`                     | Regex patterns; matching tags cause the generator to skip the corresponding Feature/Rule/Scenario/Examples element entirely                              |
+| `skipGenerationForTags`                 | String[] | `{}`                     | Regex patterns matched against tags. A tagged **Feature** is dropped entirely; a tagged **Rule** or **Scenario** is still generated but reported as skipped (`Assumptions.assumeTrue(false)`) |
 | `shouldBeAbstract`                      | boolean  | `true`                   | Generate abstract class with abstract step methods (default). Set to `false` for a concrete class with failing stubs                                      |
 | `classSuffixIfAbstract`                 | String   | `"Scenarios"`            | Class name suffix when generating in abstract mode                                                                                                        |
 | `classSuffixIfConcrete`                 | String   | `"Test"`                 | Class name suffix when generating in concrete mode                                                                                                        |
@@ -1718,8 +1721,8 @@ All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You ca
 <summary>Example — per‑feature options on the marker class</summary>
 
 ```java
-import dev.specbinder.processor.Gherkin2JUnit;
-import dev.specbinder.processor.Gherkin2JUnitOptions;
+import dev.specbinder.annotations.Gherkin2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
 @Gherkin2JUnitOptions( /* customize generation options as needed */)
 @Gherkin2JUnit("specs/cart.feature")
@@ -1734,8 +1737,8 @@ public abstract class CartFeature {
  <summary>Example — inherited options via a base class</summary>
 
 ```java
-import dev.specbinder.processor.Gherkin2JUnit;
-import dev.specbinder.processor.Gherkin2JUnitOptions;
+import dev.specbinder.annotations.Gherkin2JUnit;
+import dev.specbinder.annotations.Gherkin2JUnitOptions;
 
 @Gherkin2JUnitOptions( /* shared options for all features */)
 public abstract class BaseFeatureOptions {
