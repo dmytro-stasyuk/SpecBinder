@@ -10,10 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Marker class for the ShoppingCart spec. Step methods are implemented here directly
- * (concrete mode); the generator detects them in the parent and omits stubs in the
- * generated test class. Behaviour is intentionally varied to produce all four
- * statuses in the resulting JSON report:
+ * Marker class for the ShoppingCart spec. Step methods are implemented here directly, so
+ * {@code shouldBeAbstract = false} lets the generator emit a concrete, directly runnable test
+ * class rather than an abstract one needing a hand-written subclass. Without it the generated
+ * class stays abstract, JUnit never runs it, and no report is produced. Behaviour is
+ * intentionally varied to produce all four statuses in the resulting JSON report:
  * <ul>
  *     <li>Most scenarios pass.</li>
  *     <li>One scenario asserts a wrong total → {@code failed} status with an error block.</li>
@@ -24,19 +25,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * the listener's skipped-status code path is verified by the unit tests in the
  * execution-reporter module instead.
  * <p>
- * Two generation options enrich what the reporter can emit:
+ * What enriches the report beyond statuses and timings:
  * <ul>
- *     <li>{@code emitScenarioHash = true} stamps each scenario with a {@code @ScenarioHash}
- *     of its executable steps. It lets tooling detect when a scenario has drifted from the
- *     recorded run, and it unlocks the report's verbatim Gherkin step {@code text} and typed
- *     {@code arguments} (both gated on the hash matching live source).</li>
  *     <li>{@code descriptionAsAnnotation = true} emits Gherkin description text (under Feature,
  *     Rule, Scenario) as runtime-retained {@code @Description} annotations, which the reporter
- *     surfaces as {@code description} fields in the JSON at each level.</li>
+ *     surfaces as {@code description} fields in the JSON at each level. It defaults to
+ *     {@code false}, so it is set here.</li>
+ *     <li>{@code emitScenarioHash} stamps each scenario with a {@code @ScenarioHash} of its
+ *     executable steps, letting tooling detect when a scenario has drifted from the recorded
+ *     run, and carrying the report's verbatim Gherkin step {@code text} and typed
+ *     {@code arguments} (both gated on the hash matching live source). It is on by default,
+ *     so it needs no entry above.</li>
  * </ul>
  */
 @Gherkin2JUnit("specs/ShoppingCart.feature")
-@Gherkin2JUnitOptions(emitScenarioHash = true, descriptionAsAnnotation = true)
+@Gherkin2JUnitOptions(descriptionAsAnnotation = true, shouldBeAbstract = false)
 @ExtendWith(SpecBinderReporter.class)
 public abstract class ShoppingCartFeature {
 

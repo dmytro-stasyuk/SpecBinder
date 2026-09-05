@@ -53,6 +53,9 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
     private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)*?)(\"))");
 
+    /** The {@code $pN} marker standing in for a quoted parameter value in a step pattern. */
+    private static final Pattern PARAMETER_MARKER_PATTERN = Pattern.compile("\\$p(?<parameterIndex>[0-9]{1,2})");
+
     public StepProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options,
                          DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,
                          TypeElement baseType) {
@@ -1577,8 +1580,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             //            args[j] = "$p" + (j + 1);
             args[j] = "(?<p" + (j + 1) + ">.*)";
         }
-        String stepPatternWithMarkers =
-                stepPattern.replaceAll("\s\\$p[0-9]{1,2}(\s|$)", " \\$L$1");
+        String stepPatternWithMarkers = replaceParameterMarkers(stepPattern, parameterValues.size());
 
         String[] words = stepPatternWithMarkers.split("\\s+");
         String[] stepTitleWords = Arrays.copyOfRange(words, 1, words.length); // trim the keyword
@@ -1602,6 +1604,39 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         AnnotationSpec annotationSpec = annotationSpecBuilder.build();
 
         return annotationSpec;
+    }
+
+    /**
+     * Replaces every {@code $pN} parameter marker of a step pattern with JavaPoet's {@code $L} placeholder.
+     * <p>
+     * A marker is a parameter wherever it sits in the step text, so none of them may be skipped because of what
+     * surrounds it: a marker touching punctuation ({@code $p1, aged $p2}, {@code the order is $p1.}) or another
+     * marker ({@code the full name is $p1 $p2}) is replaced just like one with spaces on both sides. Leaving any
+     * of them behind would give the annotation format string fewer placeholders than there are arguments, which
+     * JavaPoet rejects with "unused arguments".
+     *
+     * @param stepPattern    the step pattern with {@code $pN} markers in place of the quoted parameter values
+     * @param parameterCount the number of parameters extracted from the step
+     * @return the step pattern with its parameter markers replaced by {@code $L} placeholders
+     */
+    private String replaceParameterMarkers(String stepPattern, int parameterCount) {
+
+        Matcher matcher = PARAMETER_MARKER_PATTERN.matcher(stepPattern);
+
+        StringBuilder result = new StringBuilder();
+        while (matcher.find()) {
+            int parameterIndex = Integer.parseInt(matcher.group("parameterIndex"));
+
+            // Text that merely looks like a marker is left alone - only the markers this step actually has
+            // parameters for become placeholders, so the placeholder count always matches the argument count.
+            boolean isParameterMarker = parameterIndex >= 1 && parameterIndex <= parameterCount;
+
+            String replacement = isParameterMarker ? "$L" : matcher.group();
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 
     /**

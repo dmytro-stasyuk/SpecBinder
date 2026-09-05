@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- `@Gherkin2JUnitOptions(addCucumberStepAnnotations = true)` no longer fails the build when a step's quoted parameter sits directly against punctuation or against another parameter — for example `Given user "Bob", aged "thirty"`, `Then the order is "confirmed".` or `Given the full name is "Ada" "Lovelace"`. Generation aborted with an `unused arguments: expected N, received N+1` error, because the pattern written into the generated step annotation only recognised a parameter with whitespace on both sides — leaving the annotation one capture group short for every parameter that touched a comma, a full stop, a percent sign, or the parameter beside it. The failure was expensive to trace, since it aborts processing before any class is written and so surfaces as unrelated files missing their generated classes rather than as an error against the step responsible. Every parameter now becomes its own `(?<pN>.*)` capture group wherever it sits in the step text
+
 ### Removed
 
 ## [2026.47.0] - 2026-09-02

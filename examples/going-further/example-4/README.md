@@ -38,20 +38,24 @@ feature
 
 Every node — feature, rule, scenario, outline, example — uses the same `displayName` field name.
 
-## Enriching the report
-
-The marker enables two generation options that make the report carry more than statuses and timings:
+## Generation options
 
 ```java
-@Gherkin2JUnitOptions(emitScenarioHash = true, descriptionAsAnnotation = true)
+@Gherkin2JUnitOptions(descriptionAsAnnotation = true, shouldBeAbstract = false)
 ```
 
-- **`emitScenarioHash = true`** stamps each scenario with a `@ScenarioHash` (a hash of its executable
-  steps) for spec-drift detection, and unlocks the report's verbatim Gherkin step `text` and typed
-  `arguments` — both gated on the hash still matching the source `.feature`.
 - **`descriptionAsAnnotation = true`** emits Gherkin descriptions (Feature / Rule / Scenario) as
   runtime-retained `@Description` annotations, which the reporter surfaces as `description` fields in
-  the JSON. This feature's `Feature:` and `Rule:` blocks both carry a description to show it at two levels.
+  the JSON. It defaults to `false`. This feature's `Feature:` and `Rule:` blocks both carry a
+  description to show it at two levels.
+- **`shouldBeAbstract = false`** makes the generated test class concrete and directly runnable. Every
+  step is implemented on the marker, so no hand-written subclass is needed — and without this the
+  generated class stays abstract, JUnit never runs it, and no report is written at all.
+
+**`emitScenarioHash`** needs no entry above: it is on by default. It stamps each scenario with a
+`@ScenarioHash` (a hash of its executable steps) for spec-drift detection, and carries the report's
+verbatim Gherkin step `text` and typed `arguments` — both gated on the hash still matching the
+source `.feature`.
 
 ## How activation works
 

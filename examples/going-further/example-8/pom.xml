@@ -7,20 +7,33 @@
         <artifactId>going-further</artifactId>
         <version>2026.48.0-SNAPSHOT</version>
     </parent>
-    <artifactId>example-4</artifactId>
+    <artifactId>example-8</artifactId>
     <name>${project.parent.artifactId}-${project.artifactId}</name>
-    <description>Showcase: scenario-level JSON reports written by the SpecBinder execution reporter</description>
+    <description>Showcase: one Playwright trace per Gherkin step, recorded onto the execution report</description>
+
+    <properties>
+        <!--
+            Pinned rather than inherited: the rest of the reactor has no browser dependency,
+            so the version lives with the one module that needs it.
+        -->
+        <playwright.version>1.54.0</playwright.version>
+    </properties>
 
     <dependencies>
         <!--
-            The execution-reporter ships a JUnit Platform TestExecutionListener registered via SPI.
-            Adding it to the test classpath is the only step needed to enable per-feature JSON reports
-            under target/specbinder-reports/.
+            The execution reporter supplies both halves of this example: the JSON report itself,
+            and the ExecutionBoundaryListener SPI that the trace adapter implements.
         -->
         <dependency>
             <groupId>dev.specbinder</groupId>
             <artifactId>execution-reporter</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -30,7 +43,7 @@
             <!--
                 The aggregator examples/pom.xml disables tests by default (skipTests=true)
                 because most examples are demonstrations only. This module overrides that
-                so the report is actually produced when `mvn test` runs here.
+                so the traces and the report are actually produced when `mvn test` runs here.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -38,10 +51,9 @@
                 <configuration>
                     <skipTests>false</skipTests>
                     <!--
-                        Surefire's default: a non-zero exit when tests fail. The example
-                        intentionally includes a failing scenario so the JSON shows an
-                        `error` block; testFailureIgnore lets `mvn test` complete and emit
-                        the report without the build going red.
+                        The spec deliberately contains one failing scenario, because the trace of a
+                        step that failed is the whole point of the exercise. testFailureIgnore lets
+                        `mvn test` finish and emit the traces without the build going red.
                     -->
                     <testFailureIgnore>true</testFailureIgnore>
                 </configuration>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tiny Cart</title>
+    <style>
+        body { font: 16px/1.5 system-ui, sans-serif; margin: 2rem auto; max-width: 34rem; color: #0f172a; }
+        h1 { font-size: 1.4rem; }
+        h2 { font-size: 1.1rem; margin-top: 2rem; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; align-items: center; gap: .75rem; padding: .4rem 0; border-bottom: 1px solid #e2e8f0; }
+        li span { flex: 1; }
+        button { font: inherit; padding: .2rem .7rem; border: 1px solid #0d9488; background: #0d9488;
+                 color: #fff; border-radius: .3rem; cursor: pointer; }
+        button.secondary { background: #fff; color: #0d9488; }
+        #total { font-size: 1.3rem; }
+        #cart:empty::after { content: "empty"; color: #64748b; }
+    </style>
+</head>
+<body>
+<h1>Tiny Cart</h1>
+
+<h2>Catalogue</h2>
+<ul id="catalogue">
+    <li><span>Apple — 1.50</span><button data-add="Apple" data-price="1.50">Add</button></li>
+    <li><span>Banana — 0.75</span><button data-add="Banana" data-price="0.75">Add</button></li>
+    <li><span>Cherries — 4.20</span><button data-add="Cherries" data-price="4.20">Add</button></li>
+</ul>
+
+<h2>Cart</h2>
+<ul id="cart"></ul>
+<p>Total: <strong id="total">0.00</strong></p>
+<button id="clear" class="secondary">Clear cart</button>
+
+<script>
+    const lines = [];
+
+    function render() {
+        document.getElementById('cart').innerHTML =
+            lines.map(l => `<li><span>${l.name}</span><span>${l.price.toFixed(2)}</span></li>`).join('');
+        const total = lines.reduce((sum, l) => sum + l.price, 0);
+        document.getElementById('total').textContent = total.toFixed(2);
+    }
+
+    document.querySelectorAll('[data-add]').forEach(button => {
+        button.addEventListener('click', () => {
+            lines.push({ name: button.dataset.add, price: parseFloat(button.dataset.price) });
+            render();
+        });
+    });
+
+    document.getElementById('clear').addEventListener('click', () => {
+        lines.length = 0;
+        render();
+    });
+</script>
+</body>
+</html>
