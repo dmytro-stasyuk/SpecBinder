@@ -20,5 +20,6 @@
         <module>example-5</module>
         <module>example-6</module>
         <module>example-7</module>
+        <module>example-8</module>
     </modules>
 </project>
