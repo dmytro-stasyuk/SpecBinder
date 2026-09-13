@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *     so it needs no entry above.</li>
  * </ul>
  */
-@Gherkin2JUnit("specs/ShoppingCart.feature")
+@Gherkin2JUnit("specs/ShoppingCart.specb")
 @Gherkin2JUnitOptions(descriptionAsAnnotation = true, shouldBeAbstract = false)
 @ExtendWith(SpecBinderReporter.class)
 public abstract class ShoppingCartFeature {

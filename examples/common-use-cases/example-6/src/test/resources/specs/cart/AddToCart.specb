@@ -1,5 +1,9 @@
 Feature: AddToCart
 
+  As a shopper browsing the catalogue
+  I want to put the products I like into my cart
+  So that I can buy them together in a single order
+
   Scenario: Add a single item
     Given I have an empty shopping cart
     When I add "Wireless Headphones" to the cart

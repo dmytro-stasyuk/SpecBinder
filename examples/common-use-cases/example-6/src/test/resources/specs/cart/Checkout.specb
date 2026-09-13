@@ -1,5 +1,9 @@
 Feature: Checkout
 
+  As an online shopper with a full cart
+  I want the checkout to take my card details in one step
+  In order for my order to be confirmed straight away
+
   Scenario: Checkout with valid payment
     Given I have a cart with "3" items
     When I proceed to checkout

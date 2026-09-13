@@ -18,6 +18,8 @@ Demonstrates how the values of a `Examples` table reach **every** kind of step p
   JSON string `"1"`, whereas a bare `<qty>` would have produced the number `1`
 - Two table steps need **distinct trailing words**, because the generated parameter type is named
   after them — two steps both ending `should be:` would share one merged `BeParam` class
+- A doc string may also be typed `image`, `svg` or `html`. SpecBinder still passes the content
+  through as a plain `String`; the IDE plugin renders it below the doc string as a **preview**
 
 ## Gherkin → JUnit mapping
 
@@ -50,6 +52,33 @@ iSubmitTheOrderWithTheFollowingPayload("""
         .replaceAll("<qty>", qty.toString())
         .replaceAll("<total>", total.toString()));
 ```
+
+### The content types beyond `json`
+
+The last scenario is a plain `Scenario:`, not an outline — it is here because the three remaining
+content types belong beside the `json` one above, and because every one of them is a `String` to
+SpecBinder and a rendered document to the IDE.
+
+```gherkin
+When the confirmation badge is
+  """image
+  iVBORw0KGgoAAAANSUhEUgAAAIwAAABpCAIAAABnK1xY...
+  """
+```
+
+`image` holds the picture base64 encoded — the format is worked out from the data, so PNG, JPEG,
+GIF and WebP all work. `svg` holds the markup of a drawing and `html` holds a fragment of a page.
+The generated signature is the same in all four cases:
+
+```java
+public abstract void theConfirmationBadgeIs(String docString);
+public abstract void theDeliveryIconIs(String docString);
+public abstract void theConfirmationPageIs(String docString);
+```
+
+So nothing about the content type reaches the test code. It is there for the reader, and for the
+editor: the SpecBinder IntelliJ plugin puts an eye icon in the gutter beside the opening fence and
+renders the picture, the drawing or the page below the closing one.
 
 ### Placeholders inside a data table
 

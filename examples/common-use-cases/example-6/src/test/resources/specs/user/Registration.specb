@@ -1,5 +1,9 @@
 Feature: Registration
 
+  As a new visitor to the shop
+  I want an account of my own
+  In order to place orders and follow them after they ship
+
   Scenario: Register a new account
     Given I am on the registration page
     When I register with email "bob@example.com" and password "secure456"

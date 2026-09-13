@@ -1,8 +1,8 @@
-<img src="logo.png" alt="SpecBinder logo" width="80" align="left"/>
+<h1>
+  <img src="logo.svg" alt="" width="40" height="30"/>&nbsp;&nbsp;SpecBinder
+</h1>
 
-# Spec Binder
-
-**Spec Binder** turns natural-language Gherkin specs into **pure JUnit** test code at **compile time**.
+**SpecBinder** turns natural-language Gherkin specs into **pure JUnit** test code at **compile time**.
 No runtime step discovery, no Cucumber runner. Your `.feature` / `.specb` files become first-class Java code that compiles and runs like any other JUnit test.
 
 > Built around an annotation-processor approach that parses gherkin spec files during `javac`, generating JUnit test

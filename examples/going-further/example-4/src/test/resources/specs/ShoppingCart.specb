@@ -2,7 +2,7 @@
 Feature: ShoppingCart
 
   Demonstrates the SpecBinder execution reporter. Running `mvn test` in this module
-  produces target/specbinder-reports/specs/ShoppingCart.feature.json containing the
+  produces target/specbinder-reports/specs/ShoppingCart.specb.json containing the
   hierarchical execution tree: top-level scenarios, a Scenario Outline with examples,
   and a Rule with its own scenarios.
 
@@ -26,7 +26,7 @@ Feature: ShoppingCart
     Given the upstream pricing service is unavailable
     Then the cart total should be "0.00"
 
-  Scenario Outline: Subtotal grows linearly with quantity
+  Scenario Outline: Subtotal grows linearlly with quantity
     Given I have a new cart
     When I add an item priced <unit price> with quantity <qty>
     Then the cart total should be <expected total>

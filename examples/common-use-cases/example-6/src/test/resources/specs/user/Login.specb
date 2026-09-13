@@ -1,5 +1,9 @@
 Feature: Login
 
+  As a returning customer
+  I want to sign in with my email address and password
+  So that I can pick up where I left off on my dashboard
+
   Scenario: Successful login
     Given I am on the login page
     When I enter username "alice@example.com"
