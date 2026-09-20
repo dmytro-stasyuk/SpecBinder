@@ -30,7 +30,7 @@ import java.nio.file.Path;
  * also gives the report each step's verbatim Gherkin text, is on by default.
  */
 @Gherkin2JUnit("specs/CartTrace.specb")
-@Gherkin2JUnitOptions(shouldBeAbstract = false)
+@Gherkin2JUnitOptions(shouldBeAbstract = false, descriptionAsAnnotation = true)
 @ExtendWith({SpecBinderReporter.class, PlaywrightTracing.class})
 public abstract class CartTraceFeature {
 
