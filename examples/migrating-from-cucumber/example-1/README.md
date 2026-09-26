@@ -1,4 +1,4 @@
-# Example 5: Data Tables with Cucumber DataTable Integration
+# Example 1: Data Tables with Cucumber DataTable Integration
 
 Demonstrates the `CUCUMBER_DATA_TABLE` mode where Gherkin data tables are passed as Cucumber `DataTable` objects, giving access to the full Cucumber DataTable API for type conversions and POJO mapping.
 

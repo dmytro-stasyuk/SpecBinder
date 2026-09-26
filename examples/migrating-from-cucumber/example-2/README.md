@@ -1,4 +1,4 @@
-# Example 6: Cucumber Step Annotations & Annotation-Based Step Matching
+# Example 2: Cucumber Step Annotations & Annotation-Based Step Matching
 
 Demonstrates two related features: generating `@Given`/`@When`/`@Then` Cucumber annotations on step methods, and using those annotations for step matching when inheriting methods from the marker class.
 

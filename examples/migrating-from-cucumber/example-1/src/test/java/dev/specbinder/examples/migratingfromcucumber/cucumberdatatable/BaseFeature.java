@@ -1,4 +1,4 @@
-package dev.specbinder.examples.goingfurther.cucumberdatatable;
+package dev.specbinder.examples.migratingfromcucumber.cucumberdatatable;
 
 import dev.specbinder.annotations.Gherkin2JUnitOptions;
 

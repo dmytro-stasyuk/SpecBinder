@@ -16,6 +16,7 @@
         <module>getting-started</module>
         <module>common-use-cases</module>
         <module>going-further</module>
+        <module>migrating-from-cucumber</module>
     </modules>
     <dependencies>
         <dependency>

@@ -1,4 +1,4 @@
-package dev.specbinder.examples.goingfurther.cucumberannotations;
+package dev.specbinder.examples.migratingfromcucumber.cucumberannotations;
 
 import dev.specbinder.annotations.Gherkin2JUnit;
 import dev.specbinder.annotations.Gherkin2JUnitOptions;
