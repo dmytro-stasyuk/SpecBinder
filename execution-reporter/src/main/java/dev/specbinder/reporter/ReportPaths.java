@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Resolves the directory under which per-feature JSON reports are written.
+ * Resolves the directory under which per-run JSON reports are written.
  * <p>
  * Convention (no overrides in Phase 1):
  * <ul>
@@ -81,12 +81,22 @@ public final class ReportPaths {
     }
 
     /**
-     * Builds the per-feature report file path. Appends {@code .json} to the source path so that
-     * {@code specs/Cart.feature} → {@code <reportDir>/specs/Cart.feature.json} (extension preserved
-     * to avoid collisions when both {@code .feature} and {@code .specb} share a directory).
+     * Builds the per-run report file path from the fully qualified name of the test class that ran,
+     * mapping package segments onto directories: {@code com.shop.CartTest} →
+     * {@code <reportDir>/com/shop/CartTest.json}. A class in the default package lands directly
+     * under {@code reportDir}.
+     * <p>
+     * Keyed on the test class rather than on the spec so that several concrete classes over one
+     * generated base — the same spec run under more than one configuration — each get their own
+     * file instead of overwriting one another. Two classes cannot share a fully qualified name, so
+     * the mapping is collision-free by construction.
+     * <p>
+     * Only ever called with a top-level class (the feature-root {@code afterAll}), so no {@code $}
+     * reaches the name; were a nested class passed, {@code $} is a legal filename character on every
+     * supported platform and is left as it is.
      */
-    public static Path featureReportFile(Path reportDir, String sourceFilePath) {
-        Path relative = Paths.get(sourceFilePath + ".json");
+    public static Path featureReportFile(Path reportDir, String testClassName) {
+        Path relative = Paths.get(testClassName.replace('.', '/') + ".json");
         return reportDir.resolve(relative).normalize();
     }
 

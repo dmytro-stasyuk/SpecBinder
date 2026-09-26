@@ -13,7 +13,7 @@ mvn test
 After the run, look at:
 
 ```
-target/specbinder-reports/specs/ShoppingCart.feature.json
+target/specbinder-reports/specs/ShoppingCartTest.json
 ```
 
 ## What's in the report

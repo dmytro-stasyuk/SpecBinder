@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- **⚠️ BREAKING:** The execution report is now named after the test class that ran rather than the spec file, so a spec run by more than one concrete test class produces a report for each instead of the last run silently replacing the others. Reports move from `specbinder-reports/<spec path>.json` to `specbinder-reports/<package>/<ClassName>.json` and the report schema version is now 9, so anything reading the old location needs updating; reports already on disk are left behind until the next clean build
+
 ### Fixed
 
 ### Removed

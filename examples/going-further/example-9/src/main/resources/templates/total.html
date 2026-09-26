@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cart total</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="/">SpecBinder</a>
+    <span>Example 9 · One spec, three test layers</span>
+</header>
+
+<main class="page-shell result-shell">
+    <section class="panel result-panel">
+        <p class="eyebrow">Calculation complete</p>
+        <h1 id="result-title">Your cart total</h1>
+
+        <div class="total-card">
+            <span class="currency" aria-hidden="true">€</span>
+            <output aria-label="Cart total" th:text="${total}">20.00</output>
+        </div>
+
+        <dl class="summary-list">
+            <div>
+                <dt>Quantity</dt>
+                <dd th:text="${quantity}">2</dd>
+            </div>
+            <div>
+                <dt>Unit price</dt>
+                <dd>€<span th:text="${unitPrice}">10.00</span></dd>
+            </div>
+            <div>
+                <dt>Discount</dt>
+                <dd><span th:text="${discount}">0</span>%</dd>
+            </div>
+        </dl>
+
+        <a class="button-link" href="/">Start another cart</a>
+    </section>
+</main>
+
+<footer>
+    Calculated by the same service used in the unit and Spring test layers.
+</footer>
+</body>
+</html>

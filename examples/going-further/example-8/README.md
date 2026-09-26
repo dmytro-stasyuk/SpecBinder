@@ -33,7 +33,7 @@ target/
 │   │   └── 03_theCartTotalShouldBe$p1.zip
 │   ├── scenario_6_ex_01/          ← Scenario Outline rows get their own folder per row
 │   └── …
-└── specbinder-reports/specs/CartTrace.specb.json
+└── specbinder-reports/specs/CartTraceTest.json
 ```
 
 25 zips for 8 scenarios. Open any one of them:

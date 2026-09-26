@@ -79,7 +79,7 @@ AnnotationProcessor (APT entry point)
 **Client usage:** Client projects add this as an annotation processor dependency (used only during compilation).
 
 ### 3. `execution-reporter/`
-Runtime JUnit 5 extension that captures execution results from generated test classes and writes per-feature JSON reports under `target/specbinder-reports/<sourceFilePath>.json`. Consumed downstream by tooling such as the IntelliJ plugin's gutter icons.
+Runtime JUnit 5 extension that captures execution results from generated test classes and writes one JSON report per test class under `target/specbinder-reports/<test class FQN as directories>.json`. Consumed downstream by tooling such as the IntelliJ plugin's gutter icons.
 
 **Dependencies:** Depends on `annotations` (for `@SourceFilePath` lookup) plus Jackson for JSON serialization.
 

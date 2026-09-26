@@ -578,7 +578,9 @@ public class SpecBinderReporter implements
         if (reportDir == null) {
             return;
         }
-        Path target = ReportPaths.featureReportFile(reportDir, featureReport.getSourceFilePath());
+        // Named after the concrete class JUnit ran, not the spec: several concrete classes may
+        // share one generated base, and keying on the spec would have them overwrite each other.
+        Path target = ReportPaths.featureReportFile(reportDir, featureReport.getTestClass());
         try {
             // A run may cover only part of the feature — fold its results into whatever is
             // already recorded rather than replacing the file wholesale.

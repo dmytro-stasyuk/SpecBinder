@@ -13,7 +13,12 @@ import java.util.List;
 })
 public class FeatureReport {
 
-    public static final int SCHEMA_VERSION = 8;
+    /**
+     * Bumped to 9 when reports moved from being named after the spec to being named after the
+     * test class that ran. The JSON shape is unchanged; the bump marks which layout on disk a
+     * file belongs to.
+     */
+    public static final int SCHEMA_VERSION = 9;
 
     private int schemaVersion = SCHEMA_VERSION;
     private String sourceFilePath;

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cart pricing</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="/">SpecBinder</a>
+    <span>Example 9 · One spec, three test layers</span>
+</header>
+
+<main class="page-shell">
+    <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">Browser-tested Spring Boot application</p>
+        <h1 id="page-title">Cart pricing, without the guesswork</h1>
+        <p class="hero-copy">
+            Enter a quantity, unit price, and optional discount. The same pricing rules are exercised directly,
+            through a Spring bean, and here through the browser.
+        </p>
+    </section>
+
+    <section class="calculator-layout" aria-label="Cart total calculator">
+        <form class="panel form-panel" method="post" action="/total">
+            <div class="panel-heading">
+                <p class="step-number">01</p>
+                <div>
+                    <h2>Build your cart</h2>
+                    <p>All fields are required. Use zero when no discount applies.</p>
+                </div>
+            </div>
+
+            <div class="field-grid">
+                <div class="field">
+                    <label for="quantity">Quantity</label>
+                    <input id="quantity" name="quantity" type="number" min="0" value="2" required>
+                    <small id="quantity-help">Number of identical items</small>
+                </div>
+
+                <div class="field">
+                    <label for="unit-price">Unit price</label>
+                    <div class="input-with-prefix">
+                        <span aria-hidden="true">€</span>
+                        <input id="unit-price" name="unitPrice" type="number" min="0" step="0.01" value="10.00" required>
+                    </div>
+                    <small>Price before the discount</small>
+                </div>
+
+                <div class="field field-wide">
+                    <label for="discount">Discount (%)</label>
+                    <input id="discount" name="discount" type="number" min="0" max="100" value="0" required>
+                    <small>Any whole percentage from 0 to 100</small>
+                </div>
+            </div>
+
+            <button type="submit">Calculate total</button>
+        </form>
+
+        <aside class="panel explanation-panel">
+            <p class="step-number">02</p>
+            <h2>What gets tested?</h2>
+            <p>The browser submits this form to a Spring MVC controller, which delegates to the shared pricing service.</p>
+
+            <div class="formula" aria-label="Pricing formula">
+                <span>quantity × unit price</span>
+                <span class="formula-divider">then</span>
+                <span>subtract the discount</span>
+                <span class="formula-divider">then</span>
+                <span>round to the nearest cent</span>
+            </div>
+
+            <ul class="check-list">
+                <li>Embedded Spring Boot server</li>
+                <li>Real browser interaction</li>
+                <li>The same Gherkin scenarios as the faster test layers</li>
+            </ul>
+        </aside>
+    </section>
+</main>
+
+<footer>
+    A small application with a deliberately thorough test journey.
+</footer>
+</body>
+</html>

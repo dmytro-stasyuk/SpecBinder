@@ -1,0 +1,27 @@
+Feature: CartPricing
+
+  As a shopper
+  I want to see the total for my cart after a percentage discount
+  So that I know how much I will be charged
+
+  Rule: a line total is the unit price times the quantity
+
+    Scenario: one line
+      Given a cart holding "2" items priced "10.00"
+      Then the cart total should be "20.00"
+
+    Scenario: a larger quantity
+      Given a cart holding "5" items priced "4.50"
+      Then the cart total should be "22.50"
+
+  Rule: a percentage discount comes off the total
+
+    Scenario: a discount that divides cleanly
+      Given a cart holding "4" items priced "25.00"
+      When a discount of "10" percent is applied
+      Then the cart total should be "90.00"
+
+    Scenario: a discount that lands between cents
+      Given a cart holding "1" items priced "9.99"
+      When a discount of "15" percent is applied
+      Then the cart total should be "8.49"
