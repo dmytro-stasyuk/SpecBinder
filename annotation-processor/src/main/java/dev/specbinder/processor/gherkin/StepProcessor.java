@@ -205,7 +205,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         if (options.isShouldBeAbstract()) {
             stepMethodBuilder.addModifiers(Modifier.ABSTRACT);
         } else {
-            if ("SKIP".equals(options.getUnimplementedStepBehavior())) {
+            if ("ABORT".equals(options.getUnimplementedStepBehavior())) {
                 stepMethodBuilder.addStatement("$T.assumeTrue(false, \"Step is not yet implemented\")", Assumptions.class);
             } else if ("COMPILATION_ERROR".equals(options.getUnimplementedStepBehavior())) {
                 stepMethodBuilder.addCode("Step is not yet implemented\n");

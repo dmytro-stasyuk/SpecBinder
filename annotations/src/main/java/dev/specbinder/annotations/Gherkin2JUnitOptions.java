@@ -91,12 +91,13 @@ public @interface Gherkin2JUnitOptions {
         FAIL,
 
         /**
-         * Generates a test method that is <strong>skipped</strong> using {@code Assumptions.assumeTrue(false, ...)}.
+         * Generates a test method that is <strong>aborted</strong> using {@code Assumptions.assumeTrue(false, ...)}.
          * <p>
-         * The test is reported as skipped/aborted rather than failed, which can be useful
-         * when empty elements are intentional placeholders that should not block the build.
+         * The failed assumption throws JUnit's {@code TestAbortedException}, so the test is reported as aborted
+         * rather than failed, which can be useful when empty elements are intentional placeholders that should
+         * not block the build.
          */
-        SKIP,
+        ABORT,
 
         /**
          * Generates a test method that <strong>does not compile</strong> by inserting a plain-text
@@ -254,8 +255,8 @@ public @interface Gherkin2JUnitOptions {
      * <ul>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — generates a test method with
      *     {@code Assertions.fail("Rule doesn't have any scenarios")}, causing the test to fail</li>
-     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#SKIP SKIP} — generates a test method with
-     *     {@code Assumptions.assumeTrue(false, "Rule has no scenarios")}, causing the test to be skipped</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#ABORT ABORT} — generates a test method with
+     *     {@code Assumptions.assumeTrue(false, "Rule has no scenarios")}, causing the test to be aborted</li>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#COMPILATION_ERROR COMPILATION_ERROR} — inserts an invalid
      *     statement that prevents compilation, making empty Rules a hard blocker</li>
      * </ul>
@@ -279,8 +280,8 @@ public @interface Gherkin2JUnitOptions {
      * <ul>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — generates a test method with
      *     {@code Assertions.fail("Scenario has no steps")}, causing the test to fail</li>
-     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#SKIP SKIP} — generates a test method with
-     *     {@code Assumptions.assumeTrue(false, "Scenario has no steps")}, causing the test to be skipped</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#ABORT ABORT} — generates a test method with
+     *     {@code Assumptions.assumeTrue(false, "Scenario has no steps")}, causing the test to be aborted</li>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#COMPILATION_ERROR COMPILATION_ERROR} — inserts an invalid
      *     statement that prevents compilation, making empty Scenarios a hard blocker</li>
      * </ul>
@@ -391,9 +392,9 @@ public @interface Gherkin2JUnitOptions {
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — the method body contains
      *     {@code Assertions.fail("Step is not yet implemented")}, causing the test to fail at runtime
      *     when the step is reached</li>
-     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#SKIP SKIP} — the method body contains
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#ABORT ABORT} — the method body contains
      *     {@code Assumptions.assumeTrue(false, "Step is not yet implemented")}, causing the test
-     *     to be reported as skipped/aborted when the step is reached</li>
+     *     to be reported as aborted when the step is reached</li>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#COMPILATION_ERROR COMPILATION_ERROR} — the method body
      *     contains an invalid statement ({@code Step is not yet implemented}) that prevents compilation,
      *     making unimplemented steps a hard blocker similar to abstract generation mode</li>

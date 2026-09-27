@@ -38,19 +38,19 @@ public class GeneratorOptions {
 
     /**
      * Controls how the generator handles Scenarios that contain no steps.
-     * Valid values: "FAIL", "SKIP", "COMPILATION_ERROR"
+     * Valid values: "FAIL", "ABORT", "COMPILATION_ERROR"
      */
     private final String emptyScenarioBehavior;
 
     /**
      * Controls how the generator handles Rules that contain no Scenarios.
-     * Valid values: "FAIL", "SKIP", "COMPILATION_ERROR"
+     * Valid values: "FAIL", "ABORT", "COMPILATION_ERROR"
      */
     private final String emptyRuleBehavior;
 
     /**
      * Controls the body of generated step method stubs when shouldBeAbstract is false.
-     * Valid values: "FAIL", "SKIP", "COMPILATION_ERROR"
+     * Valid values: "FAIL", "ABORT", "COMPILATION_ERROR"
      */
     private final String unimplementedStepBehavior;
 

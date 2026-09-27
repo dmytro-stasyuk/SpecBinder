@@ -244,7 +244,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         } else if (scenarioSteps.isEmpty()) {
 
-            if ("SKIP".equals(options.getEmptyScenarioBehavior())) {
+            if ("ABORT".equals(options.getEmptyScenarioBehavior())) {
                 scenarioMethodBuilder.addStatement("$T.assumeTrue(false, \"Scenario has no steps\")", Assumptions.class);
             } else if ("COMPILATION_ERROR".equals(options.getEmptyScenarioBehavior())) {
                 scenarioMethodBuilder.addCode("Scenario has no steps\n");

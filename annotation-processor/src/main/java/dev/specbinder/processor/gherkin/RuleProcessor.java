@@ -175,14 +175,14 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
         if (!hasScenarios) {
             /*
-              If there are no scenarios in the rule, add a test method that either fails or is skipped,
+              If there are no scenarios in the rule, add a test method that either fails or is aborted,
               depending on the emptyRuleBehavior option.
              */
             MethodSpec.Builder noScenariosInRuleMSB = MethodSpec
                     .methodBuilder("noScenariosInRule")
                     .addModifiers(Modifier.PUBLIC);
 
-            if (ruleSkipped || "SKIP".equals(options.getEmptyRuleBehavior())) {
+            if (ruleSkipped || "ABORT".equals(options.getEmptyRuleBehavior())) {
                 noScenariosInRuleMSB.addStatement("$T.assumeTrue(false, \"Rule has no scenarios\")", Assumptions.class);
             } else if ("COMPILATION_ERROR".equals(options.getEmptyRuleBehavior())) {
                 noScenariosInRuleMSB.addCode("Rule doesn't have any scenarios\n");

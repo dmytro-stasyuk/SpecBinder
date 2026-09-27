@@ -83,8 +83,8 @@ public class ShoppingCartFeatureTest extends ShoppingCartFeature {
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `emptyScenarioBehavior` | `FAIL` | `FAIL`, `SKIP`, or `NONE` for stepless scenarios |
-| `emptyRuleBehavior` | `FAIL` | `FAIL`, `SKIP`, or `NONE` for scenarioless rules |
+| `emptyScenarioBehavior` | `FAIL` | `FAIL`, `ABORT`, or `NONE` for stepless scenarios |
+| `emptyRuleBehavior` | `FAIL` | `FAIL`, `ABORT`, or `NONE` for scenarioless rules |
 | `tagForEmptyScenarios` | `"new"` | Tag added to empty scenarios (set to `""` to disable) |
 | `tagForEmptyRules` | `"new"` | Tag added to empty rules (set to `""` to disable) |
 

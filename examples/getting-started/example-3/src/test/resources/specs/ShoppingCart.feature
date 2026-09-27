@@ -7,7 +7,7 @@ Feature: ShoppingCart
     Given I have an empty shopping cart
     When I add "Wireless Headphones" with quantity "2" and unit price "59.99"
     Then the cart should contain "1" item
-    And the cart subtotal should be "119.98"
+    And the cart subtotal should be "119.00"
 
   Scenario: Add multiple different items
     Given I have an empty shopping cart

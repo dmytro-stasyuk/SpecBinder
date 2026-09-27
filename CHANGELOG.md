@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Changed
 
+- **⚠️ BREAKING:** The `SKIP` value of `emptyScenarioBehavior`, `emptyRuleBehavior` and `unimplementedStepBehavior` is now called `ABORT`, because the generated test is reported by JUnit as aborted, not skipped. What the generated tests do is unchanged, but any configuration that uses `SKIP` has to switch to `ABORT` before it compiles again.
+
 ### Fixed
 
 ### Removed
