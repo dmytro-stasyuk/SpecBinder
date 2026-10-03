@@ -9,6 +9,8 @@ Demonstrates how Gherkin tags (`@smoke`, `@regression`, etc.) map to JUnit `@Tag
 - Scenario-level tags → `@Tag` on the `@Test` method
 - Multiple tags → `@Tags` container annotation
 - Tags enable filtering in IDEs, Maven Surefire, and CI pipelines
+- Tags carry over to the concrete subclass (`ShoppingCartTest`) that implements the step methods — it declares no tags
+  of its own, yet filtering selects its tests exactly as tagged in the spec
 
 ## Gherkin → JUnit mapping
 
@@ -25,6 +27,15 @@ Demonstrates how Gherkin tags (`@smoke`, `@regression`, etc.) map to JUnit `@Tag
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.specb` | Feature with tags at feature, rule, and scenario levels |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
+| `src/test/java/.../ShoppingCartTest.java` | Concrete subclass implementing the step methods with assertions |
+
+## Class hierarchy
+
+```
+ShoppingCartFeature.java          (marker class, @Gherkin2JUnit)
+  └→ ShoppingCartScenarios.java   (generated, abstract, carries the @Tag annotations)
+      └→ ShoppingCartTest.java    (your concrete class, implements step methods, inherits the tags)
+```
 
 ## Running filtered tests
 

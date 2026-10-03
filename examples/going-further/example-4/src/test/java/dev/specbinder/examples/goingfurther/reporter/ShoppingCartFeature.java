@@ -4,26 +4,14 @@ import dev.specbinder.annotations.Gherkin2JUnit;
 import dev.specbinder.annotations.Gherkin2JUnitOptions;
 import dev.specbinder.reporter.SpecBinderReporter;
 
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
- * Marker class for the ShoppingCart spec. Step methods are implemented here directly, so
- * {@code shouldBeAbstract = false} lets the generator emit a concrete, directly runnable test
- * class rather than an abstract one needing a hand-written subclass. Without it the generated
- * class stays abstract, JUnit never runs it, and no report is produced. Behaviour is
- * intentionally varied to produce all four statuses in the resulting JSON report:
- * <ul>
- *     <li>Most scenarios pass.</li>
- *     <li>One scenario asserts a wrong total → {@code failed} status with an error block.</li>
- *     <li>One scenario calls {@link Assumptions#abort} → {@code aborted} status.</li>
- * </ul>
- * Note: SpecBinder doesn't currently translate a Gherkin {@code @disabled} tag to JUnit's
- * {@code @Disabled}, so the report won't contain a {@code skipped} scenario in this example —
- * the listener's skipped-status code path is verified by the unit tests in the
- * execution-reporter module instead.
+ * Marker class for the ShoppingCart spec. It switches on the execution reporter and the one
+ * generation option that enriches the report; the step methods live in ShoppingCartTest.
+ * <p>
+ * {@code @ExtendWith} is {@code @Inherited}, so placing the reporter here covers the concrete
+ * ShoppingCartTest that JUnit actually runs.
  * <p>
  * What enriches the report beyond statuses and timings:
  * <ul>
@@ -37,35 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *     {@code arguments} (both gated on the hash matching live source). It is on by default,
  *     so it needs no entry above.</li>
  * </ul>
+ * <p>
+ * No path in @Gherkin2JUnit — the processor discovers the co-located ShoppingCart.specb in
+ * this package by convention.
  */
-@Gherkin2JUnit("specs/ShoppingCart.specb")
-@Gherkin2JUnitOptions(descriptionAsAnnotation = true, shouldBeAbstract = false)
+@Gherkin2JUnit
+@Gherkin2JUnitOptions(descriptionAsAnnotation = true)
 @ExtendWith(SpecBinderReporter.class)
 public abstract class ShoppingCartFeature {
-
-    private final Cart cart = new Cart();
-
-    public void iHaveANewCart() {
-        cart.setSubtotal(0.0);
-    }
-
-    public void iHaveACartWithSubtotal$p1(Double subtotal) {
-        cart.setSubtotal(subtotal);
-    }
-
-    public void iAddAnItemPriced$p1WithQuantity$p2(Double unitPrice, Integer quantity) {
-        cart.addItem(unitPrice, quantity);
-    }
-
-    public void iApplyDiscountCode$p1(String code) {
-        cart.applyDiscountCode(code);
-    }
-
-    public void theCartTotalShouldBe$p1(Double expected) {
-        assertEquals(expected, cart.subtotal(), 0.001);
-    }
-
-    public void theUpstreamPricingServiceIsUnavailable() {
-        Assumptions.abort("pricing service is unreachable; skipping scenario");
-    }
 }

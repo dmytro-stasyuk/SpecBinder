@@ -35,7 +35,8 @@ All three use the same `CartPricingService`. The UI submits a real HTML form to 
 ## The marker class
 
 ```java
-@Gherkin2JUnit("specs/CartPricing.specb")
+@Gherkin2JUnit
+@Gherkin2JUnitOptions(descriptionAsAnnotation = true)
 @ExtendWith(SpecBinderReporter.class)
 public abstract class CartPricingFeature {
     public abstract void aCartHolding$p1ItemsPriced$p2(Integer quantity, String unitPrice);
@@ -46,13 +47,13 @@ public abstract class CartPricingFeature {
 }
 ```
 
-The marker declares the shared step signatures. Each concrete test extends the generated `CartPricingScenarios` and implements those methods with its own setup, interactions, and assertions. No generation options are needed — `shouldBeAbstract` defaults to `true`.
+The marker declares the shared step signatures. Each concrete test extends the generated `CartPricingScenarios` and implements those methods with its own setup, interactions, and assertions. The bare `@Gherkin2JUnit` discovers the co-located `CartPricing.specb` by convention. `descriptionAsAnnotation` only adds the spec's descriptions to the reports; `shouldBeAbstract` needs no setting, since it defaults to `true`.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `src/test/resources/specs/CartPricing.specb` | Four scenarios covering quantities, discounts, and rounding |
+| `src/test/java/.../CartPricing.specb` | Four scenarios covering quantities, discounts, and rounding |
 | `src/test/java/.../CartPricingFeature.java` | Marker class with abstract steps and the reporter extension |
 | `src/test/java/.../CartPricingUnitTest.java` | Direct service calls; tagged `unit` |
 | `src/test/java/.../CartPricingSpringTest.java` | Spring bean calls; tagged `spring` |
@@ -113,4 +114,4 @@ target/specbinder-reports/dev/specbinder/examples/goingfurther/multipletests/
 └── CartPricingUiTest.json         4 passed
 ```
 
-Each report identifies `specs/CartPricing.specb` as its source and records its concrete `testClass`. Naming reports after the concrete classes keeps the results for each layer separate.
+Each report identifies `dev/specbinder/examples/goingfurther/multipletests/CartPricing.specb` as its source and records its concrete `testClass`. Naming reports after the concrete classes keeps the results for each layer separate.

@@ -1,0 +1,52 @@
+Feature: ShoppingCart
+
+  Demonstrates how the values of an Examples table reach every kind of step
+  parameter of a Scenario Outline: a quoted value, a doc string and a data
+  table. The doc string carries a content type, so the IDE highlights and
+  formats it as JSON while SpecBinder still passes it as a plain String.
+
+  Scenario Outline: Order a single product
+    Given I have an empty shopping cart
+    When I add "<product>" to the cart
+    And I submit the order with the following payload:
+      """json
+      {
+        "product": "<product>",
+        "quantity": "<qty>",
+        "total": "<total>"
+      }
+      """
+    Then the order should contain the following lines:
+      | product   | quantity | line total |
+      | <product> | <qty>    | <total>    |
+
+    Examples: Single-product orders
+      | product        | qty | total |
+      | Wireless Mouse | 1   | 29.99 |
+      | USB-C Cable    | 3   | 26.97 |
+      | Laptop Stand   | 2   | 70.00 |
+
+  Scenario Outline: Apply a promotion to the order
+    Given I have an empty shopping cart
+    When I add "<product>" to the cart
+    Then the order should show the following promotion details:
+      | field     | value      |
+      | promotion | <promo>    |
+      | channel   | web        |
+      | discount  | <discount> |
+
+    Examples: Promotions
+      | product        | promo    | discount |
+      | Wireless Mouse | SPRING10 | 10%      |
+      | Laptop Stand   | BUNDLE20 | 20%      |
+
+  Scenario Outline: Build an order reference from fixed text and Examples values
+    Given I have an empty shopping cart
+    When I add "<product>" to the cart
+    And I place the order with reference "ORD-<year>-<region>"
+    Then the tracking link should be "https://shop.example.com/orders/<region>/<year>"
+
+    Examples: Order references
+      | product        | year | region |
+      | Wireless Mouse | 2026 | EU     |
+      | Laptop Stand   | 2026 | US     |

@@ -6,7 +6,6 @@ import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.DataTableTypeRegistry;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -16,9 +15,14 @@ import java.util.Map;
  * use Cucumber's type conversion to map rows to POJOs.
  *
  * You must provide a getTableConverter() method that the generated
- * createDataTable() helper uses to parse the table text.
+ * createDataTable() helper uses to parse the table text. It lives here,
+ * in the marker's hierarchy, together with the row types it converts to;
+ * the step methods themselves are implemented in ShoppingCartTest.
+ *
+ * No path in @Gherkin2JUnit — the processor discovers the co-located
+ * ShoppingCart.feature in this package by convention.
  */
-@Gherkin2JUnit("specs/ShoppingCart.specb")
+@Gherkin2JUnit
 public abstract class ShoppingCartFeature extends BaseFeature {
 
     protected DataTableTypeRegistry registry;
@@ -53,24 +57,6 @@ public abstract class ShoppingCartFeature extends BaseFeature {
      */
     protected DataTable.TableConverter getTableConverter() {
         return tableConverter;
-    }
-
-    public void myCartContainsTheFollowingProducts(DataTable dataTable) {
-        List<Product> products = dataTable.asList(Product.class);
-        // Use products...
-    }
-
-    public void theCartShouldContain$p1Products(Integer expectedCount) {
-        // TODO: Implement assertion
-    }
-
-    public void theFollowingUsersExist(DataTable dataTable) {
-        List<User> users = dataTable.asList(User.class);
-        // Use users...
-    }
-
-    public void theSystemShouldHave$p1Users(Integer expectedCount) {
-        // TODO: Implement assertion
     }
 
     public record Product(String name, int qty, double unitPrice) {

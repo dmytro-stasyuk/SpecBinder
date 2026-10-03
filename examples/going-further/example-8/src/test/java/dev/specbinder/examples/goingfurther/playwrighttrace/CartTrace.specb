@@ -1,0 +1,44 @@
+@playwright
+Feature: CartTrace
+
+  Demonstrates recording one Playwright trace per Gherkin step. Running `mvn test` in this
+  module drives a real browser through the steps below, writes a self-contained trace zip for
+  each one under target/playwright-traces/, and stamps each zip's path onto its step in
+  the JSON execution report.
+
+  Scenario: A fresh cart starts empty
+    Given I open the cart page
+    Then the cart total should be "0.00"
+
+  Scenario: Adding an item updates the total
+    Given I open the cart page
+    When I add "Apple" to the cart
+    Then the cart total should be "1.50"
+
+  Scenario: Adding two items sums their prices
+    Given I open the cart page
+    When I add "Apple" to the cart
+    And I add "Cherries" to the cart
+    Then the cart total should be "5.70"
+
+  Scenario: Clearing the cart resets the total
+    Given I open the cart page
+    When I add "Banana" to the cart
+    And I clear the cart
+    Then the cart total should be "0.00"
+
+  Scenario: Intentional failure, so one trace captures a red step
+    Given I open the cart page
+    When I add "Banana" to the cart
+    Then the cart total should be "99.99"
+
+  Scenario Outline: Each catalogue item lands at its own price
+    Given I open the cart page
+    When I add "<item>" to the cart
+    Then the cart total should be "<price>"
+
+    Examples:
+      | item     | price |
+      | Apple    | 1.50  |
+      | Banana   | 0.75  |
+      | Cherries | 4.20  |

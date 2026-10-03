@@ -1,7 +1,5 @@
 package dev.specbinder.examples.commonusecases.basesteps;
 
-import specs.CheckoutScenarios;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

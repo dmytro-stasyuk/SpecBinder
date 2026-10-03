@@ -1,13 +1,13 @@
 Feature: ShoppingCart
 
-  A fully working example where step methods are implemented
-  in a concrete subclass of the generated abstract class, with real assertions.
+  Two scenarios sharing most of their steps: each distinct step becomes
+  one method, and steps share state through the test class.
 
   Scenario: Add item and verify cart contents
     Given I have an empty shopping cart
     When I add "Wireless Headphones" with quantity "2" and unit price "59.99"
     Then the cart should contain "1" item
-    And the cart subtotal should be "119.00"
+    And the cart subtotal should be "119.98"
 
   Scenario: Add multiple different items
     Given I have an empty shopping cart

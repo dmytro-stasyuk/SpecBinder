@@ -4,17 +4,19 @@ import dev.specbinder.annotations.Gherkin2JUnit;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
- * The generator initially produces ProductsParam with a String category field.
- * By defining ProductsParam here with a Category enum, we refine the type:
- * the generator detects our class and uses it instead of generating a new one.
+ * The generator initially produces ProductsParam with a String category field,
+ * together with the abstract step method that receives it. Both are moved here
+ * from the generated class and the type is refined to a Category enum: the
+ * generator detects them and uses them instead of generating its own.
  *
  * If someone adds a row with an invalid category (e.g. "furniture"),
  * the generated code will try Category.furniture — causing a COMPILER ERROR.
+ *
+ * No path in @Gherkin2JUnit — the processor discovers the co-located
+ * ShoppingCart.specb in this package by convention.
  */
-@Gherkin2JUnit("specs/ShoppingCart.specb")
+@Gherkin2JUnit
 public abstract class ShoppingCartFeature {
 
     /**
@@ -46,34 +48,17 @@ public abstract class ShoppingCartFeature {
         public Category category() { return this.category; }
     }
 
-    protected List<ProductsParam> products;
+    /**
+     * Step declaration moved from the generated code along with ProductsParam, so the
+     * refined type and the step that receives it live side by side. It stays abstract —
+     * the concrete test class implements it like any other step.
+     */
+    public abstract void myCartContainsTheFollowingProducts(List<ProductsParam> products);
 
-    public void myCartContainsTheFollowingProducts(List<ProductsParam> products) {
-        this.products = products;
-    }
-
-    public void iCalculateTheSubtotal() {
-        // subtotal calculated on demand in assertion
-    }
-
-    public void theCartSubtotalShouldBe$p1(Double expectedSubtotal) {
-        double actual = products.stream()
-                .mapToDouble(p -> p.qty() * p.unitPrice())
-                .sum();
-        assertEquals(expectedSubtotal, actual, 0.001);
-    }
-
-    public void iFilterByCategory$p1(String categoryName) {
-        Category category = Category.valueOf(categoryName);
-        products = products.stream()
-                .filter(p -> p.category() == category)
-                .toList();
-    }
-
-    public void theFilteredItemsShouldTotal$p1(Double expectedTotal) {
-        double actual = products.stream()
-                .mapToDouble(p -> p.qty() * p.unitPrice())
-                .sum();
-        assertEquals(expectedTotal, actual, 0.001);
-    }
+    /**
+     * Step declaration moved from the generated code with its quoted parameter refined
+     * from String to Category. The generator passes the quoted value as an enum constant,
+     * so a category the enum doesn't know is a compiler error here too.
+     */
+    public abstract void iFilterByCategory$p1(Category category);
 }

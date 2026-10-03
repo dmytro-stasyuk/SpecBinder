@@ -7,7 +7,8 @@ Demonstrates the `CUCUMBER_DATA_TABLE` mode where Gherkin data tables are passed
 - `@Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)` changes data table handling
 - Step methods receive `DataTable` instead of `List<Param>`
 - The generator creates a `createDataTable()` helper that parses text blocks into `DataTable` objects
-- You must provide a `getTableConverter()` method in your class hierarchy
+- You must provide a `getTableConverter()` method in your class hierarchy — here, in the marker class
+- The concrete `ShoppingCartTest` implements the steps, converting each `DataTable` to typed rows with `asList(...)`
 - Full access to Cucumber's `DataTable` API: `asList()`, `asMap()`, `asMaps()`, POJO mapping
 - Requires `cucumber-java` dependency
 
@@ -30,6 +31,9 @@ protected DataTable createDataTable(String tableLines) {
     // using getTableConverter()
 }
 
+// Generated abstract step method
+public abstract void myCartContainsTheFollowingProducts(DataTable dataTable);
+
 // Generated call site
 myCartContainsTheFollowingProducts(createDataTable("""
         |name               |qty|unit price|
@@ -50,15 +54,28 @@ registry.defineDataTableType(new DataTableType(
         )
 ));
 
-// Then in step method:
-List<Product> products = dataTable.asList(Product.class);
+// Then in the step method, in ShoppingCartTest:
+@Override
+public void myCartContainsTheFollowingProducts(DataTable dataTable) {
+    products = dataTable.asList(Product.class);
+}
+```
+
+## Class hierarchy
+
+```
+BaseFeature.java                    (@Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE))
+  └→ ShoppingCartFeature.java       (marker — getTableConverter(), row type registration)
+      └→ ShoppingCartScenarios.java (generated, abstract — DataTable step methods, createDataTable() helper)
+          └→ ShoppingCartTest.java  (your concrete class, implements the steps)
 ```
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.specb` | Feature with data tables |
+| `src/test/java/.../ShoppingCart.feature` | Feature with data tables, co-located with its marker |
 | `src/test/java/.../BaseFeature.java` | Base class with `@Gherkin2JUnitOptions(dataTableParameterType = CUCUMBER_DATA_TABLE)` |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class with `getTableConverter()`, POJO type registration, and step implementations |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class with `getTableConverter()` and POJO type registration |
+| `src/test/java/.../ShoppingCartTest.java` | Concrete test implementing the steps with `DataTable.asList(...)` |
 | `pom.xml` | Includes `cucumber-java` dependency |

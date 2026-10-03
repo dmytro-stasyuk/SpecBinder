@@ -8,8 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 /**
  * One behavioural contract. Each concrete test implements these steps at its own application layer.
  * SpecBinder generates the abstract CartPricingScenarios class; all three tests inherit its scenarios.
+ * <p>
+ * No path in @Gherkin2JUnit — the processor discovers the co-located CartPricing.specb in this
+ * package by convention.
  */
-@Gherkin2JUnit("specs/CartPricing.specb")
+@Gherkin2JUnit
 @Gherkin2JUnitOptions(descriptionAsAnnotation = true)
 @ExtendWith(SpecBinderReporter.class)
 public abstract class CartPricingFeature {

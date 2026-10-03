@@ -18,9 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Any step left unimplemented would become a failing stub (Assertions.fail(...)) at
  * run time rather than a compile error — that is the key trade-off versus the default
  * abstract mode.
+ *
+ * No path in @Gherkin2JUnit — the processor discovers the co-located ShoppingCart.specb
+ * in this package by convention.
  */
 @Gherkin2JUnitOptions(shouldBeAbstract = false)
-@Gherkin2JUnit("specs/ShoppingCart.specb")
+@Gherkin2JUnit
 public abstract class ShoppingCartFeature {
 
     private final List<CartItem> cart = new ArrayList<>();

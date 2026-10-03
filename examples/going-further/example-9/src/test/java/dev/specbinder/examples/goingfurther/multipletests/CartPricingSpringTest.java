@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import specs.CartPricingScenarios;
 
 import java.math.BigDecimal;
 

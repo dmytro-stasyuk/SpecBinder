@@ -4,6 +4,7 @@ import com.squareup.javapoet.*;
 import dev.specbinder.annotations.Gherkin2JUnit;
 import dev.specbinder.annotations.output.SourceFilePath;
 import dev.specbinder.annotations.output.SourceTimestamp;
+import dev.specbinder.annotations.output.SpecDisplayNameGenerator;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
 import dev.specbinder.processor.gherkin.FeatureFileParser;
@@ -722,6 +723,19 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                 .addMember("value", "\"" + JavaDocUtils.escapeForJavaPoet(displayNameValue) + "\"")
                 .build()
         );
+
+        /*
+         * {@link DisplayNameGeneration} annotation: JUnit does not pass @DisplayName down to the subclass
+         * that runs an abstract generated class, but it does pass this one, so that subclass is named after
+         * the Feature too — "<display name above> (<subclass name>)" — instead of by its class name alone.
+         */
+        if (options.isShouldBeAbstract()) {
+            classBuilder.addAnnotation(AnnotationSpec
+                    .builder(DisplayNameGeneration.class)
+                    .addMember("value", "$T.class", SpecDisplayNameGenerator.class)
+                    .build()
+            );
+        }
 
         if (feature != null) {
             DescriptionEmitter.emit(classBuilder, feature.getDescription(), options);

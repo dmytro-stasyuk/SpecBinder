@@ -1,0 +1,10 @@
+Feature: ShoppingCart
+
+  Inherits all shared options from BaseFeature: step methods
+  carry the Given/When/Then keyword prefix and the generated
+  class name ends in "Spec".
+
+  Scenario: Add item to cart
+    Given I have an empty shopping cart
+    When I add "Wireless Headphones" to the cart
+    Then the cart should contain "1" item

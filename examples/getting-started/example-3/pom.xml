@@ -9,5 +9,5 @@
     </parent>
     <artifactId>example-3</artifactId>
     <name>${project.parent.artifactId}-${project.artifactId}</name>
-    <description>Implementing step methods — concrete mode end-to-end</description>
+    <description>Step reuse across scenarios and scenario state</description>
 </project>

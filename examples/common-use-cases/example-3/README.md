@@ -16,15 +16,15 @@ Two feature files (`ShoppingCart` and `Checkout`) each have their own marker tha
 
 ```
 BaseShopSteps.java                       (shared cart steps + state + helpers)
-  ├→ ShoppingCartFeature.java            (marker → specs/ShoppingCart.feature)
+  ├→ ShoppingCartFeature.java            (marker → ./ShoppingCart.specb)
   │     └→ ShoppingCartScenarios.java    (generated, abstract)
   │           └→ ShoppingCartTest.java   (concrete — cart-assertion steps)
-  └→ CheckoutFeature.java                (marker → specs/Checkout.feature)
+  └→ CheckoutFeature.java                (marker → ./Checkout.specb)
         └→ CheckoutScenarios.java        (generated, abstract)
               └→ CheckoutTest.java       (concrete — checkout steps)
 ```
 
-Both `ShoppingCart.feature` and `Checkout.feature` use `Given I have an empty shopping cart`
+Both `ShoppingCart.specb` and `Checkout.specb` use `Given I have an empty shopping cart`
 and `When I add "…" with quantity "…" and unit price "…"` — implemented once in `BaseShopSteps`.
 
 ## The base class
@@ -50,13 +50,15 @@ public abstract class BaseShopSteps {
 
 ## Two markers, two concrete tests
 
-Each marker extends the base and points at its own feature; each concrete test implements only its feature's own steps:
+Each marker extends the base and points at its own feature; each concrete test implements only its feature's own steps.
+Both spec files are co-located in the markers' package, so each marker names its file explicitly — `./` resolves against
+the marker's package, and a bare `@Gherkin2JUnit` would pick up both files:
 
 ```java
-@Gherkin2JUnit("specs/ShoppingCart.feature")
+@Gherkin2JUnit("./ShoppingCart.specb")
 public abstract class ShoppingCartFeature extends BaseShopSteps {}
 
-@Gherkin2JUnit("specs/Checkout.feature")
+@Gherkin2JUnit("./Checkout.specb")
 public abstract class CheckoutFeature extends BaseShopSteps {}
 
 public class ShoppingCartTest extends ShoppingCartScenarios {
@@ -77,8 +79,8 @@ Neither generated class re-declares `iHaveAnEmptyShoppingCart` or `iAdd…` as a
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.feature` | First feature — cart setup + cart assertions |
-| `src/test/resources/specs/Checkout.feature` | Second feature — reuses the base cart steps, adds checkout steps |
+| `src/test/java/.../ShoppingCart.specb` | First feature — cart setup + cart assertions |
+| `src/test/java/.../Checkout.specb` | Second feature — reuses the base cart steps, adds checkout steps |
 | `src/test/java/.../BaseShopSteps.java` | Base class with shared step implementations, state, and helpers |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker for the first feature (extends the base) |
 | `src/test/java/.../CheckoutFeature.java` | Marker for the second feature (extends the base) |

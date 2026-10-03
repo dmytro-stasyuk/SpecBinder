@@ -13,10 +13,24 @@ public final class PricingController {
 
     private final CartPricingService pricing;
 
+    /**
+     * Creates the controller.
+     *
+     * @param pricing the service that calculates cart totals
+     */
     public PricingController(CartPricingService pricing) {
         this.pricing = pricing;
     }
 
+    /**
+     * Calculates the total for the submitted cart form and renders it.
+     *
+     * @param quantity  number of items in the cart
+     * @param unitPrice price of a single item
+     * @param discount  discount to apply, in percent
+     * @param model     model the submitted values and the calculated total are added to
+     * @return the name of the view that shows the total
+     */
     @PostMapping("/total")
     public String total(@RequestParam("quantity") int quantity,
                         @RequestParam("unitPrice") BigDecimal unitPrice,

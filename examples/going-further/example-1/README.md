@@ -40,7 +40,7 @@ ShoppingCartFeature.java    (marker class, @Gherkin2JUnit + shouldBeAbstract = f
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.specb` | Feature with a scenario and a rule |
+| `src/test/java/.../ShoppingCart.specb` | Feature with a scenario and a rule, co-located with its marker |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class with `@Gherkin2JUnitOptions(shouldBeAbstract = false)` and all step methods implemented |
 
 ## Run it

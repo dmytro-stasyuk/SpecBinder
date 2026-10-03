@@ -9,8 +9,7 @@ import dev.specbinder.annotations.Gherkin2JUnitOptions;
  */
 @Gherkin2JUnitOptions(
         useStepKeywordInStepMethodName = true,
-        tagForEmptyScenarios = "todo",
-        tagForEmptyRules = "todo"
+        classSuffixIfAbstract = "Spec"
 )
 public abstract class BaseFeature {
 }

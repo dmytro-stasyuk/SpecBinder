@@ -9,5 +9,5 @@
     </parent>
     <artifactId>example-4</artifactId>
     <name>${project.parent.artifactId}-${project.artifactId}</name>
-    <description>Data table type refinement with enums — compile-time safety for table values</description>
+    <description>Type refinement with enums — compile-time safety for table and step parameter values</description>
 </project>

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- The test class that runs a generated abstract class is now shown under the spec's own name, followed by the class name — for example `Feature: Shopping cart (ShoppingCartTest)` — in the IDE's test runner and in build reports, matching the `Rule:` and `Scenario:` entries below it. Putting your own `@DisplayName` on that class still overrides it.
+
 ### Changed
 
 - **⚠️ BREAKING:** The `SKIP` value of `emptyScenarioBehavior`, `emptyRuleBehavior` and `unimplementedStepBehavior` is now called `ABORT`, because the generated test is reported by JUnit as aborted, not skipped. What the generated tests do is unchanged, but any configuration that uses `SKIP` has to switch to `ABORT` before it compiles again.

@@ -7,7 +7,6 @@ import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import specs.CartPricingScenarios;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 

@@ -33,7 +33,7 @@ target/
 │   │   └── 03_theCartTotalShouldBe$p1.zip
 │   ├── scenario_6_ex_01/          ← Scenario Outline rows get their own folder per row
 │   └── …
-└── specbinder-reports/specs/CartTraceTest.json
+└── specbinder-reports/dev/specbinder/examples/goingfurther/playwrighttrace/CartTraceTest.json
 ```
 
 25 zips for 8 scenarios. Open any one of them:
@@ -61,13 +61,21 @@ SpecBinderReporter  ──raises──>  ExecutionBoundaryListener
               one zip per step                    the step's entry in the JSON report
 ```
 
-Three files, and only one of them is really about tracing:
+Four classes and the spec, and only one of them is really about tracing:
 
 | File | Role |
 |------|------|
 | `PlaywrightTraceListener` | **The integration.** Implements `ExecutionBoundaryListener`; opens a trace chunk per step and records its path onto the report. |
 | `PlaywrightTracing` | Ordinary JUnit extension: launches Chromium, starts one trace for the feature, registers the listener. |
-| `CartTraceFeature` | The marker class, with step methods that drive the bundled `web/cart.html`. |
+| `CartTraceFeature` | The marker class: registers both extensions; `@Inherited`, so they cover the concrete test. |
+| `CartTraceTest` | The concrete test, with step methods that drive the bundled `web/cart.html`. |
+| `CartTrace.specb` | The spec, co-located with its marker in `src/test/java`. |
+
+```
+CartTraceFeature.java          (marker, @Gherkin2JUnit + @ExtendWith(SpecBinderReporter, PlaywrightTracing))
+  └→ CartTraceScenarios.java   (generated, abstract)
+      └→ CartTraceTest.java    (your concrete class, implements the steps — the class JUnit runs)
+```
 
 ### The two moving parts
 

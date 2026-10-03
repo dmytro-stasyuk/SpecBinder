@@ -8,6 +8,6 @@ import dev.specbinder.annotations.Gherkin2JUnit;
  * and declares abstract methods only for this feature's checkout-specific steps.
  * This is what makes the base-class steps shared across two feature files.
  */
-@Gherkin2JUnit("specs/Checkout.feature")
+@Gherkin2JUnit("./Checkout.specb")
 public abstract class CheckoutFeature extends BaseShopSteps {
 }

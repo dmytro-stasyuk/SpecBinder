@@ -254,30 +254,43 @@ JUnit discovers and runs `CartTest`. If any step method is left unimplemented, t
 
 ## Examples
 
-The [`examples/`](examples/) directory contains ready-to-run Maven modules organized in two tracks:
+The [`examples/`](examples/) directory contains ready-to-run Maven modules organized in four tracks. Every example
+implements its steps in a concrete test class (except *Concrete Mode*, where the generated class is itself the test),
+and from getting-started example-8 onward the spec files sit next to their marker classes in `src/test/java`:
 
 <table>
 <tr><td colspan="2"><code>examples/</code></td></tr>
 <tr><td colspan="2">├── <code>getting-started/</code> — <em>Fundamentals, one concept at a time</em></td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/getting-started/example-1/README.md">Hello World</a></td><td>Simplest possible feature</td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/getting-started/example-2/README.md">Step Parameters</a></td><td>Type inference (String, Integer, Double, Boolean, Character)</td></tr>
-<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-3/README.md">Concrete Mode E2E</a></td><td>Implementing step methods with real logic</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-3/README.md">Step Reuse and Scenario State</a></td><td>One method per distinct step; scenario state in the test class, fresh for each scenario</td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/getting-started/example-4/README.md">Rules</a></td><td>Nested scenarios with Rule blocks</td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/getting-started/example-5/README.md">Background</a></td><td>Feature-level and rule-level backgrounds</td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/getting-started/example-6/README.md">Scenario Outline</a></td><td>Parameterized tests with Examples tables</td></tr>
-<tr><td>│ &ensp; └── <a href="examples/getting-started/example-7/README.md">Tags</a></td><td>@Tag annotations and test filtering</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/getting-started/example-7/README.md">Tags</a></td><td>@Tag annotations and test filtering</td></tr>
+<tr><td>│ &ensp; └── <a href="examples/getting-started/example-8/README.md">Co-located Spec Files</a></td><td>Convention-based discovery with bare @Gherkin2JUnit</td></tr>
 <tr><td>│</td><td></td></tr>
-<tr><td colspan="2">└── <code>common-use-cases/</code> — <em>Real-world patterns and advanced features</em></td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-1/README.md">Data Tables</a></td><td>LIST_OF_OBJECT_PARAMS (default mode)</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-2/README.md">Cucumber DataTable</a></td><td>CUCUMBER_DATA_TABLE integration</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-3/README.md">TDD Workflow</a></td><td>Iterative red-green development with @new tags</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-4/README.md">Abstract Mode</a></td><td>Compile-time step enforcement</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-5/README.md">DocStrings</a></td><td>Multi-line input (JSON, plain text)</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-6/README.md">Convention Discovery</a></td><td>Co-located .feature / .specb files, bare @Gherkin2JUnit</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-7/README.md">Glob Patterns</a></td><td>Multiple features from a single marker class</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-8/README.md">Type Refinement</a></td><td>Enum refinement of generated Param classes</td></tr>
-<tr><td>&ensp; &ensp; ├── <a href="examples/common-use-cases/example-9/README.md">Config Inheritance</a></td><td>@Gherkin2JUnitOptions inheritance and override</td></tr>
-<tr><td>&ensp; &ensp; └── <a href="examples/common-use-cases/example-10/README.md">Cucumber Annotations</a></td><td>@Given/@When/@Then and annotation-based matching</td></tr>
+<tr><td colspan="2">├── <code>common-use-cases/</code> — <em>Real-world patterns</em></td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/common-use-cases/example-1/README.md">Data Tables</a></td><td>Type-safe generated Param classes (LIST_OF_OBJECT_PARAMS, the default mode)</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/common-use-cases/example-2/README.md">DocStrings</a></td><td>Multi-line input (JSON, plain text) and typed doc strings (json, image, svg, html)</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/common-use-cases/example-3/README.md">Sharing Steps via a Base Class</a></td><td>Common step implementations reused across features</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/common-use-cases/example-4/README.md">Type Refinement with Enums</a></td><td>Compile-time safety for data table and step parameter values</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/common-use-cases/example-5/README.md">TDD Workflow</a></td><td>Iterative red-green development with @new tags</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/common-use-cases/example-6/README.md">Glob Patterns</a></td><td>One marker discovering specs across sub-packages with <code>./**/*.specb</code></td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/common-use-cases/example-7/README.md">Config Inheritance</a></td><td>Shared @Gherkin2JUnitOptions in a base class, overridden per feature</td></tr>
+<tr><td>│ &ensp; └── <a href="examples/common-use-cases/example-8/README.md">Examples Table Values in Every Parameter</a></td><td>Placeholders in quoted values, doc strings and data tables</td></tr>
+<tr><td>│</td><td></td></tr>
+<tr><td colspan="2">├── <code>going-further/</code> — <em>Trickier examples that lean on deeper JUnit or SpecBinder mechanics</em></td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/going-further/example-1/README.md">Concrete Mode</a></td><td>A directly runnable generated class (shouldBeAbstract = false)</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/going-further/example-2/README.md">JUnit Parameter Resolution</a></td><td>TestInfo, @TempDir and custom @JUnitResolved parameters, declared in the marker and implemented in the test</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/going-further/example-3/README.md">Organizing Steps into Interfaces</a></td><td>Reusable step logic in interfaces with default methods; the test supplies the state</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/going-further/example-4/README.md">Execution Reporter</a></td><td>Scenario-level JSON reports of test runs</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/going-further/example-8/README.md">Playwright Trace per Step</a></td><td>One Playwright trace per Gherkin step, recorded onto the execution report</td></tr>
+<tr><td>│ &ensp; └── <a href="examples/going-further/example-9/README.md">One Spec, Multiple Implementations</a></td><td>One business spec tested through direct Java, Spring beans and a browser</td></tr>
+<tr><td>│</td><td></td></tr>
+<tr><td colspan="2">└── <code>migrating-from-cucumber/</code> — <em>Moving an existing Cucumber suite to SpecBinder, keeping its <code>.feature</code> files</em></td></tr>
+<tr><td>&ensp; &ensp; ├── <a href="examples/migrating-from-cucumber/example-1/README.md">Cucumber DataTable</a></td><td>Cucumber DataTable parameters with asList(...) POJO mapping (CUCUMBER_DATA_TABLE)</td></tr>
+<tr><td>&ensp; &ensp; └── <a href="examples/migrating-from-cucumber/example-2/README.md">Cucumber Annotations</a></td><td>Custom-named steps matched by @Given/@When/@Then patterns, plus generated Cucumber annotations</td></tr>
 </table>
 
 ---
@@ -297,6 +310,10 @@ details.
   class. A `@DisplayName` annotation is also added, carrying the **keyword and the Feature title** — for
   `Feature: Customer checkout` that is `@DisplayName("Feature: Customer checkout")`. Only when the file has no
   parseable `Feature:` block does the display name fall back to the spec file name.
+  JUnit does not pass `@DisplayName` down to a subclass, so a generated abstract class also carries
+  `@DisplayNameGeneration(SpecDisplayNameGenerator.class)`: the class you write to run it is shown under the same
+  name with its own class name added — `Feature: Customer checkout (CustomerCheckoutTest)` — in the IDE's test
+  runner and in build reports. A `@DisplayName` on your own class still takes precedence.
   Note this is separate from the generated **class name**, which comes from the spec file name — see
   [Details of mapping Gherkin → JUnit](#details-of-mapping-gherkin--junit).
 

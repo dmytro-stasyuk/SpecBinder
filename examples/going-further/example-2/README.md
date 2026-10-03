@@ -9,6 +9,8 @@ Demonstrates how step methods can receive parameters filled by JUnit's parameter
 - **Mixing on a single step** — one step method has a Gherkin-derived parameter plus both built-in and custom resolved parameters
 - **Aggregation across steps** — the generated `@Test scenario_1` method receives the union (deduplicated) of every resolved parameter required by any of the scenario's steps
 - **Annotation passthrough** — `@TempDir` is preserved on the generated parameter so JUnit's resolver fires; `@JUnitResolved` is a SpecBinder-internal marker and is stripped
+- **Declare in the marker, implement in the test** — the step signatures with resolved parameters are declared abstract in
+  the marker, where the generator can see them; the concrete `ReceiptWriterTest` implements them
 
 ## Why each resolved type is used here
 
@@ -18,20 +20,46 @@ Demonstrates how step methods can receive parameters filled by JUnit's parameter
 | `TestInfo` | Failure message includes the test display name, so a CI log makes it obvious which scenario broke |
 | `@JUnitResolved Clock` | The receipt timestamp comes from a fixed clock, making the test deterministic regardless of when it runs |
 
-## Step method signatures (from `ReceiptWriterFeature`)
+## Class hierarchy
+
+```
+ReceiptWriterFeature.java          (marker, @Gherkin2JUnit — declares the steps with resolved parameters)
+  └→ ReceiptWriterScenarios.java   (generated, abstract — @Test methods receive the resolved parameters)
+      └→ ReceiptWriterTest.java    (your concrete class, implements the steps)
+```
+
+## Step method declarations (in `ReceiptWriterFeature`)
+
+The generator only propagates resolved parameters for step methods it finds in the marker's class hierarchy — it can't
+see a subclass of the generated class. So the steps that take resolved parameters are declared abstract in the marker,
+with their full signatures:
 
 ```java
 // Gherkin-derived + built-in @TempDir + custom @JUnitResolved — three sources on one step
-public void anOrder$p1WithItemsHasBeenPlaced(
+public abstract void anOrder$p1WithItemsHasBeenPlaced(
         String orderId,
         @TempDir Path receiptsDir,
-        @JUnitResolved Clock clock) throws IOException { ... }
+        @JUnitResolved Clock clock);
 
 // Built-in TestInfo only — used in the failure message
-public void theReceiptFileExists(TestInfo testInfo) { ... }
+public abstract void theReceiptFileExists(TestInfo testInfo);
 
 // Custom @JUnitResolved Clock only
-public void theReceiptIsTimestampedWithTheTestClock(@JUnitResolved Clock clock) throws IOException { ... }
+public abstract void theReceiptIsTimestampedWithTheTestClock(@JUnitResolved Clock clock);
+```
+
+`ReceiptWriterTest` implements them; there the resolved values are just ordinary arguments:
+
+```java
+@Override
+public void anOrder$p1WithItemsHasBeenPlaced(String orderId, Path receiptsDir, Clock clock) {
+    receiptFile = receiptsDir.resolve(orderId + ".txt");
+    try {
+        Files.writeString(receiptFile, "Order " + orderId + " issued at " + clock.instant());
+    } catch (IOException e) {
+        throw new UncheckedIOException(e);
+    }
+}
 ```
 
 ## Generated `@Test` method (excerpt)
@@ -76,8 +104,9 @@ public void anOrderIsBeingProcessed(OrderContext ctx) { ... }
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ReceiptWriter.feature` | The spec |
-| `src/test/java/.../ReceiptWriterFeature.java` | Marker class with step implementations |
+| `src/test/java/.../ReceiptWriter.specb` | The spec, co-located with its marker |
+| `src/test/java/.../ReceiptWriterFeature.java` | Marker class declaring the steps with resolved parameters |
+| `src/test/java/.../ReceiptWriterTest.java` | Concrete test implementing the steps |
 | `src/test/java/.../FixedClockResolver.java` | Custom `ParameterResolver` providing a deterministic `Clock` |
 
 ## Key points
@@ -85,4 +114,4 @@ public void anOrderIsBeingProcessed(OrderContext ctx) { ... }
 - **Built-in JUnit types don't require `@JUnitResolved`** — they are recognized by type (and by `@TempDir` for the temp-dir variants)
 - **Custom types do require `@JUnitResolved`** — without it, the generator does not recognize the parameter as JUnit-resolved and falls back to its default behavior (regenerates a fresh step method, treating the user's declaration as an unused overload)
 - **Order matters in the source signature, not in the generated test method** — JUnit's parameter resolution is type-based, so the generated signature lists params in a deterministic but order-agnostic way
-- **`@ExtendWith` on the marker class** registers the custom resolver; because `@ExtendWith` is `@Inherited`, the generated `MyFeatureTest` picks it up automatically
+- **`@ExtendWith` on the marker class** registers the custom resolver; because `@ExtendWith` is `@Inherited`, the concrete `ReceiptWriterTest` picks it up automatically

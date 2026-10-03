@@ -39,10 +39,8 @@ public static class ProductsParam {
 ## Generated step method and call site
 
 ```java
-// Step method signature
-public void myCartContainsTheFollowingProducts(List<ProductsParam> products) {
-    Assertions.fail("Step is not yet implemented");
-}
+// Abstract step method in the generated class
+public abstract void myCartContainsTheFollowingProducts(List<ProductsParam> products);
 
 // Call site in @BeforeEach
 myCartContainsTheFollowingProducts(
@@ -57,8 +55,17 @@ myCartContainsTheFollowingProducts(
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.feature` | Feature with multiple data tables of varying shapes |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
+| `src/test/java/.../ShoppingCart.specb` | Feature with multiple data tables of varying shapes |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class with bare `@Gherkin2JUnit` — discovers the co-located spec by convention |
+| `src/test/java/.../ShoppingCartTest.java` | Concrete subclass implementing the step methods with assertions |
+
+## Class hierarchy
+
+```
+ShoppingCartFeature.java          (marker class, @Gherkin2JUnit)
+  └→ ShoppingCartScenarios.java   (generated, abstract, contains the Param classes and @Test methods)
+      └→ ShoppingCartTest.java    (your concrete class, implements step methods)
+```
 
 ## Key points
 
@@ -66,3 +73,5 @@ myCartContainsTheFollowingProducts(
 - The class name is derived from the last word before the colon in the step text
 - Fields use accessor methods (not `getX()`) for a record-like API
 - No Cucumber dependency — pure Java classes
+- The concrete `ShoppingCartTest` reads table rows through the typed accessors — `product.qty()` is an `Integer`,
+  `product.inStock()` a `Boolean` — with no string parsing

@@ -10,6 +10,8 @@ Demonstrates how Gherkin `Rule` blocks map to JUnit `@Nested` test classes, grou
 - Scenarios outside any Rule remain at the top level
 - Rule description lines become JavaDoc on the nested class
 - `@Order` annotations preserve the feature file ordering
+- Step methods are implemented once in a concrete subclass (`ShoppingCartTest`); the `@Nested` rule classes call the
+  same implementations on the outer instance, so top-level and rule scenarios share one set of steps and state
 
 ## Gherkin → JUnit mapping
 
@@ -28,11 +30,20 @@ Demonstrates how Gherkin `Rule` blocks map to JUnit `@Nested` test classes, grou
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.feature` | Feature with a top-level scenario and two rules, each containing two scenarios |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
+| `src/test/java/.../ShoppingCartTest.java` | Concrete subclass implementing the step methods with assertions |
+
+## Class hierarchy
+
+```
+ShoppingCartFeature.java          (marker class, @Gherkin2JUnit)
+  └→ ShoppingCartScenarios.java   (generated, abstract, contains @Test methods and @Nested rule classes)
+      └→ ShoppingCartTest.java    (your concrete class, implements step methods)
+```
 
 ## Generated structure
 
 ```java
-public class ShoppingCartFeatureTest extends ShoppingCartFeature {
+public abstract class ShoppingCartScenarios extends ShoppingCartFeature {
 
     @Test
     @DisplayName("Scenario: View an empty cart")
@@ -43,11 +54,11 @@ public class ShoppingCartFeatureTest extends ShoppingCartFeature {
     public class Rule_1 {
         @Test
         @DisplayName("Scenario: Show free shipping when threshold is met")
-        public void scenario_1() { ... }
+        public void rule_1_scenario_1() { ... }
 
         @Test
         @DisplayName("Scenario: Show shipping cost when below threshold")
-        public void scenario_2() { ... }
+        public void rule_1_scenario_2() { ... }
     }
 
     @Nested
@@ -55,11 +66,11 @@ public class ShoppingCartFeatureTest extends ShoppingCartFeature {
     public class Rule_2 {
         @Test
         @DisplayName("Scenario: Apply a valid discount code")
-        public void scenario_1() { ... }
+        public void rule_2_scenario_1() { ... }
 
         @Test
         @DisplayName("Scenario: Reject an expired discount code")
-        public void scenario_2() { ... }
+        public void rule_2_scenario_2() { ... }
     }
 }
 ```

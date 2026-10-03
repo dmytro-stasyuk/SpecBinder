@@ -10,6 +10,8 @@ Demonstrates how `Scenario Outline` with `Examples` tables maps to JUnit `@Param
 - Column headers → parameter names (sanitized to valid Java identifiers, e.g. `expected subtotal` → `expectedSubtotal`)
 - Type inference from cell values across all rows
 - Multiple `Examples` blocks → separate repeatable `@CsvSource` annotations
+- Outline step methods are implemented once in the concrete subclass (`ShoppingCartTest`) like any other step — each
+  `Examples` row passes its values in as arguments, so one implementation runs once per row
 
 ## Gherkin → JUnit mapping
 
@@ -27,6 +29,15 @@ Demonstrates how `Scenario Outline` with `Examples` tables maps to JUnit `@Param
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.specb` | Two scenario outlines — one with a single Examples block, one with two Examples blocks |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
+| `src/test/java/.../ShoppingCartTest.java` | Concrete subclass implementing the step methods with assertions |
+
+## Class hierarchy
+
+```
+ShoppingCartFeature.java          (marker class, @Gherkin2JUnit)
+  └→ ShoppingCartScenarios.java   (generated, abstract, contains @ParameterizedTest methods)
+      └→ ShoppingCartTest.java    (your concrete class, implements step methods)
+```
 
 ## Generated output
 

@@ -9,12 +9,14 @@ Demonstrates how Gherkin `Background` blocks map to JUnit `@BeforeEach` methods 
 - Background title → `@DisplayName` on the `@BeforeEach` method
 - Background description → JavaDoc on the `@BeforeEach` method
 - Both backgrounds run before each scenario inside a rule
+- Background steps are ordinary step methods, implemented in the concrete subclass (`ShoppingCartTest`) alongside the
+  scenario steps — the generated `@BeforeEach` methods simply call them
 
 ## Execution order
 
 When both a feature-level and a rule-level background exist, JUnit 5 runs them in this order for each scenario inside the rule:
 
-1. **Feature `@BeforeEach`** — `featureBackground()` (signed in, empty cart)
+1. **Feature `@BeforeEach`** — `background()` (signed in, empty cart)
 2. **Rule `@BeforeEach`** — `ruleBackground()` (rule-specific setup)
 3. **Scenario `@Test`** — the actual test
 
@@ -26,15 +28,24 @@ Scenarios at the top level (outside any rule) only run the feature-level backgro
 |------|---------|
 | `src/test/resources/specs/ShoppingCart.specb` | Feature with a feature-level background, a top-level scenario, and two rules each with their own background |
 | `src/test/java/.../ShoppingCartFeature.java` | Marker class annotated with `@Gherkin2JUnit` |
+| `src/test/java/.../ShoppingCartTest.java` | Concrete subclass implementing the step methods with assertions |
+
+## Class hierarchy
+
+```
+ShoppingCartFeature.java          (marker class, @Gherkin2JUnit)
+  └→ ShoppingCartScenarios.java   (generated, abstract, contains @BeforeEach, @Test methods and @Nested rule classes)
+      └→ ShoppingCartTest.java    (your concrete class, implements step methods)
+```
 
 ## Generated structure
 
 ```java
-public class ShoppingCartFeatureTest extends ShoppingCartFeature {
+public abstract class ShoppingCartScenarios extends ShoppingCartFeature {
 
     @BeforeEach
     @DisplayName("Background: Start with a signed-in shopper")
-    public void featureBackground(TestInfo testInfo) {
+    public void background(TestInfo testInfo) {
         iAmSignedInAs$p1("alice@example.com");
         iHaveAnEmptyShoppingCart();
     }
@@ -53,9 +64,9 @@ public class ShoppingCartFeatureTest extends ShoppingCartFeature {
         }
 
         @Test
-        public void scenario_1() { ... }
+        public void rule_1_scenario_1() { ... }
         @Test
-        public void scenario_2() { ... }
+        public void rule_1_scenario_2() { ... }
     }
 
     @Nested
@@ -67,7 +78,7 @@ public class ShoppingCartFeatureTest extends ShoppingCartFeature {
         }
 
         @Test
-        public void scenario_1() { ... }
+        public void rule_2_scenario_1() { ... }
     }
 }
 ```

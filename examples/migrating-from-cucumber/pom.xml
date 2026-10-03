@@ -16,4 +16,20 @@
         <module>example-1</module>
         <module>example-2</module>
     </modules>
+    <build>
+        <!-- Spec files are co-located with their marker classes in src/test/java (see getting-started example-8);
+             this makes Maven copy them to the test classpath. Inherited by every example module below. -->
+        <testResources>
+            <testResource>
+                <directory>src/test/java</directory>
+                <includes>
+                    <include>**/*.feature</include>
+                    <include>**/*.specb</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+    </build>
 </project>

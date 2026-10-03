@@ -14,9 +14,10 @@ Demonstrates two related features: generating `@Given`/`@When`/`@Then` Cucumber 
 ### 2. Annotation-based step matching (`useCucumberAnnotationsForStepMatching`)
 
 - `useCucumberAnnotationsForStepMatching` defaults to `false`; this example opts in with `@Gherkin2JUnitOptions(..., useCucumberAnnotationsForStepMatching = true)`
-- When the generator looks for already-implemented steps in the marker class, it matches by **Cucumber annotation pattern** — not by method name
+- When the generator looks for steps already declared in the marker class, it matches by **Cucumber annotation pattern** — not by method name
 - This means you can use **any method name** you like, as long as the `@Given`/`@When`/`@Then` annotation pattern matches the Gherkin step text
-- The generator recognises the inherited method and does not emit a stub for it
+- The generator recognises the declared method, calls it from the scenario, and does not emit its own declaration
+- The declarations can be abstract — here the marker declares them and the concrete `ShoppingCartTest` implements them
 
 ### 3. Both Cucumber expressions and regular expressions are supported
 
@@ -29,7 +30,8 @@ Both are equally valid for matching. This example mixes both styles to demonstra
 
 ## Custom method names with annotation matching
 
-In this example, all step methods in the marker class use descriptive names instead of the default generated names:
+In this example, the marker class declares five of the six steps, as abstract methods with descriptive names instead of
+the default generated names:
 
 | Gherkin step | Custom method name | Pattern style | Annotation |
 |---|---|---|---|
@@ -38,18 +40,70 @@ In this example, all step methods in the marker class use descriptive names inst
 | `Then the cart should contain "..." items` | `verifyCartSize()` | Regular expression | `@Then("^the cart should contain (?<p1>.*) items$")` |
 | `Given I have a cart with subtotal "..."` | `setupCartWithSubtotal()` | Regular expression | `@Given("^I have a cart with subtotal (?<p1>.*)$")` |
 | `When I apply discount code "..."` | `applyDiscount()` | Cucumber expression | `@When("I apply discount code {string}")` |
-| `Then the cart subtotal should be "..."` | `verifySubtotal()` | Cucumber expression | `@Then("the cart subtotal should be {string}")` |
 
-The generator detects these methods via their annotation patterns and inherits them — no stubs are generated.
+The generator detects these methods via their annotation patterns and calls them from the scenarios — it emits no
+declarations of its own for them:
 
-## Generated output (without inherited methods)
+```java
+@Gherkin2JUnitOptions(addCucumberStepAnnotations = true, useCucumberAnnotationsForStepMatching = true)
+@Gherkin2JUnit
+public abstract class ShoppingCartFeature {
 
-Since all step methods are already implemented in the marker class with matching annotations, the generated test class contains **no step methods at all** — only the `@Test` scenario methods that call the inherited implementations.
+    @Given("I have an empty shopping cart")
+    public abstract void startWithEmptyCart();
+
+    @When("^I add (?<p1>.*) to the cart$")
+    public abstract void addItemToCart(String item);
+
+    // ...
+}
+```
+
+## Generated output
+
+The sixth step, `Then the cart subtotal should be "..."`, is deliberately not declared in the marker. The generator
+emits it itself — and because `addCucumberStepAnnotations` is on, with a generated `@Then` annotation:
+
+```java
+public abstract class ShoppingCartScenarios extends ShoppingCartFeature {
+
+    @Test
+    @DisplayName("Scenario: Add item and verify cart")
+    public void scenario_1() {
+        startWithEmptyCart();
+        addItemToCart("Wireless Headphones");
+        addItemToCart("Coffee Beans");
+        verifyCartSize(2);
+    }
+
+    @Then("^the cart subtotal should be (?<p1>.*)$")
+    public abstract void theCartSubtotalShouldBe$p1(Double p1);
+
+    @Test
+    @DisplayName("Scenario: Apply discount code")
+    public void scenario_2() {
+        setupCartWithSubtotal(100.00);
+        applyDiscount("SAVE10");
+        theCartSubtotalShouldBe$p1(90.00);
+    }
+}
+```
+
+The concrete `ShoppingCartTest` implements all six: the five custom-named declarations and the generated one.
+
+## Class hierarchy
+
+```
+ShoppingCartFeature.java          (marker — custom-named, annotated step declarations)
+  └→ ShoppingCartScenarios.java   (generated, abstract — calls them, adds the one missing step)
+      └→ ShoppingCartTest.java    (your concrete class, implements all steps)
+```
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `src/test/resources/specs/ShoppingCart.feature` | Feature with Given/When/And/Then steps |
-| `src/test/java/.../ShoppingCartFeature.java` | Marker class with custom-named step methods matched by both Cucumber expression and regex annotation patterns |
+| `src/test/java/.../ShoppingCart.feature` | Feature with Given/When/And/Then steps, co-located with its marker |
+| `src/test/java/.../ShoppingCartFeature.java` | Marker class declaring custom-named step methods matched by both Cucumber expression and regex annotation patterns |
+| `src/test/java/.../ShoppingCartTest.java` | Concrete test implementing the declared steps and the generated one |
 | `pom.xml` | Includes `cucumber-java` dependency |

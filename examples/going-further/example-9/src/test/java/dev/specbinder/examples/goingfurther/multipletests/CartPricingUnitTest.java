@@ -1,7 +1,6 @@
 package dev.specbinder.examples.goingfurther.multipletests;
 
 import org.junit.jupiter.api.Tag;
-import specs.CartPricingScenarios;
 
 import java.math.BigDecimal;
 

@@ -6,82 +6,57 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * Demonstrates addCucumberStepAnnotations option and annotation-based step matching.
  *
- * The generator adds @Given/@When/@Then annotations to step methods with a pattern
- * matching the original Gherkin step text. And/But steps inherit the keyword from the
- * preceding Given/When/Then step.
+ * With useCucumberAnnotationsForStepMatching enabled, the generator matches the step methods
+ * declared here by their Cucumber annotation pattern — NOT by method name. This means you can
+ * use any method name you like, as long as the annotation pattern matches the Gherkin step text.
+ * The declarations are abstract: ShoppingCartTest implements them.
  *
- * With useCucumberAnnotationsForStepMatching enabled, the generator matches
- * inherited step methods by their Cucumber annotation pattern — NOT by method name.
- * This means you can use any method name you like, as long as the annotation pattern
- * matches the Gherkin step text.
+ * Both Cucumber expressions (e.g. {string}) and regular expressions (e.g. ^...$) are supported
+ * for annotation-based matching. This example mixes both styles.
  *
- * Both Cucumber expressions (e.g. {string}) and regular expressions (e.g. ^...$)
- * are supported for annotation-based matching. This example mixes both styles.
+ * One step — "the cart subtotal should be ..." — is deliberately not declared here. The generator
+ * emits it itself, and addCucumberStepAnnotations puts a generated @Then annotation on it. And/But
+ * steps inherit the keyword from the preceding Given/When/Then step.
+ *
+ * No path in @Gherkin2JUnit — the processor discovers the co-located ShoppingCart.feature in this
+ * package by convention.
  */
 @Gherkin2JUnitOptions(addCucumberStepAnnotations = true, useCucumberAnnotationsForStepMatching = true)
-@Gherkin2JUnit("specs/ShoppingCart.feature")
+@Gherkin2JUnit
 public abstract class ShoppingCartFeature {
-
-    private final List<String> cart = new ArrayList<>();
-    private double subtotal;
 
     /**
      * Matched using a Cucumber expression pattern.
      * Method name is "startWithEmptyCart" — NOT the default "iHaveAnEmptyShoppingCart".
      */
     @Given("I have an empty shopping cart")
-    public void startWithEmptyCart() {
-        cart.clear();
-    }
+    public abstract void startWithEmptyCart();
 
     /**
      * Matched using a regular expression pattern (^...$).
      * Named capture group (?&lt;p1&gt;.*) matches the parameter.
      */
     @When("^I add (?<p1>.*) to the cart$")
-    public void addItemToCart(String item) {
-        cart.add(item);
-    }
+    public abstract void addItemToCart(String item);
 
     /**
      * Matched using a regular expression pattern (^...$).
      */
     @Then("^the cart should contain (?<p1>.*) items$")
-    public void verifyCartSize(Integer expectedCount) {
-        assertEquals(expectedCount, cart.size());
-    }
+    public abstract void verifyCartSize(Integer expectedCount);
 
     /**
      * Matched using a regular expression pattern (^...$).
      */
     @Given("^I have a cart with subtotal (?<p1>.*)$")
-    public void setupCartWithSubtotal(Double amount) {
-        subtotal = amount;
-    }
+    public abstract void setupCartWithSubtotal(Double amount);
 
     /**
      * Matched using a Cucumber expression pattern.
      */
     @When("I apply discount code {string}")
-    public void applyDiscount(String code) {
-        if ("SAVE10".equals(code)) {
-            subtotal *= 0.9;
-        }
-    }
-
-    /**
-     * Matched using a Cucumber expression pattern.
-     */
-    @Then("the cart subtotal should be {string}")
-    public void verifySubtotal(Double expected) {
-        assertEquals(expected, subtotal, 0.001);
-    }
+    public abstract void applyDiscount(String code);
 }
