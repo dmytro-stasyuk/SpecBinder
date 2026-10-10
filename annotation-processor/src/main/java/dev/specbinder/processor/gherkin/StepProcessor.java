@@ -13,10 +13,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.messages.types.DocString;
-import io.cucumber.messages.types.Step;
-import io.cucumber.messages.types.TableCell;
-import io.cucumber.messages.types.TableRow;
+import io.cucumber.messages.types.*;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -214,7 +211,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             }
         }
 
-        String resolvedKeyword = resolveGWTKeyword(step.getKeyword().trim(), resolvedStepKeywords, stepLine);
+        String resolvedKeyword = resolveGWTKeyword(step, resolvedStepKeywords, stepLine);
         resolvedStepKeywords.add(resolvedKeyword);
 
         if (options.isAddCucumberStepAnnotations() && annotationMatch == null) {
@@ -1533,14 +1530,24 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
     /**
      * Resolves the GWT keyword for a step. For Given/When/Then steps, returns the keyword directly.
-     * For And/But/* steps, inherits the keyword from the previous step.
+     * For And/But/* steps, inherits the keyword from the previous step. Step keywords of other languages
+     * (e.g. "Angenommen") are resolved through the keyword type the Gherkin parser assigns to them.
      */
-    private String resolveGWTKeyword(String stepKeyword, List<String> resolvedStepKeywords, long stepLine) {
+    private String resolveGWTKeyword(Step step, List<String> resolvedStepKeywords, long stepLine) {
+        String stepKeyword = step.getKeyword().trim();
         String keywordLower = stepKeyword.toLowerCase();
+        StepKeywordType keywordType = step.getKeywordType().orElse(StepKeywordType.UNKNOWN);
 
         if (keywordLower.equals("given") || keywordLower.equals("when") || keywordLower.equals("then")) {
             return keywordLower;
-        } else if (keywordLower.equals("and") || keywordLower.equals("but") || keywordLower.equals("*")) {
+        } else if (keywordType == StepKeywordType.CONTEXT && !keywordLower.equals("*")) {
+            return "given";
+        } else if (keywordType == StepKeywordType.ACTION && !keywordLower.equals("*")) {
+            return "when";
+        } else if (keywordType == StepKeywordType.OUTCOME && !keywordLower.equals("*")) {
+            return "then";
+        } else if (keywordLower.equals("and") || keywordLower.equals("but") || keywordLower.equals("*")
+                || keywordType == StepKeywordType.CONJUNCTION) {
             if (resolvedStepKeywords.isEmpty()) {
                 throw new ProcessingException(
                         "Step on line - " + stepLine

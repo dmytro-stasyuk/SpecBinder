@@ -82,6 +82,8 @@ public class Gherkin2JUnitOptionsResolver {
         String unimplementedStepBehavior = FAIL.name();
         String tagForEmptyScenarios = "new";
         String tagForEmptyRules = "new";
+        String emptySpecBehavior = FAIL.name();
+        String tagForEmptySpecs = "new";
         boolean addCucumberStepAnnotations = false;
         boolean placeGeneratedClassNextToAnnotatedClass = false;
         String dataTableParameterType = LIST_OF_OBJECT_PARAMS.name();
@@ -154,6 +156,14 @@ public class Gherkin2JUnitOptionsResolver {
                         break;
                     case "tagForEmptyRules":
                         tagForEmptyRules = (String) value;
+                        break;
+                    case "emptySpecBehavior":
+                        if (value instanceof VariableElement) {
+                            emptySpecBehavior = ((VariableElement) value).getSimpleName().toString();
+                        }
+                        break;
+                    case "tagForEmptySpecs":
+                        tagForEmptySpecs = (String) value;
                         break;
                     case "addCucumberStepAnnotations":
                         addCucumberStepAnnotations = (Boolean) value;
@@ -245,6 +255,8 @@ public class Gherkin2JUnitOptionsResolver {
                 unimplementedStepBehavior,
                 tagForEmptyScenarios,
                 tagForEmptyRules,
+                emptySpecBehavior,
+                tagForEmptySpecs,
                 addCucumberStepAnnotations,
                 placeGeneratedClassNextToAnnotatedClass,
                 dataTableParameterType,
@@ -338,6 +350,8 @@ public class Gherkin2JUnitOptionsResolver {
                 options.unimplementedStepBehavior().name(),
                 options.tagForEmptyScenarios(),
                 options.tagForEmptyRules(),
+                options.emptySpecBehavior().name(),
+                options.tagForEmptySpecs(),
                 options.addCucumberStepAnnotations(),
                 false, // placeGeneratedClassNextToAnnotatedClass - option removed
                 options.dataTableParameterType().name(),

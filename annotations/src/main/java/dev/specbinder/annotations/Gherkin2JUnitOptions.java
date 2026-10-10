@@ -276,6 +276,33 @@ public @interface Gherkin2JUnitOptions {
     String tagForEmptyRules() default "new";
 
     /**
+     * Controls how the generator handles a spec that contains neither Scenarios nor Rules, when the spec file holds
+     * several specs (several Feature keywords or their synonyms), each generated as a nested class.
+     * <ul>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — generates a test method with
+     *     {@code Assertions.fail("Feature doesn't have any scenarios")}, causing the test to fail</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#ABORT ABORT} — generates a test method with
+     *     {@code Assumptions.assumeTrue(false, "Feature has no scenarios")}, causing the test to be aborted</li>
+     *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#COMPILATION_ERROR COMPILATION_ERROR} — inserts an invalid
+     *     statement that prevents compilation, making empty specs a hard blocker</li>
+     * </ul>
+     * The messages use the spec's keyword as written, e.g. "Ability doesn't have any scenarios".
+     *
+     * @return the behavior for specs with no Scenarios or Rules
+     * @see #tagForEmptySpecs()
+     */
+    EMPTY_ELEMENT_BEHAVIOUR emptySpecBehavior() default EMPTY_ELEMENT_BEHAVIOUR.FAIL;
+
+    /**
+     * The value for JUnit's @{@link org.junit.jupiter.api.Tag} annotation that will be added to the nested class of
+     * a spec that contains neither Scenarios nor Rules, when the spec file holds several specs. By default, this is
+     * set to "new". If an empty or blank value is specified, no tag will be added.
+     *
+     * @return the tag for empty specs
+     */
+    String tagForEmptySpecs() default "new";
+
+    /**
      * Controls how the generator handles Scenarios that contain no steps.
      * <ul>
      *     <li>{@link EMPTY_ELEMENT_BEHAVIOUR#FAIL FAIL} (default) — generates a test method with

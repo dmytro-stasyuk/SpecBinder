@@ -17,11 +17,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Parses a Gherkin feature file and extracts the Feature object.
+ * Parses a Gherkin spec file and extracts its Feature objects, one per spec in the file.
  */
 public class FeatureFileParser implements LoggingSupport {
 
@@ -45,17 +47,19 @@ public class FeatureFileParser implements LoggingSupport {
     }
 
     /**
-     * Parses a Gherkin feature file using the provided file path and returns the Feature object.
+     * Parses a Gherkin spec file using the provided file path and returns one Feature per spec in the file.
+     * A file usually holds a single spec; a file holding several top-level Feature keywords (or their synonyms)
+     * yields one Feature per keyword, in file order, with line numbers that point into the original file.
      *
      * <p>Options are passed in per call rather than held as a field because they are resolved per
      * annotated element (and are inheritable), while this parser is constructed once.
      *
      * @param featureFilePath the path to the feature file, relative to the classpath
      * @param options         the resolved generator options for the annotated class
-     * @return the Feature object extracted from the Gherkin document
+     * @return the Feature objects extracted from the spec file, never empty
      * @throws IOException if an error occurs while reading the file or parsing the Gherkin document
      */
-    public Feature parseUsingPath(String featureFilePath, GeneratorOptions options) throws IOException {
+    public List<Feature> parseUsingPath(String featureFilePath, GeneratorOptions options) throws IOException {
 
         String fileContent = loadFileContent(featureFilePath);
 
@@ -65,7 +69,16 @@ public class FeatureFileParser implements LoggingSupport {
             fileContent = textStripper.strip(fileContent);
         }
 
-        InputStream inputStream = new ByteArrayInputStream(fileContent.getBytes(StandardCharsets.UTF_8));
+        List<Feature> features = new ArrayList<>();
+        for (String specContent : SpecFileSplitter.split(fileContent)) {
+            features.add(parseFeature(featureFilePath, specContent, textWasStripped));
+        }
+        return features;
+    }
+
+    private Feature parseFeature(String featureFilePath, String content, boolean textWasStripped) throws IOException {
+
+        InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 
         Stream<Envelope> envelopeStream = gherkinParser.parse(featureFilePath, inputStream);
 
@@ -77,8 +90,7 @@ public class FeatureFileParser implements LoggingSupport {
                 && gherkinDocEnvelope.get().getGherkinDocument().get().getFeature().isPresent()
         ) {
             GherkinDocument gherkinDocument = gherkinDocEnvelope.get().getGherkinDocument().get();
-            Feature feature = gherkinDocument.getFeature().orElse(null);
-            return feature;
+            return gherkinDocument.getFeature().orElse(null);
         } else {
             String strippedHint = textWasStripped
                     ? " (text was stripped from this file before parsing - check that a stripPatterns or"

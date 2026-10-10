@@ -605,6 +605,10 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                 fmtString(resolved.getTagForEmptyScenarios()), fmtString(defaults.getTagForEmptyScenarios()), overridden, defaulted);
         putOption("tagForEmptyRules",
                 fmtString(resolved.getTagForEmptyRules()), fmtString(defaults.getTagForEmptyRules()), overridden, defaulted);
+        putOption("emptySpecBehavior",
+                fmtEnumName(resolved.getEmptySpecBehavior()), fmtEnumName(defaults.getEmptySpecBehavior()), overridden, defaulted);
+        putOption("tagForEmptySpecs",
+                fmtString(resolved.getTagForEmptySpecs()), fmtString(defaults.getTagForEmptySpecs()), overridden, defaulted);
         putOption("addCucumberStepAnnotations",
                 fmtBool(resolved.isAddCucumberStepAnnotations()), fmtBool(defaults.isAddCucumberStepAnnotations()), overridden, defaulted);
         putOption("placeGeneratedClassNextToAnnotatedClass",

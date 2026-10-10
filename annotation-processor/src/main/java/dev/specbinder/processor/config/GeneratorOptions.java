@@ -68,6 +68,19 @@ public class GeneratorOptions {
     private final String tagForEmptyRules;
 
     /**
+     * Controls how the generator handles a spec (one of several in a spec file) that contains neither Scenarios
+     * nor Rules. Valid values: "FAIL", "ABORT", "COMPILATION_ERROR"
+     */
+    private final String emptySpecBehavior;
+
+    /**
+     * The value for JUnit's @{@link org.junit.jupiter.api.Tag} annotation that will be added to the nested class of
+     * a spec (one of several in a spec file) that contains neither Scenarios nor Rules.
+     * If an empty or blank value is specified, no tag will be added.
+     */
+    private final String tagForEmptySpecs;
+
+    /**
      * If set to true, the generator will add Cucumber step annotations (e.g. @Given, @When, @Then) to the generated
      * step methods. This can be useful inside IDEs with installed Cucumber/Gherkin plugins to facilitate navigation
      * from textual steps in Gherkin feature file to step method java code.
@@ -198,6 +211,8 @@ public class GeneratorOptions {
         this.unimplementedStepBehavior = FAIL.name();
         this.tagForEmptyScenarios = "new";
         this.tagForEmptyRules = "new";
+        this.emptySpecBehavior = FAIL.name();
+        this.tagForEmptySpecs = "new";
         this.addCucumberStepAnnotations = false;
         this.placeGeneratedClassNextToAnnotatedClass = false;
         this.dataTableParameterType = LIST_OF_OBJECT_PARAMS.name();
@@ -228,6 +243,8 @@ public class GeneratorOptions {
      * @param unimplementedStepBehavior    see {@link #unimplementedStepBehavior}
      * @param tagForEmptyScenarios   see {@link #tagForEmptyScenarios}
      * @param tagForEmptyRules   see {@link #tagForEmptyRules}
+     * @param emptySpecBehavior  see {@link #emptySpecBehavior}
+     * @param tagForEmptySpecs   see {@link #tagForEmptySpecs}
      * @param addCucumberStepAnnotations   see {@link #addCucumberStepAnnotations}
      * @param placeGeneratedClassNextToAnnotatedClass see {@link #placeGeneratedClassNextToAnnotatedClass}
      * @param dataTableParameterType       see {@link #dataTableParameterType}
@@ -255,6 +272,8 @@ public class GeneratorOptions {
             String unimplementedStepBehavior,
             String tagForEmptyScenarios,
             String tagForEmptyRules,
+            String emptySpecBehavior,
+            String tagForEmptySpecs,
             boolean addCucumberStepAnnotations,
             boolean placeGeneratedClassNextToAnnotatedClass,
             String dataTableParameterType,
@@ -281,6 +300,8 @@ public class GeneratorOptions {
         this.unimplementedStepBehavior = unimplementedStepBehavior;
         this.tagForEmptyScenarios = tagForEmptyScenarios;
         this.tagForEmptyRules = tagForEmptyRules;
+        this.emptySpecBehavior = emptySpecBehavior;
+        this.tagForEmptySpecs = tagForEmptySpecs;
         this.addCucumberStepAnnotations = addCucumberStepAnnotations;
         this.placeGeneratedClassNextToAnnotatedClass = placeGeneratedClassNextToAnnotatedClass;
         this.dataTableParameterType = dataTableParameterType;

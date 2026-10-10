@@ -1,5 +1,7 @@
 package dev.specbinder.processor.gherkin;
 
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import dev.specbinder.processor.config.GeneratorOptions;
@@ -10,11 +12,17 @@ import dev.specbinder.processor.gherkin.utils.EnumImportCollector;
 import dev.specbinder.processor.support.BaseTypeSupport;
 import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
+import dev.specbinder.processor.utils.DescriptionEmitter;
+import dev.specbinder.processor.utils.JavaDocUtils;
 import dev.specbinder.processor.utils.ParameterConversionUtils;
 import dev.specbinder.processor.utils.TagUtils;
 import io.cucumber.messages.types.*;
+import io.cucumber.messages.types.Tag;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.*;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -75,7 +83,71 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
         }
 
         // Pre-scan all steps to compute widened parameter types across all occurrences
-        Map<String, List<Class<?>>> preComputedStepTypes = preComputeStepParameterTypes(feature);
+        Map<String, List<Class<?>>> preComputedStepTypes = preComputeStepParameterTypes(List.of(feature));
+
+        processFeatureChildren(feature, classBuilder, classBuilder, "", "", preComputedStepTypes);
+    }
+
+    /**
+     * Processes the specs of a spec file holding several of them. Each spec becomes a nested class named after its
+     * keyword and its position in the file (e.g. {@code Business_Need_2}), while the step methods of all specs are
+     * shared on the generated class. A spec carrying a matching skip tag produces no nested class, and the other
+     * specs keep their position numbers.
+     *
+     * @param specs        the specs of the file, in file order
+     * @param classBuilder the TypeSpec.Builder for the class being generated
+     */
+    public void processSpecs(List<Feature> specs, TypeSpec.Builder classBuilder) {
+
+        List<Feature> generatedSpecs = specs.stream()
+                .filter(spec -> !TagUtils.shouldSkipElement(spec.getTags(), options.getSkipGenerationForTags()))
+                .toList();
+
+        // Step methods are shared by all specs, so parameter types are widened across all of them
+        Map<String, List<Class<?>>> preComputedStepTypes = preComputeStepParameterTypes(generatedSpecs);
+
+        for (int i = 0; i < specs.size(); i++) {
+            Feature spec = specs.get(i);
+            if (!generatedSpecs.contains(spec)) {
+                continue;
+            }
+            int specNumber = i + 1;
+            String keyword = spec.getKeyword().trim();
+            String specClassName = SpecNamingUtils.toIdentifier(keyword) + "_" + specNumber;
+
+            TypeSpec.Builder specClassBuilder = TypeSpec
+                    .classBuilder(specClassName)
+                    .addModifiers(Modifier.PUBLIC);
+
+            boolean hasRules = spec.getChildren().stream().anyMatch(child -> child.getRule().isPresent());
+            boolean hasScenarios = spec.getChildren().stream().anyMatch(child -> child.getScenario().isPresent());
+            boolean isEmpty = !hasRules && !hasScenarios;
+
+            addSpecClassAnnotations(spec, specNumber, hasRules, hasScenarios, isEmpty, specClassBuilder);
+
+            String methodNamePrefix = specClassName.toLowerCase(Locale.ROOT) + "_";
+            processFeatureChildren(spec, classBuilder, specClassBuilder, specClassName + "_", methodNamePrefix,
+                    preComputedStepTypes);
+
+            if (isEmpty) {
+                specClassBuilder.addMethod(noScenariosInSpecMethod(keyword));
+            }
+
+            classBuilder.addType(specClassBuilder.build());
+        }
+    }
+
+    /**
+     * Generates the children of a feature: its Background, Rules and Scenarios.
+     *
+     * @param classBuilder       the generated top-level class, which receives the step methods
+     * @param targetClassBuilder the class receiving the Background method, Scenario methods and Rule classes
+     * @param classNamePrefix    prefix for nested Rule class names ("" for a single-spec file)
+     * @param methodNamePrefix   prefix for scenario method names ("" for a single-spec file)
+     */
+    private void processFeatureChildren(Feature feature, TypeSpec.Builder classBuilder,
+                                        TypeSpec.Builder targetClassBuilder, String classNamePrefix,
+                                        String methodNamePrefix, Map<String, List<Class<?>>> preComputedStepTypes) {
 
         // Pre-collect feature-level Background steps for scenario-hash assembly. Empty list when
         // emitScenarioHash is off — collection is cheap and unused branches are pruned downstream.
@@ -96,7 +168,7 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                 MethodSpec.Builder featureBackgroundMethodBuilder = backgroundProcessor.processFeatureBackground(background, classBuilder);
 
                 MethodSpec backgroundMethod = featureBackgroundMethodBuilder.build();
-                classBuilder.addMethod(backgroundMethod);
+                targetClassBuilder.addMethod(backgroundMethod);
             }
             else if (child.getRule().isPresent()) {
 
@@ -104,7 +176,8 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                 boolean ruleSkipped = TagUtils.shouldSkipElement(rule.getTags(), options.getSkipGenerationForTags());
                 featureRuleCount++;
                 RuleProcessor ruleProcessor = new RuleProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
-                ruleProcessor.processRule(featureRuleCount, rule, classBuilder, preComputedStepTypes, featureBackgroundSteps, ruleSkipped);
+                ruleProcessor.processRule(featureRuleCount, rule, classBuilder, targetClassBuilder, classNamePrefix,
+                        methodNamePrefix, preComputedStepTypes, featureBackgroundSteps, ruleSkipped);
             }
             else if (child.getScenario().isPresent()) {
 
@@ -112,10 +185,10 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                 boolean scenarioSkipped = TagUtils.shouldSkipElement(scenario.getTags(), options.getSkipGenerationForTags());
                 featureScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector, featureBackgroundSteps);
-                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario("", featureScenarioCount, scenario, classBuilder, preComputedStepTypes, scenarioSkipped);
+                MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(methodNamePrefix, featureScenarioCount, scenario, classBuilder, preComputedStepTypes, scenarioSkipped);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
-                classBuilder.addMethod(scenarioMethod);
+                targetClassBuilder.addMethod(scenarioMethod);
             }
             else {
                 throw new ProcessingException("Unsupported child element type for feature: " + child);
@@ -124,18 +197,93 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
         }
     }
 
+    private void addSpecClassAnnotations(Feature spec, int specNumber, boolean hasRules, boolean hasScenarios,
+                                         boolean isEmpty, TypeSpec.Builder specClassBuilder) {
+
+        specClassBuilder.addAnnotation(AnnotationSpec.builder(Nested.class).build());
+        specClassBuilder.addAnnotation(AnnotationSpec
+                .builder(Order.class)
+                .addMember("value", "" + specNumber)
+                .build());
+
+        List<Tag> tags = spec.getTags();
+        if (tags != null && !tags.isEmpty()) {
+            specClassBuilder.addAnnotation(TagUtils.toJUnitTagsAnnotation(tags));
+        }
+
+        if (isEmpty && StringUtils.isNotBlank(options.getTagForEmptySpecs())) {
+            specClassBuilder.addAnnotation(TagUtils.toJUnitTagsAnnotation(options.getTagForEmptySpecs()));
+        }
+
+        if (hasScenarios || isEmpty) {
+            specClassBuilder.addAnnotation(AnnotationSpec
+                    .builder(TestMethodOrder.class)
+                    .addMember("value", "$T.class", ClassName.get(MethodOrderer.OrderAnnotation.class))
+                    .build());
+        }
+        if (hasRules) {
+            specClassBuilder.addAnnotation(AnnotationSpec
+                    .builder(TestClassOrder.class)
+                    .addMember("value", "$T.class", ClassName.get(ClassOrderer.OrderAnnotation.class))
+                    .build());
+        }
+
+        String specName = spec.getName();
+        if (specName != null && !specName.isEmpty()) {
+            specName = " " + specName.replaceAll("\"", "\\\\\"");
+        } else {
+            specName = "";
+        }
+        String keyword = spec.getKeyword().trim();
+        String displayNameValue;
+        if (options.isAddSourceLineNumbers()) {
+            long line = spec.getLocation().getLine();
+            displayNameValue = keyword + " [" + line + "]:" + specName;
+        } else {
+            displayNameValue = keyword + ":" + specName;
+        }
+        specClassBuilder.addAnnotation(AnnotationSpec
+                .builder(DisplayName.class)
+                .addMember("value", "\"" + JavaDocUtils.escapeForJavaPoet(displayNameValue) + "\"")
+                .build());
+
+        DescriptionEmitter.emit(specClassBuilder, spec.getDescription(), options);
+    }
+
+    /**
+     * The placeholder test of a spec without Scenarios or Rules, which fails, aborts or does not compile,
+     * depending on the emptySpecBehavior option.
+     */
+    private MethodSpec noScenariosInSpecMethod(String keyword) {
+
+        MethodSpec.Builder methodBuilder = MethodSpec
+                .methodBuilder("noScenariosIn" + SpecNamingUtils.toIdentifier(keyword).replace("_", ""))
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(AnnotationSpec.builder(Test.class).build());
+
+        if ("ABORT".equals(options.getEmptySpecBehavior())) {
+            methodBuilder.addStatement("$T.assumeTrue(false, $S)", Assumptions.class, keyword + " has no scenarios");
+        } else if ("COMPILATION_ERROR".equals(options.getEmptySpecBehavior())) {
+            methodBuilder.addCode((keyword + " doesn't have any scenarios\n").replace("$", "$$"));
+        } else {
+            methodBuilder.addStatement("$T.fail($S)", Assertions.class, keyword + " doesn't have any scenarios");
+        }
+
+        return methodBuilder.build();
+    }
+
     private static final Pattern PARAM_PATTERN = Pattern.compile("(?<parameter>(\")(?<parameterValue>[^\"]*?)(\"))");
 
     /**
-     * Pre-scans all steps across all scenarios in the feature to determine widened parameter types.
+     * Pre-scans all steps across all scenarios of the given features to determine widened parameter types.
      * When the same step pattern appears multiple times with different parameter values,
      * the widest common type is computed (e.g., Character + String → String).
      */
-    private Map<String, List<Class<?>>> preComputeStepParameterTypes(Feature feature) {
+    private Map<String, List<Class<?>>> preComputeStepParameterTypes(List<Feature> features) {
         // Collect parameter values grouped by step pattern
         Map<String, List<List<String>>> stepPatternValues = new LinkedHashMap<>();
 
-        for (FeatureChild child : feature.getChildren()) {
+        for (FeatureChild child : features.stream().flatMap(feature -> feature.getChildren().stream()).toList()) {
             if (child.getScenario().isPresent()) {
                 collectStepPatternValues(child.getScenario().get().getSteps(), stepPatternValues);
             }

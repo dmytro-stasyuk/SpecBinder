@@ -57,12 +57,28 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
     }
 
     void processRule(int ruleNumber, Rule rule, TypeSpec.Builder classBuilder, Map<String, List<Class<?>>> preComputedStepTypes, List<Step> featureBackgroundSteps, boolean ruleSkipped) {
+        processRule(ruleNumber, rule, classBuilder, classBuilder, "", "", preComputedStepTypes, featureBackgroundSteps, ruleSkipped);
+    }
+
+    /**
+     * Processes a Rule into a nested class added to {@code targetClassBuilder}, while its step methods go to
+     * {@code classBuilder}. The prefixes name the Rule within its spec when a spec file holds several specs,
+     * e.g. class {@code Ability_1_Rule_2} and methods {@code ability_1_rule_2_scenario_1}.
+     *
+     * @param classBuilder       the generated top-level class, which receives the step methods
+     * @param targetClassBuilder the class the nested Rule class is added to
+     * @param classNamePrefix    prefix for the nested Rule class name ("" for a single-spec file)
+     * @param methodNamePrefix   prefix for the scenario method names ("" for a single-spec file)
+     */
+    void processRule(int ruleNumber, Rule rule, TypeSpec.Builder classBuilder, TypeSpec.Builder targetClassBuilder,
+                     String classNamePrefix, String methodNamePrefix, Map<String, List<Class<?>>> preComputedStepTypes,
+                     List<Step> featureBackgroundSteps, boolean ruleSkipped) {
 
         List<Step> ruleBackgroundSteps = BackgroundStepCollector.collectRuleBackgroundSteps(rule);
         List<Step> combinedBackgroundSteps = BackgroundStepCollector.combine(featureBackgroundSteps, ruleBackgroundSteps);
 
         TypeSpec.Builder nestedRuleClassBuilder = TypeSpec
-                .classBuilder("Rule_" + ruleNumber)
+                .classBuilder(classNamePrefix + "Rule_" + ruleNumber)
                 .addModifiers(Modifier.PUBLIC);
 
         /*
@@ -126,12 +142,13 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
                 ruleName = " " + ruleName;
             }
         }
+        String ruleKeyword = rule.getKeyword().trim();
         String displayNameValue;
         if (options.isAddSourceLineNumbers()) {
             long line = rule.getLocation().getLine();
-            displayNameValue = "Rule [" + line + "]:" + ruleName;
+            displayNameValue = ruleKeyword + " [" + line + "]:" + ruleName;
         } else {
-            displayNameValue = "Rule:" + ruleName;
+            displayNameValue = ruleKeyword + ":" + ruleName;
         }
         nestedRuleClassBuilder.addAnnotation(
                 AnnotationSpec.builder(DisplayName.class)
@@ -153,7 +170,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
                 ruleScenarioCount++;
                 ScenarioProcessor scenarioProcessor = new ScenarioProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector, combinedBackgroundSteps);
-                String rulePrefix = "rule_" + ruleNumber + "_";
+                String rulePrefix = methodNamePrefix + "rule_" + ruleNumber + "_";
                 MethodSpec.Builder scenarioMethodBuilder = scenarioProcessor.processScenario(rulePrefix, ruleScenarioCount, scenario, classBuilder, preComputedStepTypes, scenarioSkipped);
 
                 MethodSpec scenarioMethod = scenarioMethodBuilder.build();
@@ -200,7 +217,7 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
         }
 
         TypeSpec nestedRuleClassSpec = nestedRuleClassBuilder.build();
-        classBuilder.addType(nestedRuleClassSpec);
+        targetClassBuilder.addType(nestedRuleClassSpec);
     }
 
 }
