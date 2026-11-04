@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.50.0] - 2026-11-04
+
+### Added
+
 - The test class that runs a generated abstract class is now shown under the spec's own name, followed by the class name — for example `Feature: Shopping cart (ShoppingCartTest)` — in the IDE's test runner and in build reports, matching the `Rule:` and `Scenario:` entries below it. Putting your own `@DisplayName` on that class still overrides it.
 - A spec file can now hold several Features (or Abilities, Business Needs and other synonyms) one after another, so related specs can be drafted, reviewed and run together before each moves into its own file. Each one becomes a nested class of the single generated test class, and they share its step methods.
 - The new `emptySpecBehavior` and `tagForEmptySpecs` options set what happens to a Feature with no scenarios or Rules yet in such a file, just as `emptyRuleBehavior` and `tagForEmptyRules` do for an empty Rule. By default its placeholder test fails and is tagged `new`.
