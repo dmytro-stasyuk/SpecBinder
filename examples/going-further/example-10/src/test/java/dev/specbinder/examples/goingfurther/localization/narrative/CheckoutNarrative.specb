@@ -1,0 +1,12 @@
+Narrative: Pay by card at checkout
+  As a shopper
+  I want to pay for the items in my cart by card
+  So that I can complete my purchase without cash
+
+  Rule: A successful card payment completes the order and empties the cart
+
+    Scenario: Pay by card for two items
+      Given a cart with "2" items
+      When I pay by card
+      Then the order status is "paid"
+      And the cart is empty

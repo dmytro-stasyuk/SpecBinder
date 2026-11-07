@@ -80,6 +80,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>dev.specbinder</groupId>
+            <artifactId>spec-reader</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
             <version>${cucumber-java.version}</version>

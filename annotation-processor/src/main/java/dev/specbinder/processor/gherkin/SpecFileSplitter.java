@@ -1,11 +1,9 @@
 package dev.specbinder.processor.gherkin;
 
-import io.cucumber.gherkin.GherkinDialectProvider;
+import dev.specbinder.specreader.LanguageHeader;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Splits the content of a spec file holding several top-level Feature keywords (or their synonyms, in the file's
@@ -18,23 +16,21 @@ import java.util.regex.Pattern;
  */
 final class SpecFileSplitter {
 
-    private static final Pattern LANGUAGE_PATTERN = Pattern.compile("^\\s*#\\s*language\\s*:\\s*([a-zA-Z\\-_]+)\\s*$");
-    private static final String DEFAULT_LANGUAGE = "en";
-
     private SpecFileSplitter() {
     }
 
     /**
      * Returns one document per spec, or a single-element list holding the unchanged content when the file holds
      * at most one spec.
+     *
+     * @param content         the content of the spec file
+     * @param featureKeywords the Feature keywords the spec file is read with, a team's synonyms included
      */
-    static List<String> split(String content) {
+    static List<String> split(String content, List<String> featureKeywords) {
 
         String[] lines = content.split("\n", -1);
 
-        int languageLine = findLanguageLine(lines);
-        List<String> featureKeywords = featureKeywords(languageLine < 0 ? DEFAULT_LANGUAGE
-                : languageOf(lines[languageLine]));
+        int languageLine = LanguageHeader.findLine(lines);
 
         List<Integer> keywordLines = findFeatureKeywordLines(lines, featureKeywords);
         if (keywordLines.size() < 2) {
@@ -54,37 +50,6 @@ final class SpecFileSplitter {
             documents.add(documentOf(lines, start, end, languageLine));
         }
         return documents;
-    }
-
-    private static int findLanguageLine(String[] lines) {
-        for (int i = 0; i < lines.length; i++) {
-            String trimmed = lines[i].strip();
-            if (trimmed.isEmpty()) {
-                continue;
-            }
-            if (!trimmed.startsWith("#")) {
-                return -1;
-            }
-            if (LANGUAGE_PATTERN.matcher(lines[i]).matches()) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private static String languageOf(String line) {
-        Matcher matcher = LANGUAGE_PATTERN.matcher(line);
-        return matcher.matches() ? matcher.group(1) : DEFAULT_LANGUAGE;
-    }
-
-    // GherkinDialectProvider is deprecated in newer Gherkin versions in favour of GherkinDialects, which is not
-    // public in older ones; the provider works with both.
-    @SuppressWarnings("deprecation")
-    private static List<String> featureKeywords(String language) {
-        GherkinDialectProvider dialectProvider = new GherkinDialectProvider(DEFAULT_LANGUAGE);
-        return dialectProvider.getDialect(language)
-                .orElseGet(dialectProvider::getDefaultDialect)
-                .getFeatureKeywords();
     }
 
     private static List<Integer> findFeatureKeywordLines(String[] lines, List<String> featureKeywords) {

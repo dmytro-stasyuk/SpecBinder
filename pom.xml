@@ -52,6 +52,7 @@
     </properties>
     <modules>
         <module>annotations</module>
+        <module>spec-reader</module>
         <module>annotation-processor</module>
         <module>execution-reporter</module>
         <module>examples</module>

@@ -1,9 +1,6 @@
 package dev.specbinder.processor.utils;
 
-import com.squareup.javapoet.MethodSpec;
-import dev.specbinder.processor.exception.ProcessingException;
-
-import java.util.List;
+import dev.specbinder.processor.utils.StepKeywordUtils.ResolvedStepKeyword;
 
 /**
  * Utility class for generating method names from Gherkin step definitions.
@@ -17,46 +14,29 @@ public class MethodNamingUtils {
     }
 
     /**
-     * Generates a method name from the first line of a Gherkin step definition.
+     * Generates a method name from the first line of a Gherkin step definition. The step keyword is left out of the
+     * name however many words it has, unless {@code useStepKeywordInStepMethodName} is set, in which case the keyword
+     * the step resolved to starts the name: the step's own keyword, or for And, But and * the keyword of the step
+     * before it.
      *
-     * @param stepFirstLine                  the first line of the Gherkin step definition
-     * @param scenarioStepsMethodSpecs       a list of MethodSpec objects representing the scenario steps
-     * @param stepLine                       the line number of the step in the feature file
-     * @param useStepKeywordInStepMethodName if true, the step keyword (Given/When/Then) is included
-     *                                       as a prefix in the generated method name
+     * @param stepFirstLine                  the first line of the Gherkin step definition, starting with its keyword
+     * @param stepKeyword                    the keyword of the step, as the parser read it
+     * @param resolvedStepKeyword            the keyword the step resolved to
+     * @param useStepKeywordInStepMethodName if true, the resolved keyword is included as a prefix in the generated
+     *                                       method name
      * @return a sanitized method name suitable for use in Java code
      */
-    public static String getStepMethodName(String stepFirstLine, List<MethodSpec> scenarioStepsMethodSpecs, long stepLine,
-                                               boolean useStepKeywordInStepMethodName) {
+    public static String getStepMethodName(String stepFirstLine, String stepKeyword,
+                                           ResolvedStepKeyword resolvedStepKeyword,
+                                           boolean useStepKeywordInStepMethodName) {
 
         StringBuilder methodNameBuilder = new StringBuilder();
 
-        String[] words = stepFirstLine.split("\\s+");
-        for (int i = 0; i < words.length; i++) {
+        String stepText = StepKeywordUtils.textAfterKeyword(stepFirstLine, stepKeyword);
+        String nameText = useStepKeywordInStepMethodName ? resolvedStepKeyword.spelling() + " " + stepText : stepText;
 
-            String word = words[i];
-
-            if (i == 0) {
-                boolean isAndButAsterisk = word.equalsIgnoreCase("and")
-                        || word.equalsIgnoreCase("but")
-                        || word.equalsIgnoreCase("*");
-
-                if (isAndButAsterisk) {
-                    // Always validate that And/But/* have a previous step
-                    validatePreviousStepExists(scenarioStepsMethodSpecs, stepLine);
-
-                    if (useStepKeywordInStepMethodName) {
-                        word = getPreviousGWTStepWord(scenarioStepsMethodSpecs, stepLine);
-                    } else {
-                        continue;
-                    }
-                } else {
-                    // Given/When/Then keyword
-                    if (!useStepKeywordInStepMethodName) {
-                        continue;
-                    }
-                }
-            }
+        String[] words = nameText.split("\\s+");
+        for (String word : words) {
 
             StringBuilder sanitizedWordBuilder = new StringBuilder();
 
@@ -119,30 +99,5 @@ public class MethodNamingUtils {
 
         String sanitizedMethodName = methodNameBuilder.toString();
         return sanitizedMethodName;
-    }
-
-    private static void validatePreviousStepExists(List<MethodSpec> scenarioStepsMethodSpecs, long stepLine) {
-        if (scenarioStepsMethodSpecs.isEmpty()) {
-            throw new ProcessingException(
-                    "Step on line - " + stepLine
-                            + " starts with 'And', but there are no previous scenario steps defined");
-        }
-    }
-
-    private static String getPreviousGWTStepWord(List<MethodSpec> scenarioStepsMethodSpecs, long stepLine) {
-
-        MethodSpec lastScenarioMethodSpec = scenarioStepsMethodSpecs.get(scenarioStepsMethodSpecs.size() - 1);
-        String lastMethodName = lastScenarioMethodSpec.name;
-        if (lastMethodName.startsWith("given")) {
-            return "given";
-        } else if (lastMethodName.startsWith("when")) {
-            return "when";
-        } else if (lastMethodName.startsWith("then")) {
-            return "then";
-        } else {
-            throw new ProcessingException(
-                    "Step on line - " + stepLine
-                            + " starts with 'And', but there are no previous scenario steps defined that have a step annotation");
-        }
     }
 }

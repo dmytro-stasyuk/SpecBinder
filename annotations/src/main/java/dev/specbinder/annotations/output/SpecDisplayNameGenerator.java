@@ -19,6 +19,13 @@ import org.junit.jupiter.api.DisplayNameGenerator;
  */
 public class SpecDisplayNameGenerator extends DisplayNameGenerator.Standard {
 
+    /**
+     * Creates the generator. JUnit creates it through this constructor when it reads
+     * {@code @DisplayNameGeneration(SpecDisplayNameGenerator.class)}.
+     */
+    public SpecDisplayNameGenerator() {
+    }
+
     @Override
     public String generateDisplayNameForClass(Class<?> testClass) {
         String featureName = featureDisplayNameAbove(testClass);

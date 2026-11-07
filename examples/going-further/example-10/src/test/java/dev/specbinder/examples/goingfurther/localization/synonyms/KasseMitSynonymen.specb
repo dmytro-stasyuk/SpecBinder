@@ -1,0 +1,9 @@
+Funktionalität: Kasse
+
+  Geschäftsregel: Kartenzahlung
+
+    Szenario: Mit Karte bezahlen
+      Vorausgesetzt ein Warenkorb mit "2" Artikeln
+      Wenn ich mit Karte bezahle
+      Dann hat die Bestellung den Status "bezahlt"
+      Und der Warenkorb ist leer

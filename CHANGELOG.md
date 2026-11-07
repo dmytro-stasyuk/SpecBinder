@@ -8,9 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- The new `keywordLanguages` option sets which languages' keywords a spec without a `# language:` header may use — for example `keywordLanguages = {KeywordLanguage.ENGLISH, KeywordLanguage.GERMAN}` — and the keywords of the listed languages can be mixed freely, even from one line to the next. A header still wins, and the default stays English only. Execution reports show each step as the spec writes it, whichever language its keyword is in.
+- The new `keywordSynonyms` option gives any Gherkin keyword your team's own words — for example `@KeywordSynonym(keyword = GherkinKeyword.GIVEN, synonyms = "Assuming")` makes `Assuming a cart` a Given step. Synonyms are accepted next to a keyword's usual words, or instead of them with `replace = true`, in every spec, including those with a `# language:` header.
+
 ### Changed
 
+- Build errors about a spec's content, such as an `And` step with no step before it, now start with the path of the spec file they come from — for example `In spec file - 'com/example/Cart.feature': …` — so it is clear which file to fix.
+- A spec line that can't be read where it stands now fails the build with an error naming the line, what was found there and what was expected instead — for example `Line - 4 can't be read: found 'Invalid user clicks button', but expected a step, a table, a doc string, tags, or an Examples, Scenario or Rule line`. This replaces the vague `Unable to parse Feature` error, and a doc string that is never closed is now reported as such.
+
 ### Fixed
+
+- Spec files with a `# language:` header now handle step keywords of several words, such as `Gegeben sei` or `Etant donné qu'`, which used to leave part of the keyword in step method names, and composite steps, which used to fail the build. The steps' methods get their correct names, so implementations of the old names need renaming. A header naming a language Gherkin doesn't have now fails with an error naming the file, line and language, rather than a vague parse error.
+- Execution reports now show the step text of specs that use `stripPatterns` or `stripBetweenPatterns`, with the stripped text left out just as in the generated code. Such scenarios used to be reported with no step text at all.
 
 ### Removed
 

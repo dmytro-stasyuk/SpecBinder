@@ -3,6 +3,7 @@ package dev.specbinder.reporter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.specbinder.annotations.output.ScenarioHash;
 import dev.specbinder.reporter.internal.SourceFeatureReader;
+import dev.specbinder.reporter.internal.SpecReadingOptions;
 import org.junit.jupiter.api.DisplayName;
 
 import java.io.IOException;
@@ -77,7 +78,8 @@ final class ReportMerger {
         FeatureReport previous = readIfUsable(fresh, target, mapper);
         if (previous != null) {
             List<Position> declared = declaredPositions(testClass);
-            attachExampleRows(declared, fresh.getSourceFilePath(), classLoaderOf(testClass));
+            attachExampleRows(declared, fresh.getSourceFilePath(), SpecReadingOptions.of(testClass),
+                    classLoaderOf(testClass));
             carryOver(previous, fresh, declared);
         }
         return recomputeDerivedFields(fresh);
@@ -97,11 +99,12 @@ final class ReportMerger {
      * scenarios first, then each Rule's — the same order {@link #declaredPositions} produces.
      */
     private static void attachExampleRows(List<Position> declared, String sourceFilePath,
-                                          ClassLoader classLoader) {
+                                          SpecReadingOptions options, ClassLoader classLoader) {
         if (declared.isEmpty() || sourceFilePath == null) {
             return;
         }
-        SourceFeatureReader.ParsedFeature parsed = SourceFeatureReader.parse(sourceFilePath, classLoader);
+        SourceFeatureReader.ParsedFeature parsed =
+                SourceFeatureReader.parse(sourceFilePath, options, classLoader);
         List<SourceFeatureReader.ParsedScenario> flat = new ArrayList<>(parsed.scenarios());
         for (SourceFeatureReader.ParsedRule rule : parsed.rules()) {
             flat.addAll(rule.scenarios());

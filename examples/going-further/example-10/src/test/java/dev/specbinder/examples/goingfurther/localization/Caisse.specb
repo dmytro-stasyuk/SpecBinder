@@ -1,0 +1,10 @@
+# language: fr
+Fonctionnalité: Caisse
+
+  Règle: Paiement par carte
+
+    Scénario: Payer par carte
+      Soit un panier avec "2" articles
+      Quand je paie par carte
+      Alors la commande a le statut "payée"
+      Et le panier est vide

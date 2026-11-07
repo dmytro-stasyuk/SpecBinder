@@ -9,11 +9,15 @@ import dev.specbinder.processor.gherkin.utils.RecordMetadata;
 import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
 import dev.specbinder.processor.utils.*;
+import dev.specbinder.processor.utils.StepKeywordUtils.ResolvedStepKeyword;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.messages.types.*;
+import io.cucumber.messages.types.DocString;
+import io.cucumber.messages.types.Step;
+import io.cucumber.messages.types.TableCell;
+import io.cucumber.messages.types.TableRow;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -24,7 +28,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -47,6 +50,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
     private List<ParameterSpec> resolvedExtras = List.of();
     private boolean lastBaseMatchValid = true;
+    private ResolvedStepKeyword resolvedStepKeyword;
 
     private static final Pattern parameterPattern = Pattern.compile("(?<parameter>(\")(?<parameterValue>([^\"\\\\]|\\\\.)*?)(\"))");
 
@@ -140,7 +144,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     MethodSpec processStep(
             Step step, MethodSpec.Builder scenarioMethodBuilder,
             List<MethodSpec> scenarioStepsMethodSpecs,
-            List<String> resolvedStepKeywords) {
+            List<ResolvedStepKeyword> resolvedStepKeywords) {
 
         return processStep(step, scenarioMethodBuilder, scenarioStepsMethodSpecs, resolvedStepKeywords, null, null, null, null);
     }
@@ -149,14 +153,15 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             Step step,
             MethodSpec.Builder scenarioMethodBuilder,
             List<MethodSpec> scenarioStepsMethodSpecs,
-            List<String> resolvedStepKeywords,
+            List<ResolvedStepKeyword> resolvedStepKeywords,
             List<String> scenarioParameterNames,
             List<String> testMethodParameterNames,
             List<Class<?>> scenarioParameterTypes,
             Map<Integer, TypeMirror> enumParameterTypes
     ) {
 
-        long stepLine = step.getLocation().getLine();
+        // resolved before the method name is built, since an And/But/* step takes its keyword from the step before it
+        resolvedStepKeyword = StepKeywordUtils.resolve(step, resolvedStepKeywords);
 
         /**
          * use only the first line of the step text for creating a method name
@@ -170,7 +175,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
          * it won't be actually added if a method with exactly the same signature already exists
          */
         MethodSignatureAttributes stepMethodSignatureAttributes = extractMethodSignature(
-                stepFirstLine, scenarioParameterNames, scenarioParameterTypes, scenarioStepsMethodSpecs, stepLine
+                stepFirstLine, step.getKeyword(), scenarioParameterNames, scenarioParameterTypes
         );
         String stepMethodName = stepMethodSignatureAttributes.methodName;
 
@@ -211,11 +216,10 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             }
         }
 
-        String resolvedKeyword = resolveGWTKeyword(step, resolvedStepKeywords, stepLine);
-        resolvedStepKeywords.add(resolvedKeyword);
+        resolvedStepKeywords.add(resolvedStepKeyword);
 
         if (options.isAddCucumberStepAnnotations() && annotationMatch == null) {
-            AnnotationSpec annotationSpec = buildGWTAnnotation(resolvedKeyword,
+            AnnotationSpec annotationSpec = buildGWTAnnotation(resolvedStepKeyword.gwtKeyword(), step.getKeyword(),
                     stepMethodName, stepMethodSignatureAttributes
             );
             stepMethodBuilder.addAnnotation(annotationSpec);
@@ -342,22 +346,23 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     /**
      * Checks if a base class has a compatible method for the given step.
      * A method is compatible if it has the same name and all parameter values can be converted to the method's parameter types.
+     * The step must have been passed to {@link #processStep} first, which resolves the keyword its method name may
+     * start with.
      *
      * @param step                     the Gherkin step
      * @param scenarioParameterNames   scenario parameter names (for Scenario Outlines)
-     * @param scenarioStepsMethodSpecs previously processed steps (needed for resolving And/But keywords)
      * @return true if a compatible base method exists, false otherwise
      */
-    public boolean hasCompatibleBaseMethod(Step step, List<String> scenarioParameterNames, List<MethodSpec> scenarioStepsMethodSpecs) {
-        return hasCompatibleBaseMethod(step, scenarioParameterNames, null, scenarioStepsMethodSpecs);
+    public boolean hasCompatibleBaseMethod(Step step, List<String> scenarioParameterNames) {
+        return hasCompatibleBaseMethod(step, scenarioParameterNames, null);
     }
 
-    public boolean hasCompatibleBaseMethod(Step step, List<String> scenarioParameterNames, List<Class<?>> scenarioParameterTypes, List<MethodSpec> scenarioStepsMethodSpecs) {
-        return hasCompatibleBaseMethod(step, scenarioParameterNames, scenarioParameterTypes, null, scenarioStepsMethodSpecs);
+    public boolean hasCompatibleBaseMethod(Step step, List<String> scenarioParameterNames, List<Class<?>> scenarioParameterTypes) {
+        return hasCompatibleBaseMethod(step, scenarioParameterNames, scenarioParameterTypes, null);
     }
 
     public boolean hasCompatibleBaseMethod(Step step, List<String> scenarioParameterNames, List<Class<?>> scenarioParameterTypes,
-                                           Map<Integer, TypeMirror> enumTypes, List<MethodSpec> scenarioStepsMethodSpecs) {
+                                           Map<Integer, TypeMirror> enumTypes) {
         String stepText = step.getKeyword() + " " + step.getText();
         String[] lines = stepText.trim().split("\\n");
         String stepFirstLine = lines[0].trim();
@@ -373,7 +378,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             stepPattern = processWithParameterPattern(stepPattern, scenarioParametersPattern, parameterValues);
         }
 
-        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, step.getLocation().getLine(),
+        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, step.getKeyword(), resolvedStepKeyword,
                 getOptions().isUseStepKeywordInStepMethodName());
 
         // Check if a Cucumber annotation pattern matches the step text
@@ -1528,41 +1533,8 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         return result.toString();
     }
 
-    /**
-     * Resolves the GWT keyword for a step. For Given/When/Then steps, returns the keyword directly.
-     * For And/But/* steps, inherits the keyword from the previous step. Step keywords of other languages
-     * (e.g. "Angenommen") are resolved through the keyword type the Gherkin parser assigns to them.
-     */
-    private String resolveGWTKeyword(Step step, List<String> resolvedStepKeywords, long stepLine) {
-        String stepKeyword = step.getKeyword().trim();
-        String keywordLower = stepKeyword.toLowerCase();
-        StepKeywordType keywordType = step.getKeywordType().orElse(StepKeywordType.UNKNOWN);
-
-        if (keywordLower.equals("given") || keywordLower.equals("when") || keywordLower.equals("then")) {
-            return keywordLower;
-        } else if (keywordType == StepKeywordType.CONTEXT && !keywordLower.equals("*")) {
-            return "given";
-        } else if (keywordType == StepKeywordType.ACTION && !keywordLower.equals("*")) {
-            return "when";
-        } else if (keywordType == StepKeywordType.OUTCOME && !keywordLower.equals("*")) {
-            return "then";
-        } else if (keywordLower.equals("and") || keywordLower.equals("but") || keywordLower.equals("*")
-                || keywordType == StepKeywordType.CONJUNCTION) {
-            if (resolvedStepKeywords.isEmpty()) {
-                throw new ProcessingException(
-                        "Step on line - " + stepLine
-                                + " starts with 'And', but there are no previous scenario steps defined");
-            }
-            return resolvedStepKeywords.get(resolvedStepKeywords.size() - 1);
-        } else {
-            throw new ProcessingException(
-                    "Step keyword is not a valid Gherkin keyword (Given, When, Then, And, But, *): "
-                            + stepKeyword);
-        }
-    }
-
     private AnnotationSpec buildGWTAnnotation(
-            String resolvedKeyword, String stepMethodName,
+            String resolvedKeyword, String stepKeyword, String stepMethodName,
             MethodSignatureAttributes signatureAttributes) {
 
         List<String> parameterValues = signatureAttributes.parameterValues;
@@ -1589,8 +1561,8 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         }
         String stepPatternWithMarkers = replaceParameterMarkers(stepPattern, parameterValues.size());
 
-        String[] words = stepPatternWithMarkers.split("\\s+");
-        String[] stepTitleWords = Arrays.copyOfRange(words, 1, words.length); // trim the keyword
+        // the keyword is left out however many words it has; the words of the step text are joined by single spaces
+        String[] stepTitleWords = StepKeywordUtils.textAfterKeyword(stepPatternWithMarkers, stepKeyword).split("\\s+");
         String stepAnnotationValueTrimmed = StringUtils.join(stepTitleWords, " ");
 
         // Escape regex special characters in literal text, but preserve $L placeholders
@@ -1698,10 +1670,9 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
     private MethodSignatureAttributes extractMethodSignature(
             String stepFirstLine,
+            String stepKeyword,
             List<String> scenarioParameterNames,
-            List<Class<?>> scenarioParameterTypes,
-            List<MethodSpec> scenarioStepsMethodSpecs,
-            long stepLine) {
+            List<Class<?>> scenarioParameterTypes) {
 
         List<String> parameterValues = new ArrayList<>();
 
@@ -1722,7 +1693,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                     parameterValues);
         }
 
-        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, stepLine,
+        String stepMethodName = MethodNamingUtils.getStepMethodName(stepPattern, stepKeyword, resolvedStepKeyword,
                 getOptions().isUseStepKeywordInStepMethodName());
         List<Class<?>> parameterTypes = new ArrayList<>();
         for (int i = 0; i < parameterValues.size(); i++) {

@@ -19,6 +19,7 @@
         <module>example-4</module>
         <module>example-8</module>
         <module>example-9</module>
+        <module>example-10</module>
     </modules>
     <build>
         <!-- Spec files are co-located with their marker classes in src/test/java (see getting-started example-8);

@@ -8,6 +8,8 @@ import dev.specbinder.processor.gherkin.utils.EnumImportCollector;
 import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
 import dev.specbinder.processor.utils.MethodNamingUtils;
+import dev.specbinder.processor.utils.StepKeywordUtils;
+import dev.specbinder.processor.utils.StepKeywordUtils.ResolvedStepKeyword;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -19,7 +21,10 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -63,7 +68,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
             CompositeStepGroup compositeGroup,
             MethodSpec.Builder scenarioMethodBuilder,
             List<MethodSpec> scenarioStepsMethodSpecs,
-            List<String> resolvedStepKeywords,
+            List<ResolvedStepKeyword> resolvedStepKeywords,
             TypeSpec.Builder classBuilder,
             List<MethodSpec> allMethodSpecs,
             Set<String> baseClassMethodNames,
@@ -79,12 +84,12 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         String parentStepText = parentStep.getKeyword() + " " + parentStep.getText();
         List<String> parameterValues = extractParameterValues(parentStepText);
 
-        // Determine the effective keyword for the parent step
-        String parentKeyword = parentStep.getKeyword().trim().toLowerCase();
-        Class<?> effectiveAnnotation = determineEffectiveAnnotation(parentKeyword, parentStep.getLocation().getLine(), scenarioStepsMethodSpecs);
+        // Resolve the parent step's keyword, which an And/But parent takes from the step before it
+        ResolvedStepKeyword resolvedParentKeyword = StepKeywordUtils.resolve(parentStep, resolvedStepKeywords);
+        Class<?> effectiveAnnotation = annotationFor(resolvedParentKeyword);
 
         // Generate composite method
-        MethodSpec compositeMethod = generateCompositeMethod(parentStep, parameterValues, effectiveAnnotation, scenarioStepsMethodSpecs);
+        MethodSpec compositeMethod = generateCompositeMethod(parentStep, parameterValues, effectiveAnnotation, resolvedParentKeyword);
 
         // Add composite method to class if it doesn't already exist
         String compositeMethodName = compositeMethod.name;
@@ -96,8 +101,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         // Add composite method to scenario steps list so that sub-steps can inherit from it
         scenarioStepsMethodSpecs.add(compositeMethod);
 
-        // Resolve and track the parent step's GWT keyword for And/But/* inheritance
-        String resolvedParentKeyword = resolveParentKeyword(parentKeyword, resolvedStepKeywords, parentStep.getLocation().getLine());
+        // Track the parent step's keyword for And/But/* inheritance
         resolvedStepKeywords.add(resolvedParentKeyword);
 
         // Generate sub-step methods
@@ -134,61 +138,14 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
     }
 
     /**
-     * Resolves the GWT keyword for a parent composite step.
-     * For Given/When/Then, returns the keyword directly. For And/But/*, inherits from the previous step.
+     * Returns the Cucumber annotation (@Given, @When or @Then) matching the keyword a step resolved to.
      */
-    private String resolveParentKeyword(String keyword, List<String> resolvedStepKeywords, long stepLine) {
-        if (keyword.equals("given") || keyword.equals("when") || keyword.equals("then")) {
-            return keyword;
-        } else if (keyword.equals("and") || keyword.equals("but") || keyword.equals("*")) {
-            if (resolvedStepKeywords.isEmpty()) {
-                throw new ProcessingException(
-                        "Step on line - " + stepLine
-                                + " starts with '" + keyword + "', but there are no previous scenario steps defined");
-            }
-            return resolvedStepKeywords.get(resolvedStepKeywords.size() - 1);
-        }
-        throw new ProcessingException("Invalid step keyword: " + keyword);
-    }
-
-    /**
-     * Determines the effective Cucumber annotation for a step based on its keyword.
-     * For And/But/* keywords, inherits from the previous step's annotation.
-     */
-    private Class<?> determineEffectiveAnnotation(String keyword, long stepLine, List<MethodSpec> scenarioStepsMethodSpecs) {
-        if (keyword.equals("given")) {
-            return Given.class;
-        } else if (keyword.equals("when")) {
-            return When.class;
-        } else if (keyword.equals("then")) {
-            return Then.class;
-        } else if (keyword.equals("and") || keyword.equals("but") || keyword.equals("*")) {
-            // Inherit from previous step
-            if (scenarioStepsMethodSpecs.isEmpty()) {
-                throw new ProcessingException(
-                        "Step on line - " + stepLine
-                                + " starts with '" + keyword + "', but there are no previous scenario steps defined");
-            }
-
-            MethodSpec lastScenarioMethodSpec = scenarioStepsMethodSpecs.get(scenarioStepsMethodSpecs.size() - 1);
-
-            // Determine keyword from method name prefix (same logic as MethodNamingUtils.getPreviousGWTStepWord)
-            String lastMethodName = lastScenarioMethodSpec.name;
-            if (lastMethodName.startsWith("given")) {
-                return Given.class;
-            } else if (lastMethodName.startsWith("when")) {
-                return When.class;
-            } else if (lastMethodName.startsWith("then")) {
-                return Then.class;
-            }
-
-            // When useStepKeywordInStepMethodName is false, method names don't have keyword prefixes,
-            // so we can't determine the annotation from the method name. Return null - the caller
-            // only uses the annotation when addCucumberStepAnnotations is enabled.
-            return null;
-        }
-
-        return null;
+    private static Class<?> annotationFor(ResolvedStepKeyword resolvedStepKeyword) {
+        return switch (resolvedStepKeyword.gwtKeyword()) {
+            case "given" -> Given.class;
+            case "when" -> When.class;
+            default -> Then.class;
+        };
     }
 
     private List<String> extractParameterValues(String stepText) {
@@ -202,21 +159,22 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         return parameterValues;
     }
 
-    private MethodSpec generateCompositeMethod(Step parentStep, List<String> parameterValues, Class<?> effectiveAnnotation, List<MethodSpec> scenarioStepsMethodSpecs) {
+    private MethodSpec generateCompositeMethod(Step parentStep, List<String> parameterValues, Class<?> effectiveAnnotation,
+                                               ResolvedStepKeyword resolvedParentKeyword) {
         String parentStepText = parentStep.getKeyword() + " " + parentStep.getText();
-        long stepLine = parentStep.getLocation().getLine();
 
         // Replace quoted strings with placeholders ($p1, $p2, etc.) for method naming
         String stepPattern = replaceParametersWithPlaceholders(parentStepText, parameterValues);
-        String methodName = MethodNamingUtils.getStepMethodName(stepPattern, scenarioStepsMethodSpecs, stepLine,
-                getOptions().isUseStepKeywordInStepMethodName());
+        String methodName = MethodNamingUtils.getStepMethodName(stepPattern, parentStep.getKeyword(),
+                resolvedParentKeyword, getOptions().isUseStepKeywordInStepMethodName());
 
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PROTECTED);
 
         // Add Cucumber annotation if option is enabled
-        if (effectiveAnnotation != null && options.isAddCucumberStepAnnotations()) {
-            AnnotationSpec annotationSpec = buildCucumberAnnotation(effectiveAnnotation, stepPattern, parameterValues);
+        if (options.isAddCucumberStepAnnotations()) {
+            String stepPatternAfterKeyword = StepKeywordUtils.textAfterKeyword(stepPattern, parentStep.getKeyword());
+            AnnotationSpec annotationSpec = buildCucumberAnnotation(effectiveAnnotation, stepPatternAfterKeyword, parameterValues);
             methodBuilder.addAnnotation(annotationSpec);
         }
 
@@ -507,15 +465,13 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
      * Builds a Cucumber annotation (@Given, @When, @Then) with the proper regex pattern value.
      * This ensures the annotation includes the step text pattern as required by Cucumber.
      */
-    private AnnotationSpec buildCucumberAnnotation(Class<?> annotationClass, String stepPattern, List<String> parameterValues) {
+    private AnnotationSpec buildCucumberAnnotation(Class<?> annotationClass, String stepPatternAfterKeyword,
+                                                   List<String> parameterValues) {
         // Build the annotation value with regex pattern
         // Replace $p1, $p2 with regex capture groups
-        String annotationValue = stepPattern;
 
-        // Split by whitespace to get words, then skip the keyword (Given/When/Then)
-        String[] words = annotationValue.split("\\s+");
-        String[] stepWords = Arrays.copyOfRange(words, 1, words.length);
-        String stepText = String.join(" ", stepWords);
+        // Join the words of the step text by single spaces
+        String stepText = String.join(" ", stepPatternAfterKeyword.split("\\s+"));
 
         // Replace placeholders with JavaPoet format strings ($L)
         for (int i = parameterValues.size(); i >= 1; i--) {

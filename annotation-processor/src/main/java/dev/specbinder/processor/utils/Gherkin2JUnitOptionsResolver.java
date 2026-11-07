@@ -1,10 +1,10 @@
 package dev.specbinder.processor.utils;
 
-import dev.specbinder.annotations.Gherkin2JUnitOptions;
+import dev.specbinder.annotations.*;
 import dev.specbinder.annotations.Gherkin2JUnitOptions.Verbosity;
-import dev.specbinder.annotations.StripBetween;
 import dev.specbinder.processor.config.GeneratorOptions;
-import dev.specbinder.processor.config.StripBetweenPattern;
+import dev.specbinder.specreader.KeywordSynonyms;
+import dev.specbinder.specreader.StripBetweenPattern;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -92,6 +92,7 @@ public class Gherkin2JUnitOptionsResolver {
         boolean useStepKeywordInStepMethodName = false;
         boolean useCucumberAnnotationsForStepMatching = false;
         String[] supportedFileExtensions = new String[]{"feature", "specb"};
+        KeywordLanguage[] keywordLanguages = new KeywordLanguage[]{KeywordLanguage.ENGLISH};
         String[] skipGenerationForTags = new String[]{};
         Verbosity verbosity = Verbosity.NORMAL;
         boolean emitScenarioHash = true;
@@ -100,6 +101,8 @@ public class Gherkin2JUnitOptionsResolver {
         boolean skipUnchangedSpecs = false;
         String[] stripPatterns = new String[]{};
         StripBetweenPattern[] stripBetweenPatterns = new StripBetweenPattern[]{};
+        // merged keyword by keyword rather than replaced, so each class's entries are kept until all are read
+        List<List<KeywordSynonyms.Entry>> declaredKeywordSynonyms = new ArrayList<>();
 
         Elements elements = processingEnv.getElementUtils();
 
@@ -200,6 +203,21 @@ public class Gherkin2JUnitOptionsResolver {
                                     .toArray(String[]::new);
                         }
                         break;
+                    case "keywordLanguages":
+                        if (value instanceof List<?> list) {
+                            keywordLanguages = list.stream()
+                                    .map(item -> item instanceof AnnotationValue av ? av.getValue() : item)
+                                    .filter(VariableElement.class::isInstance)
+                                    .map(item -> KeywordLanguage.valueOf(
+                                            ((VariableElement) item).getSimpleName().toString()))
+                                    .toArray(KeywordLanguage[]::new);
+                        }
+                        break;
+                    case "keywordSynonyms":
+                        if (value instanceof List<?> list) {
+                            declaredKeywordSynonyms.add(toKeywordSynonymEntries(list, elements));
+                        }
+                        break;
                     case "skipGenerationForTags":
                         if (value instanceof List<?> list) {
                             skipGenerationForTags = list.stream()
@@ -265,6 +283,8 @@ public class Gherkin2JUnitOptionsResolver {
                 useStepKeywordInStepMethodName,
                 useCucumberAnnotationsForStepMatching,
                 supportedFileExtensions,
+                keywordLanguages,
+                KeywordSynonyms.merge(declaredKeywordSynonyms),
                 skipGenerationForTags,
                 verbosity,
                 emitScenarioHash,
@@ -322,6 +342,56 @@ public class Gherkin2JUnitOptionsResolver {
     }
 
     /**
+     * Converts the nested {@code @KeywordSynonym} annotation mirrors of an array member to entries.
+     */
+    private static List<KeywordSynonyms.Entry> toKeywordSynonymEntries(List<?> list, Elements elements) {
+        List<KeywordSynonyms.Entry> entries = new ArrayList<>();
+        for (Object item : list) {
+            Object element = item instanceof AnnotationValue av ? av.getValue() : item;
+            if (element instanceof AnnotationMirror mirror) {
+                Object keyword = readAnnotationValue(mirror, "keyword", elements);
+                Object synonyms = readAnnotationValue(mirror, "synonyms", elements);
+                Object replace = readAnnotationValue(mirror, "replace", elements);
+                if (keyword instanceof VariableElement keywordConstant && synonyms instanceof List<?> synonymList) {
+                    entries.add(new KeywordSynonyms.Entry(
+                            GherkinKeyword.valueOf(keywordConstant.getSimpleName().toString()),
+                            List.of(toStringArray(synonymList)),
+                            Boolean.TRUE.equals(replace)));
+                }
+            }
+        }
+        return entries;
+    }
+
+    /**
+     * Converts real {@code @KeywordSynonym} annotation instances to entries. Used by the fallback path, where
+     * annotations are read directly rather than through mirrors.
+     */
+    private static List<KeywordSynonyms.Entry> toKeywordSynonymEntries(KeywordSynonym[] synonymAnnotations) {
+        if (synonymAnnotations == null) {
+            return List.of();
+        }
+        List<KeywordSynonyms.Entry> entries = new ArrayList<>();
+        for (KeywordSynonym synonym : synonymAnnotations) {
+            entries.add(new KeywordSynonyms.Entry(synonym.keyword(), List.of(synonym.synonyms()), synonym.replace()));
+        }
+        return entries;
+    }
+
+    /**
+     * Reads a single member off a nested annotation mirror, its default included.
+     */
+    private static Object readAnnotationValue(AnnotationMirror mirror, String memberName, Elements elements) {
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry
+                : elements.getElementValuesWithDefaults(mirror).entrySet()) {
+            if (entry.getKey().getSimpleName().contentEquals(memberName)) {
+                return entry.getValue().getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Reads a single String member off a nested annotation mirror.
      */
     private static String readAnnotationMember(AnnotationMirror mirror, String memberName, Elements elements) {
@@ -360,6 +430,8 @@ public class Gherkin2JUnitOptionsResolver {
                 options.useStepKeywordInStepMethodName(),
                 options.useCucumberAnnotationsForStepMatching(),
                 options.supportedFileExtensions(),
+                options.keywordLanguages(),
+                KeywordSynonyms.merge(List.of(toKeywordSynonymEntries(options.keywordSynonyms()))),
                 options.skipGenerationForTags(),
                 options.verbosity(),
                 options.emitScenarioHash(),

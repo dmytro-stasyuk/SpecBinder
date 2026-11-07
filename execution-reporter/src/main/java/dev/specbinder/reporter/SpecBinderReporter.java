@@ -417,8 +417,9 @@ public class SpecBinderReporter implements
         if (sourceFilePath == null) {
             return null;
         }
+        Class<?> testClass = context.getRequiredTestClass();
         ParsedFeature parsed = SourceFeatureReader.parse(
-                sourceFilePath, context.getRequiredTestClass().getClassLoader());
+                sourceFilePath, SpecReadingOptions.of(testClass), testClass.getClassLoader());
         ParsedIndex index = ParsedIndex.of(parsed);
         store.put(KEY_PARSED_INDEX, index);
         return index;
@@ -566,7 +567,7 @@ public class SpecBinderReporter implements
         }
 
         finalizeOutlineNodes(featureReport);
-        stampStepTexts(featureReport, context.getRequiredTestClass().getClassLoader());
+        stampStepTexts(featureReport, context.getRequiredTestClass());
 
         // Fire feature-finished before the disk-write early return so it always pairs with the
         // feature-started emitted in beforeAll, regardless of whether a report directory resolved.
@@ -772,8 +773,9 @@ public class SpecBinderReporter implements
      * Unmatched or unhashed scenarios stay null-{@code text} and are omitted via
      * {@code @JsonInclude(NON_NULL)}.
      */
-    private static void stampStepTexts(FeatureReport report, ClassLoader classLoader) {
-        ParsedFeature parsed = SourceFeatureReader.parse(report.getSourceFilePath(), classLoader);
+    private static void stampStepTexts(FeatureReport report, Class<?> testClass) {
+        ParsedFeature parsed = SourceFeatureReader.parse(report.getSourceFilePath(),
+                SpecReadingOptions.of(testClass), testClass.getClassLoader());
         List<ParsedScenario> parsedFlat = new ArrayList<>(parsed.scenarios());
         for (ParsedRule rule : parsed.rules()) {
             parsedFlat.addAll(rule.scenarios());

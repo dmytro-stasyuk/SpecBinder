@@ -286,7 +286,8 @@ and from getting-started example-8 onward the spec files sit next to their marke
 <tr><td>│ &ensp; ├── <a href="examples/going-further/example-3/README.md">Organizing Steps into Interfaces</a></td><td>Reusable step logic in interfaces with default methods; the test supplies the state</td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/going-further/example-4/README.md">Execution Reporter</a></td><td>Scenario-level JSON reports of test runs</td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/going-further/example-8/README.md">Playwright Trace per Step</a></td><td>One Playwright trace per Gherkin step, recorded onto the execution report</td></tr>
-<tr><td>│ &ensp; └── <a href="examples/going-further/example-9/README.md">One Spec, Multiple Implementations</a></td><td>One business spec tested through direct Java, Spring beans and a browser</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/going-further/example-9/README.md">One Spec, Multiple Implementations</a></td><td>One business spec tested through direct Java, Spring beans and a browser</td></tr>
+<tr><td>│ &ensp; └── <a href="examples/going-further/example-10/README.md">Localization</a></td><td>Shared keyword language, per-file language headers and custom keyword synonyms</td></tr>
 <tr><td>│</td><td></td></tr>
 <tr><td colspan="2">└── <code>migrating-from-cucumber/</code> — <em>Moving an existing Cucumber suite to SpecBinder, keeping its <code>.feature</code> files</em></td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/migrating-from-cucumber/example-1/README.md">Cucumber DataTable</a></td><td>Cucumber DataTable parameters with asList(...) POJO mapping (CUCUMBER_DATA_TABLE)</td></tr>
@@ -526,6 +527,9 @@ public class CartFeatureTest extends CartFeature {
 
 + To include keywords as method prefixes (e.g., `givenMyCart…`, `whenI…`, `thenMyCart…`), set
   `@Gherkin2JUnitOptions(useStepKeywordInStepMethodName = true)`.
+
++ Step keywords of other languages work the same way, however many words they have: `Gegeben sei ein Warenkorb` →
+  `einWarenkorb()`, and `Und` / `Aber` steps behave like And / But (see *Keywords in other languages* below).
 
 #### Method name derivation (from step text)
 
@@ -1696,6 +1700,83 @@ public class CartFeatureTest extends CartFeature {
 
 </details>
 
+<details>
+
+<summary>Keywords in other languages (# language: and keywordLanguages)</summary>
+
+* **One language per spec file:** a `# language:` header at the top of a spec, e.g. `# language: de`, makes every
+  keyword of that spec a keyword of that language — `Funktionalität`, `Regel`, `Szenario`, `Angenommen`, `Wenn`,
+  `Dann` and so on. The header takes the language codes Gherkin uses.
+* **Several languages for every spec:** without a header, a spec accepts the keywords of the languages listed in the
+  `keywordLanguages` option — English only by default — and they can be mixed freely, even from one line to the next:
+
+  ```java
+  @Gherkin2JUnitOptions(keywordLanguages = {KeywordLanguage.ENGLISH, KeywordLanguage.GERMAN})
+  ```
+
+  ```gherkin
+  Feature: Checkout
+    Regel: Kartenzahlung
+      Scenario: paying by card
+        Angenommen ein Warenkorb
+        And zwei Artikel
+        Wenn ich mit Karte bezahle
+        Then ist die Bestellung bezahlt
+  ```
+
+* **The header always wins:** a spec with a header accepts the keywords of that one language only, whatever
+  `keywordLanguages` lists.
+* **Not a keyword where it isn't listed:** a line starting with a keyword of a language that isn't accepted is plain
+  text. Right under a Scenario line it becomes the scenario's description; after a step it fails the build.
+* **Names keep the spec's words:** `@DisplayName`s use each keyword as the spec spells it (`Regel: Kartenzahlung`),
+  and step method names leave the keyword out however many words it has (`Gegeben sei ein Warenkorb` →
+  `einWarenkorb()`). Generated Java names such as `Rule_1` and `scenario_1()` stay English.
+* **Combinations that fail the build:** an empty `keywordLanguages` list, and two languages sharing a keyword that
+  means something different in each — `Dan` means Then in Dutch and And in Indonesian.
+* **Execution reports read specs with the same languages.** They keep a base class's languages even where a marker
+  overrides them with `{KeywordLanguage.ENGLISH}`, because at runtime that can't be told apart from not setting the
+  option; a scenario that reads differently in the base class's languages is then reported without step text.
+
+</details>
+
+<details>
+
+<summary>Keyword synonyms (keywordSynonyms)</summary>
+
+* **A team's own words for any keyword:** one `@KeywordSynonym` entry per keyword you change; the other keywords keep
+  the words of the keyword languages.
+
+  ```java
+  @Gherkin2JUnitOptions(keywordSynonyms = {
+          @KeywordSynonym(keyword = GherkinKeyword.GIVEN, synonyms = "Assuming"),
+          @KeywordSynonym(keyword = GherkinKeyword.FEATURE, synonyms = "Story", replace = true)
+  })
+  ```
+
+  ```gherkin
+  Story: Checkout
+    Scenario: paying
+      Assuming a cart
+      When the customer pays
+      Then the order is paid
+  ```
+
+* **Added or replacing:** synonyms are accepted next to a keyword's usual words; with `replace = true` they are its
+  only words, so above `Feature:` no longer starts a spec.
+* **On top of every language:** synonyms apply to specs read with `keywordLanguages` and to specs with a
+  `# language:` header alike.
+* **A synonym takes its word over:** a synonym that is another keyword's word in a configured language means the
+  synonym's keyword instead — which also settles a word two languages disagree on, such as Dutch and Indonesian `Dan`.
+* **Merged keyword by keyword:** an entry on a class replaces its base class's entry for the same keyword only; the
+  base class's other entries still apply.
+* **Names keep the spec's words:** `@DisplayName("Story: Checkout")`, while step method names leave the synonym out
+  (`Assuming a cart` → `aCart()`).
+* **Entries that fail the build:** an entry without synonyms, the same synonym for two keywords, two entries for one
+  keyword on a class, a synonym that is blank, starts or ends with a space or contains `:`, and a synonym that takes
+  over the last word a keyword has.
+
+</details>
+
 ---
 
 ## Configuration
@@ -1712,6 +1793,8 @@ All configuration is provided via the `@Gherkin2JUnitOptions` annotation. You ca
 | Option                                  | Type     | Default                  | Description                                                                                                                                               |
 |-----------------------------------------|----------|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `supportedFileExtensions`               | String[] | `{"feature", "specb"}`   | File extensions recognised by convention-based discovery and glob patterns                                                                                |
+| `keywordLanguages`                      | KeywordLanguage[] | `{ENGLISH}`     | Languages whose keywords a spec without a `# language:` header may use, mixed freely; a header still wins (see *Keywords in other languages* above)     |
+| `keywordSynonyms`                       | @KeywordSynonym[] | `{}`            | A team's own words for any keyword, next to the language's words or instead of them; merged keyword by keyword with a base class's (see *Keyword synonyms* above) |
 | `skipGenerationForTags`                 | String[] | `{}`                     | Regex patterns matched against tags. A tagged **Feature** is dropped entirely; a tagged **Rule** or **Scenario** is still generated but reported as skipped (`Assumptions.assumeTrue(false)`) |
 | `shouldBeAbstract`                      | boolean  | `true`                   | Generate abstract class with abstract step methods (default). Set to `false` for a concrete class with failing stubs                                      |
 | `classSuffixIfAbstract`                 | String   | `"Scenarios"`            | Class name suffix when generating in abstract mode                                                                                                        |
@@ -1857,6 +1940,10 @@ generated field names and test method parameter names.
   applied in the order declared.
 * **A match that takes all of a step's text but leaves its keyword fails the build**, naming the line —
   include the step keyword inside the matched text instead.
+* **The execution report strips specs the same way**, so the step text it shows matches the generated code. It
+  keeps a base class's patterns even where a marker overrides them with `{}`, because at runtime that can't be
+  told apart from not setting the option; a scenario whose text those patterns match is then reported without
+  step text.
 
 > **Using the IntelliJ plugin?** Until the plugin applies the same patterns, a spec that relies on these
 > options will show markup-bearing scenarios as permanently stale in the gutter, and Ctrl+Click from a

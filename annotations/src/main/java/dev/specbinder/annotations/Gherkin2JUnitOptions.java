@@ -202,6 +202,63 @@ public @interface Gherkin2JUnitOptions {
     String[] supportedFileExtensions() default {"feature", "specb"};
 
     /**
+     * Specifies the languages whose Gherkin keywords a spec without a {@code # language:} header may use.
+     * <p>
+     * Keywords of every listed language are accepted and can be mixed freely, even from one line to the next, so a
+     * spec may for example start with {@code Feature:} and use {@code Angenommen} and {@code Then} steps. A line
+     * starting with a keyword of a language that isn't listed is not a keyword line: where Gherkin allows text, such
+     * as right under a Scenario line, it is read as description text, and anywhere else it fails the build.
+     * <p>
+     * A {@code # language:} header always wins: a spec with one accepts the keywords of that one language only,
+     * whether or not it is listed here.
+     * <p>
+     * The array must not be empty, and must not hold two languages sharing a keyword that means something different
+     * in each, such as {@code Dan}, which means Then in {@link KeywordLanguage#DUTCH DUTCH} and And in
+     * {@link KeywordLanguage#INDONESIAN INDONESIAN}.
+     * <p>
+     * Example usage:
+     * <pre>
+     * &#64;Gherkin2JUnitOptions(keywordLanguages = {KeywordLanguage.ENGLISH, KeywordLanguage.GERMAN})
+     * </pre>
+     *
+     * @return the languages whose keywords a spec without a {@code # language:} header may use
+     */
+    KeywordLanguage[] keywordLanguages() default {KeywordLanguage.ENGLISH};
+
+    /**
+     * Specifies a team's own words for Gherkin keywords, with one {@link KeywordSynonym} entry for each keyword it
+     * changes. Keywords without an entry keep the words of the languages a spec is read with.
+     * <p>
+     * An entry's synonyms are accepted next to the keyword's words in those languages, or, with
+     * {@link KeywordSynonym#replace() replace = true}, instead of them. Synonyms apply on top of every language a spec
+     * is read with, a {@code # language:} header included. A synonym that is another keyword's word in one of those
+     * languages takes that word over, which also settles a word two languages of {@link #keywordLanguages()} give
+     * different meanings.
+     * <p>
+     * Display names keep a synonym as the spec spells it, such as {@code Story: Checkout}, and step method names
+     * leave it out, as they do any other keyword.
+     * <p>
+     * Unlike the other options, this one is merged keyword by keyword with the {@code keywordSynonyms} of the classes
+     * a class extends: an entry for a keyword replaces a base class's entry for the same keyword, and the base class's
+     * other entries still apply.
+     * <p>
+     * The build fails for an entry without synonyms, for the same synonym listed for two keywords, for two entries
+     * for one keyword on the same class, for a synonym that is blank, starts or ends with a space, or contains
+     * {@code :}, and for a synonym that takes over the last word a keyword has.
+     * <p>
+     * Example usage:
+     * <pre>
+     * &#64;Gherkin2JUnitOptions(keywordSynonyms = {
+     *     &#64;KeywordSynonym(keyword = GherkinKeyword.GIVEN, synonyms = "Assuming"),
+     *     &#64;KeywordSynonym(keyword = GherkinKeyword.FEATURE, synonyms = "Story", replace = true)
+     * })
+     * </pre>
+     *
+     * @return the synonyms of the keywords a team gives its own words
+     */
+    KeywordSynonym[] keywordSynonyms() default {};
+
+    /**
      * Specifies regex patterns for Gherkin tags that mark elements to be generated as skipped rather than
      * executed.
      * <p>

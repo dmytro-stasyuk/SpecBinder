@@ -14,6 +14,7 @@ import dev.specbinder.processor.support.BaseTypeSupport;
 import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
 import dev.specbinder.processor.utils.*;
+import dev.specbinder.processor.utils.StepKeywordUtils.ResolvedStepKeyword;
 import io.cucumber.messages.types.*;
 import io.cucumber.messages.types.Tag;
 import org.apache.commons.lang3.StringUtils;
@@ -80,7 +81,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
         List<Step> scenarioSteps = scenario.getSteps();
         List<MethodSpec> scenarioStepsMethodSpecs = new ArrayList<>(scenarioSteps.size());
-        List<String> resolvedStepKeywords = new ArrayList<>(scenarioSteps.size());
+        List<ResolvedStepKeyword> resolvedStepKeywords = new ArrayList<>(scenarioSteps.size());
         List<ParameterSpec> allResolvedExtras = new ArrayList<>();
 
         String scenarioMethodName = methodNamePrefix + "scenario_" + scenarioNumber;
@@ -289,7 +290,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
                         if (existingMethodSpec == null) {
                             // Check if base class has a compatible method (not just by name, but by signature)
-                            boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(regularStep, scenarioParameterNames, scenarioParameterTypes, enumParameterTypes, scenarioStepsMethodSpecs);
+                            boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(regularStep, scenarioParameterNames, scenarioParameterTypes, enumParameterTypes);
                             // Also check if we need an overloaded method (inherited type incompatible)
                             boolean needsOverloadedMethod = stepNeedsOverloadedMethod(regularStep);
                             if (baseClassHasCompatibleMethod && !needsOverloadedMethod) {
@@ -321,7 +322,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
 
                     if (existingMethodSpec == null) {
                         // Check if base class has a compatible method (not just by name, but by signature)
-                        boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, scenarioParameterNames, scenarioParameterTypes, enumParameterTypes, scenarioStepsMethodSpecs);
+                        boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, scenarioParameterNames, scenarioParameterTypes, enumParameterTypes);
                         // Also check if we need an overloaded method (inherited type incompatible)
                         boolean needsOverloadedMethod = stepNeedsOverloadedMethod(scenarioStep);
                         if (baseClassHasCompatibleMethod && !needsOverloadedMethod) {

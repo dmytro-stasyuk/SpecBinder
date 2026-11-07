@@ -1,8 +1,4 @@
-package dev.specbinder.processor.gherkin;
-
-import dev.specbinder.processor.config.GeneratorOptions;
-import dev.specbinder.processor.config.StripBetweenPattern;
-import dev.specbinder.processor.exception.ProcessingException;
+package dev.specbinder.specreader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,17 +37,14 @@ import java.util.regex.PatternSyntaxException;
  * to be removed — a blank line left mid-table would otherwise terminate the table and orphan every row
  * below it. Lines that were already blank are never dropped, because a blank line inside a doc string is
  * content.
+ *
+ * <p>The annotation processor strips a spec this way before generating code from it, and the execution
+ * reporter strips it the same way before reading it, so both see the same text.
  */
 public final class SpecTextStripper {
 
     private static final String OPTION_NAME = "stripPatterns";
     private static final String BETWEEN_OPTION_NAME = "stripBetweenPatterns";
-
-    /**
-     * Matches a line left holding nothing but a Gherkin step keyword.
-     */
-    private static final Pattern STEP_KEYWORD_ONLY_LINE =
-            Pattern.compile("^\\s*(Given|When|Then|And|But|\\*)\\s*$");
 
     private final List<CompiledBetweenPattern> betweenPatterns;
     private final List<Pattern> stripPatterns;
@@ -68,17 +61,18 @@ public final class SpecTextStripper {
     }
 
     /**
-     * Compiles the patterns configured on the given options.
+     * Compiles the given patterns.
      *
-     * @param options the resolved generator options for the annotated class
-     * @return a stripper for those options
-     * @throws ProcessingException if any configured pattern is not a valid regular expression, or a
-     *                             between-pair is missing one of its two ends
+     * @param stripPatterns        the {@code stripPatterns} option: regexes whose every match is removed
+     * @param stripBetweenPatterns the {@code stripBetweenPatterns} option: the two ends of each span to remove
+     * @return a stripper for those patterns
+     * @throws IllegalArgumentException if any pattern is not a valid regular expression, or a between-pair is
+     *                                  missing one of its two ends
      */
-    public static SpecTextStripper from(GeneratorOptions options) {
+    public static SpecTextStripper of(String[] stripPatterns, StripBetweenPattern[] stripBetweenPatterns) {
         return new SpecTextStripper(
-                compileBetweenPatterns(options.getStripBetweenPatterns()),
-                compileAll(options.getStripPatterns())
+                compileBetweenPatterns(stripBetweenPatterns),
+                compileAll(stripPatterns)
         );
     }
 
@@ -94,7 +88,7 @@ public final class SpecTextStripper {
             String start = betweenPattern.start();
             String end = betweenPattern.end();
             if (start == null || start.isBlank() || end == null || end.isBlank()) {
-                throw new ProcessingException(
+                throw new IllegalArgumentException(
                         "Invalid " + BETWEEN_OPTION_NAME + " entry: both start and end must be set");
             }
             compiled.add(new CompiledBetweenPattern(
@@ -122,7 +116,7 @@ public final class SpecTextStripper {
         try {
             return Pattern.compile(pattern);
         } catch (PatternSyntaxException e) {
-            throw new ProcessingException(
+            throw new IllegalArgumentException(
                     "Invalid regular expression in " + optionName + " option: '" + pattern + "' - "
                             + e.getDescription());
         }
@@ -139,11 +133,12 @@ public final class SpecTextStripper {
     /**
      * Removes every span identified by the configured options from the given spec file content.
      *
-     * @param content the raw spec file content
+     * @param content      the raw spec file content
+     * @param stepKeywords the step keywords of the languages the spec file is read with
      * @return the content with the configured text removed
-     * @throws ProcessingException if a removal leaves a step keyword with no text after it
+     * @throws IllegalArgumentException if a removal leaves a step keyword with no text after it
      */
-    public String strip(String content) {
+    public String strip(String content, List<String> stepKeywords) {
         if (!isEnabled() || content == null || content.isEmpty()) {
             return content;
         }
@@ -158,7 +153,7 @@ public final class SpecTextStripper {
             working = removeSpansKeepingLineCount(working, findSpansMatching(working, stripPattern), touchedLines);
         }
 
-        failIfAnyStepLostItsText(working);
+        failIfAnyStepLostItsText(working, stepKeywords);
 
         return dropEmptiedLines(working, touchedLines);
     }
@@ -243,14 +238,20 @@ public final class SpecTextStripper {
 
     /**
      * Fails the build when a removal has taken all of a step's text but left its keyword behind, rather
-     * than letting a step with no text reach code generation. Line numbers are still the original ones at
+     * than letting a step with no text reach code generation. A step keyword is one of the spec's language,
+     * which may be several words long ({@code Gegeben sei}). Line numbers are still the original ones at
      * this point, because removals have preserved the line count.
      */
-    private static void failIfAnyStepLostItsText(String content) {
+    private static void failIfAnyStepLostItsText(String content, List<String> stepKeywords) {
+        Set<String> strippedStepKeywords = new HashSet<>();
+        for (String stepKeyword : stepKeywords) {
+            strippedStepKeywords.add(stepKeyword.strip());
+        }
+
         String[] lines = content.split("\n", -1);
         for (int i = 0; i < lines.length; i++) {
-            if (STEP_KEYWORD_ONLY_LINE.matcher(lines[i]).matches()) {
-                throw new ProcessingException(
+            if (strippedStepKeywords.contains(lines[i].strip())) {
+                throw new IllegalArgumentException(
                         "Step on line - " + (i + 1)
                                 + " has no text left after pattern removal - include the step keyword in the"
                                 + " matched text");

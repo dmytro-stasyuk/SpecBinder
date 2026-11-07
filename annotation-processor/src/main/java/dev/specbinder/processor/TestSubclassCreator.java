@@ -181,78 +181,84 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
         // Create enum import collector for static imports (outside if block so it's accessible later)
         EnumImportCollector enumImportCollector = new EnumImportCollector();
 
-        // Add feature documentation and process feature content
-        // Pass 1: Collect data table metadata for LIST_OF_OBJECT_PARAMS option
-        DataTableCollector dataTableCollector = null;
-        if ("LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
-            dataTableCollector = new DataTableCollector();
-            for (Feature spec : generatedSpecs) {
-                collectDataTableMetadata(spec, dataTableCollector);
+        // Prefix errors in the spec content with the path of the spec file they come from; parse errors are
+        // left as they are, since the parser already names the file
+        try {
+            // Add feature documentation and process feature content
+            // Pass 1: Collect data table metadata for LIST_OF_OBJECT_PARAMS option
+            DataTableCollector dataTableCollector = null;
+            if ("LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
+                dataTableCollector = new DataTableCollector();
+                for (Feature spec : generatedSpecs) {
+                    collectDataTableMetadata(spec, dataTableCollector);
+                }
             }
-        }
 
-        // Pass 1.5: Check for existing inner types in hierarchy
-        if (dataTableCollector != null && dataTableCollector.hasDataTables()) {
-            for (RecordMetadata metadata : dataTableCollector.getRecordMetadataMap().values()) {
-                String recordName = metadata.getRecordName();
+            // Pass 1.5: Check for existing inner types in hierarchy
+            if (dataTableCollector != null && dataTableCollector.hasDataTables()) {
+                for (RecordMetadata metadata : dataTableCollector.getRecordMetadataMap().values()) {
+                    String recordName = metadata.getRecordName();
 
-                // Try to find existing inner type in base class hierarchy
-                TypeElement existingType = InnerTypeUtils.findInnerTypeInHierarchy(
-                        annotatedClass, recordName, processingEnv);
+                    // Try to find existing inner type in base class hierarchy
+                    TypeElement existingType = InnerTypeUtils.findInnerTypeInHierarchy(
+                            annotatedClass, recordName, processingEnv);
 
-                if (existingType != null) {
-                    logDebug("Found existing inner type in hierarchy: " + recordName);
+                    if (existingType != null) {
+                        logDebug("Found existing inner type in hierarchy: " + recordName);
 
-                    // Check if it has an all-args constructor
-                    ExecutableElement constructor = InnerTypeUtils.findAllArgsConstructor(existingType);
+                        // Check if it has an all-args constructor
+                        ExecutableElement constructor = InnerTypeUtils.findAllArgsConstructor(existingType);
 
-                    if (constructor != null) {
-                        // Extract constructor parameter names in order
-                        List<String> constructorParams = InnerTypeUtils.getConstructorParameterNames(
-                                constructor, existingType);
+                        if (constructor != null) {
+                            // Extract constructor parameter names in order
+                            List<String> constructorParams = InnerTypeUtils.getConstructorParameterNames(
+                                    constructor, existingType);
 
-                        // Try to map data table columns to constructor parameters
-                        ConstructorMappingUtils.MappingResult mapping =
-                                ConstructorMappingUtils.tryMapColumnsToConstructor(
-                                        metadata.getColumnNames(), constructorParams);
+                            // Try to map data table columns to constructor parameters
+                            ConstructorMappingUtils.MappingResult mapping =
+                                    ConstructorMappingUtils.tryMapColumnsToConstructor(
+                                            metadata.getColumnNames(), constructorParams);
 
-                        if (mapping.canMap()) {
-                            // Success! Can reuse existing type
-                            metadata.setExistingType(existingType, mapping);
-                            logDebug("Reusing existing inner type: " + recordName);
+                            if (mapping.canMap()) {
+                                // Success! Can reuse existing type
+                                metadata.setExistingType(existingType, mapping);
+                                logDebug("Reusing existing inner type: " + recordName);
+                            } else {
+                                logDebug("Cannot reuse " + recordName +
+                                        " - not all data table columns can be mapped to constructor parameters");
+                            }
                         } else {
                             logDebug("Cannot reuse " + recordName +
-                                    " - not all data table columns can be mapped to constructor parameters");
+                                    " - no all-args constructor found");
                         }
-                    } else {
-                        logDebug("Cannot reuse " + recordName +
-                                " - no all-args constructor found");
                     }
                 }
             }
-        }
 
-        // Pass 2: Process feature and generate code
-        FeatureProcessor featureProcessor = new FeatureProcessor(processingEnv, options, annotatedClass, dataTableCollector, enumImportCollector);
-        if (multiSpec) {
-            featureProcessor.processSpecs(specs, classBuilder);
-        } else {
-            featureProcessor.processFeature(feature, classBuilder);
-        }
+            // Pass 2: Process feature and generate code
+            FeatureProcessor featureProcessor = new FeatureProcessor(processingEnv, options, annotatedClass, dataTableCollector, enumImportCollector);
+            if (multiSpec) {
+                featureProcessor.processSpecs(specs, classBuilder);
+            } else {
+                featureProcessor.processFeature(feature, classBuilder);
+            }
 
-        // Generate record types for LIST_OF_OBJECT_PARAMS
-        if (dataTableCollector != null && dataTableCollector.hasDataTables()) {
-            for (RecordMetadata metadata : dataTableCollector.getRecordMetadataMap().values()) {
-                // Only generate new type if NOT using existing type from hierarchy
-                if (!metadata.hasExistingType()) {
-                    TypeSpec recordType = RecordGenerator.generateRecord(metadata);
-                    classBuilder.addType(recordType);
+            // Generate record types for LIST_OF_OBJECT_PARAMS
+            if (dataTableCollector != null && dataTableCollector.hasDataTables()) {
+                for (RecordMetadata metadata : dataTableCollector.getRecordMetadataMap().values()) {
+                    // Only generate new type if NOT using existing type from hierarchy
+                    if (!metadata.hasExistingType()) {
+                        TypeSpec recordType = RecordGenerator.generateRecord(metadata);
+                        classBuilder.addType(recordType);
+                    }
                 }
             }
-        }
 
-        // Add createDataTable method if needed
-        addDataTableMethodsIfNeeded(annotatedClass, generatedSpecs, classBuilder, dataTableCollector);
+            // Add createDataTable method if needed
+            addDataTableMethodsIfNeeded(annotatedClass, generatedSpecs, classBuilder, dataTableCollector);
+        } catch (ProcessingException e) {
+            throw new ProcessingException("In spec file - '" + featureFilePathForParsing + "': " + e.getMessage(), e);
+        }
 
         // Add class annotations
         List<Tag> featureTags = feature != null ? feature.getTags() : Collections.emptyList();

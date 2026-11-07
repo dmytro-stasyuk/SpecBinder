@@ -13,6 +13,7 @@ import dev.specbinder.processor.support.OptionsSupport;
 import dev.specbinder.processor.utils.DescriptionEmitter;
 import dev.specbinder.processor.utils.ElementMethodUtils;
 import dev.specbinder.processor.utils.JavaDocUtils;
+import dev.specbinder.processor.utils.StepKeywordUtils.ResolvedStepKeyword;
 import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.Step;
 import org.apache.commons.lang3.StringUtils;
@@ -80,7 +81,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
         List<Step> backgroundSteps = background.getSteps();
         List<MethodSpec> backgroundStepsMethodSpecs = new ArrayList<>(backgroundSteps.size());
-        List<String> resolvedStepKeywords = new ArrayList<>(backgroundSteps.size());
+        List<ResolvedStepKeyword> resolvedStepKeywords = new ArrayList<>(backgroundSteps.size());
 
         MethodSpec.Builder backgroundMethodBuilder = MethodSpec
                 .methodBuilder(backgroundMethodName)
@@ -109,7 +110,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
             if (existingMethodSpec == null) {
                 // Check if base class has a compatible method (not just by name, but by signature)
-                boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, null, backgroundStepsMethodSpecs);
+                boolean baseClassHasCompatibleMethod = stepProcessor.hasCompatibleBaseMethod(scenarioStep, null);
                 if (baseClassHasCompatibleMethod) {
                     logDebug("Skipping generation of method '" + stepMethodName + "', as base class already contains it");
                 } else {
@@ -148,9 +149,10 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
         } else {
             backgroundName = backgroundName.replaceAll("\"", "\\\\\"");
             if (options.isAddSourceLineNumbers()) {
-                displayNameValue = "Background [" + background.getLocation().getLine() + "]: " + backgroundName;
+                displayNameValue = background.getKeyword() + " [" + background.getLocation().getLine() + "]: "
+                        + backgroundName;
             } else {
-                displayNameValue = "Background: " + backgroundName;
+                displayNameValue = background.getKeyword() + ": " + backgroundName;
             }
         }
         AnnotationSpec displayNameAnnotation = AnnotationSpec

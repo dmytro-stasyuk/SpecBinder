@@ -1,6 +1,9 @@
 package dev.specbinder.processor.config;
 
 import dev.specbinder.annotations.Gherkin2JUnitOptions.Verbosity;
+import dev.specbinder.annotations.KeywordLanguage;
+import dev.specbinder.specreader.KeywordSynonyms;
+import dev.specbinder.specreader.StripBetweenPattern;
 import lombok.Getter;
 
 import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMETER_TYPE.LIST_OF_OBJECT_PARAMS;
@@ -132,6 +135,17 @@ public class GeneratorOptions {
     private final String[] supportedFileExtensions;
 
     /**
+     * The languages whose Gherkin keywords a spec without a {@code # language:} header may use, mixed freely.
+     * Default is English only.
+     */
+    private final KeywordLanguage[] keywordLanguages;
+
+    /**
+     * A team's own words for Gherkin keywords, merged keyword by keyword up the class hierarchy. Default is none.
+     */
+    private final KeywordSynonyms keywordSynonyms;
+
+    /**
      * Regex patterns for Gherkin tags for which the generator should skip code generation entirely.
      * Each value is treated as a Java regular expression matched against tag names (without the leading @).
      */
@@ -221,6 +235,8 @@ public class GeneratorOptions {
         this.useStepKeywordInStepMethodName = false;
         this.useCucumberAnnotationsForStepMatching = false;
         this.supportedFileExtensions = new String[]{"feature", "specb"};
+        this.keywordLanguages = new KeywordLanguage[]{KeywordLanguage.ENGLISH};
+        this.keywordSynonyms = KeywordSynonyms.NONE;
         this.skipGenerationForTags = new String[]{};
         this.verbosity = Verbosity.NORMAL;
         this.emitScenarioHash = true;
@@ -253,6 +269,8 @@ public class GeneratorOptions {
      * @param useStepKeywordInStepMethodName see {@link #useStepKeywordInStepMethodName}
      * @param useCucumberAnnotationsForStepMatching see {@link #useCucumberAnnotationsForStepMatching}
      * @param supportedFileExtensions see {@link #supportedFileExtensions}
+     * @param keywordLanguages see {@link #keywordLanguages}
+     * @param keywordSynonyms see {@link #keywordSynonyms}
      * @param skipGenerationForTags see {@link #skipGenerationForTags}
      * @param verbosity see {@link #verbosity}
      * @param emitScenarioHash see {@link #emitScenarioHash}
@@ -282,6 +300,8 @@ public class GeneratorOptions {
             boolean useStepKeywordInStepMethodName,
             boolean useCucumberAnnotationsForStepMatching,
             String[] supportedFileExtensions,
+            KeywordLanguage[] keywordLanguages,
+            KeywordSynonyms keywordSynonyms,
             String[] skipGenerationForTags,
             Verbosity verbosity,
             boolean emitScenarioHash,
@@ -310,6 +330,9 @@ public class GeneratorOptions {
         this.useStepKeywordInStepMethodName = useStepKeywordInStepMethodName;
         this.useCucumberAnnotationsForStepMatching = useCucumberAnnotationsForStepMatching;
         this.supportedFileExtensions = supportedFileExtensions;
+        this.keywordLanguages = keywordLanguages == null
+                ? new KeywordLanguage[]{KeywordLanguage.ENGLISH} : keywordLanguages;
+        this.keywordSynonyms = keywordSynonyms == null ? KeywordSynonyms.NONE : keywordSynonyms;
         this.skipGenerationForTags = skipGenerationForTags;
         this.verbosity = verbosity == null ? Verbosity.NORMAL : verbosity;
         this.emitScenarioHash = emitScenarioHash;

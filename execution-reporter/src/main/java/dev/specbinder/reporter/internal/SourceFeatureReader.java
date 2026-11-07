@@ -1,20 +1,25 @@
 package dev.specbinder.reporter.internal;
 
-import io.cucumber.gherkin.GherkinParser;
+import dev.specbinder.specreader.SpecKeywords;
+import dev.specbinder.specreader.SpecParser;
+import dev.specbinder.specreader.SpecParser.ParsedSpec;
+import dev.specbinder.specreader.SpecTextStripper;
 import io.cucumber.messages.types.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * Loads the {@code .feature} (or {@code .specb}) file behind a SpecBinder-generated test
- * class as a classpath resource, parses it with the Cucumber Gherkin parser, and produces
- * a {@link ParsedFeature} mirroring the spec's structure — feature-level scenarios first,
- * then a {@link ParsedRule} per Rule, each carrying its own scenarios.
+ * class as a classpath resource, reads it the way it was generated — with the keywords of
+ * the same languages, and with the same text stripped — and produces a {@link ParsedFeature}
+ * mirroring the spec's structure —
+ * feature-level scenarios first, then a {@link ParsedRule} per Rule, each carrying its own
+ * scenarios.
  *
  * <p>Each {@link ParsedScenario} carries:
  * <ul>
@@ -113,12 +118,24 @@ public final class SourceFeatureReader {
     }
 
     /**
-     * Loads and parses the feature at {@code sourceFilePath} (resolved via the given
-     * {@code classLoader}'s resource lookup) and returns a {@link ParsedFeature} mirroring
-     * its structure. Returns {@link ParsedFeature#EMPTY} if the resource is missing or
-     * parsing fails.
+     * Loads and parses the feature at {@code sourceFilePath} with the default options: English
+     * keywords only, nothing stripped. See {@link #parse(String, SpecReadingOptions, ClassLoader)}.
      */
     public static ParsedFeature parse(String sourceFilePath, ClassLoader classLoader) {
+        return parse(sourceFilePath, SpecReadingOptions.DEFAULTS, classLoader);
+    }
+
+    /**
+     * Loads and parses the feature at {@code sourceFilePath} (resolved via the given
+     * {@code classLoader}'s resource lookup) and returns a {@link ParsedFeature} mirroring
+     * its structure. The spec is read the way the annotation processor read it: with the
+     * keywords of its {@code # language:} header, or else with those of the languages of the
+     * given options, mixed freely, with their keyword synonyms on top, and with the text their strip
+     * patterns match removed.
+     * Returns {@link ParsedFeature#EMPTY} if the resource is missing or parsing fails.
+     */
+    public static ParsedFeature parse(String sourceFilePath, SpecReadingOptions options,
+                                      ClassLoader classLoader) {
         if (sourceFilePath == null || classLoader == null) {
             return ParsedFeature.EMPTY;
         }
@@ -129,17 +146,20 @@ public final class SourceFeatureReader {
             return ParsedFeature.EMPTY;
         }
         try (InputStream in = stream) {
-            GherkinParser parser = GherkinParser.builder().includePickles(false).build();
-            Stream<Envelope> envelopes = parser.parse(sourceFilePath, in);
-            Optional<Feature> feature = envelopes
-                    .map(Envelope::getGherkinDocument)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(GherkinDocument::getFeature)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .findFirst();
-            return feature.map(SourceFeatureReader::buildModel).orElse(ParsedFeature.EMPTY);
+            String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+            SpecKeywords keywords = SpecKeywords.of(content, options.keywordLanguages(), options.keywordSynonyms());
+            SpecTextStripper textStripper =
+                    SpecTextStripper.of(options.stripPatterns(), options.stripBetweenPatterns());
+            if (textStripper.isEnabled()) {
+                content = textStripper.strip(content, keywords.stepKeywords());
+            }
+            ParsedSpec parsedSpec = SpecParser.parse(sourceFilePath, content, keywords);
+            if (parsedSpec.firstParseError().isPresent()) {
+                LOGGER.warning("SpecBinder reporter: failed to parse feature for step-text stamping: "
+                        + sourceFilePath + " - " + parsedSpec.firstParseError().get().getMessage());
+                return ParsedFeature.EMPTY;
+            }
+            return parsedSpec.feature().map(SourceFeatureReader::buildModel).orElse(ParsedFeature.EMPTY);
         } catch (IOException | RuntimeException e) {
             LOGGER.log(Level.WARNING,
                     "SpecBinder reporter: failed to parse feature for step-text stamping: "

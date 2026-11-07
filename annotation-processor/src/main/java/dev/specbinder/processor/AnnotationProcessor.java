@@ -12,6 +12,8 @@ import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.SpecBinderVersion;
 import dev.specbinder.processor.support.VerbosityContext;
 import dev.specbinder.processor.utils.*;
+import dev.specbinder.specreader.KeywordSynonyms;
+import dev.specbinder.specreader.SpecKeywords;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.processing.*;
@@ -98,9 +100,15 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                 Gherkin2JUnit targetAnnotation = annotatedClass.getAnnotation(Gherkin2JUnit.class);
 
                 // Resolve options from the class hierarchy, supporting partial inheritance
-                GeneratorOptions generatorOptions = Gherkin2JUnitOptionsResolver.resolveOptions(
-                        annotatedClass, getProcessingEnv()
-                );
+                GeneratorOptions generatorOptions;
+                try {
+                    generatorOptions = Gherkin2JUnitOptionsResolver.resolveOptions(
+                            annotatedClass, getProcessingEnv()
+                    );
+                } catch (IllegalArgumentException e) {
+                    logError(e.getMessage());
+                    throw new RuntimeException(e.getMessage());
+                }
 
                 // Publish the per-class effective verbosity so helper classes
                 // (BackgroundProcessor, ScenarioProcessor, GlobPatternMatcher, …) gate their
@@ -109,9 +117,10 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
 
                 try {
 
-                // Validate supportedFileExtensions
+                // Validate supportedFileExtensions, keywordLanguages and keywordSynonyms
                 try {
                     FeatureFileExtensions.validate(generatorOptions.getSupportedFileExtensions());
+                    SpecKeywords.validate(generatorOptions.getKeywordLanguages(), generatorOptions.getKeywordSynonyms());
                 } catch (IllegalArgumentException e) {
                     logError(e.getMessage());
                     throw new RuntimeException(e.getMessage());
@@ -625,6 +634,10 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
                 fmtBool(resolved.isUseCucumberAnnotationsForStepMatching()), fmtBool(defaults.isUseCucumberAnnotationsForStepMatching()), overridden, defaulted);
         putOption("supportedFileExtensions",
                 fmtStringArray(resolved.getSupportedFileExtensions()), fmtStringArray(defaults.getSupportedFileExtensions()), overridden, defaulted);
+        putOption("keywordLanguages",
+                fmtEnumArray(resolved.getKeywordLanguages()), fmtEnumArray(defaults.getKeywordLanguages()), overridden, defaulted);
+        putOption("keywordSynonyms",
+                fmtKeywordSynonyms(resolved.getKeywordSynonyms()), fmtKeywordSynonyms(defaults.getKeywordSynonyms()), overridden, defaulted);
         putOption("skipGenerationForTags",
                 fmtStringArray(resolved.getSkipGenerationForTags()), fmtStringArray(defaults.getSkipGenerationForTags()), overridden, defaulted);
         putOption("emitScenarioHash",
@@ -666,6 +679,20 @@ public class AnnotationProcessor extends AbstractProcessor implements LoggingSup
         }
         sb.append("]");
         return sb.toString();
+    }
+
+    private static String fmtEnumArray(Enum<?>[] value) {
+        return fmtStringArray(Arrays.stream(value).map(Enum::name).toArray(String[]::new));
+    }
+
+    /**
+     * Formats keyword synonyms as e.g. {@code [GIVEN: Assuming, FEATURE: Story (replace)]}.
+     */
+    private static String fmtKeywordSynonyms(KeywordSynonyms value) {
+        return fmtStringArray(value.entries().stream()
+                .map(entry -> entry.keyword() + ": " + String.join(" | ", entry.synonyms())
+                        + (entry.replace() ? " (replace)" : ""))
+                .toArray(String[]::new));
     }
 
     private void logException(Throwable t, TypeElement annotatedClass) {

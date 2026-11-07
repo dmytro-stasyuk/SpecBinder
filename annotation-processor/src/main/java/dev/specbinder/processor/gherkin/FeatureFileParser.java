@@ -3,24 +3,20 @@ package dev.specbinder.processor.gherkin;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
 import dev.specbinder.processor.support.LoggingSupport;
-import io.cucumber.gherkin.GherkinParser;
-import io.cucumber.messages.types.Envelope;
+import dev.specbinder.specreader.SpecKeywords;
+import dev.specbinder.specreader.SpecParser;
+import dev.specbinder.specreader.SpecParser.ParsedSpec;
+import dev.specbinder.specreader.SpecTextStripper;
 import io.cucumber.messages.types.Feature;
-import io.cucumber.messages.types.GherkinDocument;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Parses a Gherkin spec file and extracts its Feature objects, one per spec in the file.
@@ -28,7 +24,6 @@ import java.util.stream.Stream;
 public class FeatureFileParser implements LoggingSupport {
 
     private final ProcessingEnvironment processingEnv;
-    private GherkinParser gherkinParser;
 
     /**
      * Creates a FeatureFileParser instance.
@@ -38,8 +33,6 @@ public class FeatureFileParser implements LoggingSupport {
     public FeatureFileParser(ProcessingEnvironment processingEnv) {
 
         this.processingEnv = processingEnv;
-
-        gherkinParser = GherkinParser.builder().includePickles(false).build();
     }
 
     public ProcessingEnvironment getProcessingEnv() {
@@ -63,42 +56,51 @@ public class FeatureFileParser implements LoggingSupport {
 
         String fileContent = loadFileContent(featureFilePath);
 
-        SpecTextStripper textStripper = SpecTextStripper.from(options);
-        boolean textWasStripped = textStripper.isEnabled();
-        if (textWasStripped) {
-            fileContent = textStripper.strip(fileContent);
+        SpecKeywords keywords;
+        try {
+            keywords = SpecKeywords.of(fileContent, options.getKeywordLanguages(), options.getKeywordSynonyms());
+        } catch (IllegalArgumentException e) {
+            throw new ProcessingException("In spec file - '" + featureFilePath + "': " + e.getMessage(), e);
+        }
+
+        boolean textWasStripped;
+        try {
+            SpecTextStripper textStripper =
+                    SpecTextStripper.of(options.getStripPatterns(), options.getStripBetweenPatterns());
+            textWasStripped = textStripper.isEnabled();
+            if (textWasStripped) {
+                fileContent = textStripper.strip(fileContent, keywords.stepKeywords());
+            }
+        } catch (IllegalArgumentException e) {
+            throw new ProcessingException(e.getMessage(), e);
         }
 
         List<Feature> features = new ArrayList<>();
-        for (String specContent : SpecFileSplitter.split(fileContent)) {
-            features.add(parseFeature(featureFilePath, specContent, textWasStripped));
+        for (String specContent : SpecFileSplitter.split(fileContent, keywords.featureKeywords())) {
+            features.add(parseFeature(featureFilePath, specContent, keywords, textWasStripped));
         }
         return features;
     }
 
-    private Feature parseFeature(String featureFilePath, String content, boolean textWasStripped) throws IOException {
+    private Feature parseFeature(String featureFilePath, String content, SpecKeywords keywords,
+                                 boolean textWasStripped) {
 
-        InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+        ParsedSpec parsedSpec = SpecParser.parse(featureFilePath, content, keywords);
 
-        Stream<Envelope> envelopeStream = gherkinParser.parse(featureFilePath, inputStream);
+        String strippedHint = textWasStripped
+                ? " (text was stripped from this file before parsing - check that a stripPatterns or"
+                + " stripBetweenPatterns match has not removed a Feature, Rule or Scenario line)"
+                : "";
 
-        Optional<Envelope> gherkinDocEnvelope = envelopeStream.filter(
-                envelope -> envelope.getGherkinDocument().isPresent()
-        ).findFirst();
-        if (gherkinDocEnvelope.isPresent()
-                && gherkinDocEnvelope.get().getGherkinDocument().isPresent()
-                && gherkinDocEnvelope.get().getGherkinDocument().get().getFeature().isPresent()
-        ) {
-            GherkinDocument gherkinDocument = gherkinDocEnvelope.get().getGherkinDocument().get();
-            return gherkinDocument.getFeature().orElse(null);
-        } else {
-            String strippedHint = textWasStripped
-                    ? " (text was stripped from this file before parsing - check that a stripPatterns or"
-                    + " stripBetweenPatterns match has not removed a Feature, Rule or Scenario line)"
-                    : "";
-            throw new ProcessingException(
-                    "Unable to parse Feature from the specified gherkin document: " + featureFilePath + strippedHint);
+        if (parsedSpec.firstParseError().isPresent()) {
+            throw new ProcessingException("In spec file - '" + featureFilePath + "': "
+                    + ParseErrorMessage.of(parsedSpec.firstParseError().get()) + strippedHint);
         }
+        if (parsedSpec.feature().isPresent()) {
+            return parsedSpec.feature().get();
+        }
+        throw new ProcessingException(
+                "Unable to parse Feature from the specified gherkin document: " + featureFilePath + strippedHint);
     }
 
     String loadFileContent(String featureFilePath) throws IOException {

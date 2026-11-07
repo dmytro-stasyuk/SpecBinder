@@ -61,6 +61,15 @@
             <version>${project.version}</version>
         </dependency>
         <!--
+            Reads a spec with the keywords of the languages its generated class was generated with, the same way
+            the annotation processor does. Compile scope so it transits to the consumer's test classpath.
+        -->
+        <dependency>
+            <groupId>dev.specbinder</groupId>
+            <artifactId>spec-reader</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--
             JUnit 5 platform + Jupiter API are 'provided' because the consumer's
             test runtime always supplies them. We need them on the compile classpath
             so the listener can implement TestExecutionListener and read @DisplayName
