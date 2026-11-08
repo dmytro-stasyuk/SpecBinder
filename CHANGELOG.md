@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.51.0] - 2026-11-08
+
+### Added
+
 - The new `keywordLanguages` option sets which languages' keywords a spec without a `# language:` header may use — for example `keywordLanguages = {KeywordLanguage.ENGLISH, KeywordLanguage.GERMAN}` — and the keywords of the listed languages can be mixed freely, even from one line to the next. A header still wins, and the default stays English only. Execution reports show each step as the spec writes it, whichever language its keyword is in.
 - The new `keywordSynonyms` option gives any Gherkin keyword your team's own words — for example `@KeywordSynonym(keyword = GherkinKeyword.GIVEN, synonyms = "Assuming")` makes `Assuming a cart` a Given step. Synonyms are accepted next to a keyword's usual words, or instead of them with `replace = true`, in every spec, including those with a `# language:` header.
 
