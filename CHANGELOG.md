@@ -8,9 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+- A composite step's data table is now passed to its composite method as `dataTable`, and its sub-steps can read single cells as `"<$email>"` or `"<$name[2]>"`, or take the whole table as their own by ending with `"<$dataTable>"`. The cells of a sub-step's own data table can also hold the parent step's values, such as `<$p1>`.
+- Composite steps now also work in Feature and Rule Backgrounds, and in Scenario Outlines, where Examples values in the parent step are passed on to its sub-steps.
+- Composite steps can now take up to five values, a data table counting as one, passed to the sub-steps through the new `QuadConsumer` and `PentaConsumer`. Six or more still fail the build.
+- A composite step's DocString is now passed to its composite method as `docString`. A sub-step ending with `"<$docString>"` takes it as its own DocString, and anywhere else in double quotes it is passed as a value. A sub-step's own DocString can hold references too, such as `Dear <$p1>` or `<$docString>`.
+
 ### Changed
 
+- **⚠️ BREAKING:** Sub-steps now refer to their parent step's values as `"<$p1>"`, in double quotes like any step value, and can combine them with other text, as in `"CUST-<$p1>"`. A bare `$p1` is now plain step text, so sub-steps using it need to switch to `"<$p1>"`. A reference that matches nothing fails the build with an error listing the references available, and one written outside double quotes is plain step text.
+- **⚠️ BREAKING:** The values of a composite step are now typed like those of regular steps, so `"3"` arrives as an `Integer`, or take the type of the base class step method that receives them. Implementations of composite and sub-step methods written for `String` values may need new parameter types.
+- **⚠️ BREAKING:** Composite steps with three values now use SpecBinder's own `dev.specbinder.annotations.output.composite.TriConsumer` instead of the one from Apache Commons Lang, so test projects no longer need that library. Implementations that import the old type need their import changed.
+- Each sub-step call in a composite step's lambda now has a comment holding the sub-step line as written in the spec, like the calls of regular steps.
+- **⚠️ BREAKING:** The `@BeforeEach` method generated for a Background no longer takes a `TestInfo` it doesn't use. Like a scenario's test method, it declares `TestInfo` only when one of its steps needs it. Test classes that override or call `background(TestInfo testInfo)` or `ruleBackground(TestInfo testInfo)` need the parameter removed.
+
 ### Fixed
+
+- A sub-step's own data table is now passed to its step method; the generated call used to leave it out.
+- A `$` in a data table cell no longer breaks generation with the `LIST_OF_MAPS` and `CUCUMBER_DATA_TABLE` data table types.
+- A row class from the base class whose fields aren't all private, such as one with a `public final` field, is now used to build a step's data table. Such a class used to be passed over, and the generated test didn't compile.
 
 ### Removed
 

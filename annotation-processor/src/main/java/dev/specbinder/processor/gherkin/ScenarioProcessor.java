@@ -264,7 +264,8 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
                     if (item instanceof CompositeStepGroup compositeGroup) {
                         // Process composite step
                         CompositeStepProcessor compositeProcessor = new CompositeStepProcessor(
-                                processingEnv, options, dataTableCollector, enumImportCollector, baseType);
+                                processingEnv, options, dataTableCollector, enumImportCollector, baseType,
+                                preComputedStepTypes);
                         compositeProcessor.processCompositeStep(
                                 compositeGroup, scenarioMethodBuilder, scenarioStepsMethodSpecs,
                                 resolvedStepKeywords,
@@ -551,7 +552,7 @@ class ScenarioProcessor implements LoggingSupport, OptionsSupport, BaseTypeSuppo
      * @param steps the list of steps to analyze
      * @return a list where each element is either a CompositeStepGroup or a single Step
      */
-    private static List<Object> detectCompositeStepGroups(List<Step> steps) {
+    static List<Object> detectCompositeStepGroups(List<Step> steps) {
         List<Object> result = new ArrayList<>();
 
         for (int i = 0; i < steps.size(); i++) {

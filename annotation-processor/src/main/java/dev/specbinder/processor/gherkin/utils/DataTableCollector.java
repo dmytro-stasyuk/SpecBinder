@@ -4,10 +4,8 @@ import dev.specbinder.processor.exception.ProcessingException;
 import io.cucumber.messages.types.TableCell;
 import io.cucumber.messages.types.TableRow;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiFunction;
 
 /**
  * Collects metadata about data tables in a feature for LIST_OF_OBJECT_PARAMS generation.
@@ -17,6 +15,9 @@ import java.util.Map;
 public class DataTableCollector {
 
     private final Map<String, RecordMetadata> recordMetadataMap = new LinkedHashMap<>();
+    // The record name of each composite step's data table that isn't named after its parent step, by composite step
+    // method name
+    private final Map<String, String> compositeStepRecordNames = new HashMap<>();
 
     /**
      * Constructs a new DataTableCollector.
@@ -43,6 +44,28 @@ public class DataTableCollector {
         );
 
         metadata.mergeColumns(columnHeaders);
+    }
+
+    /**
+     * Records the record name a composite step's data table is built with, when it isn't named after its parent step,
+     * e.g. after the sub-step taking the data table as "<$dataTable>".
+     *
+     * @param compositeMethodName the composite step method name
+     * @param recordName the record name of the composite step's data table
+     */
+    public void setCompositeStepRecordName(String compositeMethodName, String recordName) {
+        compositeStepRecordNames.put(compositeMethodName, recordName);
+    }
+
+    /**
+     * Returns the record name a composite step's data table is built with, or null when it is named after its parent
+     * step like the data table of a regular step.
+     *
+     * @param compositeMethodName the composite step method name
+     * @return the record name of the composite step's data table, or null
+     */
+    public String getCompositeStepRecordName(String compositeMethodName) {
+        return compositeStepRecordNames.get(compositeMethodName);
     }
 
     /**
@@ -197,6 +220,21 @@ public class DataTableCollector {
      * @param dataTableRows the list of table rows from the data table (header + data rows)
      */
     public void registerDataTableWithTypeInference(String stepText, List<TableRow> dataTableRows) {
+        registerDataTableWithTypeInference(stepText, dataTableRows, (column, cellValue) -> null);
+    }
+
+    /**
+     * Registers a data table usage with type inference based on column values, where some cells have a known type
+     * instead of a type inferred from their text, e.g. a composite sub-step's cell holding only a reference to a
+     * value of its parent step. A column whose known and inferred types differ becomes a String column.
+     *
+     * @param stepText the full step text including keyword (e.g., "Given the following users")
+     * @param dataTableRows the list of table rows from the data table (header + data rows)
+     * @param knownCellType returns the type of a cell with a known type from its column and value, or null for other
+     *                      cells
+     */
+    public void registerDataTableWithTypeInference(String stepText, List<TableRow> dataTableRows,
+                                                   BiFunction<String, String, String> knownCellType) {
         if (dataTableRows == null || dataTableRows.isEmpty()) {
             throw new ProcessingException("Data table has no rows for step: " + stepText);
         }
@@ -208,11 +246,13 @@ public class DataTableCollector {
             columnHeaders.add(cell.getValue().trim());
         }
 
-        // Collect values for each column from all data rows
+        // Collect values for each column from all data rows, and the types of cells with a known type
         int columnCount = columnHeaders.size();
         List<List<String>> columnValues = new ArrayList<>(columnCount);
+        List<Set<String>> columnKnownTypes = new ArrayList<>(columnCount);
         for (int i = 0; i < columnCount; i++) {
             columnValues.add(new ArrayList<>());
+            columnKnownTypes.add(new LinkedHashSet<>());
         }
 
         // Skip header row (index 0), process data rows starting from index 1
@@ -222,15 +262,19 @@ public class DataTableCollector {
 
             for (int colIndex = 0; colIndex < columnCount && colIndex < cells.size(); colIndex++) {
                 String cellValue = cells.get(colIndex).getValue().trim();
-                columnValues.get(colIndex).add(cellValue);
+                String cellType = knownCellType.apply(columnHeaders.get(colIndex), cellValue);
+                if (cellType != null) {
+                    columnKnownTypes.get(colIndex).add(cellType);
+                } else {
+                    columnValues.get(colIndex).add(cellValue);
+                }
             }
         }
 
         // Infer type for each column
         List<String> inferredTypes = new ArrayList<>(columnCount);
-        for (List<String> values : columnValues) {
-            String inferredType = TypeInferenceUtils.inferTypeForColumn(values);
-            inferredTypes.add(inferredType);
+        for (int i = 0; i < columnCount; i++) {
+            inferredTypes.add(columnType(columnValues.get(i), columnKnownTypes.get(i)));
         }
 
         // Register the record with inferred types
@@ -242,6 +286,22 @@ public class DataTableCollector {
         );
 
         metadata.mergeColumnsWithTypes(columnHeaders, inferredTypes);
+    }
+
+    /**
+     * Returns the type of a column from the values of its cells and the known types of its other cells: the known type
+     * when the cells agree on one type, String otherwise.
+     */
+    private static String columnType(List<String> values, Set<String> knownTypes) {
+        if (knownTypes.isEmpty()) {
+            return TypeInferenceUtils.inferTypeForColumn(values);
+        }
+        Set<String> types = new LinkedHashSet<>(knownTypes);
+        // Empty cells become null, so they don't decide the type
+        if (values.stream().anyMatch(value -> !value.isEmpty())) {
+            types.add(TypeInferenceUtils.inferTypeForColumn(values));
+        }
+        return types.size() == 1 ? types.iterator().next() : "String";
     }
 
     /**

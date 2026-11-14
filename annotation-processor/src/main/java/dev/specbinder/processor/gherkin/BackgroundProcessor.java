@@ -19,15 +19,11 @@ import io.cucumber.messages.types.Step;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.TestInfo;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
@@ -37,14 +33,17 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
     private final Set<String> baseClassMethodNames;
     private final DataTableCollector dataTableCollector;
     private final EnumImportCollector enumImportCollector;
+    private final Map<String, List<Class<?>>> preComputedStepTypes;
 
     BackgroundProcessor(ProcessingEnvironment processingEnv, GeneratorOptions options, TypeElement baseType,
-                        DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector) {
+                        DataTableCollector dataTableCollector, EnumImportCollector enumImportCollector,
+                        Map<String, List<Class<?>>> preComputedStepTypes) {
         this.processingEnv = processingEnv;
         this.options = options;
         this.baseType = baseType;
         this.dataTableCollector = dataTableCollector;
         this.enumImportCollector = enumImportCollector;
+        this.preComputedStepTypes = preComputedStepTypes;
 
         baseClassMethodNames = ElementMethodUtils.getAllInheritedMethodNames(processingEnv, baseType);
     }
@@ -91,11 +90,24 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
         DescriptionEmitter.emit(backgroundMethodBuilder, background.getDescription(), options);
 
-        backgroundMethodBuilder.addParameter(TestInfo.class, "testInfo");
-
         List<ParameterSpec> allResolvedExtras = new ArrayList<>();
 
-        for (Step scenarioStep : backgroundSteps) {
+        // Composite steps are detected in Backgrounds like in Scenarios
+        List<Object> stepGroups = options.isEnableCompositeSteps()
+                ? ScenarioProcessor.detectCompositeStepGroups(backgroundSteps)
+                : new ArrayList<>(backgroundSteps);
+
+        for (Object stepGroup : stepGroups) {
+
+            if (stepGroup instanceof CompositeStepGroup compositeGroup) {
+                new CompositeStepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType,
+                        preComputedStepTypes)
+                        .processCompositeStep(compositeGroup, backgroundMethodBuilder, backgroundStepsMethodSpecs,
+                                resolvedStepKeywords, classBuilder, allMethodSpecs, baseClassMethodNames,
+                                null, null, null, null);
+                continue;
+            }
+            Step scenarioStep = (Step) stepGroup;
 
             StepProcessor stepProcessor = new StepProcessor(processingEnv, options, dataTableCollector, enumImportCollector, baseType);
             MethodSpec stepMethodSpec = stepProcessor.processStep(scenarioStep, backgroundMethodBuilder, backgroundStepsMethodSpecs, resolvedStepKeywords);
@@ -121,8 +133,7 @@ class BackgroundProcessor implements LoggingSupport, OptionsSupport, BaseTypeSup
 
         // Aggregate JUnit-resolved parameters across all background steps, deduped by name,
         // and add them to the @BeforeEach method's parameter list. JavaPoet preserves
-        // any @TempDir annotation carried by the ParameterSpec. The hardcoded `testInfo`
-        // above is kept for backward compatibility with existing tests.
+        // any @TempDir annotation carried by the ParameterSpec.
         Set<String> existingParamNames = new HashSet<>();
         for (ParameterSpec p : backgroundMethodBuilder.parameters) {
             existingParamNames.add(p.name);

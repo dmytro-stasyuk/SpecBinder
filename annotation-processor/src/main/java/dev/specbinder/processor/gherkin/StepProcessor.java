@@ -49,6 +49,23 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
     private final Map<String, List<Class<?>>> preComputedStepTypes;
 
     private List<ParameterSpec> resolvedExtras = List.of();
+    // Types used instead of the inferred types of the step's quoted values, by position; a null entry keeps the inferred one
+    private List<Class<?>> parameterTypeOverrides = List.of();
+    // The references of a composite sub-step to its parent step; null for other steps
+    private ParentStepReferences parentStepReferences;
+    // The row type to build the step's data table with, e.g. from a composite step method in the base class; null to
+    // find it from the step's own method
+    private TypeElement dataTableRowType;
+    // The record name of the step's data table, when it isn't named after the step's own text
+    private String dataTableRecordName;
+    // The type of the step method's data table parameter, when it isn't the one of the step's own data table
+    private TypeName dataTableParameterType;
+    // The expression passed for the step's data table, when the call doesn't build it
+    private String dataTableArgument;
+    // The expression passed for the step's DocString, when the call doesn't build it
+    private String docStringArgument;
+    // The call to the step method built by the most recent call to processStep
+    private CodeBlock stepCall;
     private boolean lastBaseMatchValid = true;
     private ResolvedStepKeyword resolvedStepKeyword;
 
@@ -95,6 +112,130 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
      */
     public List<ParameterSpec> getResolvedExtras() {
         return resolvedExtras;
+    }
+
+    /**
+     * Sets the types to use for some of the step's quoted values instead of the inferred ones, e.g. the types of the
+     * parent step values that a composite sub-step receives.
+     *
+     * @param parameterTypeOverrides the types by position of the quoted value; a null entry keeps the inferred type
+     * @return this step processor
+     */
+    StepProcessor withParameterTypeOverrides(List<Class<?>> parameterTypeOverrides) {
+        this.parameterTypeOverrides = parameterTypeOverrides;
+        return this;
+    }
+
+    /**
+     * Sets the references of a composite sub-step to its parent step, used when building the sub-step's call.
+     *
+     * @param parentStepReferences the sub-step's references to its parent step
+     * @return this step processor
+     */
+    StepProcessor withParentStepReferences(ParentStepReferences parentStepReferences) {
+        this.parentStepReferences = parentStepReferences;
+        return this;
+    }
+
+    /**
+     * Sets the row type to build the step's data table with, in LIST_OF_OBJECT_PARAMS mode.
+     *
+     * @param dataTableRowType the row type, or null to find it from the step's own method
+     * @return this step processor
+     */
+    StepProcessor withDataTableRowType(TypeElement dataTableRowType) {
+        this.dataTableRowType = dataTableRowType;
+        return this;
+    }
+
+    /**
+     * Sets the record name of the step's data table, in LIST_OF_OBJECT_PARAMS mode, e.g. for a composite step whose
+     * data table is named after the sub-step taking it.
+     *
+     * @param dataTableRecordName the record name, or null for the one named after the step's own text
+     * @return this step processor
+     */
+    StepProcessor withDataTableRecordName(String dataTableRecordName) {
+        this.dataTableRecordName = dataTableRecordName;
+        return this;
+    }
+
+    /**
+     * Makes the step method's data table parameter of the given type and the step's call pass the given expression for
+     * it, e.g. for a composite sub-step that takes its parent step's data table.
+     *
+     * @param dataTableParameterType the type of the data table parameter
+     * @param dataTableArgument the expression passed for the data table
+     * @return this step processor
+     */
+    StepProcessor withDataTablePassedAs(TypeName dataTableParameterType, String dataTableArgument) {
+        this.dataTableParameterType = dataTableParameterType;
+        this.dataTableArgument = dataTableArgument;
+        return this;
+    }
+
+    /**
+     * Makes the step's call pass the given expression for its DocString, e.g. for a composite sub-step that takes its
+     * parent step's DocString.
+     *
+     * @param docStringArgument the expression passed for the DocString
+     * @return this step processor
+     */
+    StepProcessor withDocStringPassedAs(String docStringArgument) {
+        this.docStringArgument = docStringArgument;
+        return this;
+    }
+
+    /**
+     * Returns the call to the step method built by the most recent call to {@link #processStep}, without the
+     * trailing semicolon, e.g. for placing the call of a composite sub-step in the composite step's lambda.
+     *
+     * @return the call to the step method
+     */
+    CodeBlock getStepCall() {
+        return stepCall;
+    }
+
+    /**
+     * Turns the references that a composite sub-step makes to its parent step, such as "<$p1>", into Java expressions.
+     */
+    interface ParentStepReferences {
+
+        /**
+         * Returns the Java expression for a quoted value or data table cell that holds references to the parent step
+         * or escaped references, or null when it holds neither.
+         *
+         * @param value the quoted value or data table cell
+         * @return the Java expression, or null
+         */
+        ValueExpression expressionFor(String value);
+
+        /**
+         * Returns a DocString or a data table passed as text, ready to be written as a text block, with the calls that
+         * replace the references it holds at runtime, or null when it holds no references, escaped or not.
+         *
+         * @param text the DocString content or the data table text
+         * @return the text with its replacement calls, or null
+         */
+        TextReplacements textReplacementsFor(String text);
+    }
+
+    /**
+     * A DocString or a data table passed as text, with the calls that replace its references at runtime.
+     *
+     * @param text the text to write in the text block, with escaped references written as the text they stand for
+     * @param replacementCalls the calls chained after the text block, each on a line of its own
+     */
+    record TextReplacements(String text, CodeBlock replacementCalls) {
+    }
+
+    /**
+     * The Java expression for a quoted value or data table cell of a composite sub-step.
+     *
+     * @param code the Java expression, e.g. p1 or "CUST-<$p1>".replace("<$p1>", p1)
+     * @param replacesReferences whether the expression replaces references in the value's text
+     */
+    record ValueExpression(CodeBlock code, boolean replacesReferences) {
     }
 
     /**
@@ -271,7 +412,7 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                         recordType
                 );
                 dataTableParameterSpec = ParameterSpec
-                        .builder(listOfRecordsType, parameterName)
+                        .builder(dataTableParameterType != null ? dataTableParameterType : listOfRecordsType, parameterName)
                         .build();
             } else {
                 // Default: use Cucumber DataTable
@@ -315,17 +456,23 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             this.lastBaseMatchValid = true;
         }
 
-        // add a call to the step method in the scenario method (skip if null - for composite sub-steps)
+        // build the call to the step method and add it to the scenario method; the caller places the call of a
+        // composite sub-step (null scenario method builder) in the composite step's lambda
+        stepCall = buildCallToTheStepMethod(
+                stepMethodName,
+                parameterValues,
+                parameterTypes,
+                step,
+                scenarioParameterNames,
+                testMethodParameterNames,
+                scenarioParameterTypes,
+                enumParameterTypes);
         if (scenarioMethodBuilder != null) {
-            addACallToTheStepMethod(scenarioMethodBuilder,
-                    stepMethodName,
-                    parameterValues,
-                    parameterTypes,
-                    step,
-                    scenarioParameterNames,
-                    testMethodParameterNames,
-                    scenarioParameterTypes,
-                    enumParameterTypes);
+            // add block comment for the step as it appears in the feature file
+            scenarioMethodBuilder.addCode("/*");
+            appendStepCommentLines(scenarioMethodBuilder, step, options);
+            scenarioMethodBuilder.addCode("\n */\n");
+            scenarioMethodBuilder.addStatement(stepCall);
         }
 
         MethodSpec stepMethodSpec = stepMethodBuilder.build();
@@ -533,20 +680,26 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         } else {
             scenarioMethodBuilder.addCode("\n * $L", stepFirstLine);
         }
-        // Include DataTable in the comment for LIST_OF_OBJECT_PARAMS mode
-        if (step.getDataTable().isPresent() && "LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
-            io.cucumber.messages.types.DataTable dataTableMsg = step.getDataTable().get();
-            List<Integer> maxColumnLength = TableUtils.workOutMaxColumnLength(dataTableMsg);
-            String dataTableAsString = TableUtils.convertDataTableToString(dataTableMsg, maxColumnLength);
-            String[] tableLines = dataTableAsString.split("\n");
-            for (String tableLine : tableLines) {
-                scenarioMethodBuilder.addCode("\n *   $L", tableLine);
-            }
+        for (String tableLine : dataTableCommentLines(step, options)) {
+            scenarioMethodBuilder.addCode("\n *   $L", tableLine);
         }
     }
 
-    private void addACallToTheStepMethod(
-            MethodSpec.Builder scenarioMethodBuilder,
+    /**
+     * Returns the DataTable rows shown in a step's comment: the step's table in LIST_OF_OBJECT_PARAMS mode, and no
+     * rows in the other modes.
+     */
+    static List<String> dataTableCommentLines(Step step, GeneratorOptions options) {
+        if (step.getDataTable().isEmpty() || !"LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
+            return List.of();
+        }
+        io.cucumber.messages.types.DataTable dataTableMsg = step.getDataTable().get();
+        List<Integer> maxColumnLength = TableUtils.workOutMaxColumnLength(dataTableMsg);
+        String dataTableAsString = TableUtils.convertDataTableToString(dataTableMsg, maxColumnLength);
+        return List.of(dataTableAsString.split("\n"));
+    }
+
+    private CodeBlock buildCallToTheStepMethod(
             String stepMethodName,
             List<String> parameterValues,
             List<Class<?>> parameterTypes,
@@ -556,13 +709,6 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             List<Class<?>> scenarioParameterTypes,
             Map<Integer, TypeMirror> enumParameterTypes
     ) {
-
-        /**
-         * add block comment for the step as it appears in the feature file
-         */
-        scenarioMethodBuilder.addCode("/*");
-        appendStepCommentLines(scenarioMethodBuilder, step, options);
-        scenarioMethodBuilder.addCode("\n */\n");
 
         /**
          * replace all occurrences of '$' with a '$L' placeholders and replace back with '$'
@@ -600,9 +746,14 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         ElementMethodUtils.MethodSignature matchingBaseMethod = findMatchingBaseMethod(stepMethodName, parameterValues);
 
         StringBuilder parameterValuesSB = new StringBuilder();
+        // A composite sub-step's call with a value whose references are replaced in its text has an argument per line
+        boolean argumentPerLine = parameterValues.stream()
+                .map(this::parentStepReferenceExpression)
+                .anyMatch(expression -> expression != null && expression.replacesReferences());
+        String argumentSeparator = argumentPerLine ? ",\n" : ", ";
         for (int j = 0; j < parameterValues.size(); j++) {
             if (j > 0) {
-                parameterValuesSB.append(", ");
+                parameterValuesSB.append(argumentSeparator);
             }
             String parameterValue = parameterValues.get(j);
             /**
@@ -610,7 +761,11 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
              * to a scenario parameter - if so, we replace it with the reference to the Scenario's test method parameter
              */
             String scenarioParameter = getScenarioParameter(parameterValue, scenarioParameterNames, testMethodParameterNames);
-            if (scenarioParameter != null) {
+            ValueExpression parentStepReference = parentStepReferenceExpression(parameterValue);
+            if (parentStepReference != null) {
+                // a composite sub-step's value holding references to its parent step
+                parameterValuesSB.append(placeholderFor(parentStepReference, formatArgsList));
+            } else if (scenarioParameter != null) {
                 /**
                  * no quote marks in this case as we are passing a reference to a Scenario test method parameter
                  */
@@ -702,306 +857,416 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             }
         }
 
-        if (step.getDataTable().isPresent()) {
-
-            io.cucumber.messages.types.DataTable dataTableMsg = step.getDataTable().get();
-            List<Integer> maxColumnLength = TableUtils.workOutMaxColumnLength(dataTableMsg);
-            String dataTableAsString = TableUtils.convertDataTableToString(dataTableMsg, maxColumnLength);
-
-            // Choose method name based on data table parameter type
-            String helperMethodName;
-            String dataTableType = options.getDataTableParameterType();
-
+        if (step.getDataTable().isPresent() && dataTableArgument != null) {
             if (!parameterValues.isEmpty()) {
-                // For LIST_OF_OBJECT_PARAMS, List.of( starts on new line, so no trailing space needed
-                if ("LIST_OF_OBJECT_PARAMS".equals(dataTableType)) {
-                    parameterValuesSB.append(",");
-                } else {
+                parameterValuesSB.append(argumentSeparator);
+            }
+            parameterValuesSB.append(dataTableArgument.replace("$", "$$"));
+        } else if (step.getDataTable().isPresent()) {
+            appendDataTableArgument(parameterValuesSB, formatArgsList, step, stepMethodName, parameterValues,
+                    scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes);
+        } else if (step.getDocString().isPresent()) {
+            if (!parameterValues.isEmpty()) {
+                parameterValuesSB.append(argumentSeparator);
+            }
+            if (docStringArgument != null) {
+                parameterValuesSB.append(docStringArgument.replace("$", "$$"));
+            } else {
+                appendDocStringArgument(parameterValuesSB, formatArgsList, step, scenarioParameterNames,
+                        testMethodParameterNames, scenarioParameterTypes);
+            }
+        }
+
+        // Forward any JUnit-resolved extras detected on the matching base method.
+        // These are passed as trailing arguments after the Gherkin-derived values.
+        for (ParameterSpec extra : resolvedExtras) {
+            if (parameterValuesSB.length() > 0) {
+                parameterValuesSB.append(argumentSeparator);
+            }
+            parameterValuesSB.append(extra.name);
+        }
+
+        String parameterValuesPart = parameterValuesSB.toString();
+        if (argumentPerLine) {
+            // The call is emitted as a statement, whose wrapped lines are indented two levels; the closing parenthesis
+            // is put back at the statement's own indentation
+            return CodeBlock.of(methodNameWithPlaceholders + "(\n" + parameterValuesPart + "$<$<\n)$>$>",
+                    formatArgsList.toArray());
+        }
+        return CodeBlock.of(methodNameWithPlaceholders + "(" + parameterValuesPart + ")", formatArgsList.toArray());
+    }
+
+    /**
+     * Builds the DocString argument of a step's call, starting with the separator from the step's quoted values when
+     * it has any, e.g. for the call of a composite step method that passes the parent step's DocString on.
+     *
+     * @param step the step with the DocString
+     * @param parameterValues the step's quoted values
+     * @param scenarioParameterNames the Scenario Outline's parameter names, or null
+     * @param testMethodParameterNames the test method's parameter names for the Scenario Outline's parameters, or null
+     * @param scenarioParameterTypes the types of the Scenario Outline's parameters, or null
+     * @return the DocString argument
+     */
+    CodeBlock buildDocStringArgument(Step step, List<String> parameterValues, List<String> scenarioParameterNames,
+                                     List<String> testMethodParameterNames, List<Class<?>> scenarioParameterTypes) {
+        StringBuilder argumentSB = new StringBuilder(parameterValues.isEmpty() ? "" : ", ");
+        List<Object> formatArgsList = new ArrayList<>();
+        appendDocStringArgument(argumentSB, formatArgsList, step, scenarioParameterNames, testMethodParameterNames,
+                scenarioParameterTypes);
+        return CodeBlock.of(argumentSB.toString(), formatArgsList.toArray());
+    }
+
+    private void appendDocStringArgument(StringBuilder parameterValuesSB, List<Object> formatArgsList, Step step,
+                                         List<String> scenarioParameterNames, List<String> testMethodParameterNames,
+                                         List<Class<?>> scenarioParameterTypes) {
+        DocString docString1 = step.getDocString().get();
+        // A composite sub-step's references to its parent step are replaced in the DocString text
+        TextReplacements parentStepReplacements = parentStepReferences != null
+                ? parentStepReferences.textReplacementsFor(docString1.getContent())
+                : null;
+        String rawContent = parentStepReplacements != null
+                ? parentStepReplacements.text()
+                : docString1.getContent();
+
+        // The chunking decision is based on the RUNTIME UTF-8 byte length of the content,
+        // i.e. how big the resulting CONSTANT_Utf8 constant-pool entry would be. The JVM
+        // hard-limit is 65535; when the content exceeds the configured cap (default 65000)
+        // we split into multiple plain "..." string-literal chunks joined at runtime via
+        // String.join("", ...) so each chunk stays a separate constant-pool entry below
+        // the limit (the + operator can't be used here because javac compile-time-folds
+        // adjacent string-literal + expressions into a single constant). Below the cap we
+        // keep the existing text-block emission unchanged.
+        int contentByteLen = rawContent.getBytes(StandardCharsets.UTF_8).length;
+        boolean chunked = contentByteLen > options.getMaxStringLiteralBytes();
+
+        boolean hasScenarioParams = scenarioParameterNames != null && !scenarioParameterNames.isEmpty();
+
+        if (chunked) {
+            // String.join(...).replaceAll(...) is a clean method chain on the String
+            // return value, so no surrounding parentheses are needed for the .replaceAll
+            // calls that may follow (Scenario Outline path).
+            appendChunkedStringLiteral(parameterValuesSB, rawContent, options.getMaxStringLiteralBytes());
+        } else {
+            // Existing text-block emission: escape triple quotes in the content, then $ for
+            // JavaPoet's format-string escape. Order matters — $ escaping is last so it's
+            // not applied to the backslash inserted by the triple-quote escape.
+            String docString = rawContent.replaceAll("\"\"\"", "\\\\\"\"\"");
+            docString = docString.replace("$", "$$");
+            parameterValuesSB.append("\"\"\"\n");
+            parameterValuesSB.append(docString);
+            parameterValuesSB.append("\n\"\"\"");
+        }
+
+        /*
+         * In case we are processing a Scenario Outline, replace any references to scenario
+         * parameters with their values from the examples row — but only add a .replaceAll(...)
+         * call for parameters that are actually present in the DocString content.
+         */
+        if (hasScenarioParams) {
+            for (int i = 0; i < scenarioParameterNames.size(); i++) {
+                String scenarioParameterName = scenarioParameterNames.get(i);
+                if (rawContent.contains("<" + scenarioParameterName + ">")) {
+                    String testMethodParameterName = testMethodParameterNames.get(i);
+                    parameterValuesSB.append("\n.replaceAll(");
+                    parameterValuesSB.append("\"<" + scenarioParameterName + ">\"");
                     parameterValuesSB.append(", ");
+
+                    // Check if parameter type is String, if not, call .toString()
+                    if (scenarioParameterTypes != null && i < scenarioParameterTypes.size()) {
+                        Class<?> paramType = scenarioParameterTypes.get(i);
+                        if (paramType != String.class) {
+                            parameterValuesSB.append(testMethodParameterName).append(".toString()");
+                        } else {
+                            parameterValuesSB.append(testMethodParameterName);
+                        }
+                    } else {
+                        parameterValuesSB.append(testMethodParameterName);
+                    }
+
+                    parameterValuesSB.append(")");
                 }
             }
-            String recordName = null;
+        }
 
-            if ("LIST_OF_MAPS".equals(dataTableType)) {
-                helperMethodName = "createListOfMaps";
-            } else if ("LIST_OF_OBJECT_PARAMS".equals(dataTableType)) {
-                String stepTextForRecord = step.getKeyword() + step.getText();
-                recordName = dataTableCollector.deriveRecordNameFromStepText(stepTextForRecord);
-                helperMethodName = null; // Not used for LIST_OF_OBJECT_PARAMS
+        appendParentStepReplacementCalls(parameterValuesSB, formatArgsList, parentStepReplacements);
+    }
+
+    /**
+     * Builds the data table argument of a step's call, starting with the separator from the step's quoted values when
+     * it has any, e.g. for the call of a composite step method that passes the parent step's data table on.
+     *
+     * @param step the step with the data table
+     * @param stepMethodName the name of the step's method
+     * @param parameterValues the step's quoted values
+     * @param scenarioParameterNames the Scenario Outline's parameter names, or null
+     * @param testMethodParameterNames the test method's parameter names for the Scenario Outline's parameters, or null
+     * @param scenarioParameterTypes the types of the Scenario Outline's parameters, or null
+     * @param enumParameterTypes the enum types of the Scenario Outline's parameters, or null
+     * @return the data table argument
+     */
+    CodeBlock buildDataTableArgument(Step step, String stepMethodName, List<String> parameterValues,
+                                     List<String> scenarioParameterNames, List<String> testMethodParameterNames,
+                                     List<Class<?>> scenarioParameterTypes, Map<Integer, TypeMirror> enumParameterTypes) {
+        StringBuilder argumentSB = new StringBuilder();
+        List<Object> formatArgsList = new ArrayList<>();
+        appendDataTableArgument(argumentSB, formatArgsList, step, stepMethodName, parameterValues,
+                scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes);
+        return CodeBlock.of(argumentSB.toString(), formatArgsList.toArray());
+    }
+
+    private void appendDataTableArgument(
+            StringBuilder parameterValuesSB,
+            List<Object> formatArgsList,
+            Step step,
+            String stepMethodName,
+            List<String> parameterValues,
+            List<String> scenarioParameterNames,
+            List<String> testMethodParameterNames,
+            List<Class<?>> scenarioParameterTypes,
+            Map<Integer, TypeMirror> enumParameterTypes) {
+
+        io.cucumber.messages.types.DataTable dataTableMsg = step.getDataTable().get();
+        List<Integer> maxColumnLength = TableUtils.workOutMaxColumnLength(dataTableMsg);
+        String dataTableAsString = TableUtils.convertDataTableToString(dataTableMsg, maxColumnLength);
+
+        // Choose method name based on data table parameter type
+        String helperMethodName;
+        String dataTableType = options.getDataTableParameterType();
+
+        if (!parameterValues.isEmpty()) {
+            // For LIST_OF_OBJECT_PARAMS, List.of( starts on new line, so no trailing space needed
+            if ("LIST_OF_OBJECT_PARAMS".equals(dataTableType)) {
+                parameterValuesSB.append(",");
             } else {
-                helperMethodName = "createDataTable";
+                parameterValuesSB.append(", ");
             }
+        }
+        String recordName = null;
 
-            // For LIST_OF_OBJECT_PARAMS, generate List.of() with inline constructor calls
-            if ("LIST_OF_OBJECT_PARAMS".equals(dataTableType) && recordName != null) {
-                RecordMetadata recordMetadata = dataTableCollector.getRecordMetadataMap().get(recordName);
-                if (recordMetadata != null) {
-                    List<TableRow> rows = dataTableMsg.getRows();
+        if ("LIST_OF_MAPS".equals(dataTableType)) {
+            helperMethodName = "createListOfMaps";
+        } else if ("LIST_OF_OBJECT_PARAMS".equals(dataTableType)) {
+            String stepTextForRecord = step.getKeyword() + step.getText();
+            recordName = dataTableRecordName != null
+                    ? dataTableRecordName
+                    : dataTableCollector.deriveRecordNameFromStepText(stepTextForRecord);
+            helperMethodName = null; // Not used for LIST_OF_OBJECT_PARAMS
+        } else {
+            helperMethodName = "createDataTable";
+        }
 
-                    // First row is headers, remaining rows are data
-                    if (rows.size() > 1) {
-                        // Get column names from header row
-                        List<String> columnNames = new ArrayList<>();
-                        TableRow headerRow = rows.get(0);
-                        for (TableCell cell : headerRow.getCells()) {
-                            columnNames.add(cell.getValue().trim());
+        // For LIST_OF_OBJECT_PARAMS, generate List.of() with inline constructor calls
+        if ("LIST_OF_OBJECT_PARAMS".equals(dataTableType) && recordName != null) {
+            RecordMetadata recordMetadata = dataTableCollector.getRecordMetadataMap().get(recordName);
+            if (recordMetadata != null) {
+                List<TableRow> rows = dataTableMsg.getRows();
+
+                // First row is headers, remaining rows are data
+                if (rows.size() > 1) {
+                    // Get column names from header row
+                    List<String> columnNames = new ArrayList<>();
+                    TableRow headerRow = rows.get(0);
+                    for (TableCell cell : headerRow.getCells()) {
+                        columnNames.add(cell.getValue().trim());
+                    }
+
+                    // Use the row type given for the data table, or check for an inherited List<T> parameter
+                    // type from base class method
+                    InheritedListTypeInfo inheritedTypeInfo = dataTableRowType != null
+                            ? inheritedListTypeInfo(dataTableRowType, columnNames)
+                            : findInheritedListParameterType(stepMethodName, parameterValues, columnNames);
+
+                    // Determine the type name and constructor mapping to use
+                    String typeNameToUse;
+                    ConstructorMappingUtils.MappingResult mappingToUse = null;
+                    boolean useExistingTypeOrder = false;
+
+                    if (inheritedTypeInfo != null && inheritedTypeInfo.isCompatible()) {
+                        // Use the inherited type from the base method's List parameter
+                        typeNameToUse = inheritedTypeInfo.typeElement().getSimpleName().toString();
+                        mappingToUse = inheritedTypeInfo.constructorMapping();
+                        useExistingTypeOrder = true;
+                        // Mark the metadata so we don't generate a new inner class
+                        if (!recordMetadata.hasExistingType()) {
+                            recordMetadata.setExistingType(inheritedTypeInfo.typeElement(), mappingToUse);
                         }
+                    } else if (recordMetadata.hasExistingType()) {
+                        // Use existing type from hierarchy (name-based lookup)
+                        typeNameToUse = recordMetadata.getExistingType().getSimpleName().toString();
+                        mappingToUse = recordMetadata.getConstructorMapping();
+                        useExistingTypeOrder = true;
+                    } else {
+                        // Use derived record name (will generate new inner class)
+                        typeNameToUse = recordName;
+                        useExistingTypeOrder = false;
+                        // If inherited type exists but is not compatible, we need an overloaded method
+                        // Note: This generates code that won't compile due to Java type erasure,
+                        // but documents the expected behavior for this edge case
+                        if (inheritedTypeInfo != null && !inheritedTypeInfo.isCompatible()) {
+                            recordMetadata.setNeedsOverloadedMethod(true);
+                        }
+                    }
 
-                        // Check for inherited List<T> parameter type from base class method
-                        InheritedListTypeInfo inheritedTypeInfo =
-                                findInheritedListParameterType(stepMethodName, parameterValues, columnNames);
-
-                        // Determine the type name and constructor mapping to use
-                        String typeNameToUse;
-                        ConstructorMappingUtils.MappingResult mappingToUse = null;
-                        boolean useExistingTypeOrder = false;
-
-                        if (inheritedTypeInfo != null && inheritedTypeInfo.isCompatible()) {
-                            // Use the inherited type from the base method's List parameter
-                            typeNameToUse = inheritedTypeInfo.typeElement().getSimpleName().toString();
-                            mappingToUse = inheritedTypeInfo.constructorMapping();
-                            useExistingTypeOrder = true;
-                            // Mark the metadata so we don't generate a new inner class
-                            if (!recordMetadata.hasExistingType()) {
-                                recordMetadata.setExistingType(inheritedTypeInfo.typeElement(), mappingToUse);
-                            }
-                        } else if (recordMetadata.hasExistingType()) {
-                            // Use existing type from hierarchy (name-based lookup)
-                            typeNameToUse = recordMetadata.getExistingType().getSimpleName().toString();
-                            mappingToUse = recordMetadata.getConstructorMapping();
-                            useExistingTypeOrder = true;
-                        } else {
-                            // Use derived record name (will generate new inner class)
-                            typeNameToUse = recordName;
-                            useExistingTypeOrder = false;
-                            // If inherited type exists but is not compatible, we need an overloaded method
-                            // Note: This generates code that won't compile due to Java type erasure,
-                            // but documents the expected behavior for this edge case
-                            if (inheritedTypeInfo != null && !inheritedTypeInfo.isCompatible()) {
-                                recordMetadata.setNeedsOverloadedMethod(true);
+                    // Get constructor parameter types for type conversion
+                    List<TypeMirror> constructorParamTypes = null;
+                    if (useExistingTypeOrder) {
+                        TypeElement existingType = inheritedTypeInfo != null && inheritedTypeInfo.isCompatible()
+                                ? inheritedTypeInfo.typeElement()
+                                : recordMetadata.getExistingType();
+                        if (existingType != null) {
+                            ExecutableElement constructor = InnerTypeUtils.findAllArgsConstructor(existingType);
+                            if (constructor != null) {
+                                constructorParamTypes = constructor.getParameters().stream()
+                                        .map(VariableElement::asType)
+                                        .collect(Collectors.toList());
                             }
                         }
+                    }
 
-                        // Get constructor parameter types for type conversion
-                        List<TypeMirror> constructorParamTypes = null;
-                        if (useExistingTypeOrder) {
-                            TypeElement existingType = inheritedTypeInfo != null && inheritedTypeInfo.isCompatible()
-                                    ? inheritedTypeInfo.typeElement()
-                                    : recordMetadata.getExistingType();
-                            if (existingType != null) {
-                                ExecutableElement constructor = InnerTypeUtils.findAllArgsConstructor(existingType);
-                                if (constructor != null) {
-                                    constructorParamTypes = constructor.getParameters().stream()
-                                            .map(VariableElement::asType)
-                                            .collect(Collectors.toList());
-                                }
-                            }
+                    // Use $T placeholder for List to ensure import is added
+                    parameterValuesSB.append("\n$T.of(");
+                    formatArgsList.add(List.class);
+
+                    // Process each data row (skip header at index 0)
+                    for (int rowIndex = 1; rowIndex < rows.size(); rowIndex++) {
+                        TableRow dataRow = rows.get(rowIndex);
+                        List<TableCell> cells = dataRow.getCells();
+
+                        if (rowIndex > 1) {
+                            parameterValuesSB.append(",");
                         }
+                        parameterValuesSB.append("\n        new ");
+                        parameterValuesSB.append(typeNameToUse);
+                        parameterValuesSB.append("(");
 
-                        // Use $T placeholder for List to ensure import is added
-                        parameterValuesSB.append("\n$T.of(");
-                        formatArgsList.add(List.class);
+                        // Generate constructor arguments based on record metadata
+                        if (useExistingTypeOrder && mappingToUse != null) {
+                            // Use existing type: args in constructor parameter order
+                            Map<Integer, String> paramIndexToColumnName = mappingToUse.getParamIndexToColumnName();
+                            List<String> constructorParams = mappingToUse.getConstructorParamNames();
 
-                        // Process each data row (skip header at index 0)
-                        for (int rowIndex = 1; rowIndex < rows.size(); rowIndex++) {
-                            TableRow dataRow = rows.get(rowIndex);
-                            List<TableCell> cells = dataRow.getCells();
-
-                            if (rowIndex > 1) {
-                                parameterValuesSB.append(",");
-                            }
-                            parameterValuesSB.append("\n        new ");
-                            parameterValuesSB.append(typeNameToUse);
-                            parameterValuesSB.append("(");
-
-                            // Generate constructor arguments based on record metadata
-                            if (useExistingTypeOrder && mappingToUse != null) {
-                                // Use existing type: args in constructor parameter order
-                                Map<Integer, String> paramIndexToColumnName = mappingToUse.getParamIndexToColumnName();
-                                List<String> constructorParams = mappingToUse.getConstructorParamNames();
-
-                                // First pass: collect all transformed values to check if any contain replaceAll
-                                List<String> transformedValues = new ArrayList<>();
-                                for (int i = 0; i < constructorParams.size(); i++) {
-                                    String mappedColumnName = paramIndexToColumnName.get(i);
-                                    if (mappedColumnName != null) {
-                                        int columnIndex = columnNames.indexOf(mappedColumnName);
-                                        if (columnIndex >= 0 && columnIndex < cells.size()) {
-                                            String cellValue = cells.get(columnIndex).getValue().trim();
-                                            // Empty cell values should be treated as null
-                                            if (cellValue.isEmpty()) {
-                                                transformedValues.add("null");
-                                            } else {
-                                                TypeMirror targetType = (constructorParamTypes != null && i < constructorParamTypes.size())
-                                                        ? constructorParamTypes.get(i)
-                                                        : null;
-                                                String transformedValue = transformCellValueWithPlaceholders(
-                                                        cellValue, scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes, targetType);
-                                                if (targetType != null) {
-                                                    String inferredColumnType = lookupInferredColumnType(recordMetadata, mappedColumnName);
-                                                    transformedValue = applyTypeConversion(transformedValue, targetType, inferredColumnType);
-                                                }
-                                                transformedValues.add(transformedValue);
-                                            }
-                                        } else {
-                                            transformedValues.add("null");
-                                        }
-                                    } else {
-                                        transformedValues.add("null");
-                                    }
-                                }
-
-                                // Multi-line format: each constructor argument on new line
-                                for (int i = 0; i < transformedValues.size(); i++) {
-                                    if (i > 0) {
-                                        parameterValuesSB.append(",");
-                                    }
-                                    parameterValuesSB.append("\n                ");
-                                    parameterValuesSB.append(transformedValues.get(i));
-                                }
-                                // Close parenthesis on new line
-                                parameterValuesSB.append("\n        )");
-                            } else {
-                                // Generate new type: use data table column order
-                                List<String> recordColumnNames = recordMetadata.getColumnNames();
-                                List<String> recordColumnTypes = recordMetadata.getColumnTypes();
-
-                                // First pass: collect all transformed values
-                                List<String> transformedValues = new ArrayList<>();
-                                for (int i = 0; i < recordColumnNames.size(); i++) {
-                                    String columnType = recordColumnTypes.get(i);
-
-                                    // Get TypeMirror for the inferred column type
-                                    TypeMirror targetType = getTypeMirrorForColumnType(columnType);
-
-                                    // Find column index in the current data table
-                                    int columnIndex = columnNames.indexOf(recordColumnNames.get(i));
+                            // First pass: collect all transformed values to check if any contain replaceAll
+                            List<String> transformedValues = new ArrayList<>();
+                            for (int i = 0; i < constructorParams.size(); i++) {
+                                String mappedColumnName = paramIndexToColumnName.get(i);
+                                if (mappedColumnName != null) {
+                                    int columnIndex = columnNames.indexOf(mappedColumnName);
                                     if (columnIndex >= 0 && columnIndex < cells.size()) {
                                         String cellValue = cells.get(columnIndex).getValue().trim();
+                                        ValueExpression parentStepReference = parentStepReferenceExpression(cellValue);
                                         // Empty cell values should be treated as null
                                         if (cellValue.isEmpty()) {
                                             transformedValues.add("null");
+                                        } else if (parentStepReference != null) {
+                                            transformedValues.add(placeholderFor(parentStepReference, formatArgsList));
                                         } else {
+                                            TypeMirror targetType = (constructorParamTypes != null && i < constructorParamTypes.size())
+                                                    ? constructorParamTypes.get(i)
+                                                    : null;
                                             String transformedValue = transformCellValueWithPlaceholders(
                                                     cellValue, scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes, targetType);
-                                            // Apply type conversion for non-String types
                                             if (targetType != null) {
-                                                transformedValue = applyTypeConversion(transformedValue, targetType, columnType);
+                                                String inferredColumnType = lookupInferredColumnType(recordMetadata, mappedColumnName);
+                                                transformedValue = applyTypeConversion(transformedValue, targetType, inferredColumnType);
                                             }
                                             transformedValues.add(transformedValue);
                                         }
                                     } else {
-                                        // Column not present in this data table, use null
                                         transformedValues.add("null");
                                     }
-                                }
-
-                                // Multi-line format: each constructor argument on new line
-                                for (int i = 0; i < transformedValues.size(); i++) {
-                                    if (i > 0) {
-                                        parameterValuesSB.append(",");
-                                    }
-                                    parameterValuesSB.append("\n                ");
-                                    parameterValuesSB.append(transformedValues.get(i));
-                                }
-                                // Close parenthesis on new line
-                                parameterValuesSB.append("\n        )");
-                            }
-                        }
-
-                        parameterValuesSB.append("\n)");
-                    }
-                }
-            } else {
-                // For other data table types, use helper methods
-                parameterValuesSB.append(helperMethodName);
-                parameterValuesSB.append("(");
-                parameterValuesSB.append("\"\"\"\n");
-                parameterValuesSB.append(dataTableAsString);
-                parameterValuesSB.append("\n\"\"\"");
-
-                /**
-                 * in case we are processing a scenario with examples table i.e. Scenario Template type
-                 * then we need to replace any references to scenario parameters with reference value from the examples table
-                 */
-                if (scenarioParameterNames != null && !scenarioParameterNames.isEmpty()) {
-                    // Only add replaceAll calls for parameters that are actually present in the DataTable
-                    for (int i = 0; i < scenarioParameterNames.size(); i++) {
-                        String scenarioParameterName = scenarioParameterNames.get(i);
-                        // Check if this specific parameter appears in the DataTable
-                        if (dataTableAsString.contains("<" + scenarioParameterName + ">")) {
-                            String testMethodParameterName = testMethodParameterNames.get(i);
-                            parameterValuesSB.append("\n.replaceAll(");
-                            parameterValuesSB.append("\"<" + scenarioParameterName + ">\"");
-                            parameterValuesSB.append(", ");
-
-                            // Check if parameter type is String, if not, call .toString()
-                            if (scenarioParameterTypes != null && i < scenarioParameterTypes.size()) {
-                                Class<?> paramType = scenarioParameterTypes.get(i);
-                                if (paramType != String.class) {
-                                    parameterValuesSB.append(testMethodParameterName).append(".toString()");
                                 } else {
-                                    parameterValuesSB.append(testMethodParameterName);
+                                    transformedValues.add("null");
                                 }
-                            } else {
-                                parameterValuesSB.append(testMethodParameterName);
                             }
 
-                            parameterValuesSB.append(")");
+                            // Multi-line format: each constructor argument on new line
+                            for (int i = 0; i < transformedValues.size(); i++) {
+                                if (i > 0) {
+                                    parameterValuesSB.append(",");
+                                }
+                                parameterValuesSB.append("\n                ");
+                                parameterValuesSB.append(transformedValues.get(i));
+                            }
+                            // Close parenthesis on new line
+                            parameterValuesSB.append("\n        )");
+                        } else {
+                            // Generate new type: use data table column order
+                            List<String> recordColumnNames = recordMetadata.getColumnNames();
+                            List<String> recordColumnTypes = recordMetadata.getColumnTypes();
+
+                            // First pass: collect all transformed values
+                            List<String> transformedValues = new ArrayList<>();
+                            for (int i = 0; i < recordColumnNames.size(); i++) {
+                                String columnType = recordColumnTypes.get(i);
+
+                                // Get TypeMirror for the inferred column type
+                                TypeMirror targetType = getTypeMirrorForColumnType(columnType);
+
+                                // Find column index in the current data table
+                                int columnIndex = columnNames.indexOf(recordColumnNames.get(i));
+                                if (columnIndex >= 0 && columnIndex < cells.size()) {
+                                    String cellValue = cells.get(columnIndex).getValue().trim();
+                                    ValueExpression parentStepReference = parentStepReferenceExpression(cellValue);
+                                    // Empty cell values should be treated as null
+                                    if (cellValue.isEmpty()) {
+                                        transformedValues.add("null");
+                                    } else if (parentStepReference != null) {
+                                        transformedValues.add(placeholderFor(parentStepReference, formatArgsList));
+                                    } else {
+                                        String transformedValue = transformCellValueWithPlaceholders(
+                                                cellValue, scenarioParameterNames, testMethodParameterNames, scenarioParameterTypes, enumParameterTypes, targetType);
+                                        // Apply type conversion for non-String types
+                                        if (targetType != null) {
+                                            transformedValue = applyTypeConversion(transformedValue, targetType, columnType);
+                                        }
+                                        transformedValues.add(transformedValue);
+                                    }
+                                } else {
+                                    // Column not present in this data table, use null
+                                    transformedValues.add("null");
+                                }
+                            }
+
+                            // Multi-line format: each constructor argument on new line
+                            for (int i = 0; i < transformedValues.size(); i++) {
+                                if (i > 0) {
+                                    parameterValuesSB.append(",");
+                                }
+                                parameterValuesSB.append("\n                ");
+                                parameterValuesSB.append(transformedValues.get(i));
+                            }
+                            // Close parenthesis on new line
+                            parameterValuesSB.append("\n        )");
                         }
                     }
+
+                    parameterValuesSB.append("\n)");
                 }
-
-                parameterValuesSB.append(")");
             }
+        } else {
+            // For other data table types, use helper methods
+            // A composite sub-step's references to its parent step are replaced in the table text
+            TextReplacements parentStepReplacements = parentStepReferences != null
+                    ? parentStepReferences.textReplacementsFor(dataTableAsString)
+                    : null;
+            String tableText = parentStepReplacements != null ? parentStepReplacements.text() : dataTableAsString;
+            parameterValuesSB.append(helperMethodName);
+            parameterValuesSB.append("(");
+            parameterValuesSB.append("\"\"\"\n");
+            // escape $ for JavaPoet's format string
+            parameterValuesSB.append(tableText.replace("$", "$$"));
+            parameterValuesSB.append("\n\"\"\"");
 
-        } else if (step.getDocString().isPresent()) {
-
-            if (!parameterValues.isEmpty()) {
-                parameterValuesSB.append(", ");
-            }
-
-            DocString docString1 = step.getDocString().get();
-            String rawContent = docString1.getContent();
-
-            // The chunking decision is based on the RUNTIME UTF-8 byte length of the content,
-            // i.e. how big the resulting CONSTANT_Utf8 constant-pool entry would be. The JVM
-            // hard-limit is 65535; when the content exceeds the configured cap (default 65000)
-            // we split into multiple plain "..." string-literal chunks joined at runtime via
-            // String.join("", ...) so each chunk stays a separate constant-pool entry below
-            // the limit (the + operator can't be used here because javac compile-time-folds
-            // adjacent string-literal + expressions into a single constant). Below the cap we
-            // keep the existing text-block emission unchanged.
-            int contentByteLen = rawContent.getBytes(StandardCharsets.UTF_8).length;
-            boolean chunked = contentByteLen > options.getMaxStringLiteralBytes();
-
-            boolean hasScenarioParams = scenarioParameterNames != null && !scenarioParameterNames.isEmpty();
-
-            if (chunked) {
-                // String.join(...).replaceAll(...) is a clean method chain on the String
-                // return value, so no surrounding parentheses are needed for the .replaceAll
-                // calls that may follow (Scenario Outline path).
-                appendChunkedStringLiteral(parameterValuesSB, rawContent, options.getMaxStringLiteralBytes());
-            } else {
-                // Existing text-block emission: escape triple quotes in the content, then $ for
-                // JavaPoet's format-string escape. Order matters — $ escaping is last so it's
-                // not applied to the backslash inserted by the triple-quote escape.
-                String docString = rawContent.replaceAll("\"\"\"", "\\\\\"\"\"");
-                docString = docString.replace("$", "$$");
-                parameterValuesSB.append("\"\"\"\n");
-                parameterValuesSB.append(docString);
-                parameterValuesSB.append("\n\"\"\"");
-            }
-
-            /*
-             * In case we are processing a Scenario Outline, replace any references to scenario
-             * parameters with their values from the examples row — but only add a .replaceAll(...)
-             * call for parameters that are actually present in the DocString content.
+            /**
+             * in case we are processing a scenario with examples table i.e. Scenario Template type
+             * then we need to replace any references to scenario parameters with reference value from the examples table
              */
-            if (hasScenarioParams) {
+            if (scenarioParameterNames != null && !scenarioParameterNames.isEmpty()) {
+                // Only add replaceAll calls for parameters that are actually present in the DataTable
                 for (int i = 0; i < scenarioParameterNames.size(); i++) {
                     String scenarioParameterName = scenarioParameterNames.get(i);
-                    if (rawContent.contains("<" + scenarioParameterName + ">")) {
+                    // Check if this specific parameter appears in the DataTable
+                    if (dataTableAsString.contains("<" + scenarioParameterName + ">")) {
                         String testMethodParameterName = testMethodParameterNames.get(i);
                         parameterValuesSB.append("\n.replaceAll(");
                         parameterValuesSB.append("\"<" + scenarioParameterName + ">\"");
@@ -1023,22 +1288,40 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
                     }
                 }
             }
+
+            appendParentStepReplacementCalls(parameterValuesSB, formatArgsList, parentStepReplacements);
+
+            parameterValuesSB.append(")");
         }
+    }
 
-        // Forward any JUnit-resolved extras detected on the matching base method.
-        // These are passed as trailing arguments after the Gherkin-derived values.
-        for (ParameterSpec extra : resolvedExtras) {
-            if (parameterValuesSB.length() > 0) {
-                parameterValuesSB.append(", ");
-            }
-            parameterValuesSB.append(extra.name);
+    /**
+     * Appends the calls that replace a composite sub-step's references to its parent step in a DocString or a data
+     * table passed as text, after its text block; appends nothing when there are none.
+     */
+    private static void appendParentStepReplacementCalls(StringBuilder parameterValuesSB, List<Object> formatArgsList,
+                                                         TextReplacements replacements) {
+        if (replacements != null && !replacements.replacementCalls().isEmpty()) {
+            parameterValuesSB.append("$L");
+            formatArgsList.add(replacements.replacementCalls());
         }
+    }
 
-        String parameterValuesPart = parameterValuesSB.toString();
-        CodeBlock codeBlock =
-                CodeBlock.of(methodNameWithPlaceholders + "(" + parameterValuesPart + ")", formatArgsList.toArray());
+    /**
+     * Returns the Java expression for a value of a composite sub-step that holds references to its parent step, or null
+     * when the step isn't a sub-step or the value holds no references.
+     */
+    private ValueExpression parentStepReferenceExpression(String value) {
+        return parentStepReferences != null ? parentStepReferences.expressionFor(value) : null;
+    }
 
-        scenarioMethodBuilder.addStatement(codeBlock);
+    /**
+     * Returns the format string placeholder for a value expression of a composite sub-step, adding the expression to
+     * the format arguments.
+     */
+    private static String placeholderFor(ValueExpression expression, List<Object> formatArgsList) {
+        formatArgsList.add(expression.code());
+        return "$L";
     }
 
     private String getScenarioParameter(
@@ -1698,8 +1981,11 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
         List<Class<?>> parameterTypes = new ArrayList<>();
         for (int i = 0; i < parameterValues.size(); i++) {
             String paramValue = parameterValues.get(i);
-            // Check if this is a scenario outline placeholder (e.g., "<age>")
-            if (paramValue.startsWith("<") && paramValue.endsWith(">")) {
+            if (i < parameterTypeOverrides.size() && parameterTypeOverrides.get(i) != null) {
+                // Use the type given for this value, e.g. of the parent step value a composite sub-step receives
+                parameterTypes.add(parameterTypeOverrides.get(i));
+            } else if (paramValue.startsWith("<") && paramValue.endsWith(">")) {
+                // A scenario outline placeholder (e.g., "<age>")
                 // Extract placeholder name without angle brackets
                 String placeholderName = paramValue.substring(1, paramValue.length() - 1);
 
@@ -1832,6 +2118,17 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
             return null;
         }
 
+        return inheritedListTypeInfo(listTypeArg, columnNames);
+    }
+
+    /**
+     * Describes how a data table with the given columns is built with a row type from the base class hierarchy.
+     *
+     * @param listTypeArg the row type
+     * @param columnNames the data table column names
+     * @return the row type with the mapping of the data table columns to its constructor parameters
+     */
+    InheritedListTypeInfo inheritedListTypeInfo(TypeElement listTypeArg, List<String> columnNames) {
         // Find the all-args constructor
         ExecutableElement constructor = InnerTypeUtils.findAllArgsConstructor(listTypeArg);
         if (constructor == null) {

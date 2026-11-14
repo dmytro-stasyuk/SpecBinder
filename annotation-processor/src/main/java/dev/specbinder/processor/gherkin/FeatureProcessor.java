@@ -162,7 +162,8 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
 
             if (child.getBackground().isPresent()) {
 
-                BackgroundProcessor backgroundProcessor = new BackgroundProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
+                BackgroundProcessor backgroundProcessor = new BackgroundProcessor(processingEnv, options, baseType, dataTableCollector,
+                        enumImportCollector, preComputedStepTypes);
 
                 Background background = child.getBackground().get();
                 MethodSpec.Builder featureBackgroundMethodBuilder = backgroundProcessor.processFeatureBackground(background, classBuilder);
@@ -280,26 +281,13 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
      * the widest common type is computed (e.g., Character + String → String).
      */
     private Map<String, List<Class<?>>> preComputeStepParameterTypes(List<Feature> features) {
+        // Collect the steps of all scenarios and backgrounds, in spec order
+        List<List<Step>> stepLists = CompositeStepTypeResolver.stepListsOf(features);
+
         // Collect parameter values grouped by step pattern
         Map<String, List<List<String>>> stepPatternValues = new LinkedHashMap<>();
-
-        for (FeatureChild child : features.stream().flatMap(feature -> feature.getChildren().stream()).toList()) {
-            if (child.getScenario().isPresent()) {
-                collectStepPatternValues(child.getScenario().get().getSteps(), stepPatternValues);
-            }
-            if (child.getRule().isPresent()) {
-                for (RuleChild ruleChild : child.getRule().get().getChildren()) {
-                    if (ruleChild.getScenario().isPresent()) {
-                        collectStepPatternValues(ruleChild.getScenario().get().getSteps(), stepPatternValues);
-                    }
-                    if (ruleChild.getBackground().isPresent()) {
-                        collectStepPatternValues(ruleChild.getBackground().get().getSteps(), stepPatternValues);
-                    }
-                }
-            }
-            if (child.getBackground().isPresent()) {
-                collectStepPatternValues(child.getBackground().get().getSteps(), stepPatternValues);
-            }
+        for (List<Step> steps : stepLists) {
+            collectStepPatternValues(steps, stepPatternValues);
         }
 
         // For patterns with multiple occurrences, compute widened types
@@ -326,6 +314,11 @@ public class FeatureProcessor implements LoggingSupport, OptionsSupport, BaseTyp
                 widenedTypes.add(ParameterConversionUtils.inferTypeForAllValues(valuesAtPosition));
             }
             result.put(entry.getKey(), widenedTypes);
+        }
+
+        // The values of composite steps are typed across all uses of each composite step
+        if (options.isEnableCompositeSteps()) {
+            result.putAll(new CompositeStepTypeResolver(processingEnv, options, baseType).resolve(stepLists));
         }
 
         return result;

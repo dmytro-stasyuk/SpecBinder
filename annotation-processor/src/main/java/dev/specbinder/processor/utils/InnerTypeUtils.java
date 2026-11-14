@@ -64,7 +64,7 @@ public class InnerTypeUtils {
     /**
      * Finds the all-args constructor for a class or record.
      * For records: finds constructor matching record component count
-     * For classes: finds constructor matching private final field count
+     * For classes: finds constructor matching the count of final instance fields, of any visibility
      *
      * @param typeElement the class or record type
      * @return the ExecutableElement for the constructor, or null if not found
@@ -77,7 +77,7 @@ public class InnerTypeUtils {
         if (isRecord) {
             expectedParamCount = countRecordComponents(typeElement);
         } else {
-            expectedParamCount = countPrivateFinalFields(typeElement);
+            expectedParamCount = countFinalInstanceFields(typeElement);
         }
 
         // Find constructor with matching parameter count
@@ -151,18 +151,18 @@ public class InnerTypeUtils {
     }
 
     /**
-     * Counts the number of private final fields in a class.
+     * Counts the number of final instance fields in a class, of any visibility; static constants aren't counted.
      *
      * @param typeElement the class type
-     * @return the number of private final fields
+     * @return the number of final instance fields
      */
-    private static int countPrivateFinalFields(TypeElement typeElement) {
+    private static int countFinalInstanceFields(TypeElement typeElement) {
         int count = 0;
         List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
         for (Element element : enclosedElements) {
             if (element.getKind() == ElementKind.FIELD) {
-                if (element.getModifiers().contains(Modifier.PRIVATE) &&
-                    element.getModifiers().contains(Modifier.FINAL)) {
+                if (element.getModifiers().contains(Modifier.FINAL) &&
+                    !element.getModifiers().contains(Modifier.STATIC)) {
                     count++;
                 }
             }

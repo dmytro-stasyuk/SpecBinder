@@ -180,7 +180,8 @@ class RuleProcessor implements LoggingSupport, OptionsSupport, BaseTypeSupport {
 
                 Background background = child.getBackground().get();
 
-                BackgroundProcessor backgroundProcessor = new BackgroundProcessor(processingEnv, options, baseType, dataTableCollector, enumImportCollector);
+                BackgroundProcessor backgroundProcessor = new BackgroundProcessor(processingEnv, options, baseType, dataTableCollector,
+                        enumImportCollector, preComputedStepTypes);
                 MethodSpec.Builder ruleBackgroundMethodBuilder = backgroundProcessor.processRuleBackground(background, classBuilder);
 
                 MethodSpec backgroundMethod = ruleBackgroundMethodBuilder.build();

@@ -7,6 +7,7 @@ import dev.specbinder.annotations.output.SourceTimestamp;
 import dev.specbinder.annotations.output.SpecDisplayNameGenerator;
 import dev.specbinder.processor.config.GeneratorOptions;
 import dev.specbinder.processor.exception.ProcessingException;
+import dev.specbinder.processor.gherkin.CompositeStepTypeResolver;
 import dev.specbinder.processor.gherkin.FeatureFileParser;
 import dev.specbinder.processor.gherkin.FeatureProcessor;
 import dev.specbinder.processor.gherkin.utils.DataTableCollector;
@@ -189,8 +190,14 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
             DataTableCollector dataTableCollector = null;
             if ("LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
                 dataTableCollector = new DataTableCollector();
+                // The cells of composite steps can have types known from their parent step or sub-steps
+                CompositeStepTypeResolver compositeStepTypes = null;
+                if (options.isEnableCompositeSteps()) {
+                    compositeStepTypes = new CompositeStepTypeResolver(processingEnv, options, annotatedClass);
+                    compositeStepTypes.resolve(CompositeStepTypeResolver.stepListsOf(generatedSpecs));
+                }
                 for (Feature spec : generatedSpecs) {
-                    collectDataTableMetadata(spec, dataTableCollector);
+                    collectDataTableMetadata(spec, dataTableCollector, compositeStepTypes);
                 }
             }
 
@@ -590,31 +597,34 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
     /**
      * Collects data table metadata from all steps in the feature.
      * This is the first pass that identifies all record types needed for LIST_OF_OBJECT_PARAMS generation.
+     *
+     * @param compositeStepTypes the value types of the composite steps, or null when composite steps are disabled
      */
-    private void collectDataTableMetadata(Feature feature, DataTableCollector collector) {
+    private void collectDataTableMetadata(Feature feature, DataTableCollector collector,
+                                          CompositeStepTypeResolver compositeStepTypes) {
         for (FeatureChild child : feature.getChildren()) {
             if (child.getScenario().isPresent()) {
                 Scenario scenario = child.getScenario().get();
                 // For Scenario Outlines, pass Examples to infer types from Examples columns
-                collectDataTableMetadataFromSteps(scenario.getSteps(), collector, scenario);
+                collectDataTableMetadataFromSteps(scenario.getSteps(), collector, scenario, compositeStepTypes);
             } else if (child.getRule().isPresent()) {
                 Rule rule = child.getRule().get();
                 for (RuleChild ruleChild : rule.getChildren()) {
                     if (ruleChild.getBackground().isPresent()) {
                         Background background = ruleChild.getBackground().get();
                         // Background steps are not part of Scenario Outlines
-                        collectDataTableMetadataFromSteps(background.getSteps(), collector, null);
+                        collectDataTableMetadataFromSteps(background.getSteps(), collector, null, compositeStepTypes);
                     }
                     if (ruleChild.getScenario().isPresent()) {
                         Scenario scenario = ruleChild.getScenario().get();
                         // For Scenario Outlines, pass Examples to infer types from Examples columns
-                        collectDataTableMetadataFromSteps(scenario.getSteps(), collector, scenario);
+                        collectDataTableMetadataFromSteps(scenario.getSteps(), collector, scenario, compositeStepTypes);
                     }
                 }
             } else if (child.getBackground().isPresent()) {
                 Background background = child.getBackground().get();
                 // Background steps are not part of Scenario Outlines
-                collectDataTableMetadataFromSteps(background.getSteps(), collector, null);
+                collectDataTableMetadataFromSteps(background.getSteps(), collector, null, compositeStepTypes);
             }
         }
     }
@@ -625,8 +635,10 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
      * @param steps the steps to collect data table metadata from
      * @param collector the data table collector
      * @param scenario the scenario containing these steps (null for Background steps, non-null for Scenario/Scenario Outline)
+     * @param compositeStepTypes the value types of the composite steps, or null when composite steps are disabled
      */
-    private void collectDataTableMetadataFromSteps(List<Step> steps, DataTableCollector collector, Scenario scenario) {
+    private void collectDataTableMetadataFromSteps(List<Step> steps, DataTableCollector collector, Scenario scenario,
+                                                   CompositeStepTypeResolver compositeStepTypes) {
         for (Step step : steps) {
             if (step.getDataTable().isPresent()) {
                 io.cucumber.messages.types.DataTable dt = step.getDataTable().get();
@@ -640,10 +652,53 @@ class TestSubclassCreator implements LoggingSupport, OptionsSupport {
                     collector.registerDataTableWithExamples(stepText, dt.getRows(), scenario.getExamples());
                 } else {
                     // For regular scenarios and background steps, use type inference from data table cell values
-                    collector.registerDataTableWithTypeInference(stepText, dt.getRows());
+                    // A composite step's data table that a sub-step takes as "<$dataTable>" has the sub-step's row type
+                    String compositeMethodName =
+                            compositeStepTypes != null ? compositeStepTypes.compositeMethodNameOf(step) : null;
+                    CompositeStepTypeResolver.DataTableRowType compositeRowType =
+                            compositeMethodName != null ? compositeStepTypes.dataTableRowTypeOf(compositeMethodName) : null;
+                    String recordStepText = stepText;
+                    if (compositeRowType != null) {
+                        recordStepText = compositeRowType.recordStepText();
+                        collector.setCompositeStepRecordName(compositeMethodName,
+                                collector.deriveRecordNameFromStepText(recordStepText));
+                    }
+
+                    collector.registerDataTableWithTypeInference(recordStepText, dt.getRows(), (column, cellValue) ->
+                            compositeStepTypes != null ? compositeStepTypes.knownCellType(step, column, cellValue) : null);
+
+                    if (compositeRowType != null && compositeRowType.baseRowType() != null) {
+                        useCompositeStepBaseRowType(collector, compositeMethodName, compositeRowType, dt.getRows());
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Builds a composite step's data table with the custom row type that the base class step method of a sub-step
+     * taking it as "<$dataTable>" takes; a column the row type has no field for is a generator error.
+     */
+    private static void useCompositeStepBaseRowType(DataTableCollector collector, String compositeMethodName,
+                                                    CompositeStepTypeResolver.DataTableRowType rowType,
+                                                    List<TableRow> rows) {
+        TypeElement baseRowType = rowType.baseRowType();
+        List<String> columns = rows.getFirst().getCells().stream().map(cell -> cell.getValue().trim()).toList();
+        ExecutableElement constructor = InnerTypeUtils.findAllArgsConstructor(baseRowType);
+        List<String> constructorParams = constructor != null
+                ? InnerTypeUtils.getConstructorParameterNames(constructor, baseRowType)
+                : List.of();
+        ConstructorMappingUtils.MappingResult mapping =
+                ConstructorMappingUtils.tryMapColumnsToConstructor(columns, constructorParams);
+        for (String column : columns) {
+            if (!mapping.getParamIndexToColumnName().containsValue(column)) {
+                throw new ProcessingException("The data table of the composite step " + compositeMethodName
+                        + " has the column " + column + ", which has no matching field in " + baseRowType.getSimpleName()
+                        + ", the row type of " + rowType.subStepMethodName() + " (line - " + rowType.line() + ")");
+            }
+        }
+        collector.getRecordMetadataMap().get(collector.getCompositeStepRecordName(compositeMethodName))
+                .setExistingType(baseRowType, mapping);
     }
 
     /**
