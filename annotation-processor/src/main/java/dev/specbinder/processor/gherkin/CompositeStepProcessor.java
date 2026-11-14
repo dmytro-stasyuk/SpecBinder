@@ -13,6 +13,7 @@ import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
 import dev.specbinder.processor.utils.*;
 import dev.specbinder.processor.utils.StepKeywordUtils.ResolvedStepKeyword;
+import dev.specbinder.specreader.VerticalTables;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -302,9 +303,12 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
      * @param columns the column names, as written in the header row
      * @param dataRowCount the number of data rows
      * @param columnReaders how each column's cells are read, by column name
+     * @param writtenVertically whether the data table is written vertically, so its data rows are its value columns
+     *                          as written
      */
     private record ParentDataTable(TypeName type, TypeElement givenRowType, String recordName, List<String> columns,
-                                   int dataRowCount, Map<String, ColumnReader> columnReaders) {
+                                   int dataRowCount, Map<String, ColumnReader> columnReaders,
+                                   boolean writtenVertically) {
     }
 
     /**
@@ -334,6 +338,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         List<TableRow> rows = parentStep.getDataTable().get().getRows();
         List<String> columns = rows.getFirst().getCells().stream().map(cell -> cell.getValue().trim()).toList();
         int dataRowCount = rows.size() - 1;
+        boolean writtenVertically = VerticalTables.isWrittenVertically(parentStep.getDataTable().get());
         Map<String, ColumnReader> columnReaders = new LinkedHashMap<>();
         String dataTableType = options.getDataTableParameterType();
 
@@ -343,7 +348,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
             }
             TypeName mapType = ParameterizedTypeName.get(Map.class, String.class, String.class);
             return new ParentDataTable(ParameterizedTypeName.get(ClassName.get(List.class), mapType), null, null,
-                    columns, dataRowCount, columnReaders);
+                    columns, dataRowCount, columnReaders, writtenVertically);
         }
 
         if (!LIST_OF_OBJECT_PARAMS.name().equals(dataTableType)) {
@@ -352,7 +357,8 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
                 columnReaders.put(column,
                         new ColumnReader(DATA_TABLE_REFERENCE_NAME + ".asMaps()", mapGet(column), String.class, null));
             }
-            return new ParentDataTable(ClassName.get(DataTable.class), null, null, columns, dataRowCount, columnReaders);
+            return new ParentDataTable(ClassName.get(DataTable.class), null, null, columns, dataRowCount, columnReaders,
+                    writtenVertically);
         }
 
         // A composite step method in the base class gives the row type; otherwise a row type of the same name in the
@@ -375,7 +381,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
             }
             ClassName rowTypeName = ClassName.get("", rowType.getSimpleName().toString());
             return new ParentDataTable(ParameterizedTypeName.get(ClassName.get(List.class), rowTypeName), givenRowType,
-                    recordName, columns, dataRowCount, columnReaders);
+                    recordName, columns, dataRowCount, columnReaders, writtenVertically);
         }
 
         for (String column : columns) {
@@ -384,7 +390,7 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
                     new ColumnReader(DATA_TABLE_REFERENCE_NAME, cellAccess, generatedColumnClass(recordMetadata, column), null));
         }
         return new ParentDataTable(ParameterizedTypeName.get(ClassName.get(List.class), ClassName.get("", recordName)),
-                null, recordName, columns, dataRowCount, columnReaders);
+                null, recordName, columns, dataRowCount, columnReaders, writtenVertically);
     }
 
     private static String mapGet(String column) {
@@ -872,9 +878,13 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
                                 + " has " + reference.group() + " in a data table cell, which isn't supported with the "
                                 + options.getDataTableParameterType() + " data table type");
                     } else if (rowIndex == 0) {
+                        // the header row of a vertical table is its column of names as written
+                        String placement = VerticalTables.isWrittenVertically(subStep.getDataTable().get())
+                                ? " in a name cell of its vertical data table; references are allowed in value cells"
+                                + " only"
+                                : " in a header cell of its data table; references are allowed in data rows only";
                         throw new ProcessingException("Sub-step on line - " + subStep.getLocation().getLine()
-                                + " has the reference " + reference.group()
-                                + " in a header cell of its data table; references are allowed in data rows only");
+                                + " has the reference " + reference.group() + placement);
                     } else {
                         resolveReference(reference, subStep, parent);
                     }
@@ -923,17 +933,22 @@ class CompositeStepProcessor implements LoggingSupport, OptionsSupport {
         if (isColumn) {
             int dataRowCount = dataTable.dataRowCount();
             int row = 1;
+            // the data rows of a vertical table are its value columns as written
             if (rowNumber == null) {
                 if (dataRowCount != 1) {
+                    String table = dataTable.writtenVertically()
+                            ? "vertical data table has " + dataRowCount + " value columns"
+                            : "data table has " + dataRowCount + " data rows";
                     throw new ProcessingException(subStepLine + " refers to " + reference.group() + ", which is"
-                            + " ambiguous as the parent step's data table has " + dataRowCount + " data rows; use <$"
-                            + name + "[n]> with n from 1 to " + dataRowCount);
+                            + " ambiguous as the parent step's " + table + "; use <$" + name + "[n]> with n from 1 to "
+                            + dataRowCount);
                 }
             } else {
                 String number = rowNumber.substring(1, rowNumber.length() - 1);
                 if (!number.matches("[1-9]\\d{0,8}") || Integer.parseInt(number) > dataRowCount) {
-                    throw new ProcessingException(subStepLine + " refers to " + reference.group() + "; write the row"
-                            + " number as a whole number from 1 to " + dataRowCount + ", without spaces");
+                    throw new ProcessingException(subStepLine + " refers to " + reference.group() + "; write the "
+                            + (dataTable.writtenVertically() ? "value column" : "row") + " number as a whole number"
+                            + " from 1 to " + dataRowCount + ", without spaces");
                 }
                 row = Integer.parseInt(number);
             }

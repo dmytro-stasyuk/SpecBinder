@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Composite steps now also work in Feature and Rule Backgrounds, and in Scenario Outlines, where Examples values in the parent step are passed on to its sub-steps.
 - Composite steps can now take up to five values, a data table counting as one, passed to the sub-steps through the new `QuadConsumer` and `PentaConsumer`. Six or more still fail the build.
 - A composite step's DocString is now passed to its composite method as `docString`. A sub-step ending with `"<$docString>"` takes it as its own DocString, and anywhere else in double quotes it is passed as a value. A sub-step's own DocString can hold references too, such as `Dear <$p1>` or `<$docString>`.
+- A step's data table can now be written vertically by opening its first row with `!` instead of `|`: the names run down the first column, and each further column is one record. A table with many fields stays narrow, and its step receives the same data as from the table written normally. In a composite step, `<$name[2]>` refers to the name's value in the second value column.
+- The execution report now shows a composite step as one step holding its sub-steps, each with its own spec line, the values it ran with, its status and timing. A failing sub-step carries the error and fails its composite step, and the steps after it are reported as skipped. A sub-step taking its composite step's data table or DocString shows it as a typed argument, like a step written with its own.
 
 ### Changed
 
@@ -20,12 +22,15 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - **⚠️ BREAKING:** Composite steps with three values now use SpecBinder's own `dev.specbinder.annotations.output.composite.TriConsumer` instead of the one from Apache Commons Lang, so test projects no longer need that library. Implementations that import the old type need their import changed.
 - Each sub-step call in a composite step's lambda now has a comment holding the sub-step line as written in the spec, like the calls of regular steps.
 - **⚠️ BREAKING:** The `@BeforeEach` method generated for a Background no longer takes a `TestInfo` it doesn't use. Like a scenario's test method, it declares `TestInfo` only when one of its steps needs it. Test classes that override or call `background(TestInfo testInfo)` or `ruleBackground(TestInfo testInfo)` need the parameter removed.
+- **⚠️ BREAKING:** A keyword synonym can no longer start with `!`, which now opens a vertical table. The build fails with a message asking for the synonym to be written without the `!`.
+- In the execution report, the DocString of a step that never ran now ends with a line break, like the DocString a step receives when it runs.
 
 ### Fixed
 
 - A sub-step's own data table is now passed to its step method; the generated call used to leave it out.
 - A `$` in a data table cell no longer breaks generation with the `LIST_OF_MAPS` and `CUCUMBER_DATA_TABLE` data table types.
 - A row class from the base class whose fields aren't all private, such as one with a `public final` field, is now used to build a step's data table. Such a class used to be passed over, and the generated test didn't compile.
+- In the execution report, the steps after a composite step now carry their own spec lines. They used to show the text of the step before them, and the composite step listed the test's internal state among its arguments.
 
 ### Removed
 

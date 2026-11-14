@@ -287,7 +287,8 @@ and from getting-started example-8 onward the spec files sit next to their marke
 <tr><td>│ &ensp; ├── <a href="examples/going-further/example-4/README.md">Execution Reporter</a></td><td>Scenario-level JSON reports of test runs</td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/going-further/example-8/README.md">Playwright Trace per Step</a></td><td>One Playwright trace per Gherkin step, recorded onto the execution report</td></tr>
 <tr><td>│ &ensp; ├── <a href="examples/going-further/example-9/README.md">One Spec, Multiple Implementations</a></td><td>One business spec tested through direct Java, Spring beans and a browser</td></tr>
-<tr><td>│ &ensp; └── <a href="examples/going-further/example-10/README.md">Localization</a></td><td>Shared keyword language, per-file language headers and custom keyword synonyms</td></tr>
+<tr><td>│ &ensp; ├── <a href="examples/going-further/example-10/README.md">Localization</a></td><td>Shared keyword language, per-file language headers and custom keyword synonyms</td></tr>
+<tr><td>│ &ensp; └── <a href="examples/going-further/example-11/README.md">Composite Steps</a></td><td>One business action in the spec, carried out by the sub-steps written under it</td></tr>
 <tr><td>│</td><td></td></tr>
 <tr><td colspan="2">└── <code>migrating-from-cucumber/</code> — <em>Moving an existing Cucumber suite to SpecBinder, keeping its <code>.feature</code> files</em></td></tr>
 <tr><td>&ensp; &ensp; ├── <a href="examples/migrating-from-cucumber/example-1/README.md">Cucumber DataTable</a></td><td>Cucumber DataTable parameters with asList(...) POJO mapping (CUCUMBER_DATA_TABLE)</td></tr>
@@ -1571,6 +1572,81 @@ protected List<Map<String, String>> createListOfMaps(
 </tr>
 </table>
 
+---
+
+#### Vertical tables (`!`)
+
+A step's data table with many fields can be written vertically by opening its first row with `!` instead of `|`; the
+other rows are written as usual. The names then run down the first column, and each further column is one record.
+
+<table>
+  <tr>
+    <th align="left">Gherkin</th>
+    <th align="left">Generated code</th>
+  </tr>
+  <tr>
+    <td valign="top"><pre><code class="language-gherkin" data-lang="gherkin">
+
+```gherkin
+Given the following customers:
+  ! name  | Alice             | Bob             |
+  | email | alice@example.com | bob@example.com |
+  | tier  | gold              | silver          |
+```
+
+</code></pre></td>
+<td valign="top"><pre><code class="language-java" data-lang="java">
+
+```java
+// Step method signature - as for the table written normally
+public void theFollowingCustomers(List<CustomersParam> customers) {
+    Assertions.fail("Step is not yet implemented");
+}
+
+// Call site - one record per value column
+/*
+ * Given the following customers:
+ *   ! name  | Alice             | Bob             |
+ *   | email | alice@example.com | bob@example.com |
+ *   | tier  | gold              | silver          |
+ */
+theFollowingCustomers(
+        List.of(
+                new CustomersParam(
+                        "Alice",
+                        "alice@example.com",
+                        "gold"
+                ),
+                new CustomersParam(
+                        "Bob",
+                        "bob@example.com",
+                        "silver"
+                )
+        ));
+```
+
+</code></pre></td>
+</tr>
+</table>
+
+* **Read from the spec alone:** only a first row opening with `!` makes a table vertical, so how a table is read never
+  depends on the step code; a table whose first row opens with `|` is always read normally.
+* **The same data as written normally:** the step gets a List of records in the order of their columns, with the same
+  `Param` type, field types and matching of your own row types as from the table written normally. With
+  `LIST_OF_MAPS` and `CUCUMBER_DATA_TABLE` the text block holds the table in the normal layout, so `asMaps()` gives
+  one map per value column without a `transpose()`.
+* **Shown as written:** the comment above the step call shows a vertical table with its `!`, in every data table mode.
+* **Layout doesn't change the scenario:** turning a table from one layout to the other keeps the scenario's
+  `@ScenarioHash`, so results recorded for it stay current.
+* **Where it can start:** a line is a vertical table's first row only when it starts with `!`, ends with `|` and comes
+  right after a step. A `!` row further down a table fails the build with a parse error, and description and doc
+  string lines starting with `!` stay text.
+* **Not for `Examples` tables:** an `Examples` table is always written normally. Under an `Examples` line, a line
+  starting with `!` is part of the description, and the row below it is the header.
+* **Composite steps:** a sub-step refers to a value of its parent step's vertical table as `<$name>` when the table has
+  one value column, and as `<$name[2]>` for the second value column otherwise. A sub-step's own table can be vertical
+  too, with references in its value cells but not in its name cells.
+
 </details>
 
 <details>
@@ -1772,8 +1848,8 @@ public class CartFeatureTest extends CartFeature {
 * **Names keep the spec's words:** `@DisplayName("Story: Checkout")`, while step method names leave the synonym out
   (`Assuming a cart` → `aCart()`).
 * **Entries that fail the build:** an entry without synonyms, the same synonym for two keywords, two entries for one
-  keyword on a class, a synonym that is blank, starts or ends with a space or contains `:`, and a synonym that takes
-  over the last word a keyword has.
+  keyword on a class, a synonym that is blank, starts or ends with a space, contains `:` or starts with `!` (which opens
+  a vertical table), and a synonym that takes over the last word a keyword has.
 
 </details>
 

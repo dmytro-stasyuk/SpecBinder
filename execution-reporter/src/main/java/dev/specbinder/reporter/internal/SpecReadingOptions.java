@@ -15,7 +15,8 @@ import java.util.List;
 /**
  * The generator options that decide how the spec behind a SpecBinder-generated test class is read: the
  * languages whose keywords a spec without a {@code # language:} header may use, a team's own synonyms for
- * keywords, and the text stripped from the spec before it is parsed.
+ * keywords, the text stripped from the spec before it is parsed, and whether {@code *} steps are the sub-steps
+ * of a composite step.
  *
  * <p>They are read from the {@link Gherkin2JUnitOptions} declared on the generated class's superclasses —
  * the {@code @Gherkin2JUnit} marker class and the classes it extends — and merged the way the annotation
@@ -33,19 +34,22 @@ import java.util.List;
  * @param keywordSynonyms      a team's own words for keywords
  * @param stripPatterns        regexes whose every match is stripped from the spec before it is parsed
  * @param stripBetweenPatterns the two ends of each span stripped from the spec before it is parsed
+ * @param enableCompositeSteps whether a step followed by {@code *} steps is a composite step holding them as its
+ *                             sub-steps, rather than the {@code *} steps being steps of their own
  */
 public record SpecReadingOptions(
         KeywordLanguage[] keywordLanguages,
         KeywordSynonyms keywordSynonyms,
         String[] stripPatterns,
-        StripBetweenPattern[] stripBetweenPatterns) {
+        StripBetweenPattern[] stripBetweenPatterns,
+        boolean enableCompositeSteps) {
 
     private static final KeywordLanguage[] DEFAULT_KEYWORD_LANGUAGES = {KeywordLanguage.ENGLISH};
 
-    /** The options of a spec configured with none: English keywords only, nothing stripped. */
+    /** The options of a spec configured with none: English keywords only, nothing stripped, no composite steps. */
     public static final SpecReadingOptions DEFAULTS =
             new SpecReadingOptions(DEFAULT_KEYWORD_LANGUAGES, KeywordSynonyms.NONE, new String[0],
-                    new StripBetweenPattern[0]);
+                    new StripBetweenPattern[0], false);
 
     /**
      * Returns the options the spec behind a test class was generated with. The generated class is the first
@@ -70,6 +74,7 @@ public record SpecReadingOptions(
         List<List<KeywordSynonyms.Entry>> declaredKeywordSynonyms = new ArrayList<>();
         String[] stripPatterns = DEFAULTS.stripPatterns();
         StripBetweenPattern[] stripBetweenPatterns = DEFAULTS.stripBetweenPatterns();
+        boolean enableCompositeSteps = DEFAULTS.enableCompositeSteps();
 
         // Base class first, so that what a subclass sets replaces what its base class sets
         for (int i = declaredOptions.size() - 1; i >= 0; i--) {
@@ -84,9 +89,12 @@ public record SpecReadingOptions(
             if (options.stripBetweenPatterns().length > 0) {
                 stripBetweenPatterns = toStripBetweenPatterns(options.stripBetweenPatterns());
             }
+            if (options.enableCompositeSteps()) {
+                enableCompositeSteps = true;
+            }
         }
-        return new SpecReadingOptions(
-                keywordLanguages, keywordSynonymsOf(declaredKeywordSynonyms), stripPatterns, stripBetweenPatterns);
+        return new SpecReadingOptions(keywordLanguages, keywordSynonymsOf(declaredKeywordSynonyms), stripPatterns,
+                stripBetweenPatterns, enableCompositeSteps);
     }
 
     /**

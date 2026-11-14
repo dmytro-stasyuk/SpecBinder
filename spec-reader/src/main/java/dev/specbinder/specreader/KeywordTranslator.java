@@ -44,27 +44,6 @@ final class KeywordTranslator {
         }
     }
 
-    /**
-     * The result of rewriting a spec.
-     *
-     * @param originalLines    the lines of the spec as written
-     * @param translatedLines  the lines of the spec as the parser reads them
-     * @param originalKeywords the keyword each rewritten line started with, as the spec spells it, by line index
-     * @param headerLanguage   the language code of the spec's {@code # language:} header, or null when it has none
-     */
-    record Translation(String[] originalLines, String[] translatedLines, Map<Integer, String> originalKeywords,
-                       String headerLanguage) {
-
-        String content() {
-            return String.join("\n", translatedLines);
-        }
-
-        boolean isChanged(int lineIndex) {
-            return lineIndex >= 0 && lineIndex < originalLines.length
-                    && !originalLines[lineIndex].equals(translatedLines[lineIndex]);
-        }
-    }
-
     private final List<Keyword> keywords;
     private final List<Keyword> maskedKeywords;
     private final String headerLanguage;
@@ -145,7 +124,7 @@ final class KeywordTranslator {
             }
         }
 
-        return new Translation(originalLines, translatedLines, originalKeywords, headerLanguage);
+        return new Translation(originalLines, translatedLines, originalKeywords, headerLanguage, Set.of());
     }
 
     private static Optional<Keyword> firstStartingLine(List<Keyword> keywords, String trimmedLine) {

@@ -15,10 +15,13 @@ import java.util.List;
  * (because an earlier step failed) carry {@link Status#SKIPPED} with no timing
  * fields. Background steps and scenario steps live in separate arrays on the
  * enclosing scenario, so the per-step record carries no kind discriminator.
+ * <p>
+ * A composite step — a step followed by {@code *} sub-steps, with composite steps turned
+ * on — holds one record per sub-step in {@code subSteps}, in spec order.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"methodName", "text", "arguments", "status", "startedAt", "durationMs",
-        "publishedReporterEntries", "error"})
+        "publishedReporterEntries", "error", "subSteps"})
 public class StepReport {
 
     private String methodName;
@@ -31,6 +34,8 @@ public class StepReport {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<PublishedReporterEntry> publishedReporterEntries;
     private ErrorInfo error;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<StepReport> subSteps;
 
     public StepReport() {
     }
@@ -126,5 +131,14 @@ public class StepReport {
 
     public void setError(ErrorInfo error) {
         this.error = error;
+    }
+
+    /** The sub-steps of a composite step, in spec order; {@code null} for a regular step. */
+    public List<StepReport> getSubSteps() {
+        return subSteps;
+    }
+
+    public void setSubSteps(List<StepReport> subSteps) {
+        this.subSteps = subSteps;
     }
 }

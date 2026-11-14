@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.specbinder.annotations.output.Description;
 import dev.specbinder.annotations.output.ScenarioHash;
 import dev.specbinder.annotations.output.SourceFilePath;
+import dev.specbinder.annotations.output.composite.TriConsumer;
 import dev.specbinder.reporter.internal.*;
-import dev.specbinder.reporter.internal.SourceFeatureReader.ParsedFeature;
-import dev.specbinder.reporter.internal.SourceFeatureReader.ParsedRule;
-import dev.specbinder.reporter.internal.SourceFeatureReader.ParsedScenario;
-import dev.specbinder.reporter.internal.SourceFeatureReader.StepBlockArgument;
+import dev.specbinder.reporter.internal.SourceFeatureReader.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.TestReporter;
@@ -23,7 +21,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -394,7 +394,7 @@ public class SpecBinderReporter implements
         }
         ParsedScenario match = index.matchByHash(wantHash);
         if (match != null) {
-            buffer.stampText(match.backgroundStepLines(), match.scenarioStepLines());
+            buffer.stampText(match);
         }
     }
 
@@ -826,30 +826,73 @@ public class SpecBinderReporter implements
         if (node.getType() == ScenarioNode.Kind.SCENARIO_OUTLINE) {
             if (node.getExamples() != null) {
                 for (ExampleReport row : node.getExamples()) {
-                    stampSteps(row.getBackgroundSteps(), parsed.backgroundStepLines());
-                    stampSteps(row.getSteps(), parsed.scenarioStepLines());
-                    enrichArguments(row.getBackgroundSteps(), parsed.backgroundBlockArgs());
-                    enrichArguments(row.getSteps(), parsed.scenarioBlockArgs());
+                    stampSteps(row.getBackgroundSteps(), parsed.backgroundStepLines(), parsed.backgroundSubSteps());
+                    stampSteps(row.getSteps(), parsed.scenarioStepLines(), parsed.scenarioSubSteps());
+                    enrichArguments(row.getBackgroundSteps(), parsed.backgroundBlockArgs(),
+                            parsed.backgroundSubSteps());
+                    enrichArguments(row.getSteps(), parsed.scenarioBlockArgs(), parsed.scenarioSubSteps());
                 }
                 stampOutlineTemplateSteps(node, parsed);
             }
         } else {
-            stampSteps(node.getBackgroundSteps(), parsed.backgroundStepLines());
-            stampSteps(node.getSteps(), parsed.scenarioStepLines());
-            enrichArguments(node.getBackgroundSteps(), parsed.backgroundBlockArgs());
-            enrichArguments(node.getSteps(), parsed.scenarioBlockArgs());
-            synthesizeSkippedArguments(node.getBackgroundSteps(), parsed.backgroundBlockArgs());
-            synthesizeSkippedArguments(node.getSteps(), parsed.scenarioBlockArgs());
+            stampSteps(node.getBackgroundSteps(), parsed.backgroundStepLines(), parsed.backgroundSubSteps());
+            stampSteps(node.getSteps(), parsed.scenarioStepLines(), parsed.scenarioSubSteps());
+            enrichArguments(node.getBackgroundSteps(), parsed.backgroundBlockArgs(), parsed.backgroundSubSteps());
+            enrichArguments(node.getSteps(), parsed.scenarioBlockArgs(), parsed.scenarioSubSteps());
+            synthesizeSkippedArguments(node.getBackgroundSteps(), parsed.backgroundBlockArgs(),
+                    parsed.backgroundSubSteps());
+            synthesizeSkippedArguments(node.getSteps(), parsed.scenarioBlockArgs(), parsed.scenarioSubSteps());
         }
     }
 
-    private static void stampSteps(List<StepReport> steps, List<String> stepLines) {
+    /**
+     * Stamps the spec lines onto the steps positionally, and a composite step's sub-step lines
+     * onto its sub-steps. Used both when a scenario starts, so boundary listeners can read real
+     * step text, and in {@code afterAll}; a shorter list leaves the surplus steps' text {@code null}.
+     */
+    private static void stampSteps(List<StepReport> steps, List<String> stepLines,
+                                   List<List<ParsedSubStep>> subStepLists) {
         if (steps == null || stepLines == null) {
             return;
         }
         int bound = Math.min(steps.size(), stepLines.size());
         for (int i = 0; i < bound; i++) {
             steps.get(i).setText(stepLines.get(i));
+            List<StepReport> subSteps = steps.get(i).getSubSteps();
+            if (subSteps != null && subStepLists != null && i < subStepLists.size()) {
+                List<ParsedSubStep> parsedSubSteps = subStepLists.get(i);
+                int subBound = Math.min(subSteps.size(), parsedSubSteps.size());
+                for (int j = 0; j < subBound; j++) {
+                    subSteps.get(j).setText(parsedSubSteps.get(j).line());
+                }
+            }
+        }
+    }
+
+    /**
+     * Runs {@code action} on each step paired with its spec block argument, then on each of a
+     * composite step's sub-steps paired with the block {@code subStepBlockArg} picks for it,
+     * positionally like {@link #stampSteps}.
+     */
+    private static void forEachStepAndSubStep(List<StepReport> steps, List<StepBlockArgument> blockArgs,
+                                              List<List<ParsedSubStep>> subStepLists,
+                                              Function<ParsedSubStep, StepBlockArgument> subStepBlockArg,
+                                              BiConsumer<StepReport, StepBlockArgument> action) {
+        if (steps == null || blockArgs == null) {
+            return;
+        }
+        int bound = Math.min(steps.size(), blockArgs.size());
+        for (int i = 0; i < bound; i++) {
+            StepReport step = steps.get(i);
+            action.accept(step, blockArgs.get(i));
+            List<StepReport> subSteps = step.getSubSteps();
+            if (subSteps != null && subStepLists != null && i < subStepLists.size()) {
+                List<ParsedSubStep> parsedSubSteps = subStepLists.get(i);
+                int subBound = Math.min(subSteps.size(), parsedSubSteps.size());
+                for (int j = 0; j < subBound; j++) {
+                    action.accept(subSteps.get(j), subStepBlockArg.apply(parsedSubSteps.get(j)));
+                }
+            }
         }
     }
 
@@ -875,19 +918,38 @@ public class SpecBinderReporter implements
             return;
         }
         List<StepBlockArgument> blockArgs = parsed.scenarioBlockArgs();
+        List<List<ParsedSubStep>> subStepLists = parsed.scenarioSubSteps();
         int bound = Math.min(rowSteps.size(), stepLines.size());
         List<StepReport> templateSteps = new ArrayList<>(bound);
         for (int i = 0; i < bound; i++) {
-            StepReport templateStep = StepReport.template(rowSteps.get(i).getMethodName(), stepLines.get(i));
-            if (blockArgs != null && i < blockArgs.size()) {
-                Object templateArg = buildTemplateBlockArgument(blockArgs.get(i));
-                if (templateArg != null) {
-                    templateStep.setArguments(new ArrayList<>(List.of(templateArg)));
+            StepReport rowStep = rowSteps.get(i);
+            StepBlockArgument blockArg = blockArgs != null && i < blockArgs.size() ? blockArgs.get(i) : null;
+            StepReport templateStep = templateStepOf(rowStep, stepLines.get(i), blockArg);
+            if (rowStep.getSubSteps() != null && subStepLists != null && i < subStepLists.size()) {
+                List<ParsedSubStep> parsedSubSteps = subStepLists.get(i);
+                int subBound = Math.min(rowStep.getSubSteps().size(), parsedSubSteps.size());
+                List<StepReport> templateSubSteps = new ArrayList<>(subBound);
+                for (int j = 0; j < subBound; j++) {
+                    ParsedSubStep parsedSubStep = parsedSubSteps.get(j);
+                    templateSubSteps.add(templateStepOf(
+                            rowStep.getSubSteps().get(j), parsedSubStep.line(), parsedSubStep.blockArg()));
                 }
+                templateStep.setSubSteps(templateSubSteps);
             }
             templateSteps.add(templateStep);
         }
         node.setTemplateSteps(templateSteps);
+    }
+
+    private static StepReport templateStepOf(StepReport rowStep, String line, StepBlockArgument blockArg) {
+        StepReport templateStep = StepReport.template(rowStep.getMethodName(), line);
+        if (blockArg != null) {
+            Object templateArg = buildTemplateBlockArgument(blockArg);
+            if (templateArg != null) {
+                templateStep.setArguments(new ArrayList<>(List.of(templateArg)));
+            }
+        }
+        return templateStep;
     }
 
     /**
@@ -917,33 +979,32 @@ public class SpecBinderReporter implements
      * For DataTables built from row POJOs, the wrapper also surfaces a {@code columns} array
      * that pairs each spec-verbatim header with the POJO field name used as the row's JSON key.
      */
-    private static void enrichArguments(List<StepReport> steps, List<StepBlockArgument> blockArgs) {
-        if (steps == null || blockArgs == null) {
+    private static void enrichArguments(List<StepReport> steps, List<StepBlockArgument> blockArgs,
+                                        List<List<ParsedSubStep>> subStepLists) {
+        // a sub-step that passes on its composite step's data table or DocString has its argument typed as that block
+        forEachStepAndSubStep(steps, blockArgs, subStepLists, ParsedSubStep::receivedBlockArg,
+                SpecBinderReporter::enrichStepArguments);
+    }
+
+    private static void enrichStepArguments(StepReport step, StepBlockArgument blockArg) {
+        List<Object> args = step.getArguments();
+        if (args == null || args.isEmpty() || alreadyEnriched(args)) {
             return;
         }
-        int bound = Math.min(steps.size(), blockArgs.size());
-        for (int i = 0; i < bound; i++) {
-            StepReport step = steps.get(i);
-            List<Object> args = step.getArguments();
-            if (args == null || args.isEmpty() || alreadyEnriched(args)) {
-                continue;
+        List<Object> wrapped = new ArrayList<>(args.size());
+        int lastIndex = args.size() - 1;
+        for (int j = 0; j < args.size(); j++) {
+            Object value = args.get(j);
+            boolean isLast = (j == lastIndex);
+            if (isLast && blockArg.kind() == StepBlockArgument.BlockKind.DOC_STRING) {
+                wrapped.add(buildDocStringArg(value, blockArg.docStringMediaType()));
+            } else if (isLast && blockArg.kind() == StepBlockArgument.BlockKind.DATA_TABLE) {
+                wrapped.add(buildDataTableArg(value, blockArg.dataTableHeaders()));
+            } else {
+                wrapped.add(buildSimpleArg(value));
             }
-            StepBlockArgument blockArg = blockArgs.get(i);
-            List<Object> wrapped = new ArrayList<>(args.size());
-            int lastIndex = args.size() - 1;
-            for (int j = 0; j < args.size(); j++) {
-                Object value = args.get(j);
-                boolean isLast = (j == lastIndex);
-                if (isLast && blockArg.kind() == StepBlockArgument.BlockKind.DOC_STRING) {
-                    wrapped.add(buildDocStringArg(value, blockArg.docStringMediaType()));
-                } else if (isLast && blockArg.kind() == StepBlockArgument.BlockKind.DATA_TABLE) {
-                    wrapped.add(buildDataTableArg(value, blockArg.dataTableHeaders()));
-                } else {
-                    wrapped.add(buildSimpleArg(value));
-                }
-            }
-            step.setArguments(wrapped);
         }
+        step.setArguments(wrapped);
     }
 
     /**
@@ -957,37 +1018,46 @@ public class SpecBinderReporter implements
      * Outline rows are intentionally excluded by the caller — their spec text carries
      * {@code <placeholder>} tokens rather than the per-example values, so synthesis would
      * be misleading. Only invoked from the non-outline branch of {@link #stampMatchedScenario}.
+     * <p>
+     * A composite step's sub-steps that never ran get theirs the same way, so a reference such
+     * as {@code "<$p1>"} shows as written in the spec.
      */
-    private static void synthesizeSkippedArguments(List<StepReport> steps, List<StepBlockArgument> blockArgs) {
-        if (steps == null || blockArgs == null) {
+    private static void synthesizeSkippedArguments(List<StepReport> steps, List<StepBlockArgument> blockArgs,
+                                                   List<List<ParsedSubStep>> subStepLists) {
+        forEachStepAndSubStep(steps, blockArgs, subStepLists, ParsedSubStep::blockArg,
+                SpecBinderReporter::synthesizeStepArguments);
+    }
+
+    private static void synthesizeStepArguments(StepReport step, StepBlockArgument block) {
+        List<Object> existing = step.getArguments();
+        if (existing != null && !existing.isEmpty()) {
             return;
         }
-        int bound = Math.min(steps.size(), blockArgs.size());
-        for (int i = 0; i < bound; i++) {
-            StepReport step = steps.get(i);
-            List<Object> existing = step.getArguments();
-            if (existing != null && !existing.isEmpty()) {
-                continue;
-            }
-            List<Object> synthesized = new ArrayList<>();
-            String text = step.getText();
-            if (text != null) {
-                Matcher m = INLINE_PARAM_PATTERN.matcher(text);
-                while (m.find()) {
-                    synthesized.add(buildSimpleArg(m.group("parameterValue")));
-                }
-            }
-            StepBlockArgument block = blockArgs.get(i);
-            if (block.kind() == StepBlockArgument.BlockKind.DOC_STRING) {
-                synthesized.add(buildDocStringArg(block.docStringValue(), block.docStringMediaType()));
-            } else if (block.kind() == StepBlockArgument.BlockKind.DATA_TABLE) {
-                synthesized.add(buildDataTableArgFromSpec(
-                        block.dataTableHeaders(), block.dataTableBodyRows()));
-            }
-            if (!synthesized.isEmpty()) {
-                step.setArguments(synthesized);
+        List<Object> synthesized = new ArrayList<>();
+        String text = step.getText();
+        if (text != null) {
+            Matcher m = INLINE_PARAM_PATTERN.matcher(text);
+            while (m.find()) {
+                synthesized.add(buildSimpleArg(m.group("parameterValue")));
             }
         }
+        if (block.kind() == StepBlockArgument.BlockKind.DOC_STRING) {
+            synthesized.add(buildDocStringArg(docStringAsPassed(block.docStringValue()), block.docStringMediaType()));
+        } else if (block.kind() == StepBlockArgument.BlockKind.DATA_TABLE) {
+            synthesized.add(buildDataTableArgFromSpec(
+                    block.dataTableHeaders(), block.dataTableBodyRows()));
+        }
+        if (!synthesized.isEmpty()) {
+            step.setArguments(synthesized);
+        }
+    }
+
+    /**
+     * A DocString's content as a step method receives it: the generated text block ends its
+     * last line with a line break, which the parsed content leaves out.
+     */
+    private static String docStringAsPassed(String content) {
+        return content == null || content.isEmpty() ? content : content + "\n";
     }
 
     /**
@@ -1332,13 +1402,18 @@ public class SpecBinderReporter implements
      * {@link StepReport}s — one for background steps, one for scenario steps —
      * plus a per-method-name queue of (list, index) cursors used to advance as
      * the instrumented overrides fire.
+     * <p>
+     * A composite step's report holds pre-populated reports for its sub-steps, with cursors of
+     * their own. The steps in flight are kept on a stack: a call made while a composite step runs
+     * is matched against its sub-steps only, so a sub-step's method that is also called as a later
+     * step leaves that step's report alone, and a composite method running its sub-steps again has
+     * the extra run ignored. A call made inside a regular step's method is part of that step.
      */
     static final class ScenarioStepBuffer {
         private final List<StepReport> backgroundSteps;
         private final List<StepReport> scenarioSteps;
         private final Map<String, Deque<Cursor>> cursorsByMethod;
-        private Cursor current;
-        private long currentStepStartNanos;
+        private final Deque<Frame> inFlight = new ArrayDeque<>();
         private final Instant scenarioStartedAt = Instant.now();
         private final long scenarioStartNanos = System.nanoTime();
         private long scenarioDurationMs = 0L;
@@ -1356,37 +1431,52 @@ public class SpecBinderReporter implements
             List<StepReport> bg = new ArrayList<>(backgroundCalls.size());
             List<StepReport> sc = new ArrayList<>(scenarioCalls.size());
             Map<String, Deque<Cursor>> cursors = new HashMap<>();
-            int i = 0;
-            for (StepCallSiteScanner.Call call : backgroundCalls) {
-                bg.add(StepReport.pending(call.methodName()));
-                cursors.computeIfAbsent(call.methodName(), k -> new ArrayDeque<>())
-                        .addLast(new Cursor(bg, i++));
-            }
-            i = 0;
-            for (StepCallSiteScanner.Call call : scenarioCalls) {
-                sc.add(StepReport.pending(call.methodName()));
-                cursors.computeIfAbsent(call.methodName(), k -> new ArrayDeque<>())
-                        .addLast(new Cursor(sc, i++));
-            }
+            addPendingSteps(backgroundCalls, bg, cursors);
+            addPendingSteps(scenarioCalls, sc, cursors);
             return new ScenarioStepBuffer(bg, sc, cursors);
         }
 
+        private static void addPendingSteps(List<StepCallSiteScanner.Call> calls, List<StepReport> steps,
+                                            Map<String, Deque<Cursor>> cursors) {
+            for (StepCallSiteScanner.Call call : calls) {
+                StepReport step = StepReport.pending(call.methodName());
+                Map<String, Deque<Cursor>> subStepCursors = null;
+                if (call.subCalls() != null) {
+                    List<StepReport> subSteps = new ArrayList<>(call.subCalls().size());
+                    subStepCursors = new HashMap<>();
+                    addPendingSteps(call.subCalls(), subSteps, subStepCursors);
+                    step.setSubSteps(subSteps);
+                }
+                cursors.computeIfAbsent(call.methodName(), k -> new ArrayDeque<>())
+                        .addLast(new Cursor(steps, steps.size(), subStepCursors));
+                steps.add(step);
+            }
+        }
+
         void started(String methodName, Object[] args) {
-            Deque<Cursor> queue = cursorsByMethod.get(methodName);
-            if (queue == null || queue.isEmpty()) {
+            Frame parent = inFlight.peek();
+            Map<String, Deque<Cursor>> candidates;
+            if (parent == null) {
+                candidates = cursorsByMethod;
+            } else if (parent.cursor != null && parent.cursor.isComposite()) {
+                candidates = parent.cursor.subStepCursors();
+            } else {
+                candidates = Map.of();
+            }
+            Deque<Cursor> queue = candidates.get(methodName);
+            Cursor cursor = queue == null ? null : queue.pollFirst();
+            inFlight.push(new Frame(cursor, System.nanoTime()));
+            if (cursor == null) {
                 LOGGER.fine(() -> "SpecBinder reporter: unexpected step call to '" + methodName
                         + "' (not in pre-scanned plan); skipping.");
-                current = null;
                 return;
             }
-            current = queue.pollFirst();
-            StepReport step = current.step();
+            StepReport step = cursor.step();
             List<Object> reportableArgs = filterOutResolvedFrameworkArgs(args);
             if (!reportableArgs.isEmpty()) {
                 step.setArguments(reportableArgs);
             }
             step.setStartedAt(Instant.now());
-            currentStepStartNanos = System.nanoTime();
         }
 
         /**
@@ -1394,7 +1484,8 @@ public class SpecBinderReporter implements
          * Jackson never tries to serialize their internals — JUnit's
          * {@code DefaultTestReporter} carries an {@code Optional<ExtensionContext>} that
          * the default ObjectMapper cannot handle, and it would not be meaningful
-         * diagnostic content anyway.
+         * diagnostic content anyway. A composite step's sub-step lambdas are dropped too:
+         * they are what the step runs, not values it was written with.
          */
         private static List<Object> filterOutResolvedFrameworkArgs(Object[] args) {
             if (args == null || args.length == 0) {
@@ -1402,7 +1493,7 @@ public class SpecBinderReporter implements
             }
             List<Object> kept = new ArrayList<>(args.length);
             for (Object arg : args) {
-                if (arg instanceof TestReporter) {
+                if (arg instanceof TestReporter || isSubStepLambdas(arg)) {
                     continue;
                 }
                 kept.add(arg);
@@ -1411,71 +1502,109 @@ public class SpecBinderReporter implements
         }
 
         /**
+         * Whether {@code arg} is the lambdas a composite step's method runs its sub-steps with: an
+         * array of {@link Runnable}, of a {@code java.util.function} interface such as
+         * {@code Consumer}, or of SpecBinder's {@link TriConsumer} and its larger siblings.
+         */
+        private static boolean isSubStepLambdas(Object arg) {
+            if (arg == null || !arg.getClass().isArray()) {
+                return false;
+            }
+            Class<?> componentType = arg.getClass().getComponentType();
+            String packageName = componentType.getPackageName();
+            return componentType == Runnable.class
+                    || "java.util.function".equals(packageName)
+                    || TriConsumer.class.getPackageName().equals(packageName);
+        }
+
+        /**
          * The method name of the step currently in flight, or {@code null} when no step is
          * active (e.g. an unexpected call not in the pre-scanned plan). Read before
-         * {@link #passed()} / {@link #failed(Throwable)} clears {@code current}.
+         * {@link #passed()} / {@link #failed(Throwable)} finishes it.
          */
         String currentMethodName() {
-            return current == null ? null : current.step().getMethodName();
+            Frame frame = inFlight.peek();
+            return frame == null || frame.cursor == null ? null : frame.cursor.step().getMethodName();
         }
 
         /**
          * The verbatim Gherkin line of the step currently in flight, if it was stamped by
-         * {@link #stampText(List, List)}; {@code null} otherwise. Read before
-         * {@link #passed()} / {@link #failed(Throwable)} clears {@code current}.
+         * {@link #stampText(ParsedScenario)}; {@code null} otherwise. Read before
+         * {@link #passed()} / {@link #failed(Throwable)} finishes it.
          */
         String currentText() {
-            return current == null ? null : current.step().getText();
+            Frame frame = inFlight.peek();
+            return frame == null || frame.cursor == null ? null : frame.cursor.step().getText();
         }
 
         /**
          * Assigns the spec's background and scenario step lines onto the pre-allocated
-         * {@link StepReport}s positionally, so a boundary listener can read real step text as
-         * each step fires. Idempotent with the later {@code afterAll} stamping (same source,
-         * same values); a shorter list simply leaves the surplus reports' text {@code null}.
+         * {@link StepReport}s positionally, sub-steps included, so a boundary listener can read
+         * real step text as each step fires. Idempotent with the later {@code afterAll} stamping
+         * (same source, same values).
          */
-        void stampText(List<String> backgroundLines, List<String> scenarioLines) {
-            stampInto(backgroundSteps, backgroundLines);
-            stampInto(scenarioSteps, scenarioLines);
+        void stampText(ParsedScenario scenario) {
+            stampSteps(backgroundSteps, scenario.backgroundStepLines(), scenario.backgroundSubSteps());
+            stampSteps(scenarioSteps, scenario.scenarioStepLines(), scenario.scenarioSubSteps());
         }
 
-        private static void stampInto(List<StepReport> steps, List<String> lines) {
-            if (steps == null || lines == null) {
-                return;
-            }
-            int bound = Math.min(steps.size(), lines.size());
-            for (int i = 0; i < bound; i++) {
-                steps.get(i).setText(lines.get(i));
-            }
-        }
-
+        /** Attaches the entry to the innermost step in flight that the report has an entry for. */
         void appendEntryToCurrentStep(Map<String, String> values, Instant publishedAt) {
-            if (current == null) {
-                return;
+            for (Frame frame : inFlight) {
+                if (frame.cursor != null) {
+                    frame.cursor.step().appendPublishedReporterEntry(
+                            new PublishedReporterEntry(publishedAt, values));
+                    return;
+                }
             }
-            current.step().appendPublishedReporterEntry(
-                    new PublishedReporterEntry(publishedAt, values));
         }
 
         void passed() {
-            if (current == null) {
+            Frame frame = inFlight.poll();
+            if (frame == null || frame.cursor == null) {
                 return;
             }
-            StepReport step = current.step();
-            step.setStatus(Status.PASSED);
-            step.setDurationMs(Duration.ofNanos(System.nanoTime() - currentStepStartNanos).toMillis());
-            current = null;
+            StepReport step = frame.cursor.step();
+            step.setStatus(worstSubStepFailureOr(Status.PASSED, step));
+            step.setDurationMs(Duration.ofNanos(System.nanoTime() - frame.startNanos).toMillis());
         }
 
         void failed(Throwable throwable) {
-            if (current == null) {
+            Frame frame = inFlight.poll();
+            if (frame == null || frame.cursor == null) {
                 return;
             }
-            StepReport step = current.step();
+            StepReport step = frame.cursor.step();
             step.setStatus(statusFor(throwable));
-            step.setDurationMs(Duration.ofNanos(System.nanoTime() - currentStepStartNanos).toMillis());
-            step.setError(ErrorInfo.from(throwable));
-            current = null;
+            step.setDurationMs(Duration.ofNanos(System.nanoTime() - frame.startNanos).toMillis());
+            // An error a sub-step threw, let through by its composite step, is recorded on the sub-step only
+            if (throwable != frame.subStepError) {
+                step.setError(ErrorInfo.from(throwable));
+            }
+            Frame parent = inFlight.peek();
+            if (parent != null) {
+                parent.subStepError = throwable;
+            }
+        }
+
+        /**
+         * A composite step whose method finished normally still fails, or aborts, when one of its
+         * sub-steps did; sub-steps that never ran leave its status as it is.
+         */
+        private static Status worstSubStepFailureOr(Status status, StepReport step) {
+            if (step.getSubSteps() == null) {
+                return status;
+            }
+            Status worst = status;
+            for (StepReport subStep : step.getSubSteps()) {
+                if (subStep.getStatus() == Status.FAILED) {
+                    return Status.FAILED;
+                }
+                if (subStep.getStatus() == Status.ABORTED) {
+                    worst = Status.ABORTED;
+                }
+            }
+            return worst;
         }
 
         private static Status statusFor(Throwable throwable) {
@@ -1503,9 +1632,32 @@ public class SpecBinderReporter implements
             return scenarioDurationMs;
         }
 
-        private record Cursor(List<StepReport> list, int index) {
+        /**
+         * Where a step's report sits, and for a composite step the cursors of its sub-steps'
+         * reports; {@code subStepCursors} is {@code null} for a regular step.
+         */
+        private record Cursor(List<StepReport> list, int index, Map<String, Deque<Cursor>> subStepCursors) {
             StepReport step() {
                 return list.get(index);
+            }
+
+            boolean isComposite() {
+                return subStepCursors != null;
+            }
+        }
+
+        /**
+         * A step call in flight: the cursor of its report, or {@code null} for a call the report
+         * has no entry for, and the last error one of its sub-steps threw.
+         */
+        private static final class Frame {
+            private final Cursor cursor;
+            private final long startNanos;
+            private Throwable subStepError;
+
+            private Frame(Cursor cursor, long startNanos) {
+                this.cursor = cursor;
+                this.startNanos = startNanos;
             }
         }
     }

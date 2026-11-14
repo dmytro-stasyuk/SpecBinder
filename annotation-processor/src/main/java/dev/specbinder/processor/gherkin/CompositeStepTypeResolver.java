@@ -24,12 +24,13 @@ import static dev.specbinder.annotations.Gherkin2JUnitOptions.DATA_TABLE_PARAMET
 /**
  * Works out the types of the values of composite steps before any code is generated, across all uses of each
  * composite step:
- * - a type fixed by a sub-step's step method in the base class, for a value the sub-step receives as "<$pN>", becomes
- *   the value's type; when sub-steps fix different types for one value, the type fixed first in the spec wins
+ * - a type fixed by a sub-step's step method in the base class, for a value the sub-step receives as
+ *   {@code "<$pN>"}, becomes the value's type; when sub-steps fix different types for one value, the type fixed first
+ *   in the spec wins
  * - otherwise the type is inferred from the parent step's literals of all uses, widened like for regular steps
  * The columns of a composite step's data table are typed the same way: by the types sub-steps fix for the cells they
- * receive as "<$column>", or else from the cells of all uses. With the LIST_OF_OBJECT_PARAMS data table type, sub-steps
- * that fix different types for one column are a generator error.
+ * receive as {@code "<$column>"}, or else from the cells of all uses. With the LIST_OF_OBJECT_PARAMS data table type,
+ * sub-steps that fix different types for one column are a generator error.
  */
 public class CompositeStepTypeResolver {
 
@@ -62,8 +63,9 @@ public class CompositeStepTypeResolver {
     private final Map<String, DataTableRowType> dataTableRowTypesByMethod = new HashMap<>();
 
     /**
-     * The row type of a composite step's data table that sub-steps take as "<$dataTable>": named after the first of
-     * these sub-steps in the spec, or the custom row type the step method in the base class of one of them takes.
+     * The row type of a composite step's data table that sub-steps take as {@code "<$dataTable>"}: named after the
+     * first of these sub-steps in the spec, or the custom row type the step method in the base class of one of them
+     * takes.
      *
      * @param recordStepText the text of the first sub-step taking the data table, which names a generated row type
      * @param baseRowType the custom row type from the base class, or null
@@ -164,7 +166,7 @@ public class CompositeStepTypeResolver {
      * Returns the known column type of a data table cell of a composite step:
      * - for a parent step's cell, the type sub-steps fix for its column
      * - for a sub-step's cell that holds only a reference to its parent step, the type of the value or column it
-     *   refers to, e.g. "Integer" for <$p2> when the parent step's second value is an Integer
+     *   refers to, e.g. "Integer" for {@code <$p2>} when the parent step's second value is an Integer
      * Returns null for other cells, for the cells of other steps, and for types a data table column can't have.
      *
      * @param step the step the data table belongs to
@@ -209,8 +211,8 @@ public class CompositeStepTypeResolver {
     }
 
     /**
-     * Returns the row type of a composite step's data table that sub-steps take as "<$dataTable>", or null when no
-     * sub-step takes it.
+     * Returns the row type of a composite step's data table that sub-steps take as {@code "<$dataTable>"}, or null
+     * when no sub-step takes it.
      *
      * @param compositeMethodName the composite step method name
      * @return the row type of the composite step's data table, or null

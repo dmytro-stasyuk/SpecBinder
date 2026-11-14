@@ -29,7 +29,9 @@ import java.util.logging.Logger;
  *       compare against {@code @ScenarioHash} on the test method.</li>
  *   <li>{@code backgroundStepLines} / {@code scenarioStepLines} — the keyword-prefixed spec
  *       lines of the applicable Background and scenario steps, in execution order. One
- *       entry per {@code StepReport}.</li>
+ *       entry per {@code StepReport}. With composite steps turned on, a composite step's
+ *       {@code *} sub-steps are not steps of their own: they are listed under it in
+ *       {@code backgroundSubSteps} / {@code scenarioSubSteps} instead.</li>
  *   <li>{@code backgroundBlockArgs} / {@code scenarioBlockArgs} — per-step metadata describing
  *       whether the step's spec has a DocString or DataTable trailing argument, and (for
  *       DataTables) the source-order header row. Used by the reporter to wrap each captured
@@ -71,8 +73,27 @@ public final class SourceFeatureReader {
             List<String> scenarioStepLines,
             List<StepBlockArgument> backgroundBlockArgs,
             List<StepBlockArgument> scenarioBlockArgs,
+            List<List<ParsedSubStep>> backgroundSubSteps,
+            List<List<ParsedSubStep>> scenarioSubSteps,
             List<Map<String, String>> examplesRows) {
     }
+
+    /**
+     * A sub-step of a composite step: its keyword-prefixed spec line, references such as
+     * {@code "<$p1>"} as written, and its trailing block argument. The sub-steps of each step
+     * are listed in spec order, one list per step line — empty for a step that isn't composite.
+     *
+     * @param line             the sub-step's spec line
+     * @param blockArg         the DocString or DataTable written under the sub-step itself
+     * @param receivedBlockArg the DocString or DataTable the sub-step's method receives: its own, or its
+     *                         composite step's when the sub-step passes that on by ending its text with
+     *                         {@code "<$dataTable>"} or {@code "<$docString>"}
+     */
+    public record ParsedSubStep(String line, StepBlockArgument blockArg, StepBlockArgument receivedBlockArg) {
+    }
+
+    private static final String PASSED_ON_DATA_TABLE = "\"<$dataTable>\"";
+    private static final String PASSED_ON_DOC_STRING = "\"<$docString>\"";
 
     /**
      * Describes the trailing block argument (if any) on a single step. SpecBinder allows
@@ -159,7 +180,10 @@ public final class SourceFeatureReader {
                         + sourceFilePath + " - " + parsedSpec.firstParseError().get().getMessage());
                 return ParsedFeature.EMPTY;
             }
-            return parsedSpec.feature().map(SourceFeatureReader::buildModel).orElse(ParsedFeature.EMPTY);
+            boolean enableCompositeSteps = options.enableCompositeSteps();
+            return parsedSpec.feature()
+                    .map(feature -> buildModel(feature, enableCompositeSteps))
+                    .orElse(ParsedFeature.EMPTY);
         } catch (IOException | RuntimeException e) {
             LOGGER.log(Level.WARNING,
                     "SpecBinder reporter: failed to parse feature for step-text stamping: "
@@ -168,7 +192,7 @@ public final class SourceFeatureReader {
         }
     }
 
-    private static ParsedFeature buildModel(Feature feature) {
+    private static ParsedFeature buildModel(Feature feature, boolean enableCompositeSteps) {
         // Feature-level backgrounds apply to every scenario in the file (including those
         // inside Rules), and Rule-level backgrounds apply on top of them in outer→inner
         // order — matches BackgroundStepCollector on the annotation-processor side.
@@ -181,9 +205,9 @@ public final class SourceFeatureReader {
         List<ParsedRule> rules = new ArrayList<>();
         for (FeatureChild child : feature.getChildren()) {
             child.getScenario().ifPresent(sc ->
-                    featureScenarios.add(buildScenario(sc, featureBackgroundSteps, List.of())));
+                    featureScenarios.add(buildScenario(sc, featureBackgroundSteps, List.of(), enableCompositeSteps)));
             child.getRule().ifPresent(rule ->
-                    rules.add(buildRule(rule, featureBackgroundSteps)));
+                    rules.add(buildRule(rule, featureBackgroundSteps, enableCompositeSteps)));
         }
 
         return new ParsedFeature(
@@ -191,7 +215,7 @@ public final class SourceFeatureReader {
                 Collections.unmodifiableList(rules));
     }
 
-    private static ParsedRule buildRule(Rule rule, List<Step> featureBackgroundSteps) {
+    private static ParsedRule buildRule(Rule rule, List<Step> featureBackgroundSteps, boolean enableCompositeSteps) {
         List<Step> ruleBackgroundSteps = new ArrayList<>();
         for (RuleChild child : rule.getChildren()) {
             child.getBackground().ifPresent(bg -> ruleBackgroundSteps.addAll(bg.getSteps()));
@@ -199,14 +223,16 @@ public final class SourceFeatureReader {
         List<ParsedScenario> scenarios = new ArrayList<>();
         for (RuleChild child : rule.getChildren()) {
             child.getScenario().ifPresent(sc ->
-                    scenarios.add(buildScenario(sc, featureBackgroundSteps, ruleBackgroundSteps)));
+                    scenarios.add(buildScenario(
+                            sc, featureBackgroundSteps, ruleBackgroundSteps, enableCompositeSteps)));
         }
         return new ParsedRule(Collections.unmodifiableList(scenarios));
     }
 
     private static ParsedScenario buildScenario(Scenario scenario,
                                                  List<Step> featureBackgroundSteps,
-                                                 List<Step> ruleBackgroundSteps) {
+                                                 List<Step> ruleBackgroundSteps,
+                                                 boolean enableCompositeSteps) {
         List<Step> backgroundSteps = new ArrayList<>(
                 featureBackgroundSteps.size() + ruleBackgroundSteps.size());
         backgroundSteps.addAll(featureBackgroundSteps);
@@ -218,13 +244,86 @@ public final class SourceFeatureReader {
         for (Step s : backgroundSteps) canonicalSteps.add(CanonicalStepBuilder.canonicalize(s));
         for (Step s : scenarioSteps) canonicalSteps.add(CanonicalStepBuilder.canonicalize(s));
 
+        // Each Background is grouped on its own, as the generator turns each into a method of its own
+        List<StepGroup> backgroundGroups = new ArrayList<>(groupSteps(featureBackgroundSteps, enableCompositeSteps));
+        backgroundGroups.addAll(groupSteps(ruleBackgroundSteps, enableCompositeSteps));
+        List<StepGroup> scenarioGroups = groupSteps(scenarioSteps, enableCompositeSteps);
+
         return new ParsedScenario(
                 Collections.unmodifiableList(canonicalSteps),
-                Collections.unmodifiableList(toLineList(backgroundSteps)),
-                Collections.unmodifiableList(toLineList(scenarioSteps)),
-                Collections.unmodifiableList(toBlockArgList(backgroundSteps)),
-                Collections.unmodifiableList(toBlockArgList(scenarioSteps)),
+                Collections.unmodifiableList(toLineList(stepsOf(backgroundGroups))),
+                Collections.unmodifiableList(toLineList(stepsOf(scenarioGroups))),
+                Collections.unmodifiableList(toBlockArgList(stepsOf(backgroundGroups))),
+                Collections.unmodifiableList(toBlockArgList(stepsOf(scenarioGroups))),
+                Collections.unmodifiableList(toSubStepLists(backgroundGroups)),
+                Collections.unmodifiableList(toSubStepLists(scenarioGroups)),
                 Collections.unmodifiableList(toExamplesRows(scenario)));
+    }
+
+    /** A step as the generated test calls it, with the {@code *} sub-steps it holds when it is a composite step. */
+    private record StepGroup(Step step, List<Step> subSteps) {
+    }
+
+    /**
+     * Groups steps the way the generator does. With composite steps turned on, a step other than
+     * {@code *} directly followed by {@code *} steps is a composite step holding them as its
+     * sub-steps, and {@code *} steps with no such step before them are left out, as the generator
+     * leaves them out of the test. Otherwise every step is a step of its own.
+     */
+    private static List<StepGroup> groupSteps(List<Step> steps, boolean enableCompositeSteps) {
+        List<StepGroup> groups = new ArrayList<>(steps.size());
+        for (Step step : steps) {
+            boolean isSubStep = enableCompositeSteps && "*".equals(step.getKeyword().trim());
+            if (!isSubStep) {
+                groups.add(new StepGroup(step, new ArrayList<>()));
+            } else if (!groups.isEmpty()) {
+                groups.get(groups.size() - 1).subSteps().add(step);
+            }
+        }
+        return groups;
+    }
+
+    private static List<Step> stepsOf(List<StepGroup> groups) {
+        List<Step> steps = new ArrayList<>(groups.size());
+        for (StepGroup group : groups) {
+            steps.add(group.step());
+        }
+        return steps;
+    }
+
+    private static List<List<ParsedSubStep>> toSubStepLists(List<StepGroup> groups) {
+        List<List<ParsedSubStep>> subStepLists = new ArrayList<>(groups.size());
+        for (StepGroup group : groups) {
+            StepBlockArgument parentBlockArg = toBlockArgList(List.of(group.step())).get(0);
+            List<String> lines = toLineList(group.subSteps());
+            List<StepBlockArgument> blockArgs = toBlockArgList(group.subSteps());
+            List<ParsedSubStep> subSteps = new ArrayList<>(lines.size());
+            for (int i = 0; i < lines.size(); i++) {
+                StepBlockArgument receivedBlockArg =
+                        receivedBlockArg(group.subSteps().get(i), blockArgs.get(i), parentBlockArg);
+                subSteps.add(new ParsedSubStep(lines.get(i), blockArgs.get(i), receivedBlockArg));
+            }
+            subStepLists.add(Collections.unmodifiableList(subSteps));
+        }
+        return subStepLists;
+    }
+
+    /**
+     * The block a sub-step's method receives. A sub-step without a block of its own whose text ends with
+     * {@code "<$dataTable>"} or {@code "<$docString>"} receives its composite step's data table or DocString as its
+     * own; a sub-step with a DocString of its own takes {@code "<$docString>"} as a value instead.
+     */
+    private static StepBlockArgument receivedBlockArg(Step subStep, StepBlockArgument ownBlockArg,
+                                                      StepBlockArgument parentBlockArg) {
+        if (ownBlockArg.kind() != StepBlockArgument.BlockKind.NONE) {
+            return ownBlockArg;
+        }
+        String text = subStep.getText().strip();
+        boolean passesOnDataTable = text.endsWith(PASSED_ON_DATA_TABLE)
+                && parentBlockArg.kind() == StepBlockArgument.BlockKind.DATA_TABLE;
+        boolean passesOnDocString = text.endsWith(PASSED_ON_DOC_STRING)
+                && parentBlockArg.kind() == StepBlockArgument.BlockKind.DOC_STRING;
+        return passesOnDataTable || passesOnDocString ? parentBlockArg : ownBlockArg;
     }
 
     /**

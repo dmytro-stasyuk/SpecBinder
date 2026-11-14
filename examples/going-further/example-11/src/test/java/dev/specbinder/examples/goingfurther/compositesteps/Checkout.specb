@@ -1,0 +1,76 @@
+Feature: Checkout
+
+  Demonstrates composite steps, turned on with enableCompositeSteps. A step directly followed by `*` steps is a
+  composite step and the `*` steps are its sub-steps: the scenario reads as one business action, while the generated
+  test still calls each sub-step's method in order. Sub-steps read their composite step's values through
+  references: "<$p1>" for its first quoted value, "<$product[1]>" for a cell of its data table, and "<$dataTable>" or
+  "<$docString>" to pass its whole data table or doc string on.
+
+  Background:
+    Given the shop sells:
+      | product  | price |
+      | Notebook | 4.50  |
+      | Pen      | 1.20  |
+      | Backpack | 25.00 |
+    And "Alice" is signed in
+    * open the sign-in page
+    * sign in as "<$p1>"
+
+  Scenario: Buying one product
+    Given the cart holds "2" of "Notebook"
+    * search the catalogue for "<$p2>"
+    * add "<$p1>" of the first result to the cart
+    When the customer checks out
+    * open the cart
+    * confirm the delivery address
+    * pay with the saved card
+    Then the order total should be "9.00"
+
+  Scenario: Buying products listed in a table
+    Given the cart holds these products:
+      | product  | quantity |
+      | Notebook | 2        |
+      | Pen      | 3        |
+    * add the products to the cart: "<$dataTable>"
+    * the first cart line should be for "<$product[1]>"
+    When the customer checks out
+    * open the cart
+    * confirm the delivery address
+    * pay with the saved card
+    Then the order total should be "12.60"
+
+  Scenario: A gift note goes on the order confirmation
+    Given the cart holds "1" of "Backpack"
+    * search the catalogue for "<$p2>"
+    * add "<$p1>" of the first result to the cart
+    And the order carries a gift note:
+      """
+      Happy birthday, Bob!
+      """
+    * open the gift options
+    * write the gift note: "<$docString>"
+    When the customer checks out
+    * open the cart
+    * confirm the delivery address
+    * pay with the saved card
+    Then the confirmation email should read:
+      """
+      Thank you for your order, Alice.
+      Gift note: Happy birthday, Bob!
+      """
+
+  Scenario Outline: A discount code takes its percentage off the order
+    Given the cart holds "<quantity>" of "<product>"
+    * search the catalogue for "<$p2>"
+    * add "<$p1>" of the first result to the cart
+    When the customer checks out with the discount code "<code>"
+    * open the cart
+    * apply the discount code "<$p1>"
+    * confirm the delivery address
+    * pay with the saved card
+    Then the order total should be "<total>"
+
+    Examples:
+      | product  | quantity | code   | total |
+      | Notebook | 2        | SAVE10 | 8.10  |
+      | Backpack | 1        | BOGUS  | 25.00 |

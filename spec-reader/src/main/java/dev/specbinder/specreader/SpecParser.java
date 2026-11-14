@@ -1,6 +1,5 @@
 package dev.specbinder.specreader;
 
-import dev.specbinder.specreader.KeywordTranslator.Translation;
 import io.cucumber.gherkin.GherkinParser;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Feature;
@@ -14,7 +13,8 @@ import java.util.Optional;
 /**
  * Parses a spec with the keywords of the languages it is read with. A spec in English only, or with a
  * {@code # language:} header, is parsed as written; a spec mixing the keywords of other languages is rewritten to
- * English keywords for the parser, and what the parser read is given back in the spec's own words.
+ * English keywords for the parser, and what the parser read is given back in the spec's own words. A data table
+ * written vertically is given turned to the normal layout, see {@link VerticalTables}.
  */
 public final class SpecParser {
 
@@ -43,11 +43,14 @@ public final class SpecParser {
      */
     public static ParsedSpec parse(String uri, String content, SpecKeywords keywords) {
 
-        if (keywords.isReadAsWritten()) {
+        Translation translation = keywords.isReadAsWritten()
+                ? Translation.unchanged(content)
+                : keywords.translator().translate(content);
+        translation = VerticalTables.rewriteFirstRows(translation, keywords);
+        if (!translation.isAnyLineChanged()) {
             return parseAsWritten(uri, content);
         }
 
-        Translation translation = keywords.translator().translate(content);
         ParsedSpec parsed = parseAsWritten(uri, translation.content());
         FeatureRestorer restorer = new FeatureRestorer(translation);
         return new ParsedSpec(

@@ -10,6 +10,7 @@ import dev.specbinder.processor.support.LoggingSupport;
 import dev.specbinder.processor.support.OptionsSupport;
 import dev.specbinder.processor.utils.*;
 import dev.specbinder.processor.utils.StepKeywordUtils.ResolvedStepKeyword;
+import dev.specbinder.specreader.VerticalTables;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -687,16 +688,27 @@ class StepProcessor implements LoggingSupport, OptionsSupport {
 
     /**
      * Returns the DataTable rows shown in a step's comment: the step's table in LIST_OF_OBJECT_PARAMS mode, and no
-     * rows in the other modes.
+     * rows in the other modes, except for a table written vertically, which is shown as written in every mode since
+     * the code passing it holds it in the normal layout.
      */
     static List<String> dataTableCommentLines(Step step, GeneratorOptions options) {
-        if (step.getDataTable().isEmpty() || !"LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
+        if (step.getDataTable().isEmpty()) {
             return List.of();
         }
         io.cucumber.messages.types.DataTable dataTableMsg = step.getDataTable().get();
-        List<Integer> maxColumnLength = TableUtils.workOutMaxColumnLength(dataTableMsg);
-        String dataTableAsString = TableUtils.convertDataTableToString(dataTableMsg, maxColumnLength);
-        return List.of(dataTableAsString.split("\n"));
+        boolean writtenVertically = VerticalTables.isWrittenVertically(dataTableMsg);
+        if (!writtenVertically && !"LIST_OF_OBJECT_PARAMS".equals(options.getDataTableParameterType())) {
+            return List.of();
+        }
+        io.cucumber.messages.types.DataTable shownTable =
+                writtenVertically ? VerticalTables.asWritten(dataTableMsg) : dataTableMsg;
+        List<Integer> maxColumnLength = TableUtils.workOutMaxColumnLength(shownTable);
+        String dataTableAsString = TableUtils.convertDataTableToString(shownTable, maxColumnLength);
+        List<String> lines = new ArrayList<>(List.of(dataTableAsString.split("\n")));
+        if (writtenVertically) {
+            lines.set(0, VerticalTables.FIRST_ROW_OPENER + lines.getFirst().substring(1));
+        }
+        return lines;
     }
 
     private CodeBlock buildCallToTheStepMethod(

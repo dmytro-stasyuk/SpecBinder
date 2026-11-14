@@ -1,14 +1,14 @@
 package dev.specbinder.specreader;
 
-import dev.specbinder.specreader.KeywordTranslator.Translation;
 import io.cucumber.messages.types.*;
 
 import java.util.Optional;
 
 /**
- * Puts the spec's own words back into what the parser read from a spec rewritten by {@link KeywordTranslator}: the
- * keyword of every title line and step as the spec spells it, the description lines as the spec writes them, and the
- * line as written in a parse error.
+ * Puts the spec's own words back into what the parser read from a spec rewritten by {@link KeywordTranslator} and
+ * {@link VerticalTables}: the keyword of every title line and step as the spec spells it, the description lines as
+ * the spec writes them, and the line as written in a parse error; and turns each data table written vertically,
+ * which the parser read with its rows as written, to the normal layout.
  */
 final class FeatureRestorer {
 
@@ -116,9 +116,16 @@ final class FeatureRestorer {
                 step.getKeywordType().orElse(null),
                 step.getText(),
                 step.getDocString().orElse(null),
-                step.getDataTable().orElse(null),
+                step.getDataTable().map(this::restoreDataTable).orElse(null),
                 step.getId()
         );
+    }
+
+    private DataTable restoreDataTable(DataTable dataTable) {
+        if (translation.verticalTableLines().contains(lineIndexOf(dataTable.getLocation()))) {
+            return VerticalTables.toNormalLayout(dataTable);
+        }
+        return dataTable;
     }
 
     /**

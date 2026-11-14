@@ -48,7 +48,7 @@ public class DataTableCollector {
 
     /**
      * Records the record name a composite step's data table is built with, when it isn't named after its parent step,
-     * e.g. after the sub-step taking the data table as "<$dataTable>".
+     * e.g. after the sub-step taking the data table as {@code "<$dataTable>"}.
      *
      * @param compositeMethodName the composite step method name
      * @param recordName the record name of the composite step's data table

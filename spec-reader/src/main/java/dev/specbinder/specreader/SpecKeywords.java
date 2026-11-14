@@ -305,6 +305,11 @@ public final class SpecKeywords {
                 if (synonym.contains(":")) {
                     throw new IllegalArgumentException(described + ", which contains ':' - write it without the ':'");
                 }
+                if (synonym.startsWith(VerticalTables.FIRST_ROW_OPENER)) {
+                    throw new IllegalArgumentException(described + ", which starts with '"
+                            + VerticalTables.FIRST_ROW_OPENER + "' - write it without the '"
+                            + VerticalTables.FIRST_ROW_OPENER + "', which opens a vertical data table");
+                }
                 Entry earlier = entryOfSynonym.putIfAbsent(synonym, entry);
                 if (earlier != null && earlier.keyword() != entry.keyword()) {
                     throw new IllegalArgumentException("keywordSynonyms lists '" + synonym + "' for both "

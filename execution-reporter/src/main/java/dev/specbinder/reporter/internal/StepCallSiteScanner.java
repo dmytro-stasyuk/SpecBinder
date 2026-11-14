@@ -18,21 +18,41 @@ import java.util.*;
  * Per scan: produces a {@link Plan} with one ordered list per scenario method plus
  * a single ordered list of background calls. {@code @Nested} rule classes are scanned
  * separately by the caller (their plans extend the feature-root plan additively).
+ * <p>
+ * A composite step's call is passed a lambda that calls its sub-steps. The lambda's body
+ * compiles to a synthetic method of the same class, so the scanner follows the lambda there
+ * and records the calls it makes as the composite step call's {@link Call#subCalls()}.
  */
 public final class StepCallSiteScanner {
 
     private static final int ASM_API = Opcodes.ASM9;
+    private static final String LAMBDA_METAFACTORY = "java/lang/invoke/LambdaMetafactory";
+    private static final String LAMBDA_METHOD_PREFIX = "lambda$";
 
-    /** A single bytecode call site: invoked method name. */
+    /** A single bytecode call site: invoked method name, plus the sub-step calls of a composite step. */
     public static final class Call {
         private final String methodName;
+        private final List<Call> subCalls;
 
         public Call(String methodName) {
+            this(methodName, null);
+        }
+
+        public Call(String methodName, List<Call> subCalls) {
             this.methodName = methodName;
+            this.subCalls = subCalls;
         }
 
         public String methodName() {
             return methodName;
+        }
+
+        /**
+         * The calls the lambda passed to this call makes — a composite step's sub-steps, in spec
+         * order — or {@code null} for a call passed no lambda, such as a regular step's.
+         */
+        public List<Call> subCalls() {
+            return subCalls;
         }
     }
 
@@ -112,11 +132,30 @@ public final class StepCallSiteScanner {
             }
             boolean generated = isGeneratedTestClass(cls);
             new ClassReader(bytes).accept(
-                    new ScanningClassVisitor(generated, backgroundCalls, scenarioCallsByMethod, stepMethodNames),
+                    new ScanningClassVisitor(generated, internalNameOf(cls), selfAndEnclosingInternalNames(cls),
+                            backgroundCalls, scenarioCallsByMethod, stepMethodNames),
                     ClassReader.SKIP_FRAMES);
         }
 
         return new Plan(backgroundCalls, scenarioCallsByMethod, stepMethodNames);
+    }
+
+    private static String internalNameOf(Class<?> cls) {
+        return cls.getName().replace('.', '/');
+    }
+
+    /**
+     * The classes a sub-step lambda in {@code cls} calls step methods on: {@code cls} itself, and
+     * for a {@code @Nested} rule class the classes enclosing it, whose step methods it calls
+     * through its outer instance. Calls on anything else — such as a data table row's accessor
+     * passing a cell to a sub-step — are not steps.
+     */
+    private static Set<String> selfAndEnclosingInternalNames(Class<?> cls) {
+        Set<String> names = new HashSet<>();
+        for (Class<?> c = cls; c != null; c = c.getEnclosingClass()) {
+            names.add(internalNameOf(c));
+        }
+        return names;
     }
 
     /**
@@ -171,19 +210,32 @@ public final class StepCallSiteScanner {
         return "L" + type.getName().replace('.', '/') + ";";
     }
 
-    /** Routes each method to a {@link MethodScanner} that records its body's call sites. */
+    /**
+     * Routes each method to a {@link MethodScanner} that records its body's call sites, and each
+     * synthetic lambda method to a {@link LambdaBodyScanner}. The lambdas are compiled after the
+     * methods creating them, so a composite step call's sub-step calls are filled in once the
+     * whole class has been visited.
+     */
     private static final class ScanningClassVisitor extends ClassVisitor {
         private final boolean classGenerated;
+        private final String classInternalName;
+        private final Set<String> subStepCallOwners;
         private final List<Call> backgroundCalls;
         private final Map<String, List<Call>> scenarioCallsByMethod;
         private final Set<String> stepMethodNames;
+        private final Map<String, List<Call>> lambdaBodyCalls = new HashMap<>();
+        private final List<CompositeCall> compositeCalls = new ArrayList<>();
 
         ScanningClassVisitor(boolean classGenerated,
+                             String classInternalName,
+                             Set<String> subStepCallOwners,
                              List<Call> backgroundCalls,
                              Map<String, List<Call>> scenarioCallsByMethod,
                              Set<String> stepMethodNames) {
             super(ASM_API);
             this.classGenerated = classGenerated;
+            this.classInternalName = classInternalName;
+            this.subStepCallOwners = subStepCallOwners;
             this.backgroundCalls = backgroundCalls;
             this.scenarioCallsByMethod = scenarioCallsByMethod;
             this.stepMethodNames = stepMethodNames;
@@ -192,8 +244,58 @@ public final class StepCallSiteScanner {
         @Override
         public MethodVisitor visitMethod(int access, String name, String descriptor,
                                          String signature, String[] exceptions) {
-            return new MethodScanner(classGenerated, name, descriptor,
-                    backgroundCalls, scenarioCallsByMethod, stepMethodNames);
+            if (name.startsWith(LAMBDA_METHOD_PREFIX)) {
+                List<Call> calls = new ArrayList<>();
+                lambdaBodyCalls.put(name + descriptor, calls);
+                return new LambdaBodyScanner(subStepCallOwners, calls);
+            }
+            return new MethodScanner(classGenerated, classInternalName, name, descriptor,
+                    backgroundCalls, scenarioCallsByMethod, stepMethodNames, compositeCalls);
+        }
+
+        @Override
+        public void visitEnd() {
+            for (CompositeCall compositeCall : compositeCalls) {
+                for (String lambdaKey : compositeCall.lambdaKeys()) {
+                    List<Call> subCalls = lambdaBodyCalls.getOrDefault(lambdaKey, List.of());
+                    compositeCall.call().subCalls().addAll(subCalls);
+                    for (Call subCall : subCalls) {
+                        stepMethodNames.add(subCall.methodName());
+                    }
+                }
+            }
+        }
+    }
+
+    /** A call passed one or more lambdas, keyed by their synthetic methods' name and descriptor. */
+    private record CompositeCall(Call call, List<String> lambdaKeys) {
+    }
+
+    /**
+     * Records the sub-step calls in the body of a lambda passed to a composite step: the calls on
+     * the scanned class, or on a class enclosing it. Calls producing a sub-step's values, such as
+     * {@code String.replace} or a data table row's accessor, are left out.
+     */
+    private static final class LambdaBodyScanner extends MethodVisitor {
+        private final Set<String> subStepCallOwners;
+        private final List<Call> calls;
+
+        LambdaBodyScanner(Set<String> subStepCallOwners, List<Call> calls) {
+            super(ASM_API);
+            this.subStepCallOwners = subStepCallOwners;
+            this.calls = calls;
+        }
+
+        @Override
+        public void visitMethodInsn(int opcode, String owner, String name,
+                                    String descriptor, boolean isInterface) {
+            if (opcode != Opcodes.INVOKEVIRTUAL && opcode != Opcodes.INVOKESPECIAL) {
+                return;
+            }
+            if ("<init>".equals(name) || !subStepCallOwners.contains(owner)) {
+                return;
+            }
+            calls.add(new Call(name));
         }
     }
 
@@ -202,7 +304,9 @@ public final class StepCallSiteScanner {
      * pending buffer, then in {@code visitEnd} flushes the buffer to either the
      * background sink or the scenario-method sink based on whether the method carries
      * {@code @BeforeEach} or {@code @Test} / {@code @ParameterizedTest}. Methods with
-     * neither annotation are dropped.
+     * neither annotation are dropped. A lambda created between two calls is taken as passed
+     * to the second — the generated code builds a composite step's sub-step lambda as the
+     * last argument of its call.
      */
     private static final class MethodScanner extends MethodVisitor {
         private static final String DESC_TEST = "Lorg/junit/jupiter/api/Test;";
@@ -210,28 +314,38 @@ public final class StepCallSiteScanner {
         private static final String DESC_BEFORE_EACH = "Lorg/junit/jupiter/api/BeforeEach;";
 
         private final boolean classGenerated;
+        private final String classInternalName;
         private final String methodName;
         private final String methodDescriptor;
         private final List<Call> backgroundSink;
         private final Map<String, List<Call>> scenarioSinks;
         private final Set<String> stepMethodNames;
-        private final List<String> pendingCallNames = new ArrayList<>();
+        private final List<CompositeCall> compositeCalls;
+        private final List<PendingCall> pendingCalls = new ArrayList<>();
+        private final List<String> pendingLambdaKeys = new ArrayList<>();
         private boolean isTest;
         private boolean isBeforeEach;
 
         MethodScanner(boolean classGenerated,
+                      String classInternalName,
                       String methodName,
                       String methodDescriptor,
                       List<Call> backgroundSink,
                       Map<String, List<Call>> scenarioSinks,
-                      Set<String> stepMethodNames) {
+                      Set<String> stepMethodNames,
+                      List<CompositeCall> compositeCalls) {
             super(ASM_API);
             this.classGenerated = classGenerated;
+            this.classInternalName = classInternalName;
             this.methodName = methodName;
             this.methodDescriptor = methodDescriptor;
             this.backgroundSink = backgroundSink;
             this.scenarioSinks = scenarioSinks;
             this.stepMethodNames = stepMethodNames;
+            this.compositeCalls = compositeCalls;
+        }
+
+        private record PendingCall(String methodName, List<String> lambdaKeys) {
         }
 
         @Override
@@ -258,7 +372,20 @@ public final class StepCallSiteScanner {
             if (isInfrastructureOwner(owner)) {
                 return;
             }
-            pendingCallNames.add(name);
+            pendingCalls.add(new PendingCall(name, List.copyOf(pendingLambdaKeys)));
+            pendingLambdaKeys.clear();
+        }
+
+        @Override
+        public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
+                                           Object... bootstrapMethodArguments) {
+            // LambdaMetafactory's second bootstrap argument is the method holding the lambda's body
+            if (LAMBDA_METAFACTORY.equals(bootstrapMethodHandle.getOwner())
+                    && bootstrapMethodArguments.length > 1
+                    && bootstrapMethodArguments[1] instanceof Handle implementation
+                    && classInternalName.equals(implementation.getOwner())) {
+                pendingLambdaKeys.add(implementation.getName() + implementation.getDesc());
+            }
         }
 
         @Override
@@ -286,9 +413,17 @@ public final class StepCallSiteScanner {
                 sink = new ArrayList<>();
                 scenarioSinks.put(methodName + methodDescriptor, sink);
             }
-            for (String callName : pendingCallNames) {
-                sink.add(new Call(callName));
-                stepMethodNames.add(callName);
+            for (PendingCall pendingCall : pendingCalls) {
+                Call call;
+                if (pendingCall.lambdaKeys().isEmpty()) {
+                    call = new Call(pendingCall.methodName());
+                } else {
+                    // sub-step calls are filled in once the lambda bodies have been visited
+                    call = new Call(pendingCall.methodName(), new ArrayList<>());
+                    compositeCalls.add(new CompositeCall(call, pendingCall.lambdaKeys()));
+                }
+                sink.add(call);
+                stepMethodNames.add(pendingCall.methodName());
             }
         }
 
