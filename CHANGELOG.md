@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2026.52.0] - 2026-11-17
+
+### Added
+
 - A composite step's data table is now passed to its composite method as `dataTable`, and its sub-steps can read single cells as `"<$email>"` or `"<$name[2]>"`, or take the whole table as their own by ending with `"<$dataTable>"`. The cells of a sub-step's own data table can also hold the parent step's values, such as `<$p1>`.
 - Composite steps now also work in Feature and Rule Backgrounds, and in Scenario Outlines, where Examples values in the parent step are passed on to its sub-steps.
 - Composite steps can now take up to five values, a data table counting as one, passed to the sub-steps through the new `QuadConsumer` and `PentaConsumer`. Six or more still fail the build.
